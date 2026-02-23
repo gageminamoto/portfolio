@@ -51,7 +51,7 @@ export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
   bio: "Designer building everyday products. Growing Hawai'i's local design community. Building Mizen.",
   socials: [
-    { platform: "twitter", url: "https://twitter.com", label: "Twitter" },
+    { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
     { platform: "github", url: "https://github.com", label: "GitHub" },
     { platform: "linkedin", url: "https://linkedin.com", label: "LinkedIn" },
   ],

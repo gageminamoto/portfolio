@@ -67,10 +67,6 @@ export function LayoutOne() {
 
       {/* Writing - future Notion CMS integration */}
       <Section title="Writing">
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-          <span>Writing</span>
-          <ChevronRight className="h-3 w-3" />
-        </div>
         <div className="flex flex-col gap-3">
           {writing.map((post) => (
             <a
