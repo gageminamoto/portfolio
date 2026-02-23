@@ -63,7 +63,7 @@ export const portfolioData: PortfolioData = {
   productivity: [
     { name: "Raycast", url: "https://raycast.com/", description: "launcher" },
     { name: "Notion", url: "https://www.notion.so/", description: "notes and project management" },
-    { name: "Inflight", url: "https://inflight.app/", description: "focus + tasks" },
+    { name: "Inflight", url: "https://www.inflight.co/", description: "design feedback" },
     { name: "CleanShot X", url: "https://cleanshot.com/", description: "screen capture and annotation" },
     { name: "Eagle", url: "https://en.eagle.cool/", description: "inspo library" },
     { name: "Typefully", url: "https://typefully.com/", description: "writing + scheduling" },
