@@ -10,7 +10,7 @@ const commitData = {
   hash: "b33efc4",
   additions: 21222,
   deletions: 14202,
-  relativeTime: "8 hours ago",
+  relativeTime: "8hrs ago",
 }
 
 function CommitTracker() {
@@ -23,7 +23,7 @@ function CommitTracker() {
       <span className="text-red-400/80">{`-${deletions.toLocaleString()}`}</span>
       <span className="text-emerald-400/80">{`+${additions.toLocaleString()}`}</span>
       <span className="text-muted-foreground/40">{"·"}</span>
-      <span>{`Last commit ${relativeTime}`}</span>
+      <span>{relativeTime}</span>
     </div>
   )
 }
