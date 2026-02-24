@@ -53,8 +53,9 @@ function EmailPill() {
     <div className="relative group">
       <button
         onClick={handleCopy}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color] duration-150 ease-out hover:bg-accent hover:border-foreground/20"
         aria-label={`Copy email address ${EMAIL}`}
+        aria-describedby="email-tooltip"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color] duration-150 ease-out hover:bg-accent hover:border-foreground/20"
       >
         {copied ? (
           <Check className="h-3.5 w-3.5 text-emerald-500" />
@@ -64,8 +65,9 @@ function EmailPill() {
         <span>{EMAIL}</span>
       </button>
       <span
-        className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-foreground px-2.5 py-1 text-xs text-background opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+        id="email-tooltip"
         role="tooltip"
+        className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-foreground px-2.5 py-1 text-xs text-background opacity-0 transition-opacity duration-150 group-hover:opacity-100"
       >
         {copied ? "Copied!" : "Copy email"}
       </span>

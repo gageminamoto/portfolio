@@ -30,6 +30,7 @@ export function LayoutSwitcher() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
               aria-label={`Switch to layout ${layout.label}`}
+              aria-pressed={activeLayout === layout.id}
             >
               {layout.label}
             </button>

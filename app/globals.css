@@ -121,6 +121,7 @@
   }
   html {
     scrollbar-gutter: stable;
+    color-scheme: light dark;
   }
   body {
     @apply bg-background text-foreground;

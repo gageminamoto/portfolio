@@ -7,7 +7,7 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return ""
-  return new Date(dateStr).toLocaleDateString("en-US", {
+  return new Date(dateStr).toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -50,7 +50,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
 
   if (isLoading || !data) {
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading writing posts">
         {[0, 1, 2].map((i) => (
           <SkeletonRow key={i} variant={variant} />
         ))}

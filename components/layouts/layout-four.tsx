@@ -45,8 +45,20 @@ export function LayoutFour() {
   const [activeTab, setActiveTab] = useState<Tab>("projects")
   const { name, bio, socials, build, productivity, hobbies, projects } = portfolioData
 
+  const handleKeyDown = (e: React.KeyboardEvent, currentId: Tab) => {
+    const ids = tabs.map((t) => t.id)
+    const idx = ids.indexOf(currentId)
+    if (e.key === "ArrowRight") {
+      e.preventDefault()
+      setActiveTab(ids[(idx + 1) % ids.length])
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault()
+      setActiveTab(ids[(idx - 1 + ids.length) % ids.length])
+    }
+  }
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24">
+    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24">
       {/* Header */}
       <header className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
@@ -60,17 +72,21 @@ export function LayoutFour() {
       </header>
 
       {/* Tab bar */}
-      <div className="flex items-end gap-0 border-b border-border">
+      <div role="tablist" aria-label="Portfolio sections" className="flex items-end gap-0 border-b border-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
+            id={`tab-${tab.id}`}
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            aria-controls={`tabpanel-${tab.id}`}
+            tabIndex={activeTab === tab.id ? 0 : -1}
             onClick={() => setActiveTab(tab.id)}
+            onKeyDown={(e) => handleKeyDown(e, tab.id)}
             className={`cursor-pointer relative -mb-px px-4 py-2 text-sm font-medium transition-[color,background-color,border-color] duration-150 ease-out ${activeTab === tab.id
                 ? "rounded-t-md border border-b-background border-border bg-background text-foreground"
                 : "border border-transparent text-muted-foreground hover:text-foreground"
               }`}
-            aria-selected={activeTab === tab.id}
-            role="tab"
           >
             {tab.label}
           </button>
@@ -78,7 +94,12 @@ export function LayoutFour() {
       </div>
 
       {/* Tab content */}
-      <div role="tabpanel" className="flex flex-col gap-10">
+      <div
+        id={`tabpanel-${activeTab}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
+        className="flex flex-col gap-10"
+      >
 
         {activeTab === "projects" && (
           <div className="flex flex-col gap-4">
