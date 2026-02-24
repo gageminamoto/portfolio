@@ -52,8 +52,8 @@ export const portfolioData: PortfolioData = {
   bio: "Designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
   socials: [
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
-    { platform: "github", url: "https://github.com", label: "GitHub" },
-    { platform: "linkedin", url: "https://linkedin.com", label: "LinkedIn" },
+    { platform: "github", url: "https://github.com/gageminamoto", label: "GitHub" },
+    { platform: "linkedin", url: "https://linkedin.com/in/gageminamoto", label: "LinkedIn" }, // Fixed closing quotation mark
   ],
   build: [
     { name: "Cursor", url: "https://www.cursor.com/", description: "Code editor" },
