@@ -8,7 +8,7 @@ import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { ChevronRight } from "lucide-react"
+import { BioSection } from "@/components/bio-section"
 
 function Section({
   title,
@@ -56,9 +56,7 @@ export function LayoutOne() {
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {name}
             </h1>
-            <p className="text-base leading-relaxed text-muted-foreground">
-              {bio}
-            </p>
+            <BioSection bio={bio} />
           </div>
           <ThemeToggle />
         </div>

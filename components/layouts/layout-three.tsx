@@ -7,6 +7,7 @@
 import { portfolioData } from "@/lib/portfolio-data"
 import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { BioSection } from "@/components/bio-section"
 
 function CategorySection({
   title,
@@ -65,7 +66,7 @@ export function LayoutThree() {
           </h1>
           <ThemeToggle />
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground">{bio}</p>
+        <BioSection bio={bio} className="text-sm" />
       </header>
 
       {/* Build */}

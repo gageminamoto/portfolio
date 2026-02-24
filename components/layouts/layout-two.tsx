@@ -8,6 +8,7 @@ import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { BioSection } from "@/components/bio-section"
 
 function ToolCard({
   name,
@@ -72,9 +73,7 @@ export function LayoutTwo() {
           </div>
           <ThemeToggle />
         </div>
-        <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
-          {bio}
-        </p>
+        <BioSection bio={bio} className="max-w-lg" />
         <SocialIcons socials={socials} size="sm" />
       </header>
 
