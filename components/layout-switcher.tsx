@@ -26,7 +26,7 @@ export function LayoutSwitcher() {
             <button
               key={layout.id}
               onClick={() => setActiveLayout(layout.id)}
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all duration-200 ${
+              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-xs font-medium transition-all duration-200 ${
                 activeLayout === layout.id
                   ? "bg-foreground text-background"
                   : "text-muted-foreground hover:text-foreground"

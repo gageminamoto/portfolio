@@ -53,7 +53,7 @@ function EmailPill() {
     <div className="relative group">
       <button
         onClick={handleCopy}
-        className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-colors duration-200 hover:bg-accent hover:border-foreground/20"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-colors duration-200 hover:bg-accent hover:border-foreground/20"
         aria-label={`Copy email address ${EMAIL}`}
       >
         {copied ? (
