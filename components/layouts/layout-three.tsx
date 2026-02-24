@@ -58,8 +58,7 @@ export function LayoutThree() {
   const { name, bio, build, productivity, writing, hobbies } = portfolioData
 
   return (
-    <div className="flex min-h-screen flex-col">
-    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-14 px-6 py-16 md:py-24">
+    <main className="mx-auto flex min-h-screen max-w-lg flex-col gap-14 px-6 py-16 md:py-24">
       {/* Header */}
       <header className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -129,8 +128,7 @@ export function LayoutThree() {
         </div>
       </div>
 
+      <SiteFooter />
     </main>
-    <SiteFooter />
-    </div>
   )
 }

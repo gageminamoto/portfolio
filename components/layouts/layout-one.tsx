@@ -49,8 +49,7 @@ export function LayoutOne() {
   const { name, bio, socials, build, productivity, writing, hobbies } = portfolioData
 
   return (
-    <div className="flex min-h-screen flex-col">
-    <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-16 px-6 py-16 md:py-24">
+    <main className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
       {/* Header */}
       <header className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
@@ -118,8 +117,7 @@ export function LayoutOne() {
         </div>
       </Section>
 
+      <SiteFooter />
     </main>
-    <SiteFooter />
-    </div>
   )
 }
