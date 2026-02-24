@@ -76,7 +76,7 @@ function EmailPill() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-2xl flex-col items-start justify-between gap-4 px-6 py-6 sm:flex-row sm:items-center">
+      <div className="flex w-full items-center justify-between gap-4 px-6 py-4">
         <EmailPill />
         <CommitTracker />
       </div>
