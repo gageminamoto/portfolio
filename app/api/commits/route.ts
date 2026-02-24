@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { fetchLatestCommit } from "@/lib/github"
 
-// Revalidate every 10 minutes
+export const dynamic = "force-dynamic"
 export const revalidate = 600
 
 export async function GET() {

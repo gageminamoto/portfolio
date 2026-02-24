@@ -1,20 +1,8 @@
 "use client"
 
-import { GitFork, FileText } from "lucide-react"
+import { GitBranch, FileText } from "lucide-react"
 import useSWR from "swr"
 import type { CommitHistoryItem } from "@/lib/github"
-
-let SolarCodeSquare: React.ComponentType<{ size?: number }> | null = null
-let SolarDocumentText: React.ComponentType<{ size?: number }> | null = null
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const solar = require("@solar-icons/react")
-  SolarCodeSquare = solar.CodeSquare
-  SolarDocumentText = solar.DocumentText
-} catch {
-  // Solar icons not installed, fallback to lucide
-}
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -79,10 +67,9 @@ function SkeletonRows() {
 }
 
 function CommitIcon({ isPush }: { isPush: boolean }) {
-  if (isPush) {
-    return SolarCodeSquare ? <SolarCodeSquare size={16} /> : <GitFork className="h-4 w-4" />
-  }
-  return SolarDocumentText ? <SolarDocumentText size={16} /> : <FileText className="h-4 w-4" />
+  return isPush
+    ? <GitBranch className="h-3.5 w-3.5" />
+    : <FileText className="h-3.5 w-3.5" />
 }
 
 function CommitRow({ commit }: { commit: CommitHistoryItem }) {
