@@ -8,6 +8,7 @@ import { portfolioData } from "@/lib/portfolio-data"
 import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
+import { SiteFooter } from "@/components/site-footer"
 
 function CategorySection({
   title,
@@ -126,6 +127,8 @@ export function LayoutThree() {
           ))}
         </div>
       </div>
+
+      <SiteFooter />
     </main>
   )
 }

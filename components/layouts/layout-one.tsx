@@ -9,6 +9,7 @@ import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
+import { SiteFooter } from "@/components/site-footer"
 
 function Section({
   title,
@@ -115,6 +116,8 @@ export function LayoutOne() {
           ))}
         </div>
       </Section>
+
+      <SiteFooter />
     </main>
   )
 }

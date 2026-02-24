@@ -9,6 +9,7 @@ import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
+import { SiteFooter } from "@/components/site-footer"
 
 function ToolCard({
   name,
@@ -131,6 +132,8 @@ export function LayoutTwo() {
           ))}
         </div>
       </Section>
+
+      <SiteFooter />
     </main>
   )
 }
