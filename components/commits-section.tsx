@@ -1,6 +1,6 @@
 "use client"
 
-import { GitFork, File } from "lucide-react"
+import { CodeSquare, DocumentText } from "@solar-icons/react"
 import useSWR from "swr"
 import type { CommitHistoryItem } from "@/lib/github"
 
@@ -67,29 +67,28 @@ function SkeletonRows() {
 }
 
 function CommitRow({ commit }: { commit: CommitHistoryItem }) {
-  const Icon = commit.isPush ? GitFork : File
+  const Icon = commit.isPush ? CodeSquare : DocumentText
 
   return (
     <a
       href={commit.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-baseline gap-3 rounded-md py-1.5 transition-[background-color] duration-150 ease-out hover:bg-accent/50 -mx-2 px-2"
+      className="group flex items-center gap-3 rounded-md py-2 transition-[background-color] duration-150 ease-out hover:bg-accent/50 -mx-2 px-2"
     >
-      <Icon
-        className="h-3.5 w-3.5 shrink-0 translate-y-0.5 text-muted-foreground/60"
-        aria-hidden="true"
-      />
+      <span className="shrink-0 text-muted-foreground/60" aria-hidden="true">
+        <Icon size={16} weight="Linear" />
+      </span>
       <span className={`shrink-0 text-sm ${commit.isPush ? "font-medium text-foreground" : "text-muted-foreground"}`}>
         {commit.repoName}
       </span>
-      <span className="shrink-0 text-muted-foreground/40" aria-hidden="true">
-        {">"}
+      <span className="shrink-0 text-xs text-muted-foreground/30" aria-hidden="true">
+        {"\u203A"}
       </span>
-      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-150 ease-out">
+      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground transition-colors duration-150 ease-out group-hover:text-foreground">
         {commit.message}
       </span>
-      <span className="shrink-0 text-xs text-muted-foreground/60">
+      <span className="shrink-0 text-xs text-muted-foreground/60 tabular-nums">
         {formatShortDate(commit.date)}
       </span>
     </a>

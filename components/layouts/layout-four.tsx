@@ -128,6 +128,10 @@ export function LayoutFour() {
           <WritingSection variant="card" />
         )}
 
+        {activeTab === "commits" && (
+          <CommitsSection />
+        )}
+
         {activeTab === "about" && (
           <p className="text-sm text-muted-foreground">
             Nothing to see here...
