@@ -13,11 +13,12 @@ import { SocialIcons } from "@/components/social-icons"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 
-type Tab = "writing" | "projects" | "tools"
+type Tab = "projects" | "writing" | "about" | "tools"
 
 const tabs: { id: Tab; label: string }[] = [
-  { id: "writing", label: "Writing" },
   { id: "projects", label: "Projects" },
+  { id: "writing", label: "Writing" },
+  { id: "about", label: "About" },
   { id: "tools", label: "Tools" },
 ]
 
@@ -41,7 +42,7 @@ function ToolRow({
 }
 
 export function LayoutFour() {
-  const [activeTab, setActiveTab] = useState<Tab>("writing")
+  const [activeTab, setActiveTab] = useState<Tab>("projects")
   const { name, bio, socials, build, productivity, hobbies, projects } = portfolioData
 
   return (
@@ -80,10 +81,6 @@ export function LayoutFour() {
       {/* Tab content */}
       <div role="tabpanel" className="flex flex-col gap-10">
 
-        {activeTab === "writing" && (
-          <WritingSection variant="card" />
-        )}
-
         {activeTab === "projects" && (
           <div className="flex flex-col gap-4">
             {projects.length === 0 ? (
@@ -102,6 +99,53 @@ export function LayoutFour() {
                 </div>
               ))
             )}
+          </div>
+        )}
+
+        {activeTab === "writing" && (
+          <WritingSection variant="card" />
+        )}
+
+        {activeTab === "about" && (
+          <div className="flex flex-col gap-10">
+            {/* Build */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">Build</h2>
+              <div className="flex flex-col gap-3">
+                {build.map((tool) => (
+                  <ToolRow key={tool.name} {...tool} />
+                ))}
+              </div>
+            </section>
+
+            {/* Productivity */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">Productivity</h2>
+              <div className="flex flex-col gap-3">
+                {productivity.map((tool) => (
+                  <ToolRow key={tool.name} {...tool} />
+                ))}
+              </div>
+            </section>
+
+            {/* Hobbies */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">Hobbies</h2>
+              <div className="flex flex-col gap-3">
+                {hobbies.map((hobby) => (
+                  <div key={hobby.name} className="flex items-baseline gap-2">
+                    {hobby.url ? (
+                      <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                        {hobby.name}
+                      </HoverLink>
+                    ) : (
+                      <span className="font-medium text-foreground">{hobby.name}</span>
+                    )}
+                    <span className="text-sm text-muted-foreground">{hobby.description}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
         )}
 
