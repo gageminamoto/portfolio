@@ -11,7 +11,7 @@ export async function GET() {
   } catch (error) {
     console.error("[writing/route] Failed to fetch from Notion:", error)
     return NextResponse.json(
-      { error: "Failed to fetch writing posts" },
+      { posts: [], error: "Failed to fetch writing posts" },
       { status: 500 }
     )
   }

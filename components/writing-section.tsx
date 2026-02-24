@@ -58,9 +58,9 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
     )
   }
 
-  const { posts } = data
+  const posts = data?.posts ?? []
 
-  if (posts.length === 0) {
+  if (!Array.isArray(posts) || posts.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">No posts yet.</p>
     )
