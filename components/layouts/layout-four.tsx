@@ -13,12 +13,12 @@ import { SocialIcons } from "@/components/social-icons"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 
-type Tab = "writing" | "projects" | "about"
+type Tab = "writing" | "projects" | "tools"
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "writing", label: "Writing" },
   { id: "projects", label: "Projects" },
-  { id: "about", label: "About" },
+  { id: "tools", label: "Tools" },
 ]
 
 function ToolRow({
@@ -77,8 +77,8 @@ export function LayoutFour() {
         ))}
       </div>
 
-      {/* Tab content */}
-      <div role="tabpanel" className="flex flex-col gap-10">
+      {/* Tab content — min-h ensures scrollbar stays visible across all tabs, preventing layout shift */}
+      <div role="tabpanel" className="flex min-h-screen flex-col gap-10">
 
         {activeTab === "writing" && (
           <WritingSection variant="card" />
@@ -105,7 +105,7 @@ export function LayoutFour() {
           </div>
         )}
 
-        {activeTab === "about" && (
+        {activeTab === "tools" && (
           <div className="flex flex-col gap-10">
             {/* Build */}
             <section className="flex flex-col gap-4">
