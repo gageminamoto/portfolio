@@ -60,7 +60,7 @@ export function LayoutFour() {
       </header>
 
       {/* Tab bar */}
-      <div className="flex items-end gap-0 overflow-x-auto border-b border-border scrollbar-none">
+      <div className="flex items-end gap-0 border-b border-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
