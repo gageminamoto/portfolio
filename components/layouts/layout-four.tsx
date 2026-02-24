@@ -60,7 +60,7 @@ export function LayoutFour() {
       </header>
 
       {/* Tab bar */}
-      <div className="flex items-end gap-0 border-b border-border">
+      <div className="flex items-end gap-0 overflow-x-auto border-b border-border scrollbar-none">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -107,46 +107,9 @@ export function LayoutFour() {
         )}
 
         {activeTab === "about" && (
-          <div className="flex flex-col gap-10">
-            {/* Build */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">Build</h2>
-              <div className="flex flex-col gap-3">
-                {build.map((tool) => (
-                  <ToolRow key={tool.name} {...tool} />
-                ))}
-              </div>
-            </section>
-
-            {/* Productivity */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">Productivity</h2>
-              <div className="flex flex-col gap-3">
-                {productivity.map((tool) => (
-                  <ToolRow key={tool.name} {...tool} />
-                ))}
-              </div>
-            </section>
-
-            {/* Hobbies */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">Hobbies</h2>
-              <div className="flex flex-col gap-3">
-                {hobbies.map((hobby) => (
-                  <div key={hobby.name} className="flex items-baseline gap-2">
-                    {hobby.url ? (
-                      <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                        {hobby.name}
-                      </HoverLink>
-                    ) : (
-                      <span className="font-medium text-foreground">{hobby.name}</span>
-                    )}
-                    <span className="text-sm text-muted-foreground">{hobby.description}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Something's cooking here. Check back soon — this page is still figuring itself out.
+          </p>
         )}
 
         {activeTab === "tools" && (
