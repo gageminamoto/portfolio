@@ -4,11 +4,13 @@ import { useState } from "react"
 import { LayoutOne } from "@/components/layouts/layout-one"
 import { LayoutTwo } from "@/components/layouts/layout-two"
 import { LayoutThree } from "@/components/layouts/layout-three"
+import { LayoutFour } from "@/components/layouts/layout-four"
 
 const layouts = [
   { id: "1", label: "I", component: LayoutOne },
   { id: "2", label: "II", component: LayoutTwo },
   { id: "3", label: "III", component: LayoutThree },
+  { id: "4", label: "IV", component: LayoutFour },
 ] as const
 
 export function LayoutSwitcher() {
