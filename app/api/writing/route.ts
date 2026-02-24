@@ -6,7 +6,7 @@ export const revalidate = 600
 
 export async function GET() {
   try {
-    const posts = await fetchLatestPosts(3)
+    const posts = await fetchLatestPosts(10)
     return NextResponse.json({ posts })
   } catch (error) {
     console.error("[writing/route] Failed to fetch from Notion:", error)

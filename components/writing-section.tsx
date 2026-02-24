@@ -1,9 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import useSWR from "swr"
 import type { NotionWritingPost } from "@/lib/notion"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
+const INITIAL_COUNT = 5
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return ""
@@ -34,6 +36,7 @@ function SkeletonRow({ variant }: { variant: WritingVariant }) {
 }
 
 export function WritingSection({ variant = "default" }: WritingSectionProps) {
+  const [expanded, setExpanded] = useState(false)
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
     fetcher,
@@ -66,11 +69,14 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
     )
   }
 
-  // Card variant (Layout 2) — row with date on the right
+  // Card variant (Layout 2) — row with date on the right, show 5 initially
   if (variant === "card") {
+    const visiblePosts = expanded ? posts : posts.slice(0, INITIAL_COUNT)
+    const hasMore = posts.length > INITIAL_COUNT
+
     return (
       <div className="flex flex-col gap-1">
-        {posts.map((post) => (
+        {visiblePosts.map((post) => (
           <a
             key={post.id}
             href={post.url}
@@ -88,6 +94,14 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
             )}
           </a>
         ))}
+        {hasMore && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="cursor-pointer px-3 py-2 text-left text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+          >
+            {expanded ? "Show less" : `See ${posts.length - INITIAL_COUNT} more`}
+          </button>
+        )}
       </div>
     )
   }

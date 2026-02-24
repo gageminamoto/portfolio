@@ -12,12 +12,14 @@ import { BioSection } from "@/components/bio-section"
 import { SocialIcons } from "@/components/social-icons"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
+import { CommitsSection } from "@/components/commits-section"
 
-type Tab = "projects" | "writing" | "about" | "tools"
+type Tab = "projects" | "writing" | "commits" | "about" | "tools"
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "projects", label: "Projects" },
   { id: "writing", label: "Writing" },
+  { id: "commits", label: "Commits" },
   { id: "about", label: "About" },
   { id: "tools", label: "Tools" },
 ]

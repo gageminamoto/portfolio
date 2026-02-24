@@ -37,6 +37,73 @@ function headers(): HeadersInit {
   return h
 }
 
+export interface CommitHistoryItem {
+  sha: string
+  hash: string
+  message: string
+  repoName: string
+  repoFullName: string
+  date: string        // ISO string
+  authorName: string
+  authorAvatar: string
+  url: string         // link to commit on GitHub
+  isPush: boolean     // was this the HEAD commit of a push event?
+}
+
+export async function fetchCommitHistory(
+  limit: number = 30
+): Promise<CommitHistoryItem[]> {
+  try {
+    // Use the events API for activity feed — gives push events across all repos
+    const eventsRes = await fetch(
+      `https://api.github.com/users/${GITHUB_USERNAME}/events?per_page=100`,
+      { headers: headers() }
+    )
+    if (!eventsRes.ok) {
+      console.error(`[github] events fetch failed: ${eventsRes.status}`)
+      return []
+    }
+
+    const events = await eventsRes.json()
+    if (!Array.isArray(events)) return []
+
+    const commits: CommitHistoryItem[] = []
+
+    for (const event of events) {
+      if (event.type !== "PushEvent") continue
+      const repoName = (event.repo?.name as string)?.split("/")[1] ?? event.repo?.name
+      const repoFullName = event.repo?.name as string
+      const eventCommits = event.payload?.commits
+
+      if (!Array.isArray(eventCommits)) continue
+
+      for (let i = eventCommits.length - 1; i >= 0; i--) {
+        const c = eventCommits[i]
+        commits.push({
+          sha: c.sha,
+          hash: (c.sha as string).slice(0, 7),
+          message: (c.message as string)?.split("\n")[0] ?? "",
+          repoName,
+          repoFullName,
+          date: event.created_at as string,
+          authorName: c.author?.name ?? event.actor?.display_login ?? GITHUB_USERNAME,
+          authorAvatar: event.actor?.avatar_url ?? "",
+          url: `https://github.com/${repoFullName}/commit/${c.sha}`,
+          isPush: i === eventCommits.length - 1,
+        })
+
+        if (commits.length >= limit) break
+      }
+      if (commits.length >= limit) break
+    }
+
+    return commits
+  } catch (error) {
+    console.error("[github] fetchCommitHistory error:", error)
+    return []
+  }
+}
+
 export async function fetchLatestCommit(): Promise<CommitData | null> {
   try {
     // 1. Get the most recently pushed repo
