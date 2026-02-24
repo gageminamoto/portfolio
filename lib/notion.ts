@@ -57,18 +57,6 @@ export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> 
         direction: "descending",
       },
     ],
-    filter: {
-      or: [
-        {
-          property: "Status",
-          status: { equals: "Published" },
-        },
-        {
-          property: "Published",
-          checkbox: { equals: true },
-        },
-      ],
-    },
   })
 
   return (response.results as PageObjectResponse[]).map((page) => ({
