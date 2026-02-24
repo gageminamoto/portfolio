@@ -9,6 +9,7 @@ import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
+import { WritingSection } from "@/components/writing-section"
 
 function CategorySection({
   title,
@@ -93,22 +94,12 @@ export function LayoutThree() {
         </CategorySection>
       </div>
 
-      {/* Writing - future Notion CMS */}
+      {/* Writing — Notion CMS */}
       <div className="flex flex-col gap-6">
         <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
           Writing
         </h2>
-        <div className="flex flex-col gap-2.5">
-          {writing.map((post) => (
-            <a
-              key={post.slug}
-              href={`/writing/${post.slug}`}
-              className="font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
-            >
-              {post.title}
-            </a>
-          ))}
-        </div>
+        <WritingSection variant="dash" />
       </div>
 
       {/* Hobbies */}

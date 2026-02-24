@@ -10,6 +10,7 @@ import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
+import { WritingSection } from "@/components/writing-section"
 
 function ToolCard({
   name,
@@ -96,26 +97,9 @@ export function LayoutTwo() {
         </div>
       </Section>
 
-      {/* Writing - future Notion CMS */}
+      {/* Writing — Notion CMS */}
       <Section title="Writing">
-        <div className="flex flex-col gap-1">
-          {writing.map((post) => (
-            <a
-              key={post.slug}
-              href={`/writing/${post.slug}`}
-              className="group flex items-center justify-between rounded-md px-3 py-3 transition-colors duration-200 hover:bg-accent"
-            >
-              <span className="text-sm font-medium text-foreground">
-                {post.title}
-              </span>
-              {post.date && (
-                <span className="text-xs text-muted-foreground">
-                  {post.date}
-                </span>
-              )}
-            </a>
-          ))}
-        </div>
+        <WritingSection variant="card" />
       </Section>
 
       {/* Hobbies */}

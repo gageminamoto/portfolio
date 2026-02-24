@@ -46,6 +46,8 @@
     "embla-carousel-react": "8.6.0",
     "input-otp": "1.4.2",
     "lucide-react": "^0.564.0",
+    "@notionhq/client": "^2.2.15",
+    "swr": "^2.3.3",
     "next": "16.1.6",
     "next-themes": "^0.4.6",
     "react": "19.2.4",
