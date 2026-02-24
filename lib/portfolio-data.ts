@@ -58,7 +58,8 @@ export const portfolioData: PortfolioData = {
   build: [
     { name: "Cursor", url: "https://www.cursor.com/", description: "Code editor" },
     { name: "Conductor", url: "https://conductor.is/", description: "Agent orchestration" },
-    { name: "Figma", url: "https://www.figma.com/", description: "Design and prototyping" },
+    { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
+    { name: "Figma", url: "https://www.figma.com/", description: "Design and Collaboration" },
   ],
   productivity: [
     { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
