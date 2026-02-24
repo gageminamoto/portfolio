@@ -2,6 +2,13 @@ import { formatDistanceToNowStrict } from "date-fns"
 
 const GITHUB_USERNAME = "gageminamoto"
 
+// Add org/collab repos here that won't show up in the user's public repos list
+// Format: "owner/repo"
+const EXTRA_REPOS = (process.env.GITHUB_EXTRA_REPOS ?? "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean)
+
 interface CommitData {
   hash: string
   additions: number
@@ -101,48 +108,71 @@ export async function fetchCommitHistory(
       if (commits.length >= limit) break
     }
 
-    // Fallback: if no push events found, fetch commits directly from recent repos
-    if (commits.length === 0) {
-      console.log("[v0] no push events found, falling back to repos API")
-      const reposRes = await fetch(
-        `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`,
-        { headers: headers() }
-      )
-      if (reposRes.ok) {
-        const repos = await reposRes.json()
-        console.log("[v0] repos found:", Array.isArray(repos) ? repos.length : 0)
-        if (Array.isArray(repos)) {
-          for (const repo of repos) {
-            const commitsRes = await fetch(
-              `https://api.github.com/repos/${repo.full_name}/commits?per_page=${Math.ceil(limit / repos.length)}`,
-              { headers: headers() }
-            )
-            if (!commitsRes.ok) continue
-            const repoCommits = await commitsRes.json()
-            if (!Array.isArray(repoCommits)) continue
+    // Always fetch from repos API to get full commit history
+    // (events API only keeps ~90 days of data and misses org repos)
+    console.log("[v0] fetching commits from repos API")
+    const reposRes = await fetch(
+      `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`,
+      { headers: headers() }
+    )
 
-            for (const c of repoCommits) {
-              commits.push({
-                sha: c.sha,
-                hash: (c.sha as string).slice(0, 7),
-                message: (c.commit?.message as string)?.split("\n")[0] ?? "",
-                repoName: repo.name as string,
-                repoFullName: repo.full_name as string,
-                date: c.commit?.committer?.date ?? c.commit?.author?.date ?? "",
-                authorName: c.commit?.author?.name ?? GITHUB_USERNAME,
-                authorAvatar: c.author?.avatar_url ?? "",
-                url: c.html_url ?? `https://github.com/${repo.full_name}/commit/${c.sha}`,
-                isPush: false,
-              })
-              if (commits.length >= limit) break
-            }
-            if (commits.length >= limit) break
-          }
-          // Sort by date descending
-          commits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    // Build a list of all repos to fetch from: user repos + extra (org/collab) repos
+    const allRepos: { full_name: string; name: string }[] = []
+
+    if (reposRes.ok) {
+      const repos = await reposRes.json()
+      if (Array.isArray(repos)) {
+        for (const repo of repos) {
+          allRepos.push({ full_name: repo.full_name, name: repo.name })
         }
       }
     }
+
+    // Add extra repos (org repos, collab repos)
+    for (const extra of EXTRA_REPOS) {
+      const name = extra.split("/")[1] ?? extra
+      if (!allRepos.some((r) => r.full_name === extra)) {
+        allRepos.push({ full_name: extra, name })
+      }
+    }
+
+    console.log("[v0] repos to fetch:", allRepos.map((r) => r.full_name))
+
+    // Fetch commits from each repo, filtering by author
+    const perRepo = Math.max(Math.ceil(limit / allRepos.length), 6)
+    for (const repo of allRepos) {
+      const commitsRes = await fetch(
+        `https://api.github.com/repos/${repo.full_name}/commits?author=${GITHUB_USERNAME}&per_page=${perRepo}`,
+        { headers: headers() }
+      )
+      if (!commitsRes.ok) {
+        console.log("[v0] failed to fetch commits for", repo.full_name, commitsRes.status)
+        continue
+      }
+      const repoCommits = await commitsRes.json()
+      if (!Array.isArray(repoCommits)) continue
+
+      for (const c of repoCommits) {
+        // Deduplicate by sha (events API may have already added it)
+        if (commits.some((existing) => existing.sha === c.sha)) continue
+
+        commits.push({
+          sha: c.sha,
+          hash: (c.sha as string).slice(0, 7),
+          message: (c.commit?.message as string)?.split("\n")[0] ?? "",
+          repoName: repo.name,
+          repoFullName: repo.full_name,
+          date: c.commit?.committer?.date ?? c.commit?.author?.date ?? "",
+          authorName: c.commit?.author?.name ?? GITHUB_USERNAME,
+          authorAvatar: c.author?.avatar_url ?? "",
+          url: c.html_url ?? `https://github.com/${repo.full_name}/commit/${c.sha}`,
+          isPush: false,
+        })
+      }
+    }
+
+    // Sort all commits by date descending
+    commits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
     console.log("[v0] total commits returned:", commits.length)
     return commits.slice(0, limit)
