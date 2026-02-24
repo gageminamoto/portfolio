@@ -50,7 +50,7 @@ export function SocialIcons({
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors duration-200 hover:text-foreground"
+            className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
             aria-label={social.label}
           >
             <Icon className={sizeClass} />

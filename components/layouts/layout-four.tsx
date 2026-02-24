@@ -64,7 +64,7 @@ export function LayoutFour() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`cursor-pointer relative -mb-px px-4 py-2 text-sm font-medium transition-colors duration-150 ${
+            className={`cursor-pointer relative -mb-px px-4 py-2 text-sm font-medium transition-[color,background-color,border-color] duration-150 ease-out ${
               activeTab === tab.id
                 ? "rounded-t-md border border-b-background border-border bg-background text-foreground"
                 : "border border-transparent text-muted-foreground hover:text-foreground"

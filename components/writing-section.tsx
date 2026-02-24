@@ -76,7 +76,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
             href={post.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center justify-between rounded-md px-3 py-3 transition-colors duration-200 hover:bg-accent"
+            className="group flex items-center justify-between rounded-md px-3 py-3 transition-[background-color] duration-150 ease-out hover:bg-accent"
           >
             <span className="text-sm font-medium text-foreground">
               {post.title}
@@ -102,7 +102,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
             href={post.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
+            className="font-medium text-foreground transition-colors duration-150 ease-out hover:text-muted-foreground"
           >
             {post.title}
           </a>
@@ -120,7 +120,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
           href={post.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-base font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
+          className="text-base font-medium text-foreground transition-colors duration-150 ease-out hover:text-muted-foreground"
         >
           {post.title}
         </a>
