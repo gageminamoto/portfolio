@@ -65,11 +65,10 @@ export function LayoutFour() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`cursor-pointer relative -mb-px px-4 py-2 text-sm font-medium transition-[color,background-color,border-color] duration-150 ease-out ${
-              activeTab === tab.id
+            className={`cursor-pointer relative -mb-px px-4 py-2 text-sm font-medium transition-[color,background-color,border-color] duration-150 ease-out ${activeTab === tab.id
                 ? "rounded-t-md border border-b-background border-border bg-background text-foreground"
                 : "border border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
             aria-selected={activeTab === tab.id}
             role="tab"
           >
@@ -108,7 +107,7 @@ export function LayoutFour() {
 
         {activeTab === "about" && (
           <p className="text-sm text-muted-foreground">
-            Something's cooking here. Check back soon — this page is still figuring itself out.
+            Nothing to see here...
           </p>
         )}
 
