@@ -7,6 +7,7 @@ export const revalidate = 600
 export async function GET() {
   try {
     const commits = await fetchCommitHistory(30)
+    console.log("[v0] /api/commits/history returned", commits.length, "commits")
     return NextResponse.json({ commits })
   } catch (error) {
     console.error("[commits/history] Failed to fetch:", error)

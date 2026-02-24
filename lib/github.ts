@@ -65,7 +65,11 @@ export async function fetchCommitHistory(
     }
 
     const events = await eventsRes.json()
+    console.log("[v0] events response type:", typeof events, "isArray:", Array.isArray(events), "length:", Array.isArray(events) ? events.length : "N/A")
     if (!Array.isArray(events)) return []
+
+    const eventTypes = events.slice(0, 10).map((e: { type: string }) => e.type)
+    console.log("[v0] first 10 event types:", eventTypes)
 
     const commits: CommitHistoryItem[] = []
 
@@ -97,7 +101,51 @@ export async function fetchCommitHistory(
       if (commits.length >= limit) break
     }
 
-    return commits
+    // Fallback: if no push events found, fetch commits directly from recent repos
+    if (commits.length === 0) {
+      console.log("[v0] no push events found, falling back to repos API")
+      const reposRes = await fetch(
+        `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`,
+        { headers: headers() }
+      )
+      if (reposRes.ok) {
+        const repos = await reposRes.json()
+        console.log("[v0] repos found:", Array.isArray(repos) ? repos.length : 0)
+        if (Array.isArray(repos)) {
+          for (const repo of repos) {
+            const commitsRes = await fetch(
+              `https://api.github.com/repos/${repo.full_name}/commits?per_page=${Math.ceil(limit / repos.length)}`,
+              { headers: headers() }
+            )
+            if (!commitsRes.ok) continue
+            const repoCommits = await commitsRes.json()
+            if (!Array.isArray(repoCommits)) continue
+
+            for (const c of repoCommits) {
+              commits.push({
+                sha: c.sha,
+                hash: (c.sha as string).slice(0, 7),
+                message: (c.commit?.message as string)?.split("\n")[0] ?? "",
+                repoName: repo.name as string,
+                repoFullName: repo.full_name as string,
+                date: c.commit?.committer?.date ?? c.commit?.author?.date ?? "",
+                authorName: c.commit?.author?.name ?? GITHUB_USERNAME,
+                authorAvatar: c.author?.avatar_url ?? "",
+                url: c.html_url ?? `https://github.com/${repo.full_name}/commit/${c.sha}`,
+                isPush: false,
+              })
+              if (commits.length >= limit) break
+            }
+            if (commits.length >= limit) break
+          }
+          // Sort by date descending
+          commits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        }
+      }
+    }
+
+    console.log("[v0] total commits returned:", commits.length)
+    return commits.slice(0, limit)
   } catch (error) {
     console.error("[github] fetchCommitHistory error:", error)
     return []

@@ -1,8 +1,20 @@
 "use client"
 
-import { CodeSquare, DocumentText } from "@solar-icons/react"
+import { GitFork, FileText } from "lucide-react"
 import useSWR from "swr"
 import type { CommitHistoryItem } from "@/lib/github"
+
+let SolarCodeSquare: React.ComponentType<{ size?: number }> | null = null
+let SolarDocumentText: React.ComponentType<{ size?: number }> | null = null
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const solar = require("@solar-icons/react")
+  SolarCodeSquare = solar.CodeSquare
+  SolarDocumentText = solar.DocumentText
+} catch {
+  // Solar icons not installed, fallback to lucide
+}
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -66,9 +78,14 @@ function SkeletonRows() {
   )
 }
 
-function CommitRow({ commit }: { commit: CommitHistoryItem }) {
-  const Icon = commit.isPush ? CodeSquare : DocumentText
+function CommitIcon({ isPush }: { isPush: boolean }) {
+  if (isPush) {
+    return SolarCodeSquare ? <SolarCodeSquare size={16} /> : <GitFork className="h-4 w-4" />
+  }
+  return SolarDocumentText ? <SolarDocumentText size={16} /> : <FileText className="h-4 w-4" />
+}
 
+function CommitRow({ commit }: { commit: CommitHistoryItem }) {
   return (
     <a
       href={commit.url}
@@ -77,7 +94,7 @@ function CommitRow({ commit }: { commit: CommitHistoryItem }) {
       className="group flex items-center gap-3 rounded-md py-2 transition-[background-color] duration-150 ease-out hover:bg-accent/50 -mx-2 px-2"
     >
       <span className="shrink-0 text-muted-foreground/60" aria-hidden="true">
-        <Icon size={16} weight="Linear" />
+        <CommitIcon isPush={commit.isPush} />
       </span>
       <span className={`shrink-0 text-sm ${commit.isPush ? "font-medium text-foreground" : "text-muted-foreground"}`}>
         {commit.repoName}
