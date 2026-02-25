@@ -99,48 +99,19 @@ function CommitRow({ commit }: { commit: CommitHistoryItem }) {
   )
 }
 
-function RefreshButton({ onClick, isRefreshing }: { onClick: () => void; isRefreshing: boolean }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={isRefreshing}
-      aria-label="Refresh commits"
-      className="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 text-muted-foreground/60 transition-colors duration-150 ease-out hover:text-foreground disabled:pointer-events-none"
-    >
-      <RefreshCw
-        className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
-        aria-hidden="true"
-      />
-    </button>
-  )
-}
-
 export function CommitsSection() {
-  const { data, error, isLoading, mutate } = useSWR("/api/commits/history", fetcher, {
+  const { data, error, isLoading } = useSWR("/api/commits/history", fetcher, {
     refreshInterval: 600_000,
     dedupingInterval: 60_000,
   })
-
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true)
-    await mutate()
-    setIsRefreshing(false)
-  }, [mutate])
 
   if (isLoading) return <SkeletonRows />
 
   if (error || !data?.commits) {
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-end">
-          <RefreshButton onClick={handleRefresh} isRefreshing={isRefreshing} />
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Could not load commits right now.
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        Could not load commits right now.
+      </p>
     )
   }
 
@@ -148,14 +119,9 @@ export function CommitsSection() {
 
   if (commits.length === 0) {
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-end">
-          <RefreshButton onClick={handleRefresh} isRefreshing={isRefreshing} />
-        </div>
-        <p className="text-sm text-muted-foreground">
-          No recent commits found.
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        No recent commits found.
+      </p>
     )
   }
 
@@ -163,9 +129,6 @@ export function CommitsSection() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex items-center justify-end -mb-4">
-        <RefreshButton onClick={handleRefresh} isRefreshing={isRefreshing} />
-      </div>
       {groups.map((group) => (
         <section key={group.label} className="flex flex-col gap-1">
           <div className="flex items-baseline gap-2 pb-2">

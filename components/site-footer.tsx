@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { Mail, Check, RefreshCw } from "lucide-react"
-import useSWR, { useSWRConfig } from "swr"
+import { Mail, Check } from "lucide-react"
+import useSWR from "swr"
 
 const EMAIL = "info@gageminamoto.com"
 
@@ -82,40 +82,11 @@ function EmailPill() {
   )
 }
 
-function RefreshCommitsButton() {
-  const { mutate } = useSWRConfig()
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true)
-    await mutate("/api/commits/history")
-    await mutate("/api/commits")
-    setIsRefreshing(false)
-  }, [mutate])
-
-  return (
-    <button
-      onClick={handleRefresh}
-      disabled={isRefreshing}
-      aria-label="Refresh commits"
-      className="hidden cursor-pointer items-center justify-center rounded-md p-1 text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-foreground disabled:pointer-events-none sm:inline-flex"
-    >
-      <RefreshCw
-        className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`}
-        aria-hidden="true"
-      />
-    </button>
-  )
-}
-
 export function SiteFooter() {
   return (
     <footer className="flex flex-col gap-4 border-t border-border pt-6 pb-10 sm:flex-row sm:items-center sm:justify-between">
       <EmailPill />
-      <div className="flex items-center gap-2">
-        <RefreshCommitsButton />
-        <CommitTracker />
-      </div>
+      <CommitTracker />
     </footer>
   )
 }
