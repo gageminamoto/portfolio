@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { GitBranch, FileText, RefreshCw } from "lucide-react"
+import { GitBranch, FileText } from "lucide-react"
 import useSWR from "swr"
 import type { CommitHistoryItem } from "@/lib/github"
 
