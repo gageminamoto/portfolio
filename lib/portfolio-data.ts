@@ -60,7 +60,7 @@ export const portfolioData: PortfolioData = {
     { name: "Conductor", url: "https://conductor.is/", description: "Agent orchestration" },
     { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
     { name: "Figma", url: "https://www.figma.com/", description: "Design and Collaboration" },
-    { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas wired to your agents." },
+    { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
   ],
   productivity: [
     { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
