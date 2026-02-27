@@ -86,8 +86,8 @@ export function LayoutFour() {
             onClick={() => setActiveTab(tab.id)}
             onKeyDown={(e) => handleKeyDown(e, tab.id)}
             className={`cursor-pointer relative -mb-px px-4 py-2 text-sm font-medium transition-[color,background-color,border-color] duration-150 ease-out ${activeTab === tab.id
-                ? "rounded-t-md border border-b-background border-border bg-background text-foreground"
-                : "border border-transparent text-muted-foreground hover:text-foreground"
+              ? "rounded-t-md border border-b-background border-border bg-background text-foreground"
+              : "border border-transparent text-muted-foreground hover:text-foreground"
               }`}
           >
             {tab.label}
@@ -105,9 +105,9 @@ export function LayoutFour() {
 
         {activeTab === "projects" && (
           <div className="flex flex-col gap-10">
-            {/* In Production */}
+            {/* Shipped */}
             <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">In Production</h2>
+              <h2 className="text-sm text-muted-foreground">Shipped</h2>
               <div className="flex flex-col gap-4">
                 {projects.filter((p) => p.status === "production").map((project) => (
                   <div key={project.name} className="flex flex-col gap-0.5">
