@@ -34,6 +34,7 @@ export interface ProjectItem {
   name: string
   url?: string
   description: string
+  status: "production" | "building"
 }
 
 export interface SocialLink {
@@ -90,7 +91,11 @@ export const portfolioData: PortfolioData = {
     { name: "Design books", description: "Addicted to adding them" },
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
-  projects: [],
+  projects: [
+    { name: "Mizen", url: "https://www.mizen.recipes/", description: "Recipe and meal planning app", status: "production" },
+    { name: "Parse-n-plate", url: "https://github.com/parse-n-plate", description: "Structured recipe parsing pipeline", status: "production" },
+    { name: "This portfolio", description: "The site you're looking at", status: "building" },
+  ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
     { name: "Paper MCP", url: "https://paper.design/docs/mcp", description: "Learning how to do canvas to code and back" },

@@ -104,23 +104,44 @@ export function LayoutFour() {
       >
 
         {activeTab === "projects" && (
-          <div className="flex flex-col gap-4">
-            {projects.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No projects yet.</p>
-            ) : (
-              projects.map((project) => (
-                <div key={project.name} className="flex flex-col gap-1">
-                  {project.url ? (
-                    <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {project.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="font-medium text-foreground">{project.name}</span>
-                  )}
-                  <p className="text-sm text-muted-foreground">{project.description}</p>
-                </div>
-              ))
-            )}
+          <div className="flex flex-col gap-10">
+            {/* In Production */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">In Production</h2>
+              <div className="flex flex-col gap-4">
+                {projects.filter((p) => p.status === "production").map((project) => (
+                  <div key={project.name} className="flex flex-col gap-0.5">
+                    {project.url ? (
+                      <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                        {project.name}
+                      </HoverLink>
+                    ) : (
+                      <span className="font-medium text-foreground">{project.name}</span>
+                    )}
+                    <p className="text-sm text-muted-foreground">{project.description}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Building */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">Building</h2>
+              <div className="flex flex-col gap-4">
+                {projects.filter((p) => p.status === "building").map((project) => (
+                  <div key={project.name} className="flex flex-col gap-0.5">
+                    {project.url ? (
+                      <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                        {project.name}
+                      </HoverLink>
+                    ) : (
+                      <span className="font-medium text-foreground">{project.name}</span>
+                    )}
+                    <p className="text-sm text-muted-foreground">{project.description}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
         )}
 
