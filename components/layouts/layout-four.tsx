@@ -45,7 +45,7 @@ function ToolRow({
 
 export function LayoutFour() {
   const [activeTab, setActiveTab] = useState<Tab>("projects")
-  const { name, bio, socials, build, productivity, hobbies, projects } = portfolioData
+  const { name, bio, socials, build, productivity, hobbies, projects, learning } = portfolioData
 
   const handleKeyDown = (e: React.KeyboardEvent, currentId: Tab) => {
     const ids = tabs.map((t) => t.id)
@@ -133,9 +133,45 @@ export function LayoutFour() {
         )}
 
         {activeTab === "about" && (
-          <p className="text-sm text-muted-foreground">
-            Nothing to see here...
-          </p>
+          <div className="flex flex-col gap-10">
+            {/* Hobbies */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">Hobbies</h2>
+              <div className="flex flex-col gap-3">
+                {hobbies.map((hobby) => (
+                  <div key={hobby.name} className="flex items-baseline gap-2">
+                    {hobby.url ? (
+                      <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                        {hobby.name}
+                      </HoverLink>
+                    ) : (
+                      <span className="font-medium text-foreground">{hobby.name}</span>
+                    )}
+                    <span className="text-sm text-muted-foreground">{hobby.description}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Learning */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">Learning</h2>
+              <div className="flex flex-col gap-3">
+                {learning.map((item) => (
+                  <div key={item.name} className="flex items-baseline gap-2">
+                    {item.url ? (
+                      <HoverLink href={item.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                        {item.name}
+                      </HoverLink>
+                    ) : (
+                      <span className="font-medium text-foreground">{item.name}</span>
+                    )}
+                    <span className="text-sm text-muted-foreground">{item.description}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
         )}
 
         {activeTab === "tools" && (
@@ -156,25 +192,6 @@ export function LayoutFour() {
               <div className="flex flex-col gap-3">
                 {productivity.map((tool) => (
                   <ToolRow key={tool.name} {...tool} />
-                ))}
-              </div>
-            </section>
-
-            {/* Hobbies */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">Hobbies</h2>
-              <div className="flex flex-col gap-3">
-                {hobbies.map((hobby) => (
-                  <div key={hobby.name} className="flex items-baseline gap-2">
-                    {hobby.url ? (
-                      <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                        {hobby.name}
-                      </HoverLink>
-                    ) : (
-                      <span className="font-medium text-foreground">{hobby.name}</span>
-                    )}
-                    <span className="text-sm text-muted-foreground">{hobby.description}</span>
-                  </div>
                 ))}
               </div>
             </section>
