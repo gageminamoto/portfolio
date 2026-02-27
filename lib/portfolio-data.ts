@@ -93,7 +93,6 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [
     { name: "Mizen", url: "https://www.mizen.recipes/", description: "Kitchen companion guiding you through any recipe.", status: "production" },
-    { name: "Umi", url: "https://apps.apple.com/us/app/umi-language-learning/id1628381103", description: "Redesign for immersive language learning lessons.", status: "production" },
     { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play without the scratch pad, using just your phone and 5 dice.", status: "production" },
     { name: "This portfolio", description: "The site you're looking at.", status: "building" },
   ],
