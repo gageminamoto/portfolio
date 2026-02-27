@@ -47,7 +47,7 @@ function ToolRow({
 }
 
 export function LayoutOne() {
-  const { name, bio, socials, build, productivity, writing, hobbies } = portfolioData
+  const { name, bio, socials, build, productivity, writing, hobbies, learning } = portfolioData
 
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
@@ -103,6 +103,24 @@ export function LayoutOne() {
               <span className="text-sm text-muted-foreground">
                 {hobby.description}
               </span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Learning */}
+      <Section title="Learning">
+        <div className="flex flex-col gap-3">
+          {learning.map((item) => (
+            <div key={item.name} className="flex items-baseline gap-2">
+              {item.url ? (
+                <HoverLink href={item.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                  {item.name}
+                </HoverLink>
+              ) : (
+                <span className="font-medium text-foreground">{item.name}</span>
+              )}
+              <span className="text-sm text-muted-foreground">{item.description}</span>
             </div>
           ))}
         </div>

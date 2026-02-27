@@ -18,6 +18,12 @@ export interface WritingItem {
   // tags?: string[]
 }
 
+export interface LearningItem {
+  name: string
+  url?: string
+  description: string
+}
+
 export interface HobbyItem {
   name: string
   url?: string
@@ -45,6 +51,7 @@ export interface PortfolioData {
   writing: WritingItem[]
   hobbies: HobbyItem[]
   projects: ProjectItem[]
+  learning: LearningItem[]
 }
 
 export const portfolioData: PortfolioData = {
@@ -84,6 +91,11 @@ export const portfolioData: PortfolioData = {
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [],
+  learning: [
+    { name: "Designing with AI", url: "https://www.designingwithai.com/", description: "Course on integrating AI into design practice" },
+    { name: "Swift & SwiftUI", url: "https://developer.apple.com/tutorials/swiftui", description: "Building native iOS apps" },
+    { name: "Typography fundamentals", description: "Deep diving into type systems and hierarchy" },
+  ],
 }
 
 // Helper for future Notion API integration
