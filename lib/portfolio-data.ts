@@ -92,9 +92,8 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [],
   learning: [
-    { name: "Designing with AI", url: "https://www.designingwithai.com/", description: "Course on integrating AI into design practice" },
-    { name: "Swift & SwiftUI", url: "https://developer.apple.com/tutorials/swiftui", description: "Building native iOS apps" },
-    { name: "Typography fundamentals", description: "Deep diving into type systems and hierarchy" },
+    { name: "Animations", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
+    { name: "Paper MCP", url: "https://developer.apple.com/tutorials/swiftui", description: "Learning how to do canvas to code and back" },
   ],
 }
 
