@@ -92,8 +92,8 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [],
   learning: [
-    { name: "Animations", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
-    { name: "Paper MCP", url: "https://developer.apple.com/tutorials/swiftui", description: "Learning how to do canvas to code and back" },
+    { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
+    { name: "Paper MCP", url: "https://paper.design/docs/mcp", description: "Learning how to do canvas to code and back" },
   ],
 }
 
