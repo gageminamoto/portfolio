@@ -3,6 +3,7 @@
 import { useState } from "react"
 import useSWR from "swr"
 import type { NotionWritingPost } from "@/lib/notion"
+import { HoverLink } from "@/components/hover-link"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 const INITIAL_COUNT = 5
@@ -24,7 +25,7 @@ interface WritingSectionProps {
 
 function SkeletonRow() {
   return (
-    <div className="flex items-center justify-between rounded-md px-3 py-3">
+    <div className="flex items-baseline gap-2">
       <div className="h-4 w-48 animate-pulse rounded bg-muted" />
       <div className="h-3 w-20 animate-pulse rounded bg-muted" />
     </div>
@@ -69,29 +70,26 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
   const hasMore = posts.length > INITIAL_COUNT
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-3">
       {visiblePosts.map((post) => (
-        <a
-          key={post.id}
-          href={post.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center justify-between rounded-md px-3 py-3 transition-[background-color] duration-150 ease-out hover:bg-accent"
-        >
-          <span className="text-sm font-medium text-foreground">
+        <div key={post.id} className="flex items-baseline gap-2">
+          <HoverLink
+            href={post.url}
+            className="font-medium no-underline decoration-transparent hover:decoration-foreground"
+          >
             {post.title}
-          </span>
+          </HoverLink>
           {post.date && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               {formatDate(post.date)}
             </span>
           )}
-        </a>
+        </div>
       ))}
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="cursor-pointer px-3 py-2 text-left text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+          className="cursor-pointer text-left text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
         >
           {expanded ? "Show less" : `See ${posts.length - INITIAL_COUNT} more`}
         </button>
