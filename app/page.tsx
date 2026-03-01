@@ -1,5 +1,5 @@
-import { LayoutSwitcher } from "@/components/layout-switcher"
+import { LayoutOne } from "@/components/layouts/layout-one"
 
 export default function Page() {
-  return <LayoutSwitcher />
+  return <LayoutOne />
 }
