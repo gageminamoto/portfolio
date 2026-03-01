@@ -7,7 +7,7 @@ const GITHUB_USERNAME = "gageminamoto"
 const EXTRA_REPOS = (process.env.GITHUB_EXTRA_REPOS ?? "")
   .split(",")
   .map((s) => s.trim())
-  .filter(Boolean)
+  .filter((s) => s.includes("/") && !s.startsWith("ghp_") && !s.startsWith("github_pat_"))
 
 interface CommitData {
   hash: string
@@ -55,6 +55,7 @@ export interface CommitHistoryItem {
   authorAvatar: string
   url: string         // link to commit on GitHub
   isPush: boolean     // was this the HEAD commit of a push event?
+  isPrivate: boolean  // private repo — don't link externally
 }
 
 export async function fetchCommitHistory(
@@ -80,10 +81,30 @@ export async function fetchCommitHistory(
 
     const commits: CommitHistoryItem[] = []
 
+    // Build a set of private repo full_names for lookup
+    const privateRepoNames = new Set<string>()
+
+    // If authenticated, fetch user's private repos to know which events are private
+    if (process.env.GITHUB_TOKEN) {
+      const privateReposRes = await fetch(
+        `https://api.github.com/user/repos?visibility=private&per_page=100&sort=pushed`,
+        { headers: headers() }
+      )
+      if (privateReposRes.ok) {
+        const privateRepos = await privateReposRes.json()
+        if (Array.isArray(privateRepos)) {
+          for (const r of privateRepos) {
+            privateRepoNames.add(r.full_name as string)
+          }
+        }
+      }
+    }
+
     for (const event of events) {
       if (event.type !== "PushEvent") continue
       const repoName = (event.repo?.name as string)?.split("/")[1] ?? event.repo?.name
       const repoFullName = event.repo?.name as string
+      const isPrivate = privateRepoNames.has(repoFullName)
       const eventCommits = event.payload?.commits
 
       if (!Array.isArray(eventCommits)) continue
@@ -99,8 +120,9 @@ export async function fetchCommitHistory(
           date: event.created_at as string,
           authorName: c.author?.name ?? event.actor?.display_login ?? GITHUB_USERNAME,
           authorAvatar: event.actor?.avatar_url ?? "",
-          url: `https://github.com/${repoFullName}/commit/${c.sha}`,
+          url: isPrivate ? "" : `https://github.com/${repoFullName}/commit/${c.sha}`,
           isPush: i === eventCommits.length - 1,
+          isPrivate,
         })
 
         if (commits.length >= limit) break
@@ -108,22 +130,32 @@ export async function fetchCommitHistory(
       if (commits.length >= limit) break
     }
 
-    // Always fetch from repos API to get full commit history
-    // (events API only keeps ~90 days of data and misses org repos)
+    // Fetch from repos API to supplement events (gets full history + private repos)
     console.log("[v0] fetching commits from repos API")
-    const reposRes = await fetch(
+
+    // Build a list of all repos: public + private (authenticated) + extra
+    const allRepos: { full_name: string; name: string; isPrivate: boolean }[] = []
+
+    // Public repos
+    const publicReposRes = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`,
       { headers: headers() }
     )
-
-    // Build a list of all repos to fetch from: user repos + extra (org/collab) repos
-    const allRepos: { full_name: string; name: string }[] = []
-
-    if (reposRes.ok) {
-      const repos = await reposRes.json()
+    if (publicReposRes.ok) {
+      const repos = await publicReposRes.json()
       if (Array.isArray(repos)) {
         for (const repo of repos) {
-          allRepos.push({ full_name: repo.full_name, name: repo.name })
+          allRepos.push({ full_name: repo.full_name, name: repo.name, isPrivate: false })
+        }
+      }
+    }
+
+    // Private repos (requires authenticated token)
+    if (process.env.GITHUB_TOKEN) {
+      for (const repoFullName of privateRepoNames) {
+        if (!allRepos.some((r) => r.full_name === repoFullName)) {
+          const name = repoFullName.split("/")[1] ?? repoFullName
+          allRepos.push({ full_name: repoFullName, name, isPrivate: true })
         }
       }
     }
@@ -132,11 +164,11 @@ export async function fetchCommitHistory(
     for (const extra of EXTRA_REPOS) {
       const name = extra.split("/")[1] ?? extra
       if (!allRepos.some((r) => r.full_name === extra)) {
-        allRepos.push({ full_name: extra, name })
+        allRepos.push({ full_name: extra, name, isPrivate: false })
       }
     }
 
-    console.log("[v0] repos to fetch:", allRepos.map((r) => r.full_name))
+    console.log("[v0] repos to fetch:", allRepos.map((r) => `${r.full_name}${r.isPrivate ? " (private)" : ""}`))
 
     // Fetch commits from each repo, filtering by author
     const perRepo = Math.max(Math.ceil(limit / allRepos.length), 6)
@@ -165,8 +197,9 @@ export async function fetchCommitHistory(
           date: c.commit?.committer?.date ?? c.commit?.author?.date ?? "",
           authorName: c.commit?.author?.name ?? GITHUB_USERNAME,
           authorAvatar: c.author?.avatar_url ?? "",
-          url: c.html_url ?? `https://github.com/${repo.full_name}/commit/${c.sha}`,
+          url: repo.isPrivate ? "" : (c.html_url ?? `https://github.com/${repo.full_name}/commit/${c.sha}`),
           isPush: false,
+          isPrivate: repo.isPrivate,
         })
       }
     }

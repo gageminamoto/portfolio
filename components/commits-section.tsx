@@ -73,13 +73,8 @@ function CommitIcon({ isPush }: { isPush: boolean }) {
 }
 
 function CommitRow({ commit }: { commit: CommitHistoryItem }) {
-  return (
-    <a
-      href={commit.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex items-center gap-3 rounded-md py-2 transition-[background-color] duration-150 ease-out hover:bg-accent/50 -mx-2 px-2"
-    >
+  const content = (
+    <>
       <span className="shrink-0 text-muted-foreground/60" aria-hidden="true">
         <CommitIcon isPush={commit.isPush} />
       </span>
@@ -95,6 +90,27 @@ function CommitRow({ commit }: { commit: CommitHistoryItem }) {
       <span className="shrink-0 text-xs text-muted-foreground/60 tabular-nums">
         {formatShortDate(commit.date)}
       </span>
+    </>
+  )
+
+  const baseClasses = "group flex items-center gap-3 rounded-md py-2 -mx-2 px-2"
+
+  if (commit.isPrivate || !commit.url) {
+    return (
+      <div className={baseClasses}>
+        {content}
+      </div>
+    )
+  }
+
+  return (
+    <a
+      href={commit.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${baseClasses} transition-[background-color] duration-150 ease-out hover:bg-accent/50`}
+    >
+      {content}
     </a>
   )
 }
