@@ -14,10 +14,10 @@ import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { CommitsSection } from "@/components/commits-section"
 
-type Tab = "projects" | "writing" | "commits" | "about" | "tools"
+type Tab = "playground" | "writing" | "commits" | "about" | "tools"
 
 const tabs: { id: Tab; label: string }[] = [
-  { id: "projects", label: "Projects" },
+  { id: "playground", label: "Playground" },
   { id: "writing", label: "Writing" },
   { id: "commits", label: "Commits" },
   { id: "about", label: "About" },
@@ -44,7 +44,7 @@ function ToolRow({
 }
 
 export function LayoutFour() {
-  const [activeTab, setActiveTab] = useState<Tab>("projects")
+  const [activeTab, setActiveTab] = useState<Tab>("playground")
   const { name, bio, socials, build, productivity, hobbies, projects, learning } = portfolioData
 
   const handleKeyDown = (e: React.KeyboardEvent, currentId: Tab) => {
@@ -71,6 +71,45 @@ export function LayoutFour() {
         </div>
         <BioSection bio={bio} />
         <SocialIcons socials={socials} />
+
+        {/* Projects — Shipped & Building */}
+        <div className="flex flex-col gap-8">
+          <section className="flex flex-col gap-3">
+            <h2 className="text-xs text-muted-foreground">Shipped</h2>
+            <div className="flex flex-col gap-3">
+              {projects.filter((p) => p.status === "production").map((project) => (
+                <div key={project.name} className="flex flex-col gap-0.5">
+                  {project.url ? (
+                    <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                      {project.name}
+                    </HoverLink>
+                  ) : (
+                    <span className="font-medium text-foreground">{project.name}</span>
+                  )}
+                  <p className="text-sm text-muted-foreground">{project.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="flex flex-col gap-3">
+            <h2 className="text-xs text-muted-foreground">Building</h2>
+            <div className="flex flex-col gap-3">
+              {projects.filter((p) => p.status === "building").map((project) => (
+                <div key={project.name} className="flex flex-col gap-0.5">
+                  {project.url ? (
+                    <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                      {project.name}
+                    </HoverLink>
+                  ) : (
+                    <span className="font-medium text-foreground">{project.name}</span>
+                  )}
+                  <p className="text-sm text-muted-foreground">{project.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
       </header>
 
       {/* Tab bar */}
@@ -103,46 +142,10 @@ export function LayoutFour() {
         className="flex flex-col gap-10"
       >
 
-        {activeTab === "projects" && (
-          <div className="flex flex-col gap-10">
-            {/* Shipped */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">Shipped</h2>
-              <div className="flex flex-col gap-4">
-                {projects.filter((p) => p.status === "production").map((project) => (
-                  <div key={project.name} className="flex flex-col gap-0.5">
-                    {project.url ? (
-                      <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                        {project.name}
-                      </HoverLink>
-                    ) : (
-                      <span className="font-medium text-foreground">{project.name}</span>
-                    )}
-                    <p className="text-sm text-muted-foreground">{project.description}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Building */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-sm text-muted-foreground">Building</h2>
-              <div className="flex flex-col gap-4">
-                {projects.filter((p) => p.status === "building").map((project) => (
-                  <div key={project.name} className="flex flex-col gap-0.5">
-                    {project.url ? (
-                      <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                        {project.name}
-                      </HoverLink>
-                    ) : (
-                      <span className="font-medium text-foreground">{project.name}</span>
-                    )}
-                    <p className="text-sm text-muted-foreground">{project.description}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
+        {activeTab === "playground" && (
+          <p className="text-sm text-muted-foreground">
+            Experiments and interactive bits — coming soon.
+          </p>
         )}
 
         {activeTab === "writing" && (
