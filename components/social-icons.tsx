@@ -73,11 +73,19 @@ export function SocialIcons({
       {email && (
         <button
           onClick={handleCopyEmail}
-          className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+          className="relative text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
           aria-label={copied ? "Email copied" : "Copy email"}
           title={email}
+          style={{ width: "1.25rem", height: "1.25rem" }}
         >
-          <Icon icon="solar:mailbox-bold" className={sizeClass} />
+          <Icon
+            icon="solar:mailbox-bold"
+            className={`${sizeClass} absolute inset-0 transition-opacity duration-200 ${copied ? "opacity-0" : "opacity-100"}`}
+          />
+          <Icon
+            icon="solar:letter-opened-bold"
+            className={`${sizeClass} absolute inset-0 transition-opacity duration-200 ${copied ? "opacity-100 animate-mail-shake" : "opacity-0"}`}
+          />
         </button>
       )}
     </div>
