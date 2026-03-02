@@ -37,11 +37,11 @@ function ToolRow({
   description: string
 }) {
   return (
-    <div className="flex items-baseline gap-2">
-      <HoverLink href={url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+    <div className="flex items-baseline gap-2 min-w-0">
+      <HoverLink href={url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
         {name}
       </HoverLink>
-      <span className="text-sm text-muted-foreground">{description}</span>
+      <span className="truncate text-sm text-muted-foreground">{description}</span>
     </div>
   )
 }
@@ -110,15 +110,15 @@ export function LayoutOne() {
       <Section title="Hobbies">
         <div className="flex flex-col gap-3">
           {hobbies.map((hobby) => (
-            <div key={hobby.name} className="flex items-baseline gap-2">
+            <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
               {hobby.url ? (
-                <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
                   {hobby.name}
                 </HoverLink>
               ) : (
-                <span className="font-medium text-foreground">{hobby.name}</span>
+                <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
               )}
-              <span className="text-sm text-muted-foreground">
+              <span className="truncate text-sm text-muted-foreground">
                 {hobby.description}
               </span>
             </div>
@@ -130,15 +130,15 @@ export function LayoutOne() {
       <Section title="Learning">
         <div className="flex flex-col gap-3">
           {learning.map((item) => (
-            <div key={item.name} className="flex items-baseline gap-2">
+            <div key={item.name} className="flex items-baseline gap-2 min-w-0">
               {item.url ? (
-                <HoverLink href={item.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
                   {item.name}
                 </HoverLink>
               ) : (
-                <span className="font-medium text-foreground">{item.name}</span>
+                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
               )}
-              <span className="text-sm text-muted-foreground">{item.description}</span>
+              <span className="truncate text-sm text-muted-foreground">{item.description}</span>
             </div>
           ))}
         </div>

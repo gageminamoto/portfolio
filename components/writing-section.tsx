@@ -72,15 +72,15 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
   return (
     <div className="flex flex-col gap-3">
       {visiblePosts.map((post) => (
-        <div key={post.id} className="flex items-baseline gap-2">
+        <div key={post.id} className="flex items-baseline gap-2 min-w-0">
           <HoverLink
             href={post.url}
-            className="font-medium no-underline decoration-transparent hover:decoration-foreground"
+            className="truncate font-medium no-underline decoration-transparent hover:decoration-foreground"
           >
             {post.title}
           </HoverLink>
           {post.date && (
-            <span className="text-sm text-muted-foreground">
+            <span className="shrink-0 text-sm text-muted-foreground">
               {formatDate(post.date)}
             </span>
           )}
