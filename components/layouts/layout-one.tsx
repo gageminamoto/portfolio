@@ -67,9 +67,9 @@ export function LayoutOne() {
 
       {/* Projects */}
       <Section title="Projects">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {projects.map((project) => (
-            <div key={project.name} className="flex items-baseline gap-2">
+            <div key={project.name} className="flex flex-col gap-0.5">
               {project.url ? (
                 <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
                   {project.name}
@@ -78,9 +78,6 @@ export function LayoutOne() {
                 <span className="font-medium text-foreground">{project.name}</span>
               )}
               <span className="text-sm text-muted-foreground">{project.description}</span>
-              {project.status === "building" && (
-                <span className="text-xs text-muted-foreground/60">building</span>
-              )}
             </div>
           ))}
         </div>
