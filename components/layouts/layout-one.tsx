@@ -1,9 +1,5 @@
 "use client"
 
-// Layout One: Inspired by Brian Lovin
-// Left-aligned vertical flow with generous whitespace.
-// Social icons row, writing as a flat list, tools with bold name + lighter description.
-
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
