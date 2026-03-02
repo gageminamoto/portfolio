@@ -25,9 +25,9 @@ interface WritingSectionProps {
 
 function SkeletonRow() {
   return (
-    <div className="flex items-baseline gap-2">
+    <div className="flex items-baseline gap-3 min-w-0">
       <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-      <div className="h-3 w-20 animate-pulse rounded bg-muted" />
+      <div className="ml-auto h-3 w-20 shrink-0 animate-pulse rounded bg-muted" />
     </div>
   )
 }
@@ -72,15 +72,15 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
   return (
     <div className="flex flex-col gap-3">
       {visiblePosts.map((post) => (
-        <div key={post.id} className="flex items-baseline gap-2 min-w-0">
+        <div key={post.id} className="flex items-baseline gap-3 min-w-0">
           <HoverLink
             href={post.url}
-            className="truncate font-medium no-underline decoration-transparent hover:decoration-foreground"
+            className="min-w-0 truncate font-medium no-underline decoration-transparent hover:decoration-foreground"
           >
             {post.title}
           </HoverLink>
           {post.date && (
-            <span className="shrink-0 text-sm text-muted-foreground">
+            <span className="ml-auto shrink-0 text-sm text-muted-foreground">
               {formatDate(post.date)}
             </span>
           )}
