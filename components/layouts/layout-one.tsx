@@ -47,7 +47,7 @@ function ToolRow({
 }
 
 export function LayoutOne() {
-  const { name, bio, socials, build, productivity, hobbies, learning } = portfolioData
+  const { name, bio, socials, build, productivity, projects, hobbies, learning } = portfolioData
 
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
@@ -64,6 +64,27 @@ export function LayoutOne() {
         </div>
         <SocialIcons socials={socials} />
       </header>
+
+      {/* Projects */}
+      <Section title="Projects">
+        <div className="flex flex-col gap-3">
+          {projects.map((project) => (
+            <div key={project.name} className="flex items-baseline gap-2">
+              {project.url ? (
+                <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                  {project.name}
+                </HoverLink>
+              ) : (
+                <span className="font-medium text-foreground">{project.name}</span>
+              )}
+              <span className="text-sm text-muted-foreground">{project.description}</span>
+              {project.status === "building" && (
+                <span className="text-xs text-muted-foreground/60">building</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </Section>
 
       {/* Writing — Notion CMS */}
       <Section title="Writing">
