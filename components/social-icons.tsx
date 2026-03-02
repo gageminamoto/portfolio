@@ -1,4 +1,6 @@
 import type { SocialLink } from "@/lib/portfolio-data"
+import { Icon } from "@iconify/react"
+import { useState } from "react"
 
 function TwitterIcon({ className }: { className?: string }) {
   return (
@@ -33,11 +35,22 @@ const iconMap: Record<string, React.FC<{ className?: string }>> = {
 export function SocialIcons({
   socials,
   size = "md",
+  email,
 }: {
   socials: SocialLink[]
   size?: "sm" | "md"
+  email?: string
 }) {
+  const [copied, setCopied] = useState(false)
   const sizeClass = size === "sm" ? "h-4 w-4" : "h-5 w-5"
+
+  const handleCopyEmail = () => {
+    if (email) {
+      navigator.clipboard.writeText(email)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
 
   return (
     <div className="flex items-center gap-4">
@@ -57,6 +70,16 @@ export function SocialIcons({
           </a>
         )
       })}
+      {email && (
+        <button
+          onClick={handleCopyEmail}
+          className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+          aria-label={copied ? "Email copied" : "Copy email"}
+          title={email}
+        >
+          <Icon icon="solar:mailbox-bold" className={sizeClass} />
+        </button>
+      )}
     </div>
   )
 }

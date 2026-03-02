@@ -47,7 +47,7 @@ function ToolRow({
 }
 
 export function LayoutOne() {
-  const { name, bio, socials, build, productivity, projects, hobbies, learning } = portfolioData
+  const { name, bio, socials, email, build, productivity, projects, hobbies, learning } = portfolioData
 
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
@@ -62,7 +62,7 @@ export function LayoutOne() {
           </div>
           <ThemeToggle />
         </div>
-        <SocialIcons socials={socials} />
+        <SocialIcons socials={socials} email={email} />
       </header>
 
       {/* Projects */}

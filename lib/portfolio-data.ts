@@ -46,6 +46,7 @@ export interface SocialLink {
 export interface PortfolioData {
   name: string
   bio: string
+  email?: string
   socials: SocialLink[]
   build: ToolItem[]
   productivity: ToolItem[]
@@ -58,6 +59,7 @@ export interface PortfolioData {
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
   bio: "Sofware Designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
+  email: "hello@gageminamoto.com",
   socials: [
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
     { platform: "github", url: "https://github.com/gageminamoto", label: "GitHub" },
