@@ -7,7 +7,14 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
-import { PokemonCards } from "@/components/pokemon-cards"
+import dynamic from "next/dynamic"
+
+// Dynamically import PokemonCards so a missing framer-motion
+// doesn't crash the full page before React hydrates
+const PokemonCards = dynamic(
+  () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
+  { ssr: false, loading: () => <span className="font-medium text-foreground">Pokemon cards</span> }
+)
 
 function Section({
   title,
