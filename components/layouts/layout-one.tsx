@@ -11,9 +11,6 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
-import { IconTabSwitcher } from "@/components/icon-tab-switcher"
-import { useState } from "react"
-import { AnimatePresence, motion } from "framer-motion"
 
 function Section({
   title,
@@ -46,96 +43,6 @@ function ToolRow({
       </HoverLink>
       <span className="text-sm text-muted-foreground">{description}</span>
     </div>
-  )
-}
-
-const tabConfig = [
-  { id: "tools", label: "Tools", icon: "solar:suitcase-bold" },
-  { id: "hobbies", label: "Hobbies", icon: "solar:ghost-bold" },
-  { id: "play", label: "Play", icon: "solar:bag-smile-bold" },
-  { id: "learning", label: "Learning", icon: "solar:user-bold" },
-]
-
-function TabbedSection({
-  build,
-  productivity,
-  hobbies,
-  learning,
-}: {
-  build: { name: string; url: string; description: string }[]
-  productivity: { name: string; url: string; description: string }[]
-  hobbies: { name: string; url?: string; description: string }[]
-  learning: { name: string; url?: string; description: string }[]
-}) {
-  const [activeTab, setActiveTab] = useState("tools")
-
-  const toolsAll = [...build, ...productivity]
-
-  return (
-    <section className="flex flex-col gap-6">
-      <IconTabSwitcher tabs={tabConfig} activeTab={activeTab} onTabChange={setActiveTab} />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-        >
-          {activeTab === "tools" && (
-            <div className="flex flex-col gap-3">
-              {toolsAll.map((tool) => (
-                <ToolRow key={tool.name} {...tool} />
-              ))}
-            </div>
-          )}
-          {activeTab === "hobbies" && (
-            <div className="flex flex-col gap-3">
-              {hobbies.map((hobby) => (
-                <div key={hobby.name} className="flex items-baseline gap-2">
-                  {hobby.url ? (
-                    <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {hobby.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="font-medium text-foreground">{hobby.name}</span>
-                  )}
-                  <span className="text-sm text-muted-foreground">{hobby.description}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {activeTab === "play" && (
-            <div className="flex flex-col gap-3">
-              {hobbies.filter(h => h.url).map((hobby) => (
-                <div key={hobby.name} className="flex items-baseline gap-2">
-                  <HoverLink href={hobby.url!} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                    {hobby.name}
-                  </HoverLink>
-                  <span className="text-sm text-muted-foreground">{hobby.description}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {activeTab === "learning" && (
-            <div className="flex flex-col gap-3">
-              {learning.map((item) => (
-                <div key={item.name} className="flex items-baseline gap-2">
-                  {item.url ? (
-                    <HoverLink href={item.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {item.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="font-medium text-foreground">{item.name}</span>
-                  )}
-                  <span className="text-sm text-muted-foreground">{item.description}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </section>
   )
 }
 
@@ -181,13 +88,61 @@ export function LayoutOne() {
         <WritingSection variant="default" />
       </Section>
 
-      {/* Tabbed: Tools, Hobbies, Play, Learning */}
-      <TabbedSection
-        build={build}
-        productivity={productivity}
-        hobbies={hobbies}
-        learning={learning}
-      />
+      {/* Build tools */}
+      <Section title="Build">
+        <div className="flex flex-col gap-3">
+          {build.map((tool) => (
+            <ToolRow key={tool.name} {...tool} />
+          ))}
+        </div>
+      </Section>
+
+      {/* Productivity */}
+      <Section title="Productivity">
+        <div className="flex flex-col gap-3">
+          {productivity.map((tool) => (
+            <ToolRow key={tool.name} {...tool} />
+          ))}
+        </div>
+      </Section>
+
+      {/* Hobbies */}
+      <Section title="Hobbies">
+        <div className="flex flex-col gap-3">
+          {hobbies.map((hobby) => (
+            <div key={hobby.name} className="flex items-baseline gap-2">
+              {hobby.url ? (
+                <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                  {hobby.name}
+                </HoverLink>
+              ) : (
+                <span className="font-medium text-foreground">{hobby.name}</span>
+              )}
+              <span className="text-sm text-muted-foreground">
+                {hobby.description}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Learning */}
+      <Section title="Learning">
+        <div className="flex flex-col gap-3">
+          {learning.map((item) => (
+            <div key={item.name} className="flex items-baseline gap-2">
+              {item.url ? (
+                <HoverLink href={item.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                  {item.name}
+                </HoverLink>
+              ) : (
+                <span className="font-medium text-foreground">{item.name}</span>
+              )}
+              <span className="text-sm text-muted-foreground">{item.description}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
 
       <SiteFooter />
     </main>
