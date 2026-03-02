@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
+import { PokemonCards } from "@/components/pokemon-cards"
 
 function Section({
   title,
@@ -105,20 +106,33 @@ export function LayoutOne() {
       {/* Hobbies */}
       <Section title="Hobbies">
         <div className="flex flex-col gap-3">
-          {hobbies.map((hobby) => (
-            <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-              {hobby.url ? (
-                <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                  {hobby.name}
-                </HoverLink>
-              ) : (
-                <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
-              )}
-              <span className="truncate text-sm text-muted-foreground">
-                {hobby.description}
-              </span>
-            </div>
-          ))}
+          {hobbies.map((hobby) => {
+            // Pokemon cards entry gets the interactive fan component
+            if (hobby.name === "Pokemon cards") {
+              return (
+                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+                  <PokemonCards />
+                  <span className="truncate text-sm text-muted-foreground">
+                    {hobby.description}
+                  </span>
+                </div>
+              )
+            }
+            return (
+              <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+                {hobby.url ? (
+                  <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
+                    {hobby.name}
+                  </HoverLink>
+                ) : (
+                  <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                )}
+                <span className="truncate text-sm text-muted-foreground">
+                  {hobby.description}
+                </span>
+              </div>
+            )
+          })}
         </div>
       </Section>
 
