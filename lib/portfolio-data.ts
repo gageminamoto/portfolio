@@ -69,7 +69,7 @@ export const portfolioData: PortfolioData = {
     { name: "Cursor", url: "https://www.cursor.com/", description: "Code editor" },
     { name: "Conductor", url: "https://conductor.is/", description: "Agent orchestration" },
     { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
-    { name: "Figma", url: "https://www.figma.com/", description: "Design and Collaboration" },
+    { name: "Figma", url: "https://www.figma.com/", description: "Design and collaboration" },
     { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
   ],
   productivity: [
@@ -96,7 +96,7 @@ export const portfolioData: PortfolioData = {
   projects: [
     { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online recipes", status: "production" },
     { name: "Umi Language Learning", url: "https://umiapp.co/", description: "Language learning through TV and movies", status: "production" },
-    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee with a beautiful, colorful design.", status: "production" },
+    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive experience", status: "production" },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
