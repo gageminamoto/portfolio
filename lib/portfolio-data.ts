@@ -80,6 +80,7 @@ export const portfolioData: PortfolioData = {
     { name: "Eagle", url: "https://en.eagle.cool/", description: "Inspo library" },
     { name: "Typefully", url: "https://typefully.com/", description: "Writing + scheduling" },
     { name: "Superwhisper", url: "https://superwhisper.com/", description: "Voice dictation" },
+    { name: "Notion Agents", url: "https://www.notion.so/product/agents", description: "Autonomous workflows in Notion" },
   ],
   writing: [
     { title: "Blog 1", slug: "blog-1" },
