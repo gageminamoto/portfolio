@@ -110,6 +110,24 @@ export function LayoutOne() {
         </div>
       </Section>
 
+      {/* Learning */}
+      <Section title="Learning">
+        <div className="flex flex-col gap-3">
+          {learning.map((item) => (
+            <div key={item.name} className="flex items-baseline gap-2 min-w-0">
+              {item.url ? (
+                <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
+                  {item.name}
+                </HoverLink>
+              ) : (
+                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
+              )}
+              <span className="truncate text-sm text-muted-foreground">{item.description}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* Hobbies */}
       <Section title="Hobbies">
         <div className="flex flex-col gap-3">
@@ -140,24 +158,6 @@ export function LayoutOne() {
               </div>
             )
           })}
-        </div>
-      </Section>
-
-      {/* Learning */}
-      <Section title="Learning">
-        <div className="flex flex-col gap-3">
-          {learning.map((item) => (
-            <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-              {item.url ? (
-                <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                  {item.name}
-                </HoverLink>
-              ) : (
-                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
-              )}
-              <span className="truncate text-sm text-muted-foreground">{item.description}</span>
-            </div>
-          ))}
         </div>
       </Section>
 

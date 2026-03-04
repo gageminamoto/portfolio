@@ -97,7 +97,7 @@ export const portfolioData: PortfolioData = {
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
-    { name: "Paper MCP", url: "https://paper.design/docs/mcp", description: "Learning how to do canvas to code and back" },
+    { name: "日本語", description: "Speaking the Mothertongue" },
   ],
 }
 
