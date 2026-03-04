@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Albert_Sans, JetBrains_Mono, Darker_Grotesque } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const _albertSans = Albert_Sans({ subsets: ["latin"], variable: "--font-albert-sans" })
 const _jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
+const _darkerGrotesque = Darker_Grotesque({ subsets: ["latin"], variable: "--font-darker-grotesque" })
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',

@@ -75,8 +75,9 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-sans: var(--font-albert-sans), 'Albert Sans', system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
+  --font-display: var(--font-darker-grotesque), 'Darker Grotesque', system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -125,6 +126,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h1 {
+    @apply font-display;
   }
 }
 
