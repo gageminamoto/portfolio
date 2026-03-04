@@ -63,7 +63,7 @@ const FAN_CARD_W = Math.round(FAN_CARD_H * CARD_RATIO) // ~100
 
 // Fan spread configs (relative to center)
 const FAN_CONFIGS = [
-  { rotate: -18, x: -58, y: -105 },
+  { rotate: -10, x: -14, y: -105 },
   { rotate: 0, x: 0, y: -120 },
   { rotate: 18, x: 58, y: -105 },
 ]
