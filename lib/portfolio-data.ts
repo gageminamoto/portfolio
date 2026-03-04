@@ -87,20 +87,17 @@ export const portfolioData: PortfolioData = {
     { title: "Blog 3", slug: "blog-3" },
   ],
   hobbies: [
-    { name: "Modded Minecraft", url: "https://www.minecraft.net/", description: "Rn playing as a farmer sim" },
-    { name: "Stardew Valley", url: "https://www.stardewvalley.net/", description: "Best chill game" },
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
     { name: "Design books", description: "Addicted to adding them" },
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
     { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online recipes", status: "production" },
-    { name: "Umi Language Learning", url: "https://umiapp.co/", description: "Language learning through TV and movies", status: "production" },
     { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive experience", status: "production" },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
-    { name: "Paper MCP", url: "https://paper.design/docs/mcp", description: "Learning how to do canvas to code and back" },
+    { name: "日本語", description: "Speaking the Mothertongue" },
   ],
 }
 
