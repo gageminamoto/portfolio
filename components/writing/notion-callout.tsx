@@ -1,8 +1,10 @@
 import type { NotionBlock } from "@/lib/notion"
 import { NotionRichText } from "./notion-rich-text"
 
+type CalloutBlock = Extract<NotionBlock, { type: "callout" }>
+
 interface NotionCalloutProps {
-  block: NotionBlock
+  block: CalloutBlock
 }
 
 export function NotionCallout({ block }: NotionCalloutProps) {

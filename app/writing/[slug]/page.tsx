@@ -4,6 +4,7 @@ import { ArticleContent } from "./article-content"
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ from?: string }>
 }
 
 export async function generateMetadata({
@@ -26,8 +27,9 @@ export async function generateMetadata({
   }
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
   const { slug } = await params
+  const { from } = await searchParams
 
-  return <ArticleContent slug={slug} />
+  return <ArticleContent slug={slug} from={from} />
 }

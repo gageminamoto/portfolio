@@ -1,5 +1,5 @@
 import type { NotionBlock } from "@/lib/notion"
-import { NotionHeading } from "./notion-heading"
+import { NotionHeading, type HeadingBlock } from "./notion-heading"
 import { NotionParagraph } from "./notion-paragraph"
 import { NotionQuote } from "./notion-quote"
 import { NotionCode } from "./notion-code"
@@ -17,7 +17,7 @@ export function NotionBlockComponent({ block }: NotionBlockComponentProps) {
     case "heading_1":
     case "heading_2":
     case "heading_3":
-      return <NotionHeading block={block} />
+      return <NotionHeading block={block as HeadingBlock} />
 
     case "paragraph":
       return <NotionParagraph block={block} />

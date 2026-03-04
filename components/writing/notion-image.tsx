@@ -5,8 +5,10 @@ import { AnimatePresence } from "framer-motion"
 import type { NotionBlock } from "@/lib/notion"
 import { ImageLightbox } from "./image-lightbox"
 
+type ImageBlock = Extract<NotionBlock, { type: "image" }>
+
 interface NotionImageProps {
-  block: NotionBlock
+  block: ImageBlock
 }
 
 export function NotionImage({ block }: NotionImageProps) {

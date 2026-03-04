@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import useSWR from "swr"
-import { ChevronLeft } from "lucide-react"
+import { useState, useCallback } from "react"
+import { ChevronLeft, Link as LinkIcon, Check } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NotionBlocksRenderer } from "@/components/writing/notion-blocks-renderer"
 import {
@@ -44,9 +45,33 @@ function ArticleSkeleton() {
 
 interface ArticleContentProps {
   slug: string
+  from?: string
 }
 
-export function ArticleContent({ slug }: ArticleContentProps) {
+export function ArticleContent({ slug, from }: ArticleContentProps) {
+  const [copied, setCopied] = useState(false)
+
+  const isFromHome = from === "home"
+  const backLabel = isFromHome ? "Home" : "Writing"
+  const backHref = isFromHome ? "/" : "/writing"
+
+  const handleCopyLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      const textarea = document.createElement("textarea")
+      textarea.value = window.location.href
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textarea)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }, [])
+
   const { data, error, isLoading } = useSWR<{
     post: NotionWritingPost
     blocks: NotionBlock[]
@@ -76,13 +101,27 @@ export function ArticleContent({ slug }: ArticleContentProps) {
           <header className="mb-10 flex flex-col gap-6">
             <nav className="flex items-center justify-between">
               <Link
-                href="/writing"
+                href={backHref}
                 className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
-                Writing
+                {backLabel}
               </Link>
-              <ThemeToggle />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  aria-label={copied ? "Link copied" : "Copy link"}
+                  className="inline-flex items-center text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm cursor-pointer"
+                >
+                  {copied ? (
+                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                  ) : (
+                    <LinkIcon className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                <ThemeToggle />
+              </div>
             </nav>
 
             {post && (

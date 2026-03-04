@@ -12,7 +12,6 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json())
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
-  year: "numeric",
 })
 
 function formatDate(dateStr: string | null): string {
@@ -20,11 +19,82 @@ function formatDate(dateStr: string | null): string {
   return dateFormatter.format(new Date(dateStr))
 }
 
+function getTimeGroup(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+
+  const startOfWeek = new Date(now)
+  startOfWeek.setDate(now.getDate() - now.getDay())
+  startOfWeek.setHours(0, 0, 0, 0)
+
+  if (date >= startOfWeek) return "This week"
+
+  if (
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  )
+    return "This month"
+
+  if (date.getFullYear() === now.getFullYear()) return "Earlier this year"
+
+  return String(date.getFullYear())
+}
+
+function groupPosts(
+  posts: NotionWritingPost[]
+): { label: string; posts: NotionWritingPost[] }[] {
+  const groups: Map<string, NotionWritingPost[]> = new Map()
+  const undated: NotionWritingPost[] = []
+
+  for (const post of posts) {
+    if (!post.date) {
+      undated.push(post)
+      continue
+    }
+    const label = getTimeGroup(post.date)
+    const group = groups.get(label)
+    if (group) {
+      group.push(post)
+    } else {
+      groups.set(label, [post])
+    }
+  }
+
+  const result = Array.from(groups, ([label, posts]) => ({ label, posts }))
+  if (undated.length > 0) {
+    result.push({ label: "Undated", posts: undated })
+  }
+  return result
+}
+
 function SkeletonRow() {
   return (
     <div className="flex w-full items-baseline justify-between gap-4">
       <div className="h-4 w-48 animate-pulse rounded bg-muted" />
       <div className="h-3 w-20 shrink-0 animate-pulse rounded bg-muted" />
+    </div>
+  )
+}
+
+function PostRow({ post }: { post: NotionWritingPost }) {
+  return (
+    <div className="flex w-full items-baseline justify-between gap-4">
+      <span className="min-w-0 truncate">
+        <Link
+          href={`/writing/${post.slug}`}
+          className="font-medium text-foreground underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        >
+          {post.title}
+        </Link>
+      </span>
+      {post.date && (
+        <time
+          dateTime={post.date}
+          className="shrink-0 text-sm tabular-nums text-muted-foreground"
+        >
+          {formatDate(post.date)}
+        </time>
+      )}
     </div>
   )
 }
@@ -37,6 +107,7 @@ export default function WritingPage() {
   )
 
   const posts = data?.posts ?? []
+  const groups = groupPosts(posts)
 
   return (
     <main
@@ -63,12 +134,12 @@ export default function WritingPage() {
       </div>
 
       {/* Posts list */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-10">
         {isLoading && (
           <div
             className="flex flex-col gap-3"
             aria-busy="true"
-            aria-label="Loading posts\u2026"
+            aria-label="Loading posts…"
           >
             {[0, 1, 2, 3, 4].map((i) => (
               <SkeletonRow key={i} />
@@ -88,28 +159,15 @@ export default function WritingPage() {
 
         {!isLoading &&
           !error &&
-          posts.map((post) => (
-            <div
-              key={post.id}
-              className="flex w-full items-baseline justify-between gap-4"
-            >
-              <span className="min-w-0 truncate">
-                <Link
-                  href={`/writing/${post.slug}`}
-                  className="font-medium text-foreground underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-                >
-                  {post.title}
-                </Link>
-              </span>
-              {post.date && (
-                <time
-                  dateTime={post.date}
-                  className="shrink-0 text-sm tabular-nums text-muted-foreground"
-                >
-                  {formatDate(post.date)}
-                </time>
-              )}
-            </div>
+          groups.map((group) => (
+            <section key={group.label} className="flex flex-col gap-4">
+              <h2 className="text-sm text-muted-foreground">{group.label}</h2>
+              <div className="flex flex-col gap-4">
+                {group.posts.map((post) => (
+                  <PostRow key={post.id} post={post} />
+                ))}
+              </div>
+            </section>
           ))}
       </div>
 

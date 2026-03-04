@@ -1,7 +1,9 @@
 import type { NotionBlock } from "@/lib/notion"
 
+type CodeBlock = Extract<NotionBlock, { type: "code" }>
+
 interface NotionCodeProps {
-  block: NotionBlock
+  block: CodeBlock
 }
 
 export function NotionCode({ block }: NotionCodeProps) {

@@ -1,8 +1,10 @@
 import type { NotionBlock } from "@/lib/notion"
 import { NotionRichText } from "./notion-rich-text"
 
+type QuoteBlock = Extract<NotionBlock, { type: "quote" }>
+
 interface NotionQuoteProps {
-  block: NotionBlock
+  block: QuoteBlock
 }
 
 export function NotionQuote({ block }: NotionQuoteProps) {

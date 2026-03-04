@@ -6,8 +6,10 @@ import type { NotionBlock } from "@/lib/notion"
 import { NotionRichText } from "./notion-rich-text"
 import { NotionBlocksRenderer } from "./notion-blocks-renderer"
 
+type ToggleBlock = Extract<NotionBlock, { type: "toggle" }>
+
 interface NotionToggleProps {
-  block: NotionBlock
+  block: ToggleBlock
 }
 
 export function NotionToggle({ block }: NotionToggleProps) {

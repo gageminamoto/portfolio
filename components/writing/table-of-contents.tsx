@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { ChevronDown } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import type { NotionBlock } from "@/lib/notion"
+import { getHeadingId, type HeadingBlock } from "./notion-heading"
 
 export interface TocHeading {
   id: string
@@ -13,26 +14,34 @@ export interface TocHeading {
 
 export function extractHeadings(blocks: NotionBlock[]): TocHeading[] {
   return blocks
-    .filter(
-      (b) =>
-        b.type === "heading_1" ||
-        b.type === "heading_2" ||
-        b.type === "heading_3"
-    )
-    .map((b) => {
-      const type = b.type as "heading_1" | "heading_2" | "heading_3"
-      const richText = b[type].rich_text as { plain_text: string }[]
-      const text = richText.map((t) => t.plain_text).join("")
-      const id = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
+    .filter(isHeadingBlock)
+    .map((block) => {
+      const richText = getHeadingRichText(block)
       return {
-        id,
-        text,
-        level: parseInt(type.replace("heading_", "")) as 1 | 2 | 3,
+        id: getHeadingId(block),
+        text: richText.map((t) => t.plain_text).join(""),
+        level: parseInt(block.type.replace("heading_", "")) as 1 | 2 | 3,
       }
     })
+}
+
+function isHeadingBlock(block: NotionBlock): block is HeadingBlock {
+  return (
+    block.type === "heading_1" ||
+    block.type === "heading_2" ||
+    block.type === "heading_3"
+  )
+}
+
+function getHeadingRichText(block: HeadingBlock) {
+  switch (block.type) {
+    case "heading_1":
+      return block.heading_1.rich_text
+    case "heading_2":
+      return block.heading_2.rich_text
+    case "heading_3":
+      return block.heading_3.rich_text
+  }
 }
 
 interface TableOfContentsProps {

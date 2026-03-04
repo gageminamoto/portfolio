@@ -39,7 +39,7 @@ function PostRow({ post }: { post: NotionWritingPost }) {
     <div className="flex items-baseline gap-2 min-w-0">
       <span className="shrink-0 font-medium">
         <HoverLink
-          href={`/writing/${post.slug}`}
+          href={`/writing/${post.slug}?from=home`}
           external={false}
           className="no-underline decoration-transparent hover:decoration-foreground"
         >
