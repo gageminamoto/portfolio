@@ -7,7 +7,9 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
+import { ChevronRight } from "lucide-react"
 import dynamic from "next/dynamic"
+import Link from "next/link"
 
 // Dynamically import PokemonCards so a missing framer-motion
 // doesn't crash the full page before React hydrates
@@ -18,14 +20,26 @@ const PokemonCards = dynamic(
 
 function Section({
   title,
+  href,
   children,
 }: {
   title: string
+  href?: string
   children: React.ReactNode
 }) {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-sm text-muted-foreground">{title}</h2>
+      {href ? (
+        <Link
+          href={href}
+          className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground w-fit"
+        >
+          <h2>{title}</h2>
+          <ChevronRight className="h-3.5 w-3.5" />
+        </Link>
+      ) : (
+        <h2 className="text-sm text-muted-foreground">{title}</h2>
+      )}
       {children}
     </section>
   )
@@ -54,7 +68,7 @@ export function LayoutOne() {
   const { name, bio, socials, email, build, productivity, projects, hobbies, learning } = portfolioData
 
   return (
-    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
+    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24">
       {/* Header */}
       <header className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
@@ -88,7 +102,7 @@ export function LayoutOne() {
       </Section>
 
       {/* Writing — Notion CMS */}
-      <Section title="Writing">
+      <Section title="Writing" href="/writing">
         <WritingSection variant="default" />
       </Section>
 

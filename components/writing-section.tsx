@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import useSWR from "swr"
+import { ChevronDown } from "lucide-react"
 import type { NotionWritingPost } from "@/lib/notion"
 import { HoverLink } from "@/components/hover-link"
+import { cn } from "@/lib/utils"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 const INITIAL_COUNT = 5
@@ -25,9 +27,30 @@ interface WritingSectionProps {
 
 function SkeletonRow() {
   return (
-    <div className="flex w-full items-baseline justify-between gap-4">
-      <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-      <div className="h-3 w-20 shrink-0 animate-pulse rounded bg-muted" />
+    <div className="flex items-baseline gap-2 min-w-0">
+      <div className="h-4 w-48 shrink-0 animate-pulse rounded bg-muted" />
+      <div className="h-3 w-20 animate-pulse rounded bg-muted" />
+    </div>
+  )
+}
+
+function PostRow({ post }: { post: NotionWritingPost }) {
+  return (
+    <div className="flex items-baseline gap-2 min-w-0">
+      <span className="shrink-0 font-medium">
+        <HoverLink
+          href={`/writing/${post.slug}?from=home`}
+          external={false}
+          className="no-underline decoration-transparent hover:decoration-foreground"
+        >
+          {post.title}
+        </HoverLink>
+      </span>
+      {post.date && (
+        <span className="truncate text-sm text-muted-foreground">
+          {formatDate(post.date)}
+        </span>
+      )}
     </div>
   )
 }
@@ -66,35 +89,54 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
     )
   }
 
-  const visiblePosts = expanded ? posts : posts.slice(0, INITIAL_COUNT)
   const hasMore = posts.length > INITIAL_COUNT
 
   return (
     <div className="flex flex-col gap-3">
-      {visiblePosts.map((post) => (
-        <div key={post.id} className="flex w-full items-baseline justify-between gap-4">
-          <span className="min-w-0 truncate font-medium">
-            <HoverLink
-              href={post.url}
-              className="no-underline decoration-transparent hover:decoration-foreground"
-            >
-              {post.title}
-            </HoverLink>
-          </span>
-          {post.date && (
-            <span className="shrink-0 text-sm text-muted-foreground">
-              {formatDate(post.date)}
-            </span>
-          )}
-        </div>
+      {posts.slice(0, INITIAL_COUNT).map((post) => (
+        <PostRow key={post.id} post={post} />
       ))}
+
       {hasMore && (
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="cursor-pointer text-left text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
-        >
-          {expanded ? "Show less" : `See ${posts.length - INITIAL_COUNT} more`}
-        </button>
+        <>
+          <div className="relative">
+            <div
+              className={cn(
+                "grid transition-[grid-template-rows] duration-300 ease-out",
+                expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="flex flex-col gap-3">
+                  {posts.slice(INITIAL_COUNT).map((post) => (
+                    <PostRow key={post.id} post={post} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                "pointer-events-none absolute -top-8 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent transition-opacity duration-300",
+                expanded ? "opacity-0" : "opacity-100"
+              )}
+            />
+          </div>
+
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="group flex cursor-pointer items-center justify-center py-1"
+            aria-expanded={expanded}
+            aria-label={expanded ? "Show fewer posts" : `Show ${posts.length - INITIAL_COUNT} more posts`}
+          >
+            <ChevronDown
+              className={cn(
+                "size-4 text-muted-foreground/40 transition-transform duration-200 ease-out group-hover:text-muted-foreground",
+                expanded && "rotate-180"
+              )}
+            />
+          </button>
+        </>
       )}
     </div>
   )

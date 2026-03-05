@@ -44,6 +44,13 @@ function headers(): HeadersInit {
   return h
 }
 
+function reposUrl(params: string): string {
+  if (process.env.GITHUB_TOKEN) {
+    return `https://api.github.com/user/repos?type=owner&${params}`
+  }
+  return `https://api.github.com/users/${GITHUB_USERNAME}/repos?${params}`
+}
+
 export interface CommitHistoryItem {
   sha: string
   hash: string
@@ -112,7 +119,7 @@ export async function fetchCommitHistory(
     // (events API only keeps ~90 days of data and misses org repos)
     console.log("[v0] fetching commits from repos API")
     const reposRes = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`,
+      reposUrl("sort=pushed&per_page=5"),
       { headers: headers() }
     )
 
@@ -186,7 +193,7 @@ export async function fetchLatestCommit(): Promise<CommitData | null> {
   try {
     // 1. Get the most recently pushed repo
     const reposRes = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=1`,
+      reposUrl("sort=pushed&per_page=1"),
       { headers: headers() }
     )
     if (!reposRes.ok) {

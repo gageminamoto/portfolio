@@ -1,5 +1,8 @@
 import { Client } from "@notionhq/client"
-import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints"
+import type {
+  BlockObjectResponse,
+  PageObjectResponse,
+} from "@notionhq/client/build/src/api-endpoints"
 
 export const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -66,4 +69,112 @@ export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> 
     date: getDate(page),
     url: page.url,
   }))
+}
+
+export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
+  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
+
+  if (!databaseId) {
+    throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
+  }
+
+  const allPages: PageObjectResponse[] = []
+  let cursor: string | undefined = undefined
+
+  do {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      start_cursor: cursor,
+      sorts: [
+        {
+          timestamp: "created_time",
+          direction: "descending",
+        },
+      ],
+    })
+    allPages.push(...(response.results as PageObjectResponse[]))
+    cursor = response.has_more ? response.next_cursor ?? undefined : undefined
+  } while (cursor)
+
+  return allPages.map((page) => ({
+    id: page.id,
+    title: getTitle(page),
+    slug: getSlug(page),
+    date: getDate(page),
+    url: page.url,
+  }))
+}
+
+export async function fetchPostBySlug(
+  slug: string
+): Promise<NotionWritingPost | null> {
+  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
+
+  if (!databaseId) {
+    throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
+  }
+
+  // Try filtering by Slug property first (only if the property exists in the DB)
+  try {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        property: "Slug",
+        rich_text: {
+          equals: slug,
+        },
+      },
+      page_size: 1,
+    })
+
+    if (response.results.length > 0) {
+      const page = response.results[0] as PageObjectResponse
+      return {
+        id: page.id,
+        title: getTitle(page),
+        slug: getSlug(page),
+        date: getDate(page),
+        url: page.url,
+      }
+    }
+  } catch {
+    // Slug property doesn't exist in this database — fall through to title-based matching
+  }
+
+  // Fall back: fetch all and match by generated slug
+  const allPosts = await fetchAllPosts()
+  return allPosts.find((p) => p.slug === slug) ?? null
+}
+
+export type NotionBlock = BlockObjectResponse & {
+  children?: NotionBlock[]
+}
+
+export async function fetchPostBlocks(
+  pageId: string
+): Promise<NotionBlock[]> {
+  const blocks: NotionBlock[] = []
+  let cursor: string | undefined = undefined
+
+  do {
+    const response = await notion.blocks.children.list({
+      block_id: pageId,
+      start_cursor: cursor,
+      page_size: 100,
+    })
+
+    for (const block of response.results as BlockObjectResponse[]) {
+      const notionBlock: NotionBlock = { ...block }
+
+      if (block.has_children) {
+        notionBlock.children = await fetchPostBlocks(block.id)
+      }
+
+      blocks.push(notionBlock)
+    }
+
+    cursor = response.has_more ? response.next_cursor ?? undefined : undefined
+  } while (cursor)
+
+  return blocks
 }
