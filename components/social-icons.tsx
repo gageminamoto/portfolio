@@ -91,7 +91,7 @@ export function SocialIcons({
             className={`text-sm transition-all duration-200 ${copied ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 pointer-events-none"}`}
             aria-live="polite"
           >
-            Copied!
+            Email Copied!
           </span>
         </button>
       )}
