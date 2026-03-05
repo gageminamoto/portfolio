@@ -58,7 +58,7 @@ export interface PortfolioData {
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Sofware Designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
+  bio: "Software designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
   email: "info@gageminamoto.com",
   socials: [
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
