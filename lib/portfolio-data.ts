@@ -30,6 +30,11 @@ export interface HobbyItem {
   description: string
 }
 
+export interface ManifestoItem {
+  principle: string
+  description: string
+}
+
 export interface ProjectItem {
   name: string
   url?: string
@@ -46,6 +51,8 @@ export interface SocialLink {
 export interface PortfolioData {
   name: string
   bio: string
+  extendedBio: string
+  designManifesto: ManifestoItem[]
   email?: string
   socials: SocialLink[]
   build: ToolItem[]
@@ -58,7 +65,22 @@ export interface PortfolioData {
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Software designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
+  bio: "Software designer building everyday products. Growing Hawai'i's local design community. Building\u00a0[Mizen](https://www.mizen.recipes/).",
+  extendedBio: `I'm a software designer based in Hawai‘i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai‘i.
+
+I grew up in Hawai‘i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
+
+I first stepped into design through esports and brand marketing at the University of Hawai‘i, then continued growing at Servco. Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
+
+Today, I use that foundation to design thoughtful software and brands in and for Hawai‘i, where great design is still rare but deeply needed.`,
+  designManifesto: [
+    /*
+    { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
+    { principle: "Details compound", description: "Typography, spacing, and micro-interactions build trust over time. Sweat the small\u00a0stuff." },
+    { principle: "Design with code", description: "The best design happens in the medium it ships in. Prototype in code, iterate\u00a0fast." },
+    { principle: "Ship and learn", description: "Perfect is the enemy of shipped. Put it in front of real people and\u00a0listen." },
+    */
+  ],
   email: "info@gageminamoto.com",
   socials: [
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
@@ -95,8 +117,8 @@ export const portfolioData: PortfolioData = {
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
-    { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online recipes", status: "production" },
-    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive experience", status: "production" },
+    { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online\u00a0recipes", status: "production" },
+    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive\u00a0experience", status: "production" },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },

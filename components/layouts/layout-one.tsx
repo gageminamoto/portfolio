@@ -7,65 +7,10 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
-import { ChevronRight } from "lucide-react"
-import dynamic from "next/dynamic"
-import Link from "next/link"
-
-// Dynamically import PokemonCards so a missing framer-motion
-// doesn't crash the full page before React hydrates
-const PokemonCards = dynamic(
-  () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
-  { ssr: false, loading: () => <span className="font-medium text-foreground">Pokemon cards</span> }
-)
-
-function Section({
-  title,
-  href,
-  children,
-}: {
-  title: string
-  href?: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="flex flex-col gap-4">
-      {href ? (
-        <Link
-          href={href}
-          className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground w-fit"
-        >
-          <h2>{title}</h2>
-          <ChevronRight className="h-3.5 w-3.5" />
-        </Link>
-      ) : (
-        <h2 className="text-sm text-muted-foreground">{title}</h2>
-      )}
-      {children}
-    </section>
-  )
-}
-
-function ToolRow({
-  name,
-  url,
-  description,
-}: {
-  name: string
-  url: string
-  description: string
-}) {
-  return (
-    <div className="flex items-baseline gap-2 min-w-0">
-      <HoverLink href={url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-        {name}
-      </HoverLink>
-      <span className="truncate text-sm text-muted-foreground">{description}</span>
-    </div>
-  )
-}
+import { Section } from "@/components/section"
 
 export function LayoutOne() {
-  const { name, bio, socials, email, build, productivity, projects, hobbies, learning } = portfolioData
+  const { name, bio, socials, email, projects } = portfolioData
 
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24">
@@ -106,73 +51,11 @@ export function LayoutOne() {
         <WritingSection variant="default" />
       </Section>
 
-      {/* Build tools */}
-      <Section title="Build">
-        <div className="flex flex-col gap-3">
-          {build.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Productivity */}
-      <Section title="Productivity">
-        <div className="flex flex-col gap-3">
-          {productivity.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Learning */}
-      <Section title="Learning">
-        <div className="flex flex-col gap-3">
-          {learning.map((item) => (
-            <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-              {item.url ? (
-                <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                  {item.name}
-                </HoverLink>
-              ) : (
-                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
-              )}
-              <span className="truncate text-sm text-muted-foreground">{item.description}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Hobbies */}
-      <Section title="Hobbies">
-        <div className="flex flex-col gap-3">
-          {hobbies.map((hobby) => {
-            // Pokemon cards entry gets the interactive fan component
-            if (hobby.name === "Pokemon cards") {
-              return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                  <PokemonCards />
-                  <span className="truncate text-sm text-muted-foreground">
-                    {hobby.description}
-                  </span>
-                </div>
-              )
-            }
-            return (
-              <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                {hobby.url ? (
-                  <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                    {hobby.name}
-                  </HoverLink>
-                ) : (
-                  <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
-                )}
-                <span className="truncate text-sm text-muted-foreground">
-                  {hobby.description}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+      {/* About */}
+      <Section title="About" href="/about">
+        <p className="text-sm text-muted-foreground">
+          Design manifesto, tools, and&nbsp;hobbies.
+        </p>
       </Section>
 
       <SiteFooter />
