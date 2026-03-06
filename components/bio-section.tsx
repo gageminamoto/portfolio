@@ -44,7 +44,7 @@ export function BioSection({ bio, className = "" }: BioSectionProps) {
   const parts = parseBio(bio)
 
   return (
-    <p className={`text-base leading-relaxed text-muted-foreground ${className}`}>
+    <p className={`whitespace-pre-line text-base leading-relaxed text-muted-foreground ${className}`}>
       {parts.map((part, index) => {
         if (typeof part === "string") {
           return part
