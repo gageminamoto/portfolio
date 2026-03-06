@@ -4,9 +4,9 @@ import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const _albertSans = Albert_Sans({ subsets: ["latin"], variable: "--font-albert-sans" })
-const _jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
-const _darkerGrotesque = Darker_Grotesque({ subsets: ["latin"], variable: "--font-darker-grotesque" })
+const albertSans = Albert_Sans({ subsets: ["latin"], variable: "--font-albert-sans" })
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
+const darkerGrotesque = Darker_Grotesque({ subsets: ["latin"], variable: "--font-darker-grotesque" })
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',
@@ -37,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning style={{ colorScheme: "light dark" }}>
-      <body className="font-sans antialiased">
+      <body className={`${albertSans.variable} ${jetbrainsMono.variable} ${darkerGrotesque.variable} font-sans antialiased`}>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:text-background focus:outline-none"
