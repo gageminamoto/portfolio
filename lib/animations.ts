@@ -1,4 +1,17 @@
 import type { Variants } from "framer-motion"
+import { useReducedMotion } from "framer-motion"
+
+export function useEntranceMotion() {
+  const shouldReduceMotion = useReducedMotion()
+  return {
+    item: shouldReduceMotion ? noMotion : fadeUp,
+    containerProps: {
+      variants: shouldReduceMotion ? undefined : stagger,
+      initial: "hidden" as const,
+      animate: "show" as const,
+    },
+  }
+}
 
 export const stagger: Variants = {
   hidden: {},

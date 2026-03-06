@@ -8,21 +8,18 @@ import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
-import { motion, useReducedMotion } from "framer-motion"
-import { stagger, fadeUp, noMotion } from "@/lib/animations"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
-  const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : fadeUp
+  const { item, containerProps } = useEntranceMotion()
 
   return (
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : stagger}
-      initial="hidden"
-      animate="show"
+      {...containerProps}
     >
       {/* Header */}
       <motion.header variants={item} className="flex flex-col gap-6">

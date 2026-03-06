@@ -10,8 +10,8 @@ import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { portfolioData } from "@/lib/portfolio-data"
-import { motion, useReducedMotion } from "framer-motion"
-import { stagger, fadeUp, noMotion } from "@/lib/animations"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 import dynamic from "next/dynamic"
 
 const PokemonCards = dynamic(
@@ -21,16 +21,13 @@ const PokemonCards = dynamic(
 
 export default function AboutPage() {
   const { extendedBio, designManifesto, build, productivity, skills, learning, hobbies } = portfolioData
-  const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : fadeUp
+  const { item, containerProps } = useEntranceMotion()
 
   return (
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : stagger}
-      initial="hidden"
-      animate="show"
+      {...containerProps}
     >
       {/* Header */}
       <motion.header variants={item} className="flex items-center justify-between">
@@ -115,16 +112,7 @@ export default function AboutPage() {
         <Section title="Learning">
           <div className="flex flex-col gap-3">
             {learning.map((item) => (
-              <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-                {item.url ? (
-                  <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                    {item.name}
-                  </HoverLink>
-                ) : (
-                  <span className="shrink-0 font-medium text-foreground">{item.name}</span>
-                )}
-                <span className="truncate text-sm text-muted-foreground">{item.description}</span>
-              </div>
+              <ToolRow key={item.name} {...item} />
             ))}
           </div>
         </Section>
@@ -151,54 +139,35 @@ export default function AboutPage() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <TabsContent className="animate-tab-content-in" value="all">
+          <TabsContent value="all">
             <div className="flex flex-col gap-3">
               {[
                 ...build.map((t) => ({ ...t, tag: "Build" as const })),
                 ...productivity.map((t) => ({ ...t, tag: "Productivity" as const })),
                 ...skills.map((s) => ({ ...s, tag: "Skills" as const })),
               ].map((item) => (
-                <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-                  {"url" in item && item.url ? (
-                    <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {item.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="shrink-0 font-medium text-foreground">{item.name}</span>
-                  )}
-                  <span className="truncate text-sm text-muted-foreground">{item.description}</span>
-                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">{item.tag}</span>
-                </div>
+                <ToolRow key={item.name} {...item} />
               ))}
             </div>
           </TabsContent>
-          <TabsContent className="animate-tab-content-in" value="build">
+          <TabsContent value="build">
             <div className="flex flex-col gap-3">
               {build.map((tool) => (
                 <ToolRow key={tool.name} {...tool} />
               ))}
             </div>
           </TabsContent>
-          <TabsContent className="animate-tab-content-in" value="productivity">
+          <TabsContent value="productivity">
             <div className="flex flex-col gap-3">
               {productivity.map((tool) => (
                 <ToolRow key={tool.name} {...tool} />
               ))}
             </div>
           </TabsContent>
-          <TabsContent className="animate-tab-content-in" value="skills">
+          <TabsContent value="skills">
             <div className="flex flex-col gap-3">
               {skills.map((skill) => (
-                <div key={skill.name} className="flex items-baseline gap-2 min-w-0">
-                  {skill.url ? (
-                    <HoverLink href={skill.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {skill.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="shrink-0 font-medium text-foreground">{skill.name}</span>
-                  )}
-                  <span className="truncate text-sm text-muted-foreground">{skill.description}</span>
-                </div>
+                <ToolRow key={skill.name} {...skill} />
               ))}
             </div>
           </TabsContent>

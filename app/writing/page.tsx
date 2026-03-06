@@ -5,8 +5,8 @@ import useSWR from "swr"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
-import { motion, useReducedMotion } from "framer-motion"
-import { stagger, fadeUp, noMotion } from "@/lib/animations"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -107,8 +107,7 @@ export default function WritingPage() {
     fetcher,
     { revalidateOnFocus: false }
   )
-  const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : fadeUp
+  const { item, containerProps } = useEntranceMotion()
 
   const posts = data?.posts ?? []
   const groups = groupPosts(posts)
@@ -117,9 +116,7 @@ export default function WritingPage() {
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : stagger}
-      initial="hidden"
-      animate="show"
+      {...containerProps}
     >
       {/* Header */}
       <motion.header variants={item} className="flex items-center justify-between">

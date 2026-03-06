@@ -11,8 +11,8 @@ import {
   extractHeadings,
 } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
-import { motion, useReducedMotion } from "framer-motion"
-import { stagger, fadeUp, noMotion } from "@/lib/animations"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 import type { NotionWritingPost, NotionBlock } from "@/lib/notion"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -52,8 +52,7 @@ interface ArticleContentProps {
 
 export function ArticleContent({ slug, from }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
-  const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : fadeUp
+  const { item, containerProps } = useEntranceMotion()
 
   const isFromHome = from === "home"
   const backLabel = isFromHome ? "Home" : "Writing"
@@ -100,9 +99,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
   return (
     <motion.div
       className="mx-auto max-w-4xl px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : stagger}
-      initial="hidden"
-      animate="show"
+      {...containerProps}
     >
       <div className="md:grid md:grid-cols-[1fr_200px] md:gap-12">
         <main className="min-w-0 max-w-xl">
