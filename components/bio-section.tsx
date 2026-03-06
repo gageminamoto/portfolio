@@ -41,24 +41,31 @@ interface BioSectionProps {
 }
 
 export function BioSection({ bio, className = "" }: BioSectionProps) {
-  const parts = parseBio(bio)
+  const paragraphs = bio.split("\n\n")
 
   return (
-    <p className={`whitespace-pre-line text-base leading-relaxed text-muted-foreground ${className}`}>
-      {parts.map((part, index) => {
-        if (typeof part === "string") {
-          return part
-        }
+    <div className={`text-base leading-relaxed text-muted-foreground ${className}`}>
+      {paragraphs.map((paragraph, pIndex) => {
+        const parts = parseBio(paragraph)
         return (
-          <HoverLink
-            key={index}
-            href={part.url}
-            className="no-underline decoration-transparent hover:decoration-foreground"
-          >
-            {part.text}
-          </HoverLink>
+          <p key={pIndex} className={pIndex > 0 ? "mt-4" : ""}>
+            {parts.map((part, index) => {
+              if (typeof part === "string") {
+                return part
+              }
+              return (
+                <HoverLink
+                  key={index}
+                  href={part.url}
+                  className="no-underline decoration-transparent hover:decoration-foreground"
+                >
+                  {part.text}
+                </HoverLink>
+              )
+            })}
+          </p>
         )
       })}
-    </p>
+    </div>
   )
 }
