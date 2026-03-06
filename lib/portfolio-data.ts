@@ -71,6 +71,8 @@ export const portfolioData: PortfolioData = {
     { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
     { name: "Figma", url: "https://www.figma.com/", description: "Design and collaboration" },
     { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
+    { name: "Agentation", url: "https://agentation.dev/", description: "Visual feedback for AI agents" },
+    { name: "DialKit", url: "https://joshpuckett.me/dialkit", description: "Floating control panel for React" },
   ],
   productivity: [
     { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
