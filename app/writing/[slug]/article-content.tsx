@@ -11,6 +11,8 @@ import {
   extractHeadings,
 } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
+import { motion, useReducedMotion } from "framer-motion"
+import { stagger, fadeUp, noMotion } from "@/lib/animations"
 import type { NotionWritingPost, NotionBlock } from "@/lib/notion"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -50,6 +52,8 @@ interface ArticleContentProps {
 
 export function ArticleContent({ slug, from }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
 
   const isFromHome = from === "home"
   const backLabel = isFromHome ? "Home" : "Writing"
@@ -94,11 +98,16 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
   const headings = extractHeadings(blocks)
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16 md:py-24">
+    <motion.div
+      className="mx-auto max-w-4xl px-6 py-16 md:py-24"
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
+    >
       <div className="md:grid md:grid-cols-[1fr_200px] md:gap-12">
         <main className="min-w-0 max-w-xl">
           {/* Header */}
-          <header className="mb-10 flex flex-col gap-6">
+          <motion.header variants={item} className="mb-10 flex flex-col gap-6">
             <nav className="flex items-center justify-between">
               <Link
                 href={backHref}
@@ -139,7 +148,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
                 )}
               </>
             )}
-          </header>
+          </motion.header>
 
           {/* Mobile TOC */}
           {!isLoading && !error && headings.length > 0 && (
@@ -149,6 +158,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
           )}
 
           {/* Content */}
+          <motion.div variants={item}>
           {isLoading && <ArticleSkeleton />}
 
           {error && (
@@ -172,6 +182,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
           )}
 
           {!isLoading && !error && <ArticleFooter nextPost={nextPost} />}
+          </motion.div>
         </main>
 
         {/* Desktop TOC sidebar */}
@@ -181,6 +192,6 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
           </aside>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
