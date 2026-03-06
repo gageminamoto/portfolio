@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { Mail, Check } from "lucide-react"
+import { Mail, Check, Info } from "lucide-react"
 import useSWR from "swr"
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
 const EMAIL = "info@gageminamoto.com"
 
@@ -32,6 +33,24 @@ function CommitTracker() {
       <span className="text-muted-foreground/40">{"·"}</span>
       <span>{commit.relativeTime}</span>
     </div>
+  )
+}
+
+function Colophon() {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          aria-label="Colophon"
+          className="cursor-default text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground"
+        >
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={6} className="text-left">
+        Built with Next.js and TypeScript.<br />Content from Notion. Set in Inter.<br />Deployed on Vercel.<br />Made with v0, Conductor, and Claude.
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -86,7 +105,10 @@ export function SiteFooter() {
   return (
     <footer className="flex flex-col gap-4 border-t border-border pt-6 pb-10 sm:flex-row sm:items-center sm:justify-between">
       <EmailPill />
-      <CommitTracker />
+      <div className="flex items-center gap-2">
+        <CommitTracker />
+        <Colophon />
+      </div>
     </footer>
   )
 }
