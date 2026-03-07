@@ -6,7 +6,23 @@ import type {
 
 export const notion = new Client({
   auth: process.env.NOTION_API_KEY,
+  notionVersion: "2025-09-03",
 })
+
+const dataSourceCache = new Map<string, string>()
+
+async function resolveDataSourceId(databaseId: string): Promise<string> {
+  const cached = dataSourceCache.get(databaseId)
+  if (cached) return cached
+
+  const db = await notion.databases.retrieve({ database_id: databaseId })
+  const dsId = "data_sources" in db ? db.data_sources[0]?.id : undefined
+  if (!dsId) {
+    throw new Error(`No data source found for database ${databaseId}`)
+  }
+  dataSourceCache.set(databaseId, dsId)
+  return dsId
+}
 
 export interface NotionWritingPost {
   id: string
@@ -51,8 +67,9 @@ export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> 
     throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
   }
 
-  const response = await notion.databases.query({
-    database_id: databaseId,
+  const dataSourceId = await resolveDataSourceId(databaseId)
+  const response = await notion.dataSources.query({
+    data_source_id: dataSourceId,
     page_size: limit,
     sorts: [
       {
@@ -78,12 +95,13 @@ export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
     throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
   }
 
+  const dataSourceId = await resolveDataSourceId(databaseId)
   const allPages: PageObjectResponse[] = []
   let cursor: string | undefined = undefined
 
   do {
-    const response = await notion.databases.query({
-      database_id: databaseId,
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
       start_cursor: cursor,
       sorts: [
         {
@@ -116,8 +134,9 @@ export async function fetchPostBySlug(
 
   // Try filtering by Slug property first (only if the property exists in the DB)
   try {
-    const response = await notion.databases.query({
-      database_id: databaseId,
+    const dataSourceId = await resolveDataSourceId(databaseId)
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
       filter: {
         property: "Slug",
         rich_text: {
@@ -149,6 +168,101 @@ export async function fetchPostBySlug(
 export type NotionBlock = BlockObjectResponse & {
   children?: NotionBlock[]
 }
+
+// ─── Tools ───────────────────────────────────────────────────────────
+
+export type ToolCategory = "Build" | "Productivity" | "Skills"
+
+export interface NotionToolItem {
+  id: string
+  name: string
+  url: string | null
+  description: string
+  category: ToolCategory
+  lastEdited: string
+}
+
+export interface ToolsResponse {
+  tools: NotionToolItem[]
+  lastUpdated: string | null
+}
+
+function getUrl(page: PageObjectResponse): string | null {
+  const urlProp = page.properties["URL"]
+  if (urlProp?.type === "url") return urlProp.url
+  return null
+}
+
+function getDescription(page: PageObjectResponse): string {
+  const descProp = page.properties["Description"]
+  if (descProp?.type === "rich_text") {
+    return descProp.rich_text.map((t) => t.plain_text).join("") || ""
+  }
+  return ""
+}
+
+function getCategory(page: PageObjectResponse): ToolCategory {
+  const catProp = page.properties["Category"]
+  if (catProp?.type === "select" && catProp.select?.name) {
+    return catProp.select.name as ToolCategory
+  }
+  return "Build"
+}
+
+function getOrder(page: PageObjectResponse): number {
+  const orderProp = page.properties["Order"]
+  if (orderProp?.type === "number" && orderProp.number != null) {
+    return orderProp.number
+  }
+  return 999
+}
+
+export async function fetchTools(): Promise<ToolsResponse> {
+  const databaseId = process.env.NOTION_TOOLS_DATABASE_ID
+
+  if (!databaseId) {
+    throw new Error("NOTION_TOOLS_DATABASE_ID environment variable is not set")
+  }
+
+  const dataSourceId = await resolveDataSourceId(databaseId)
+  const allPages: PageObjectResponse[] = []
+  let cursor: string | undefined = undefined
+
+  do {
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
+      start_cursor: cursor,
+      sorts: [
+        { property: "Category", direction: "ascending" },
+        { property: "Order", direction: "ascending" },
+      ],
+    })
+    allPages.push(...(response.results as PageObjectResponse[]))
+    cursor = response.has_more ? response.next_cursor ?? undefined : undefined
+  } while (cursor)
+
+  let latestEdit: string | null = null
+
+  const tools: NotionToolItem[] = allPages.map((page) => {
+    const edited = page.last_edited_time
+    if (!latestEdit || edited > latestEdit) {
+      latestEdit = edited
+    }
+
+    return {
+      id: page.id,
+      name: getTitle(page),
+      url: getUrl(page),
+      description: getDescription(page),
+      category: getCategory(page),
+      lastEdited: edited,
+    }
+  })
+
+  return { tools, lastUpdated: latestEdit }
+}
+
+// ─── Post Blocks ─────────────────────────────────────────────────────
 
 export async function fetchPostBlocks(
   pageId: string
