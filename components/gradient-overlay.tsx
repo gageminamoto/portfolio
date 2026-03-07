@@ -43,7 +43,7 @@ export function GradientOverlay() {
     <AnimatePresence>
       {shaderEnabled && (
         <motion.div
-          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
+          className="pointer-events-none absolute inset-x-0 top-0 h-full -z-10"
           aria-hidden="true"
           initial={{ opacity: 0 }}
           animate={{ opacity: p.opacity }}
