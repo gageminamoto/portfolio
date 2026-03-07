@@ -2,12 +2,6 @@
 // When connecting to Notion, replace static arrays with fetched data from the API.
 // The "writing" section is designed to be driven by a Notion CMS.
 
-export interface ToolItem {
-  name: string
-  url: string
-  description: string
-}
-
 export interface WritingItem {
   title: string
   slug: string
@@ -25,12 +19,6 @@ export interface LearningItem {
 }
 
 export interface HobbyItem {
-  name: string
-  url?: string
-  description: string
-}
-
-export interface SkillItem {
   name: string
   url?: string
   description: string
@@ -61,9 +49,6 @@ export interface PortfolioData {
   designManifesto: ManifestoItem[]
   email?: string
   socials: SocialLink[]
-  build: ToolItem[]
-  productivity: ToolItem[]
-  skills: SkillItem[]
   writing: WritingItem[]
   hobbies: HobbyItem[]
   projects: ProjectItem[]
@@ -93,37 +78,6 @@ Today, I use that foundation to design thoughtful software and brands in and for
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
     { platform: "github", url: "https://github.com/gageminamoto", label: "GitHub" },
     { platform: "linkedin", url: "https://linkedin.com/in/gageminamoto", label: "LinkedIn" }, // Fixed closing quotation mark
-  ],
-  build: [
-    { name: "Cursor", url: "https://www.cursor.com/", description: "Code editor" },
-    { name: "Conductor", url: "https://conductor.is/", description: "Agent orchestration" },
-    { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
-    { name: "Figma", url: "https://www.figma.com/", description: "Design and collaboration" },
-    { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
-    { name: "Agentation", url: "https://agentation.dev/", description: "Visual feedback for AI agents" },
-    { name: "DialKit", url: "https://joshpuckett.me/dialkit", description: "Floating control panel for React" },
-  ],
-  productivity: [
-    { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
-    { name: "Notion", url: "https://www.notion.so/", description: "Notes and project management" },
-    { name: "Inflight", url: "https://www.inflight.co/", description: "Design feedback" },
-    { name: "CleanShot X", url: "https://cleanshot.com/", description: "Screen capture and annotation" },
-    { name: "Eagle", url: "https://en.eagle.cool/", description: "Inspo library" },
-    { name: "Typefully", url: "https://typefully.com/", description: "Writing + scheduling" },
-    { name: "Superwhisper", url: "https://superwhisper.com/", description: "Voice dictation" },
-    { name: "Notion Agents", url: "https://www.notion.so/product/agents", description: "Autonomous workflows in Notion" },
-  ],
-  skills: [
-    { name: "smart-commits", description: "Clear commit messages" },
-    { name: "simplify", description: "Code review for reuse and quality" },
-    { name: "claude-developer-platform", url: "https://skills.sh/anthropics/skills/claude-api", description: "Build apps with Claude API" },
-    { name: "web-design-guidelines", url: "https://skills.sh/vercel-labs/agent-skills/web-design-guidelines", description: "UI review for Web Interface Guidelines" },
-    { name: "web-animation-design", description: "Natural web animations" },
-    { name: "baseline-ui", url: "https://skills.sh/ibelick/ui-skills/baseline-ui", description: "Opinionated UI baseline" },
-    { name: "frontend-design", url: "https://skills.sh/anthropics/skills/frontend-design", description: "Production-grade frontend interfaces" },
-    { name: "vercel-react-best-practices", url: "https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices", description: "React & Next.js performance" },
-    { name: "agentation", url: "https://skills.sh/benjitaylor/agentation/agentation", description: "Visual feedback for AI agents" },
-    { name: "find-skills", url: "https://skills.sh/vercel-labs/skills/find-skills", description: "Discover and install agent skills" },
   ],
   writing: [
     { title: "Blog 1", slug: "blog-1" },
