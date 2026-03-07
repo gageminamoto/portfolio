@@ -30,6 +30,17 @@ export interface HobbyItem {
   description: string
 }
 
+export interface SkillItem {
+  name: string
+  url?: string
+  description: string
+}
+
+export interface ManifestoItem {
+  principle: string
+  description: string
+}
+
 export interface ProjectItem {
   name: string
   url?: string
@@ -46,10 +57,13 @@ export interface SocialLink {
 export interface PortfolioData {
   name: string
   bio: string
+  extendedBio: string
+  designManifesto: ManifestoItem[]
   email?: string
   socials: SocialLink[]
   build: ToolItem[]
   productivity: ToolItem[]
+  skills: SkillItem[]
   writing: WritingItem[]
   hobbies: HobbyItem[]
   projects: ProjectItem[]
@@ -58,7 +72,22 @@ export interface PortfolioData {
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Sofware Designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
+  bio: "Software designer building everyday products. Growing Hawai'i's local design community. Building\u00a0[Mizen](https://www.mizen.recipes/).",
+  extendedBio: `I’m a software designer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai’i.
+
+I grew up in Hawai’i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
+
+I first stepped into design through esports and brand marketing at the [University of Hawai’i](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
+
+Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where great design is still rare but deeply needed.`,
+  designManifesto: [
+    /*
+    { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
+    { principle: "Details compound", description: "Typography, spacing, and micro-interactions build trust over time. Sweat the small\u00a0stuff." },
+    { principle: "Design with code", description: "The best design happens in the medium it ships in. Prototype in code, iterate\u00a0fast." },
+    { principle: "Ship and learn", description: "Perfect is the enemy of shipped. Put it in front of real people and\u00a0listen." },
+    */
+  ],
   email: "info@gageminamoto.com",
   socials: [
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
@@ -71,6 +100,8 @@ export const portfolioData: PortfolioData = {
     { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
     { name: "Figma", url: "https://www.figma.com/", description: "Design and collaboration" },
     { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
+    { name: "Agentation", url: "https://agentation.dev/", description: "Visual feedback for AI agents" },
+    { name: "DialKit", url: "https://joshpuckett.me/dialkit", description: "Floating control panel for React" },
   ],
   productivity: [
     { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
@@ -80,6 +111,19 @@ export const portfolioData: PortfolioData = {
     { name: "Eagle", url: "https://en.eagle.cool/", description: "Inspo library" },
     { name: "Typefully", url: "https://typefully.com/", description: "Writing + scheduling" },
     { name: "Superwhisper", url: "https://superwhisper.com/", description: "Voice dictation" },
+    { name: "Notion Agents", url: "https://www.notion.so/product/agents", description: "Autonomous workflows in Notion" },
+  ],
+  skills: [
+    { name: "smart-commits", description: "Clear commit messages" },
+    { name: "simplify", description: "Code review for reuse and quality" },
+    { name: "claude-developer-platform", url: "https://skills.sh/anthropics/skills/claude-api", description: "Build apps with Claude API" },
+    { name: "web-design-guidelines", url: "https://skills.sh/vercel-labs/agent-skills/web-design-guidelines", description: "UI review for Web Interface Guidelines" },
+    { name: "web-animation-design", description: "Natural web animations" },
+    { name: "baseline-ui", url: "https://skills.sh/ibelick/ui-skills/baseline-ui", description: "Opinionated UI baseline" },
+    { name: "frontend-design", url: "https://skills.sh/anthropics/skills/frontend-design", description: "Production-grade frontend interfaces" },
+    { name: "vercel-react-best-practices", url: "https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices", description: "React & Next.js performance" },
+    { name: "agentation", url: "https://skills.sh/benjitaylor/agentation/agentation", description: "Visual feedback for AI agents" },
+    { name: "find-skills", url: "https://skills.sh/vercel-labs/skills/find-skills", description: "Discover and install agent skills" },
   ],
   writing: [
     { title: "Blog 1", slug: "blog-1" },
@@ -92,8 +136,8 @@ export const portfolioData: PortfolioData = {
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
-    { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online recipes", status: "production" },
-    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive experience", status: "production" },
+    { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online\u00a0recipes", status: "production" },
+    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive\u00a0experience", status: "production" },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },

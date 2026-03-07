@@ -7,56 +7,22 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
-import dynamic from "next/dynamic"
-
-// Dynamically import PokemonCards so a missing framer-motion
-// doesn't crash the full page before React hydrates
-const PokemonCards = dynamic(
-  () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
-  { ssr: false, loading: () => <span className="font-medium text-foreground">Pokemon cards</span> }
-)
-
-function Section({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-sm text-muted-foreground">{title}</h2>
-      {children}
-    </section>
-  )
-}
-
-function ToolRow({
-  name,
-  url,
-  description,
-}: {
-  name: string
-  url: string
-  description: string
-}) {
-  return (
-    <div className="flex items-baseline gap-2 min-w-0">
-      <HoverLink href={url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-        {name}
-      </HoverLink>
-      <span className="truncate text-sm text-muted-foreground">{description}</span>
-    </div>
-  )
-}
+import { Section } from "@/components/section"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 
 export function LayoutOne() {
-  const { name, bio, socials, email, build, productivity, projects, hobbies, learning } = portfolioData
+  const { name, bio, socials, email, projects } = portfolioData
+  const { item, containerProps } = useEntranceMotion()
 
   return (
-    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
+    <motion.main
+      id="main-content"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
+      {...containerProps}
+    >
       {/* Header */}
-      <header className="flex flex-col gap-6">
+      <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -67,101 +33,47 @@ export function LayoutOne() {
           <ThemeToggle />
         </div>
         <SocialIcons socials={socials} email={email} />
-      </header>
+      </motion.header>
 
       {/* Projects */}
-      <Section title="Projects">
-        <div className="flex flex-col gap-4">
-          {projects.map((project) => (
-            <div key={project.name} className="flex flex-col gap-0.5">
-              {project.url ? (
-                <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                  {project.name}
-                </HoverLink>
-              ) : (
-                <span className="font-medium text-foreground">{project.name}</span>
-              )}
-              <span className="text-sm text-muted-foreground">{project.description}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Writing — Notion CMS */}
-      <Section title="Writing">
-        <WritingSection variant="default" />
-      </Section>
-
-      {/* Build tools */}
-      <Section title="Build">
-        <div className="flex flex-col gap-3">
-          {build.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Productivity */}
-      <Section title="Productivity">
-        <div className="flex flex-col gap-3">
-          {productivity.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Learning */}
-      <Section title="Learning">
-        <div className="flex flex-col gap-3">
-          {learning.map((item) => (
-            <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-              {item.url ? (
-                <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                  {item.name}
-                </HoverLink>
-              ) : (
-                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
-              )}
-              <span className="truncate text-sm text-muted-foreground">{item.description}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Hobbies */}
-      <Section title="Hobbies">
-        <div className="flex flex-col gap-3">
-          {hobbies.map((hobby) => {
-            // Pokemon cards entry gets the interactive fan component
-            if (hobby.name === "Pokemon cards") {
-              return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                  <PokemonCards />
-                  <span className="truncate text-sm text-muted-foreground">
-                    {hobby.description}
-                  </span>
-                </div>
-              )
-            }
-            return (
-              <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                {hobby.url ? (
-                  <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                    {hobby.name}
+      <motion.div variants={item}>
+        <Section title="Projects">
+          <div className="flex flex-col gap-4">
+            {projects.map((project) => (
+              <div key={project.name} className="flex flex-col gap-0.5">
+                {project.url ? (
+                  <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                    {project.name}
                   </HoverLink>
                 ) : (
-                  <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                  <span className="font-medium text-foreground">{project.name}</span>
                 )}
-                <span className="truncate text-sm text-muted-foreground">
-                  {hobby.description}
-                </span>
+                <span className="text-sm text-muted-foreground">{project.description}</span>
               </div>
-            )
-          })}
-        </div>
-      </Section>
+            ))}
+          </div>
+        </Section>
+      </motion.div>
 
-      <SiteFooter />
-    </main>
+      {/* Writing — Notion CMS */}
+      <motion.div variants={item}>
+        <Section title="Writing" href="/writing">
+          <WritingSection variant="default" />
+        </Section>
+      </motion.div>
+
+      {/* About */}
+      <motion.div variants={item}>
+        <Section title="About" href="/about">
+          <p className="text-sm text-muted-foreground">
+            Design manifesto, tools, and&nbsp;hobbies.
+          </p>
+        </Section>
+      </motion.div>
+
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
+    </motion.main>
   )
 }

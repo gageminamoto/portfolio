@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Albert_Sans, JetBrains_Mono, Darker_Grotesque } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { Agentation } from 'agentation'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
@@ -53,6 +54,7 @@ export default function RootLayout({
           {children}
         </ThemeProvider>
         <Analytics />
+        {process.env.NODE_ENV === "development" && <Agentation />}
       </body>
     </html>
   )
