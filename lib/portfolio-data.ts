@@ -57,7 +57,7 @@ export interface PortfolioData {
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Software designer building everyday products.\n\nCurrently, designing the simple {software|products|websites|brands} at Negi.\n\nGrowing Hawai’i’s local design community.\n\nBuilding [Mizen](https://www.mizen.recipes/), calm and simple way to cook online recipes.",
+  bio: "Software designer building everyday products.\n\nCurrently, designing simple {software|experiences|tools} at Negi.\n\nGrowing Hawai’i’s local design community.\n\nBuilding [Mizen](https://www.mizen.recipes/), calm and simple way to cook online recipes.",
   extendedBio: `I’m a software designer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai’i.
 
 I grew up in Hawai’i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.

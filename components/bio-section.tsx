@@ -51,9 +51,10 @@ function isBioSwitcher(part: BioPart): part is BioSwitcher {
 interface BioSectionProps {
   bio: string
   className?: string
+  onWordChange?: (word: string) => void
 }
 
-export function BioSection({ bio, className = "" }: BioSectionProps) {
+export function BioSection({ bio, className = "", onWordChange }: BioSectionProps) {
   const paragraphs = bio.split("\n\n")
 
   return (
@@ -78,7 +79,7 @@ export function BioSection({ bio, className = "" }: BioSectionProps) {
                 )
               }
               if (isBioSwitcher(part)) {
-                return <WordSwitcher key={index} options={part.options} />
+                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} />
               }
               return null
             })}
