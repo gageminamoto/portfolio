@@ -102,7 +102,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
       {...containerProps}
     >
       <div className="md:grid md:grid-cols-[1fr_200px] md:gap-12">
-        <main className="min-w-0 max-w-xl">
+        <main id="main-content" className="min-w-0 max-w-xl">
           {/* Header */}
           <motion.header variants={item} className="mb-10 flex flex-col gap-6">
             <nav className="flex items-center justify-between">
@@ -110,7 +110,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
                 href={backHref}
                 className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
               >
-                <ChevronLeft className="h-3.5 w-3.5" />
+                <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
                 {backLabel}
               </Link>
               <div className="flex items-center gap-2">
@@ -121,9 +121,9 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
                   className="inline-flex items-center text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm cursor-pointer"
                 >
                   {copied ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
                   ) : (
-                    <LinkIcon className="h-3.5 w-3.5" />
+                    <LinkIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                 </button>
                 <ThemeToggle />

@@ -11,19 +11,24 @@ export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = await fetchPostBySlug(slug)
 
-  if (!post) {
+  try {
+    const post = await fetchPostBySlug(slug)
+
+    if (!post) {
+      return { title: "Not Found" }
+    }
+
+    return {
+      title: `${post.title} — Gage Minamoto`,
+      openGraph: {
+        title: post.title,
+        type: "article",
+        publishedTime: post.date ?? undefined,
+      },
+    }
+  } catch {
     return { title: "Not Found" }
-  }
-
-  return {
-    title: `${post.title} — Gage Minamoto`,
-    openGraph: {
-      title: post.title,
-      type: "article",
-      publishedTime: post.date ?? undefined,
-    },
   }
 }
 

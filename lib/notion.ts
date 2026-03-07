@@ -32,6 +32,17 @@ export interface NotionWritingPost {
   url: string
 }
 
+let _warnedMissingDbId = false
+
+function warnMissingDatabaseId(): void {
+  if (!_warnedMissingDbId) {
+    console.warn(
+      "[notion] NOTION_BLOG_DATABASE_ID is not set — Notion writing features are disabled"
+    )
+    _warnedMissingDbId = true
+  }
+}
+
 function getTitle(page: PageObjectResponse): string {
   const titleProp = Object.values(page.properties).find(
     (p) => p.type === "title"
@@ -64,7 +75,8 @@ export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> 
   const databaseId = process.env.NOTION_BLOG_DATABASE_ID
 
   if (!databaseId) {
-    throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
+    warnMissingDatabaseId()
+    return []
   }
 
   const dataSourceId = await resolveDataSourceId(databaseId)
@@ -92,7 +104,8 @@ export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
   const databaseId = process.env.NOTION_BLOG_DATABASE_ID
 
   if (!databaseId) {
-    throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
+    warnMissingDatabaseId()
+    return []
   }
 
   const dataSourceId = await resolveDataSourceId(databaseId)
@@ -129,7 +142,8 @@ export async function fetchPostBySlug(
   const databaseId = process.env.NOTION_BLOG_DATABASE_ID
 
   if (!databaseId) {
-    throw new Error("NOTION_BLOG_DATABASE_ID environment variable is not set")
+    warnMissingDatabaseId()
+    return null
   }
 
   // Try filtering by Slug property first (only if the property exists in the DB)
