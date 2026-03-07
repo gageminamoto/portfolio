@@ -67,7 +67,7 @@ export default function RootLayout({
         </ThemeProvider>
         <Analytics />
         {process.env.NODE_ENV === "development" && <Agentation />}
-        <DialKitProvider />
+        {process.env.NODE_ENV === "development" && <DialKitProvider />}
       </body>
     </html>
   )
