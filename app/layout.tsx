@@ -3,6 +3,9 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Agentation } from 'agentation'
 import { ThemeProvider } from '@/components/theme-provider'
+import { DialKitProvider } from '@/components/dialkit-provider'
+import { GradientWordProvider } from '@/components/gradient-word-context'
+import { GradientOverlay } from '@/components/gradient-overlay'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -57,10 +60,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <GradientWordProvider>
+            <GradientOverlay />
+            {children}
+          </GradientWordProvider>
         </ThemeProvider>
         <Analytics />
         {process.env.NODE_ENV === "development" && <Agentation />}
+        <DialKitProvider />
       </body>
     </html>
   )

@@ -8,17 +8,19 @@ import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
+import { useGradientWord } from "@/components/gradient-word-context"
 import { motion } from "framer-motion"
 import { useEntranceMotion } from "@/lib/animations"
 
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
   const { item, containerProps } = useEntranceMotion()
+  const { setActiveWord } = useGradientWord()
 
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
       {...containerProps}
     >
       {/* Header */}
@@ -28,7 +30,7 @@ export function LayoutOne() {
             <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
               {name}
             </h1>
-            <BioSection bio={bio} />
+            <BioSection bio={bio} onWordChange={setActiveWord} />
           </div>
           <ThemeToggle />
         </div>
