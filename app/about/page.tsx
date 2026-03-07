@@ -144,7 +144,7 @@ export default function AboutPage() {
               {[
                 ...build.map((t) => ({ ...t, tag: "Build" as const })),
                 ...productivity.map((t) => ({ ...t, tag: "Productivity" as const })),
-                ...skills.map((s) => ({ ...s, tag: "Skills" as const })),
+                ...skills.map((s) => ({ ...s, tag: "Skills" as const, isSkill: true })),
               ].map((item) => (
                 <ToolRow key={item.name} {...item} />
               ))}
@@ -167,7 +167,7 @@ export default function AboutPage() {
           <TabsContent value="skills">
             <div className="flex flex-col gap-3">
               {skills.map((skill) => (
-                <ToolRow key={skill.name} {...skill} />
+                <ToolRow key={skill.name} {...skill} isSkill />
               ))}
             </div>
           </TabsContent>
