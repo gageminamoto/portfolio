@@ -78,7 +78,7 @@ export function SocialIcons({
         )
       })}
       {email && (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <button
               className="flex cursor-pointer items-center gap-1.5 text-muted-foreground transition-colors duration-150 ease hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
