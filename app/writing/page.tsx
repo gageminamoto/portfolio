@@ -5,6 +5,8 @@ import useSWR from "swr"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -105,17 +107,19 @@ export default function WritingPage() {
     fetcher,
     { revalidateOnFocus: false }
   )
+  const { item, containerProps } = useEntranceMotion()
 
   const posts = data?.posts ?? []
   const groups = groupPosts(posts)
 
   return (
-    <main
+    <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      {...containerProps}
     >
       {/* Header */}
-      <header className="flex items-center justify-between">
+      <motion.header variants={item} className="flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -124,17 +128,17 @@ export default function WritingPage() {
           Home
         </Link>
         <ThemeToggle />
-      </header>
+      </motion.header>
 
       {/* Title */}
-      <div className="flex flex-col gap-4">
+      <motion.div variants={item} className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Writing
         </h1>
-      </div>
+      </motion.div>
 
       {/* Posts list */}
-      <div className="flex flex-col gap-10">
+      <motion.div variants={item} className="flex flex-col gap-10">
         {isLoading && (
           <div
             className="flex flex-col gap-3"
@@ -169,9 +173,11 @@ export default function WritingPage() {
               </div>
             </section>
           ))}
-      </div>
+      </motion.div>
 
-      <SiteFooter />
-    </main>
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
+    </motion.main>
   )
 }

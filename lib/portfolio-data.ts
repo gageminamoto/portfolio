@@ -2,12 +2,6 @@
 // When connecting to Notion, replace static arrays with fetched data from the API.
 // The "writing" section is designed to be driven by a Notion CMS.
 
-export interface ToolItem {
-  name: string
-  url: string
-  description: string
-}
-
 export interface WritingItem {
   title: string
   slug: string
@@ -55,8 +49,6 @@ export interface PortfolioData {
   designManifesto: ManifestoItem[]
   email?: string
   socials: SocialLink[]
-  build: ToolItem[]
-  productivity: ToolItem[]
   writing: WritingItem[]
   hobbies: HobbyItem[]
   projects: ProjectItem[]
@@ -66,13 +58,13 @@ export interface PortfolioData {
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
   bio: "Software designer building everyday products. Growing Hawai'i's local design community. Building\u00a0[Mizen](https://www.mizen.recipes/).",
-  extendedBio: `I'm a software designer based in Hawai‘i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai‘i.
+  extendedBio: `I’m a software designer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai’i.
 
-I grew up in Hawai‘i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
+I grew up in Hawai’i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
 
-I first stepped into design through esports and brand marketing at the University of Hawai‘i, then continued growing at Servco. Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
+I first stepped into design through esports and brand marketing at the [University of Hawai’i](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
 
-Today, I use that foundation to design thoughtful software and brands in and for Hawai‘i, where great design is still rare but deeply needed.`,
+Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where great design is still rare but deeply needed.`,
   designManifesto: [
     /*
     { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
@@ -86,25 +78,6 @@ Today, I use that foundation to design thoughtful software and brands in and for
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
     { platform: "github", url: "https://github.com/gageminamoto", label: "GitHub" },
     { platform: "linkedin", url: "https://linkedin.com/in/gageminamoto", label: "LinkedIn" }, // Fixed closing quotation mark
-  ],
-  build: [
-    { name: "Cursor", url: "https://www.cursor.com/", description: "Code editor" },
-    { name: "Conductor", url: "https://conductor.is/", description: "Agent orchestration" },
-    { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
-    { name: "Figma", url: "https://www.figma.com/", description: "Design and collaboration" },
-    { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
-    { name: "Agentation", url: "https://agentation.dev/", description: "Visual feedback for AI agents" },
-    { name: "DialKit", url: "https://joshpuckett.me/dialkit", description: "Floating control panel for React" },
-  ],
-  productivity: [
-    { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
-    { name: "Notion", url: "https://www.notion.so/", description: "Notes and project management" },
-    { name: "Inflight", url: "https://www.inflight.co/", description: "Design feedback" },
-    { name: "CleanShot X", url: "https://cleanshot.com/", description: "Screen capture and annotation" },
-    { name: "Eagle", url: "https://en.eagle.cool/", description: "Inspo library" },
-    { name: "Typefully", url: "https://typefully.com/", description: "Writing + scheduling" },
-    { name: "Superwhisper", url: "https://superwhisper.com/", description: "Voice dictation" },
-    { name: "Notion Agents", url: "https://www.notion.so/product/agents", description: "Autonomous workflows in Notion" },
   ],
   writing: [
     { title: "Blog 1", slug: "blog-1" },
