@@ -1,6 +1,8 @@
 "use client"
 
+import React from "react"
 import { HoverLink } from "@/components/hover-link"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { WordSwitcher } from "@/components/word-switcher"
 
 interface BioLink {
@@ -65,6 +67,21 @@ export function BioSection({ bio, className = "", onWordChange }: BioSectionProp
           <p key={pIndex} className={pIndex > 0 ? "mt-4" : ""}>
             {parts.map((part, index) => {
               if (typeof part === "string") {
+                if (part.includes("Negi")) {
+                  const [before, after] = part.split("Negi")
+                  return (
+                    <React.Fragment key={index}>
+                      {before}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="underline decoration-dashed decoration-muted-foreground/50 underline-offset-[3px] transition-colors hover:decoration-foreground cursor-default">Negi</span>
+                        </TooltipTrigger>
+                        <TooltipContent>Coming soon</TooltipContent>
+                      </Tooltip>
+                      {after}
+                    </React.Fragment>
+                  )
+                }
                 return part
               }
               if (isBioLink(part)) {
