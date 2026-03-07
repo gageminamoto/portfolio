@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback, useEffect, useSyncExternalStore } from "react"
 import {
   motion,
   AnimatePresence,
@@ -437,14 +437,11 @@ export function PokemonCards() {
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const preloadedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
-
-  // Detect touch device on mount
-  useEffect(() => {
-    setIsTouchDevice(
-      "ontouchstart" in window || navigator.maxTouchPoints > 0
-    )
-  }, [])
+  const isTouchDevice = useSyncExternalStore(
+    () => () => {},
+    () => "ontouchstart" in window || navigator.maxTouchPoints > 0,
+    () => false
+  )
 
   const preloadAll = useCallback(() => {
     if (preloadedRef.current) return

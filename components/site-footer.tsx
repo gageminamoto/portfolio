@@ -11,7 +11,7 @@ const fallbackCommit = {
   hash: "-------",
   additions: 0,
   deletions: 0,
-  relativeTime: "...",
+  relativeTime: "…",
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -42,9 +42,9 @@ function Colophon() {
       <TooltipTrigger asChild>
         <button
           aria-label="Colophon"
-          className="cursor-default text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground"
+          className="cursor-default text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
         >
-          <Info className="h-3.5 w-3.5" />
+          <Info className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
       </TooltipTrigger>
       <TooltipContent side="bottom" sideOffset={6} className="text-left">
@@ -81,12 +81,12 @@ function EmailPill() {
         onClick={handleCopy}
         aria-label={`Copy email address ${EMAIL}`}
         aria-describedby="email-tooltip"
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color] duration-150 ease-out hover:bg-accent hover:border-foreground/20"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color] duration-150 ease-out hover:bg-accent hover:border-foreground/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {copied ? (
-          <Check className="h-3.5 w-3.5 text-emerald-500" />
+          <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
         ) : (
-          <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+          <Mail className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
         )}
         <span>{EMAIL}</span>
       </button>

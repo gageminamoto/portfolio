@@ -31,6 +31,8 @@ export function NotionImage({ block }: NotionImageProps) {
           onClick={() => setOpen(true)}
           className="w-full cursor-zoom-in rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
+          {/* Dynamic Notion and Vercel Blob URLs are not practical to maintain in a static next/image allowlist here. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
             alt={alt}
