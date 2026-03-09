@@ -18,7 +18,7 @@ import type { NotionToolItem } from "@/lib/notion"
 
 const PokemonCards = dynamic(
   () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
-  { ssr: false, loading: () => <span className="font-medium text-foreground">Pokemon cards</span> }
+  { ssr: false, loading: () => <span className="relative inline-flex font-medium text-foreground">Pokemon cards</span> }
 )
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())

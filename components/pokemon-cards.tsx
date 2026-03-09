@@ -233,6 +233,7 @@ function Card3DModal({
   const isDragging = useRef(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const lastMouse = useRef({ x: 0, y: 0 })
+  const cachedRect = useRef<DOMRect | null>(null)
   const [isFlipped, setIsFlipped] = useState(false)
 
   // Motion values for 3D tilt
@@ -246,6 +247,18 @@ function Card3DModal({
   const springRotateY = useSpring(rotateY, springConfig)
   const springX = useSpring(x, { stiffness: 200, damping: 25 })
   const springY = useSpring(y, { stiffness: 200, damping: 25 })
+
+  // Cache bounding rect and update via ResizeObserver instead of per-frame getBoundingClientRect
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    cachedRect.current = el.getBoundingClientRect()
+    const observer = new ResizeObserver(() => {
+      cachedRect.current = el.getBoundingClientRect()
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   // Drag threshold to differentiate click vs drag
   const DRAG_THRESHOLD = 5
@@ -262,7 +275,8 @@ function Card3DModal({
         lastMouse.current = { x: e.clientX, y: e.clientY }
       } else {
         // Tilt based on pointer position relative to card center
-        const rect = containerRef.current.getBoundingClientRect()
+        const rect = cachedRect.current
+        if (!rect) return
         const cx = rect.left + rect.width / 2
         const cy = rect.top + rect.height / 2
         const mx = e.clientX - cx
@@ -291,6 +305,10 @@ function Card3DModal({
     }
 
     isDragging.current = false
+    // Refresh cached rect after drag changes card position
+    if (containerRef.current) {
+      cachedRect.current = containerRef.current.getBoundingClientRect()
+    }
   }, [])
 
   const handlePointerLeave = useCallback(() => {
@@ -316,11 +334,10 @@ function Card3DModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      onPointerMove={handlePointerMove}
     >
       {/* Backdrop */}
       <motion.div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -330,7 +347,7 @@ function Card3DModal({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 z-[60] rounded-full bg-foreground/10 p-2 text-foreground/70 backdrop-blur-sm transition-colors duration-200 hover:bg-foreground/20 hover:text-foreground"
+        className="absolute right-4 top-4 z-[60] rounded-full bg-foreground/10 p-2 text-foreground/70 transition-colors duration-200 hover:bg-foreground/20 hover:text-foreground"
         aria-label="Close card view"
       >
         <X className="h-5 w-5" />
@@ -371,6 +388,7 @@ function Card3DModal({
           damping: 22,
           mass: 1,
         }}
+        onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerLeave}
