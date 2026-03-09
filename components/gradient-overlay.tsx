@@ -3,7 +3,6 @@
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { useDialKit } from "dialkit"
 import { useGradientWord } from "@/components/gradient-word-context"
 
 const GRADIENT_CONFIG = {
@@ -20,16 +19,16 @@ export function GradientOverlay() {
   const prefersReducedMotion = useReducedMotion()
   const [mounted, setMounted] = useState(false)
 
-  const p = useDialKit("Gradient Overlay", {
-    opacity: [0.73, 0, 1],
-    saturation: [0.05, 0, 0.1],
-    width: [74, 20, 100],
-    height: [35, 20, 100],
-    duration: [0.5, 0.1, 2],
-    noiseOpacity: [0.08, 0, 0.5],
-    noiseFrequency: [1.3, 0.1, 3],
-    noiseScale: [212, 32, 512],
-  })
+  const p = {
+    opacity: 0.73,
+    saturation: 0.05,
+    width: 74,
+    height: 35,
+    duration: 0.5,
+    noiseOpacity: 0.08,
+    noiseFrequency: 1.3,
+    noiseScale: 212,
+  }
 
   useEffect(() => {
     setMounted(true)
