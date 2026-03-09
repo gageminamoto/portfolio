@@ -48,9 +48,10 @@ function ArticleSkeleton() {
 interface ArticleContentProps {
   slug: string
   from?: string
+  initialPost?: NotionWritingPost
 }
 
-export function ArticleContent({ slug, from }: ArticleContentProps) {
+export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
   const { item, containerProps } = useEntranceMotion()
 
@@ -83,12 +84,14 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
     revalidateOnFocus: false,
   })
 
-  const post = data?.post
+  const post = data?.post ?? initialPost
   const blocks = data?.blocks ?? []
   const allPosts = data?.allPosts ?? []
 
-  // Find next article chronologically
+  // Find previous and next articles chronologically
   const currentIndex = allPosts.findIndex((p) => p.slug === slug)
+  const prevPost =
+    currentIndex > 0 ? allPosts[currentIndex - 1] : null
   const nextPost =
     currentIndex >= 0 && currentIndex < allPosts.length - 1
       ? allPosts[currentIndex + 1]
@@ -178,7 +181,7 @@ export function ArticleContent({ slug, from }: ArticleContentProps) {
             </article>
           )}
 
-          {!isLoading && !error && <ArticleFooter nextPost={nextPost} />}
+          {!isLoading && !error && <ArticleFooter prevPost={prevPost} nextPost={nextPost} />}
           </motion.div>
         </main>
 
