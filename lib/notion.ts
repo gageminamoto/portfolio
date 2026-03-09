@@ -56,11 +56,8 @@ function getSlug(page: PageObjectResponse): string {
   if (slugProp?.type === "rich_text") {
     return slugProp.rich_text.map((t) => t.plain_text).join("") || page.id
   }
-  // Fall back to a url-safe version of the title
-  return getTitle(page)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
+  // Fall back to the page ID for a stable slug that survives title changes
+  return page.id
 }
 
 function getDate(page: PageObjectResponse): string | null {
@@ -174,9 +171,21 @@ export async function fetchPostBySlug(
     // Slug property doesn't exist in this database — fall through to title-based matching
   }
 
-  // Fall back: fetch all and match by generated slug
-  const allPosts = await fetchAllPosts()
-  return allPosts.find((p) => p.slug === slug) ?? null
+  // Fall back: try fetching by page ID directly (slug is the page ID)
+  try {
+    const page = (await notion.pages.retrieve({
+      page_id: slug,
+    })) as PageObjectResponse
+    return {
+      id: page.id,
+      title: getTitle(page),
+      slug: getSlug(page),
+      date: getDate(page),
+      url: page.url,
+    }
+  } catch {
+    return null
+  }
 }
 
 export type NotionBlock = BlockObjectResponse & {

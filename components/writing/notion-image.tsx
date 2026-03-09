@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { AnimatePresence } from "framer-motion"
 import type { NotionBlock } from "@/lib/notion"
+import { getOptimizedImageUrl } from "@/lib/image-url"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ImageLightbox } from "./image-lightbox"
 
 type ImageBlock = Extract<NotionBlock, { type: "image" }>
@@ -13,6 +15,7 @@ interface NotionImageProps {
 
 export function NotionImage({ block }: NotionImageProps) {
   const [open, setOpen] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const image = block.image
 
   const src =
@@ -22,6 +25,9 @@ export function NotionImage({ block }: NotionImageProps) {
     .join("")
   const alt = caption || ""
 
+  const inlineSrc = getOptimizedImageUrl(src, { width: 1200, quality: 80 })
+  const lightboxSrc = getOptimizedImageUrl(src, { width: 2400, quality: 90 })
+
   return (
     <>
       <figure className="my-8 w-full">
@@ -29,15 +35,20 @@ export function NotionImage({ block }: NotionImageProps) {
           type="button"
           aria-label="Expand image"
           onClick={() => setOpen(true)}
-          className="w-full cursor-zoom-in rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="relative w-full cursor-zoom-in rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          {/* Dynamic Notion and Vercel Blob URLs are not practical to maintain in a static next/image allowlist here. */}
+          {!loaded && (
+            <Skeleton className="aspect-video w-full rounded-lg" />
+          )}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={src}
+            src={inlineSrc}
             alt={alt}
             loading="lazy"
-            className="w-full rounded-lg transition-opacity duration-150 ease-out hover:opacity-90"
+            onLoad={() => setLoaded(true)}
+            className={`w-full rounded-lg transition-opacity duration-300 ease-out hover:opacity-90 ${
+              loaded ? "opacity-100" : "absolute inset-0 opacity-0"
+            }`}
           />
         </button>
         {caption && (
@@ -50,7 +61,7 @@ export function NotionImage({ block }: NotionImageProps) {
       <AnimatePresence>
         {open && (
           <ImageLightbox
-            src={src}
+            src={lightboxSrc}
             alt={alt}
             onClose={() => setOpen(false)}
           />
