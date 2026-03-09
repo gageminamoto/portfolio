@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Agentation } from 'agentation'
 import { ThemeProvider } from '@/components/theme-provider'
-import { DialKitProvider } from '@/components/dialkit-provider'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
 import './globals.css'
@@ -69,7 +68,6 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
         {process.env.NODE_ENV === "development" && <Agentation />}
-        {process.env.NODE_ENV === "development" && <DialKitProvider />}
       </body>
     </html>
   )

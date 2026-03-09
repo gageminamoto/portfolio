@@ -2,7 +2,6 @@
 
 import { useState, useRef, useLayoutEffect } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { useDialKit } from "dialkit"
 
 interface WordSwitcherProps {
   options: string[]
@@ -14,12 +13,12 @@ export function WordSwitcher({ options, onWordChange }: WordSwitcherProps) {
   const selected = options[selectedIndex]
   const prefersReducedMotion = useReducedMotion()
 
-  const p = useDialKit("Word Crossfade", {
-    duration: [0.24, 0.05, 1],
-    yOffset: [6, 0, 20],
-    blur: [4, 0, 10],
-    widthDuration: [0.26, 0.1, 1],
-  })
+  const p = {
+    duration: 0.24,
+    yOffset: 6,
+    blur: 4,
+    widthDuration: 0.26,
+  }
 
   const measureRef = useRef<HTMLSpanElement>(null)
   const [widths, setWidths] = useState<Record<string, number>>({})
