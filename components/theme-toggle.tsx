@@ -2,11 +2,11 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
-import { Moon, Sun, Sparkles } from "lucide-react"
+import { Moon, Sun, Monitor, Sparkles } from "lucide-react"
 import { useGradientWord } from "@/components/gradient-word-context"
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, resolvedTheme, setTheme } = useTheme()
   const { shaderEnabled, setShaderEnabled } = useGradientWord()
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
@@ -41,7 +41,9 @@ export function ThemeToggle() {
     return <div className="h-8 w-8" />
   }
 
-  const isDark = theme === "dark"
+  const isDark = resolvedTheme === "dark"
+
+  const ThemeIcon = theme === "system" ? Monitor : isDark ? Sun : Moon
 
   return (
     <div ref={ref} className="relative">
@@ -51,11 +53,7 @@ export function ThemeToggle() {
         aria-label="Display settings"
         aria-expanded={open}
       >
-        {isDark ? (
-          <Sun className="h-4 w-4" aria-hidden="true" />
-        ) : (
-          <Moon className="h-4 w-4" aria-hidden="true" />
-        )}
+        <ThemeIcon className="h-4 w-4" aria-hidden="true" />
       </button>
 
       {open && (
@@ -69,16 +67,27 @@ export function ThemeToggle() {
           }}
         >
           <button
-            onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors duration-150 ease-out hover:bg-accent"
+            onClick={() => setTheme("light")}
+            className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "light" ? "text-foreground" : "text-muted-foreground"}`}
           >
-            {isDark ? (
-              <Sun className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-            ) : (
-              <Moon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-            )}
-            <span>{isDark ? "Light mode" : "Dark mode"}</span>
+            <Sun className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Light</span>
           </button>
+          <button
+            onClick={() => setTheme("dark")}
+            className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "dark" ? "text-foreground" : "text-muted-foreground"}`}
+          >
+            <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Dark</span>
+          </button>
+          <button
+            onClick={() => setTheme("system")}
+            className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "system" ? "text-foreground" : "text-muted-foreground"}`}
+          >
+            <Monitor className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>System</span>
+          </button>
+          <div className="mx-1 my-1 border-t border-border" />
           <button
             onClick={() => setShaderEnabled(!shaderEnabled)}
             className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors duration-150 ease-out hover:bg-accent"
