@@ -24,6 +24,11 @@ export interface HobbyItem {
   description: string
 }
 
+export interface SpeakingItem {
+  name: string
+  description: string
+}
+
 export interface ManifestoItem {
   principle: string
   description: string
@@ -53,6 +58,7 @@ export interface PortfolioData {
   hobbies: HobbyItem[]
   projects: ProjectItem[]
   learning: LearningItem[]
+  speaking: SpeakingItem[]
 }
 
 export const portfolioData: PortfolioData = {
@@ -95,12 +101,19 @@ Today, I use that foundation to design thoughtful software and brands in and for
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
-    { name: "日本語", description: "Speaking the Mothertongue" },
+    { name: "日本語", description: "Learning nihongo" },
+  ],
+  speaking: [
+    { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
+    { name: "UX 101 for University of Hawaiʻi at Mānoa Students", description: "Sep 2025" },
+    { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
+    { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
+    { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
   ],
 }
 
 // Helper for future Notion API integration
-// This function would be called from a Server Component or API route
+// This function would be called from a Server Component or API rou te
 // to fetch writing posts from a Notion database.
 //
 // export async function fetchWritingFromNotion(): Promise<WritingItem[]> {
