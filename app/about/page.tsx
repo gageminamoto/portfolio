@@ -42,7 +42,7 @@ function ToolSkeletonRow() {
 }
 
 export default function AboutPage() {
-  const { extendedBio, designManifesto, learning, hobbies } = portfolioData
+  const { extendedBio, designManifesto, learning, hobbies, speaking } = portfolioData
   const { data: toolsData, isLoading: toolsLoading } = useSWR<{
     tools: NotionToolItem[]
     lastUpdated: string | null
@@ -131,6 +131,26 @@ export default function AboutPage() {
                 </div>
               )
             })}
+          </div>
+        </Section>
+        </div>
+
+        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+
+        {/* Speaking */}
+        <div className="py-8">
+        <Section title="Speaking">
+          <div className="flex flex-col gap-3">
+            {speaking.map((item) => (
+              <div key={item.name} className="flex items-baseline gap-2 min-w-0">
+                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
+                {item.description && (
+                  <span className="truncate text-sm text-muted-foreground">
+                    {item.description}
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
         </Section>
         </div>
