@@ -86,7 +86,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
   ],
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
-    { name: "Design books", description: "Addicted to adding them" },
+    { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
