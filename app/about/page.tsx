@@ -11,8 +11,6 @@ import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { portfolioData } from "@/lib/portfolio-data"
-import { motion } from "framer-motion"
-import { useEntranceMotion } from "@/lib/animations"
 import dynamic from "next/dynamic"
 import useSWR from "swr"
 import type { NotionToolItem } from "@/lib/notion"
@@ -58,16 +56,13 @@ export default function AboutPage() {
   const build = toolsData?.tools.filter((t) => t.category === "Build") ?? []
   const productivity = toolsData?.tools.filter((t) => t.category === "Productivity") ?? []
   const skills = toolsData?.tools.filter((t) => t.category === "Skills") ?? []
-  const { item, containerProps } = useEntranceMotion()
-
   return (
-    <motion.main
+    <main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      {...containerProps}
     >
       {/* Header */}
-      <motion.header variants={item} className="flex items-center justify-between">
+      <header className="flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -76,10 +71,10 @@ export default function AboutPage() {
           Home
         </Link>
         <ThemeToggle />
-      </motion.header>
+      </header>
 
       {/* Title + Extended About */}
-      <motion.div variants={item} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           About
         </h1>
@@ -98,10 +93,10 @@ export default function AboutPage() {
             playheadKey={penflowKey}
           />
         </div>
-      </motion.div>
+      </div>
 
       {/* Sections */}
-      <motion.div variants={item} className="flex flex-col">
+      <div className="flex flex-col">
         {/* Design Manifesto */}
         <div className="pb-8">
         <Section title="Design Manifesto">
@@ -261,11 +256,9 @@ export default function AboutPage() {
           )}
         </Tabs>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
-    </motion.main>
+      <SiteFooter />
+    </main>
   )
 }

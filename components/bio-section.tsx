@@ -54,9 +54,10 @@ interface BioSectionProps {
   bio: string
   className?: string
   onWordChange?: (word: string) => void
+  onUserClick?: (word: string) => void
 }
 
-export function BioSection({ bio, className = "", onWordChange }: BioSectionProps) {
+export function BioSection({ bio, className = "", onWordChange, onUserClick }: BioSectionProps) {
   const paragraphs = bio.split("\n\n")
 
   return (
@@ -74,7 +75,7 @@ export function BioSection({ bio, className = "", onWordChange }: BioSectionProp
                       {before}
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="underline decoration-dashed decoration-muted-foreground/50 underline-offset-[3px] transition-colors hover:decoration-foreground cursor-default">Negi</span>
+                          <span className="text-foreground underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-150 ease-out hover:decoration-foreground cursor-default">Negi</span>
                         </TooltipTrigger>
                         <TooltipContent>Coming soon</TooltipContent>
                       </Tooltip>
@@ -96,7 +97,7 @@ export function BioSection({ bio, className = "", onWordChange }: BioSectionProp
                 )
               }
               if (isBioSwitcher(part)) {
-                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} />
+                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} onUserClick={onUserClick} />
               }
               return null
             })}

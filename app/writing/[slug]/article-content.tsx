@@ -11,8 +11,6 @@ import {
   extractHeadings,
 } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
-import { motion } from "framer-motion"
-import { useEntranceMotion } from "@/lib/animations"
 import type { NotionWritingPost, NotionBlock } from "@/lib/notion"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -53,7 +51,6 @@ interface ArticleContentProps {
 
 export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
-  const { item, containerProps } = useEntranceMotion()
 
   const isFromHome = from === "home"
   const backLabel = isFromHome ? "Home" : "Writing"
@@ -100,14 +97,13 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
   const headings = extractHeadings(blocks)
 
   return (
-    <motion.div
+    <div
       className="mx-auto max-w-4xl px-6 py-16 md:py-24"
-      {...containerProps}
     >
       <div className="md:grid md:grid-cols-[1fr_200px] md:gap-12">
         <main id="main-content" className="min-w-0 max-w-xl">
           {/* Header */}
-          <motion.header variants={item} className="mb-10 flex flex-col gap-6">
+          <header className="mb-10 flex flex-col gap-6">
             <nav className="flex items-center justify-between">
               <Link
                 href={backHref}
@@ -148,7 +144,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
                 )}
               </>
             )}
-          </motion.header>
+          </header>
 
           {/* Mobile TOC */}
           {!isLoading && !error && headings.length > 0 && (
@@ -158,7 +154,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
           )}
 
           {/* Content */}
-          <motion.div variants={item}>
+          <div>
           {isLoading && <ArticleSkeleton />}
 
           {error && (
@@ -182,7 +178,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
           )}
 
           {!isLoading && !error && <ArticleFooter prevPost={prevPost} nextPost={nextPost} />}
-          </motion.div>
+          </div>
         </main>
 
         {/* Desktop TOC sidebar */}
@@ -192,6 +188,6 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
           </aside>
         )}
       </div>
-    </motion.div>
+    </div>
   )
 }
