@@ -39,7 +39,8 @@ function PostRow({ post }: { post: NotionWritingPost }) {
     <div className="flex items-baseline gap-2 min-w-0">
       <span className="shrink-0 font-medium">
         <HoverLink
-          href={post.url}
+          href={`/writing/${post.slug}?from=home`}
+          external={false}
           className="no-underline decoration-transparent hover:decoration-foreground"
         >
           {post.title}
@@ -91,7 +92,10 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
   const hasMore = posts.length > INITIAL_COUNT
 
   return (
-    <div className="flex flex-col gap-3">
+    <div
+      className="flex flex-col gap-3"
+      style={!expanded && hasMore ? { maskImage: 'linear-gradient(to bottom, black calc(100% - 2rem), transparent)' } : undefined}
+    >
       {posts.slice(0, INITIAL_COUNT).map((post) => (
         <PostRow key={post.id} post={post} />
       ))}
@@ -114,12 +118,6 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
               </div>
             </div>
 
-            <div
-              className={cn(
-                "pointer-events-none absolute -top-8 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent transition-opacity duration-300",
-                expanded ? "opacity-0" : "opacity-100"
-              )}
-            />
           </div>
 
           <button

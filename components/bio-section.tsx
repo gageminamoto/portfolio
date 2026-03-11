@@ -1,33 +1,40 @@
 "use client"
 
+import React from "react"
 import { HoverLink } from "@/components/hover-link"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { WordSwitcher } from "@/components/word-switcher"
 
 interface BioLink {
   text: string
   url: string
 }
 
-// Parse bio string for links in format [text](url)
-function parseBio(bio: string): (string | BioLink)[] {
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
-  const parts: (string | BioLink)[] = []
+interface BioSwitcher {
+  options: string[]
+}
+
+type BioPart = string | BioLink | BioSwitcher
+
+// Parse bio string for links [text](url) and switchers {opt1|opt2|...}
+function parseBio(bio: string): BioPart[] {
+  const tokenRegex = /\[([^\]]+)\]\(([^)]+)\)|\{([^}]+)\}/g
+  const parts: BioPart[] = []
   let lastIndex = 0
   let match
 
-  while ((match = linkRegex.exec(bio)) !== null) {
-    // Add text before the link
+  while ((match = tokenRegex.exec(bio)) !== null) {
     if (match.index > lastIndex) {
       parts.push(bio.slice(lastIndex, match.index))
     }
-    // Add the link
-    parts.push({
-      text: match[1],
-      url: match[2],
-    })
-    lastIndex = linkRegex.lastIndex
+    if (match[1] && match[2]) {
+      parts.push({ text: match[1], url: match[2] })
+    } else if (match[3]) {
+      parts.push({ options: match[3].split("|") })
+    }
+    lastIndex = tokenRegex.lastIndex
   }
 
-  // Add remaining text
   if (lastIndex < bio.length) {
     parts.push(bio.slice(lastIndex))
   }
@@ -35,30 +42,67 @@ function parseBio(bio: string): (string | BioLink)[] {
   return parts.length > 0 ? parts : [bio]
 }
 
+function isBioLink(part: BioPart): part is BioLink {
+  return typeof part === "object" && "url" in part
+}
+
+function isBioSwitcher(part: BioPart): part is BioSwitcher {
+  return typeof part === "object" && "options" in part
+}
+
 interface BioSectionProps {
   bio: string
   className?: string
+  onWordChange?: (word: string) => void
 }
 
-export function BioSection({ bio, className = "" }: BioSectionProps) {
-  const parts = parseBio(bio)
+export function BioSection({ bio, className = "", onWordChange }: BioSectionProps) {
+  const paragraphs = bio.split("\n\n")
 
   return (
-    <p className={`text-base leading-relaxed text-muted-foreground ${className}`}>
-      {parts.map((part, index) => {
-        if (typeof part === "string") {
-          return part
-        }
+    <div className={`text-base leading-relaxed text-muted-foreground ${className}`}>
+      {paragraphs.map((paragraph, pIndex) => {
+        const parts = parseBio(paragraph)
         return (
-          <HoverLink
-            key={index}
-            href={part.url}
-            className="no-underline decoration-transparent hover:decoration-foreground"
-          >
-            {part.text}
-          </HoverLink>
+          <p key={pIndex} className={pIndex > 0 ? "mt-4" : ""}>
+            {parts.map((part, index) => {
+              if (typeof part === "string") {
+                if (part.includes("Negi")) {
+                  const [before, after] = part.split("Negi")
+                  return (
+                    <React.Fragment key={index}>
+                      {before}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="underline decoration-dashed decoration-muted-foreground/50 underline-offset-[3px] transition-colors hover:decoration-foreground cursor-default">Negi</span>
+                        </TooltipTrigger>
+                        <TooltipContent>Coming soon</TooltipContent>
+                      </Tooltip>
+                      {after}
+                    </React.Fragment>
+                  )
+                }
+                return part
+              }
+              if (isBioLink(part)) {
+                return (
+                  <HoverLink
+                    key={index}
+                    href={part.url}
+                    className="no-underline decoration-transparent hover:decoration-foreground"
+                  >
+                    {part.text}
+                  </HoverLink>
+                )
+              }
+              if (isBioSwitcher(part)) {
+                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} />
+              }
+              return null
+            })}
+          </p>
         )
       })}
-    </p>
+    </div>
   )
 }

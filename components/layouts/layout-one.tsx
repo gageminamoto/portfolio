@@ -17,6 +17,10 @@ import { useIsMobile } from "@/components/ui/use-mobile"
 import { assignShortcutKeys } from "@/lib/keyboard-shortcuts"
 import { useTheme } from "next-themes"
 import dynamic from "next/dynamic"
+import { Section } from "@/components/section"
+import { useGradientWord } from "@/components/gradient-word-context"
+import { motion } from "framer-motion"
+import { useEntranceMotion } from "@/lib/animations"
 
 // Dynamically import PokemonCards so a missing framer-motion
 // doesn't crash the full page before React hydrates
@@ -24,21 +28,6 @@ const PokemonCards = dynamic(
   () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
   { ssr: false, loading: () => <span className="font-medium text-foreground">Pokemon cards</span> }
 )
-
-function Section({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="flex flex-col gap-4">
-      <h2 className="text-sm text-muted-foreground">{title}</h2>
-      {children}
-    </section>
-  )
-}
 
 function ToolRow({
   name,
@@ -71,6 +60,8 @@ export function LayoutOne() {
   const isMobile = useIsMobile()
   const { theme, setTheme } = useTheme()
   const shortcutMap = useMemo(() => assignShortcutKeys(projects), [projects])
+  const { item, containerProps } = useEntranceMotion()
+  const { setActiveWord } = useGradientWord()
 
   const toggleTheme = useCallback(() => {
     setTheme(theme === "dark" ? "light" : "dark")
@@ -129,202 +120,227 @@ export function LayoutOne() {
   }, [projectFilter, viewMode])
 
   return (
-    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
+    <motion.main
+      id="main-content"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
+      {...containerProps}
+    >
       {/* Header */}
-      <header className="flex flex-col gap-6">
+      <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
               {name}
             </h1>
-            <BioSection bio={bio} />
+            <BioSection bio={bio} onWordChange={setActiveWord} />
           </div>
           <ThemeToggle />
         </div>
         <SocialIcons socials={socials} email={email} />
-      </header>
+      </motion.header>
 
       {/* Projects */}
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setProjectFilter("all")}
-              className={cn(
-                "text-sm transition-colors",
-                projectFilter === "all"
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground/70"
-              )}
-            >
-              Projects
-            </button>
-            <button
-              onClick={() => setProjectFilter("building")}
-              className={cn(
-                "text-sm transition-colors",
-                projectFilter === "building"
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground/70"
-              )}
-            >
-              Building
-            </button>
-            <button
-              onClick={() => setProjectFilter("production")}
-              className={cn(
-                "text-sm transition-colors",
-                projectFilter === "production"
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground/70"
-              )}
-            >
-              Shipped
-            </button>
+      <motion.div variants={item}>
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setProjectFilter("all")}
+                className={cn(
+                  "text-sm transition-colors",
+                  projectFilter === "all"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground/70"
+                )}
+              >
+                Projects
+              </button>
+              <button
+                onClick={() => setProjectFilter("building")}
+                className={cn(
+                  "text-sm transition-colors",
+                  projectFilter === "building"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground/70"
+                )}
+              >
+                Building
+              </button>
+              <button
+                onClick={() => setProjectFilter("production")}
+                className={cn(
+                  "text-sm transition-colors",
+                  projectFilter === "production"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground/70"
+                )}
+              >
+                Shipped
+              </button>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setViewMode("cards")}
+                className={cn(
+                  "rounded-md p-1.5 transition-colors",
+                  viewMode === "cards"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground/70"
+                )}
+                aria-label="Card view"
+              >
+                <Icon icon="solar:widget-5-bold" className="size-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={cn(
+                  "rounded-md p-1.5 transition-colors",
+                  viewMode === "list"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground/70"
+                )}
+                aria-label="List view"
+              >
+                <Icon icon="solar:smartphone-2-bold" className="size-4" />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setViewMode("cards")}
-              className={cn(
-                "rounded-md p-1.5 transition-colors",
-                viewMode === "cards"
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground/70"
-              )}
-              aria-label="Card view"
-            >
-              <Icon icon="solar:widget-5-bold" className="size-4" />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={cn(
-                "rounded-md p-1.5 transition-colors",
-                viewMode === "list"
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground/70"
-              )}
-              aria-label="List view"
-            >
-              <Icon icon="solar:smartphone-2-bold" className="size-4" />
-            </button>
-          </div>
-        </div>
 
-        <div
-          ref={gridRef}
-          className={cn(
-            "grid grid-cols-1 gap-2 md:grid-cols-2",
-            viewMode !== "cards" && "hidden"
+          <div
+            ref={gridRef}
+            className={cn(
+              "grid grid-cols-1 gap-2 md:grid-cols-2",
+              viewMode !== "cards" && "hidden"
+            )}
+          >
+            {filteredProjects.map((project, i) => (
+                <ProjectCard key={project.name} project={project} index={i} />
+              ))}
+          </div>
+
+          {viewMode === "list" && (
+            <div ref={listRef} className="flex flex-col gap-3">
+              {filteredProjects.map((project) => (
+                    <div key={project.name} className="flex flex-col gap-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        {project.url ? (
+                          <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                            {project.name}
+                          </HoverLink>
+                        ) : (
+                          <span className="font-medium text-foreground">{project.name}</span>
+                        )}
+                        {shortcutMap.get(project.name) && (
+                          <Kbd className="hidden md:inline-flex">{shortcutMap.get(project.name)!.toUpperCase()}</Kbd>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="truncate text-sm text-muted-foreground">{project.description}</span>
+                        {project.status === "building" && (
+                          <Badge className="shrink-0 bg-[#3A81F5]/15 text-[#3A81F5] border-transparent text-[11px]">Building</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+            </div>
           )}
-        >
-          {filteredProjects.map((project, i) => (
-              <ProjectCard key={project.name} project={project} index={i} />
-            ))}
-        </div>
-
-        {viewMode === "list" && (
-          <div ref={listRef} className="flex flex-col gap-3">
-            {filteredProjects.map((project) => (
-                  <div key={project.name} className="flex flex-col gap-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      {project.url ? (
-                        <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                          {project.name}
-                        </HoverLink>
-                      ) : (
-                        <span className="font-medium text-foreground">{project.name}</span>
-                      )}
-                      {shortcutMap.get(project.name) && (
-                        <Kbd className="hidden md:inline-flex">{shortcutMap.get(project.name)!.toUpperCase()}</Kbd>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="truncate text-sm text-muted-foreground">{project.description}</span>
-                      {project.status === "building" && (
-                        <Badge className="shrink-0 bg-[#3A81F5]/15 text-[#3A81F5] border-transparent text-[11px]">Building</Badge>
-                      )}
-                    </div>
-                  </div>
-                ))}
-          </div>
-        )}
-      </section>
+        </section>
+      </motion.div>
 
       {/* Writing — Notion CMS */}
-      <Section title="Writing">
-        <WritingSection variant="default" />
-      </Section>
+      <motion.div variants={item}>
+        <Section title="Writing" href="/writing">
+          <WritingSection variant="default" />
+        </Section>
+      </motion.div>
 
       {/* Build tools */}
-      <Section title="Build">
-        <div className="flex flex-col gap-3">
-          {build.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
+      <motion.div variants={item}>
+        <Section title="Build">
+          <div className="flex flex-col gap-3">
+            {build.map((tool) => (
+              <ToolRow key={tool.name} {...tool} />
+            ))}
+          </div>
+        </Section>
+      </motion.div>
 
       {/* Productivity */}
-      <Section title="Productivity">
-        <div className="flex flex-col gap-3">
-          {productivity.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
+      <motion.div variants={item}>
+        <Section title="Productivity">
+          <div className="flex flex-col gap-3">
+            {productivity.map((tool) => (
+              <ToolRow key={tool.name} {...tool} />
+            ))}
+          </div>
+        </Section>
+      </motion.div>
 
       {/* Learning */}
-      <Section title="Learning">
-        <div className="flex flex-col gap-3">
-          {learning.map((item) => (
-            <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-              {item.url ? (
-                <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                  {item.name}
-                </HoverLink>
-              ) : (
-                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
-              )}
-              <span className="truncate text-sm text-muted-foreground">{item.description}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Hobbies */}
-      <Section title="Hobbies">
-        <div className="flex flex-col gap-3">
-          {hobbies.map((hobby) => {
-            // Pokemon cards entry gets the interactive fan component
-            if (hobby.name === "Pokemon cards") {
-              return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                  <PokemonCards />
-                  <span className="truncate text-sm text-muted-foreground">
-                    {hobby.description}
-                  </span>
-                </div>
-              )
-            }
-            return (
-              <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                {hobby.url ? (
-                  <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-                    {hobby.name}
+      <motion.div variants={item}>
+        <Section title="Learning">
+          <div className="flex flex-col gap-3">
+            {learning.map((item) => (
+              <div key={item.name} className="flex items-baseline gap-2 min-w-0">
+                {item.url ? (
+                  <HoverLink href={item.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
+                    {item.name}
                   </HoverLink>
                 ) : (
-                  <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                  <span className="shrink-0 font-medium text-foreground">{item.name}</span>
                 )}
-                <span className="truncate text-sm text-muted-foreground">
-                  {hobby.description}
-                </span>
+                <span className="truncate text-sm text-muted-foreground">{item.description}</span>
               </div>
-            )
-          })}
-        </div>
-      </Section>
+            ))}
+          </div>
+        </Section>
+      </motion.div>
 
-      <SiteFooter />
-    </main>
+      {/* Hobbies */}
+      <motion.div variants={item}>
+        <Section title="Hobbies">
+          <div className="flex flex-col gap-3">
+            {hobbies.map((hobby) => {
+              // Pokemon cards entry gets the interactive fan component
+              if (hobby.name === "Pokemon cards") {
+                return (
+                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+                    <PokemonCards />
+                    <span className="truncate text-sm text-muted-foreground">
+                      {hobby.description}
+                    </span>
+                  </div>
+                )
+              }
+              return (
+                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+                  {hobby.url ? (
+                    <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
+                      {hobby.name}
+                    </HoverLink>
+                  ) : (
+                    <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                  )}
+                  <span className="truncate text-sm text-muted-foreground">{hobby.description}</span>
+                </div>
+              )
+            })}
+          </div>
+        </Section>
+      </motion.div>
+
+      {/* About */}
+      <motion.div variants={item}>
+        <Section title="About" href="/about">
+          <p className="text-sm text-muted-foreground">
+            Design manifesto, tools, and&nbsp;hobbies.
+          </p>
+        </Section>
+      </motion.div>
+
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
+    </motion.main>
   )
 }

@@ -2,12 +2,6 @@
 // When connecting to Notion, replace static arrays with fetched data from the API.
 // The "writing" section is designed to be driven by a Notion CMS.
 
-export interface ToolItem {
-  name: string
-  url: string
-  description: string
-}
-
 export interface WritingItem {
   title: string
   slug: string
@@ -37,6 +31,16 @@ export interface Collaborator {
   url?: string
 }
 
+export interface SpeakingItem {
+  name: string
+  description: string
+}
+
+export interface ManifestoItem {
+  principle: string
+  description: string
+}
+
 export interface ProjectItem {
   name: string
   url?: string
@@ -57,40 +61,40 @@ export interface SocialLink {
 export interface PortfolioData {
   name: string
   bio: string
+  extendedBio: string
+  designManifesto: ManifestoItem[]
   email?: string
   socials: SocialLink[]
-  build: ToolItem[]
-  productivity: ToolItem[]
   writing: WritingItem[]
   hobbies: HobbyItem[]
   projects: ProjectItem[]
   learning: LearningItem[]
+  speaking: SpeakingItem[]
 }
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Sofware Designer building everyday products. Growing Hawai'i's local design community. Building [Mizen](https://www.mizen.recipes/).",
+  bio: "Software designer building everyday products.\n\nCurrently, designing simple {software|experiences|tools} at Negi.\n\nGrowing Hawai'i's local design community.\n\nBuilding [Mizen](https://www.mizen.recipes/), calm and simple way to cook online recipes.",
+  extendedBio: `I'm a software designer based in Hawai'i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai'i.
+
+I grew up in Hawai'i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I'm designing for.
+
+I first stepped into design through esports and brand marketing at the [University of Hawai'i](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
+
+Today, I use that foundation to design thoughtful software and brands in and for Hawai'i, where great design is still rare but deeply needed.`,
+  designManifesto: [
+    /*
+    { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
+    { principle: "Details compound", description: "Typography, spacing, and micro-interactions build trust over time. Sweat the small\u00a0stuff." },
+    { principle: "Design with code", description: "The best design happens in the medium it ships in. Prototype in code, iterate\u00a0fast." },
+    { principle: "Ship and learn", description: "Perfect is the enemy of shipped. Put it in front of real people and\u00a0listen." },
+    */
+  ],
   email: "info@gageminamoto.com",
   socials: [
     { platform: "twitter", url: "https://x.com/gageminamoto", label: "Twitter" },
     { platform: "github", url: "https://github.com/gageminamoto", label: "GitHub" },
     { platform: "linkedin", url: "https://linkedin.com/in/gageminamoto", label: "LinkedIn" }, // Fixed closing quotation mark
-  ],
-  build: [
-    { name: "Cursor", url: "https://www.cursor.com/", description: "Code editor" },
-    { name: "Conductor", url: "https://conductor.is/", description: "Agent orchestration" },
-    { name: "v0", url: "https://v0.app/", description: "Simple Prototypes & quick sharing" },
-    { name: "Figma", url: "https://www.figma.com/", description: "Design and collaboration" },
-    { name: "Paper", url: "https://paper.design/", description: "Code-native design canvas for agents" },
-  ],
-  productivity: [
-    { name: "Raycast", url: "https://raycast.com/", description: "Launcher" },
-    { name: "Notion", url: "https://www.notion.so/", description: "Notes and project management" },
-    { name: "Inflight", url: "https://www.inflight.co/", description: "Design feedback" },
-    { name: "CleanShot X", url: "https://cleanshot.com/", description: "Screen capture and annotation" },
-    { name: "Eagle", url: "https://en.eagle.cool/", description: "Inspo library" },
-    { name: "Typefully", url: "https://typefully.com/", description: "Writing + scheduling" },
-    { name: "Superwhisper", url: "https://superwhisper.com/", description: "Voice dictation" },
   ],
   writing: [
     { title: "Blog 1", slug: "blog-1" },
@@ -99,7 +103,7 @@ export const portfolioData: PortfolioData = {
   ],
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
-    { name: "Design books", description: "Addicted to adding them" },
+    { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
@@ -132,12 +136,19 @@ export const portfolioData: PortfolioData = {
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
-    { name: "日本語", description: "Speaking the Mothertongue" },
+    { name: "\u65E5\u672C\u8A9E", description: "Learning nihongo" },
+  ],
+  speaking: [
+    { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
+    { name: "UX 101 for University of Hawai\u02BBi at M\u0101noa Students", description: "Sep 2025" },
+    { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
+    { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
+    { name: "Designing a Path to Success in Esports", description: "2023 \u2013 2024" },
   ],
 }
 
 // Helper for future Notion API integration
-// This function would be called from a Server Component or API route
+// This function would be called from a Server Component or API rou te
 // to fetch writing posts from a Notion database.
 //
 // export async function fetchWritingFromNotion(): Promise<WritingItem[]> {
