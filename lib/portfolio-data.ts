@@ -24,6 +24,11 @@ export interface HobbyItem {
   description: string
 }
 
+export interface SpeakingItem {
+  name: string
+  description: string
+}
+
 export interface ManifestoItem {
   principle: string
   description: string
@@ -53,11 +58,12 @@ export interface PortfolioData {
   hobbies: HobbyItem[]
   projects: ProjectItem[]
   learning: LearningItem[]
+  speaking: SpeakingItem[]
 }
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Software designer building everyday products.\n\nCurrently, designing simple {software|experiences|tools} at Negi.\n\nGrowing Hawai’i’s local design community.\n\nBuilding [Mizen](https://www.mizen.recipes/), calm and simple way to cook online recipes.",
+  bio: "Software designer building everyday products. Currently, crafting simple {software|experiences|tools} at Negi.\n\nGrowing Hawai’i’s local design community and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
   extendedBio: `I’m a software designer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the local design community in Hawai’i.
 
 I grew up in Hawai’i, surrounded by diverse cultures, including my Japanese heritage. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
@@ -86,7 +92,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
   ],
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
-    { name: "Design books", description: "Addicted to adding them" },
+    { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
@@ -95,12 +101,19 @@ Today, I use that foundation to design thoughtful software and brands in and for
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
-    { name: "日本語", description: "Speaking the Mothertongue" },
+    { name: "日本語", description: "Learning nihongo" },
+  ],
+  speaking: [
+    { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
+    { name: "UX 101 for University of Hawaiʻi at Mānoa Students", description: "Sep 2025" },
+    { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
+    { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
+    { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
   ],
 }
 
 // Helper for future Notion API integration
-// This function would be called from a Server Component or API route
+// This function would be called from a Server Component or API rou te
 // to fetch writing posts from a Notion database.
 //
 // export async function fetchWritingFromNotion(): Promise<WritingItem[]> {
