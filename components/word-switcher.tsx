@@ -1,17 +1,21 @@
 "use client"
 
-import { useState, useRef, useLayoutEffect } from "react"
+import { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
+import { useGradientWord } from "@/components/gradient-word-context"
 
 interface WordSwitcherProps {
   options: string[]
   onWordChange?: (word: string) => void
+  onUserClick?: (word: string) => void
 }
 
-export function WordSwitcher({ options, onWordChange }: WordSwitcherProps) {
+export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitcherProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const selected = options[selectedIndex]
   const prefersReducedMotion = useReducedMotion()
+  const { shaderEnabled } = useGradientWord()
+  const effectsDisabled = prefersReducedMotion || !shaderEnabled
 
   const p = {
     duration: 0.24,
@@ -38,10 +42,44 @@ export function WordSwitcher({ options, onWordChange }: WordSwitcherProps) {
     document.fonts.ready.then(measure)
   }, [options])
 
+  const [showUnderline, setShowUnderline] = useState(!!effectsDisabled)
+  const hasInteracted = useRef(false)
+  const onWordChangeRef = useRef(onWordChange)
+  onWordChangeRef.current = onWordChange
+
+  useEffect(() => {
+    if (effectsDisabled) {
+      setShowUnderline(true)
+      return
+    }
+    const underlineTimer = setTimeout(() => setShowUnderline(true), 2000)
+    const cycleTimers: ReturnType<typeof setTimeout>[] = []
+    const startDelay = 3500
+    const interval = 5000
+    for (let i = 0; i < options.length; i++) {
+      cycleTimers.push(
+        setTimeout(() => {
+          if (!hasInteracted.current) {
+            const nextIndex = (i + 1) % options.length
+            setSelectedIndex(nextIndex)
+            onWordChangeRef.current?.(options[nextIndex])
+          }
+        }, startDelay + i * interval)
+      )
+    }
+    return () => {
+      clearTimeout(underlineTimer)
+      cycleTimers.forEach(clearTimeout)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectsDisabled])
+
   const handleToggle = () => {
+    hasInteracted.current = true
     const nextIndex = (selectedIndex + 1) % options.length
     setSelectedIndex(nextIndex)
     onWordChange?.(options[nextIndex])
+    onUserClick?.(options[nextIndex])
   }
 
   const currentWidth = widths[selected]
@@ -61,13 +99,13 @@ export function WordSwitcher({ options, onWordChange }: WordSwitcherProps) {
 
       <button
         onClick={handleToggle}
-        className="inline-flex items-center rounded-md px-1 -mx-1 text-foreground underline decoration-dashed decoration-muted-foreground/50 underline-offset-[3px] transition-colors hover:decoration-foreground cursor-pointer"
+        className={`inline-flex items-center rounded-md px-1 -mx-1 text-foreground underline decoration-dashed underline-offset-[3px] cursor-pointer transition-[text-decoration-color] duration-700 ease-out ${showUnderline ? "decoration-muted-foreground/50 hover:decoration-foreground" : "decoration-transparent"}`}
       >
         <motion.span
           className="inline-flex overflow-hidden"
           animate={{ width: currentWidth || "auto" }}
           transition={{
-            duration: prefersReducedMotion ? 0 : p.widthDuration,
+            duration: effectsDisabled ? 0 : p.widthDuration,
             ease: [0.4, 0, 0.2, 1],
           }}
         >
@@ -75,10 +113,10 @@ export function WordSwitcher({ options, onWordChange }: WordSwitcherProps) {
             <motion.span
               key={selected}
               className="inline-block whitespace-nowrap"
-              initial={{ opacity: 0, y: prefersReducedMotion ? 0 : p.yOffset, filter: prefersReducedMotion ? "none" : `blur(${p.blur}px)` }}
+              initial={{ opacity: 0, y: effectsDisabled ? 0 : p.yOffset, filter: effectsDisabled ? "none" : `blur(${p.blur}px)` }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -p.yOffset, filter: prefersReducedMotion ? "none" : `blur(${p.blur}px)` }}
-              transition={{ duration: prefersReducedMotion ? 0 : p.duration, ease: [0.23, 1, 0.32, 1] }}
+              exit={{ opacity: 0, y: effectsDisabled ? 0 : -p.yOffset, filter: effectsDisabled ? "none" : `blur(${p.blur}px)` }}
+              transition={{ duration: effectsDisabled ? 0 : p.duration, ease: [0.23, 1, 0.32, 1] }}
               style={{ willChange: "filter, opacity, transform" }}
             >
               {selected}
