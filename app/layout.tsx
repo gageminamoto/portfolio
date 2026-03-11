@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Agentation } from 'agentation'
+import { DialRoot } from 'dialkit'
+import 'dialkit/styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
@@ -68,6 +70,7 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
         {process.env.NODE_ENV === "development" && <Agentation />}
+        {process.env.NODE_ENV === "development" && <DialRoot />}
       </body>
     </html>
   )
