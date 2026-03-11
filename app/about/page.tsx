@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -15,6 +16,11 @@ import { useEntranceMotion } from "@/lib/animations"
 import dynamic from "next/dynamic"
 import useSWR from "swr"
 import type { NotionToolItem } from "@/lib/notion"
+
+const Penflow = dynamic(
+  () => import("penflow/react").then((m) => m.Penflow),
+  { ssr: false }
+)
 
 const PokemonCards = dynamic(
   () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
@@ -43,6 +49,7 @@ function ToolSkeletonRow() {
 
 export default function AboutPage() {
   const { extendedBio, designManifesto, learning, hobbies, speaking } = portfolioData
+  const [penflowKey, setPenflowKey] = useState(0)
   const { data: toolsData, isLoading: toolsLoading } = useSWR<{
     tools: NotionToolItem[]
     lastUpdated: string | null
@@ -77,6 +84,20 @@ export default function AboutPage() {
           About
         </h1>
         <BioSection bio={extendedBio} />
+        <div
+          className="mt-2 w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
+          onClick={() => setPenflowKey((k) => k + 1)}
+        >
+          <Penflow
+            text="gage"
+            fontUrl="/fonts/BrittanySignature.ttf"
+            color="#ffffff"
+            size={48}
+            lineHeight={1.6}
+            animate
+            playheadKey={penflowKey}
+          />
+        </div>
       </motion.div>
 
       {/* Sections */}
