@@ -29,27 +29,8 @@ const PokemonCards = dynamic(
   { ssr: false, loading: () => <span className="font-medium text-foreground">Pokemon cards</span> }
 )
 
-function ToolRow({
-  name,
-  url,
-  description,
-}: {
-  name: string
-  url: string
-  description: string
-}) {
-  return (
-    <div className="flex items-baseline gap-2 min-w-0">
-      <HoverLink href={url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-        {name}
-      </HoverLink>
-      <span className="truncate text-sm text-muted-foreground">{description}</span>
-    </div>
-  )
-}
-
 export function LayoutOne() {
-  const { name, bio, socials, email, build, productivity, projects, hobbies, learning } = portfolioData
+  const { name, bio, socials, email, projects, hobbies, learning } = portfolioData
   const [projectFilter, setProjectFilter] = useState<"all" | "building" | "production">("all")
   const [viewMode, setViewMode] = useState<"cards" | "list">("cards")
   const gridRef = useRef<HTMLDivElement>(null)
@@ -251,28 +232,6 @@ export function LayoutOne() {
       <motion.div variants={item}>
         <Section title="Writing" href="/writing">
           <WritingSection variant="default" />
-        </Section>
-      </motion.div>
-
-      {/* Build tools */}
-      <motion.div variants={item}>
-        <Section title="Build">
-          <div className="flex flex-col gap-3">
-            {build.map((tool) => (
-              <ToolRow key={tool.name} {...tool} />
-            ))}
-          </div>
-        </Section>
-      </motion.div>
-
-      {/* Productivity */}
-      <motion.div variants={item}>
-        <Section title="Productivity">
-          <div className="flex flex-col gap-3">
-            {productivity.map((tool) => (
-              <ToolRow key={tool.name} {...tool} />
-            ))}
-          </div>
         </Section>
       </motion.div>
 
