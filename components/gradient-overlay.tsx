@@ -42,6 +42,7 @@ export function GradientOverlay() {
     <AnimatePresence>
       {shaderEnabled && (
         <motion.div
+          key="noise"
           className="pointer-events-none fixed inset-0 -z-10"
           aria-hidden="true"
           initial={{ opacity: 0 }}
@@ -52,7 +53,6 @@ export function GradientOverlay() {
             ease: [0.4, 0, 0.2, 1],
           }}
         >
-          {/* Noise dither layer to break up gradient banding */}
           <div
             className="absolute inset-0 mix-blend-overlay"
             style={{
@@ -61,6 +61,21 @@ export function GradientOverlay() {
               backgroundSize: `${p.noiseScale}px ${p.noiseScale}px`,
             }}
           />
+        </motion.div>
+      )}
+      {shaderEnabled && (
+        <motion.div
+          key="gradients"
+          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
+          aria-hidden="true"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: p.opacity }}
+          exit={{ opacity: 0 }}
+          transition={{
+            duration: prefersReducedMotion ? 0 : p.duration,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+        >
           {(Object.keys(GRADIENT_CONFIG) as GradientWord[]).map((word) => {
             const { hue, lightL, darkL } = GRADIENT_CONFIG[word]
             const l = isDark ? darkL : lightL
