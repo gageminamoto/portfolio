@@ -1,7 +1,9 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Mail, Check } from "lucide-react"
+import { Kbd } from "@/components/ui/kbd"
+import { playChime } from "@/lib/sounds"
 import useSWR from "swr"
 
 const EMAIL = "info@gageminamoto.com"
@@ -38,11 +40,16 @@ function CommitTracker() {
 function EmailPill() {
   const [copied, setCopied] = useState(false)
 
+  const showCopied = useCallback(() => {
+    setCopied(true)
+    playChime()
+    setTimeout(() => setCopied(false), 2000)
+  }, [])
+
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(EMAIL)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      showCopied()
     } catch {
       // Fallback for older browsers
       const textarea = document.createElement("textarea")
@@ -51,10 +58,15 @@ function EmailPill() {
       textarea.select()
       document.execCommand("copy")
       document.body.removeChild(textarea)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      showCopied()
     }
-  }, [])
+  }, [showCopied])
+
+  useEffect(() => {
+    const onCopy = () => showCopied()
+    window.addEventListener("email-copied", onCopy)
+    return () => window.removeEventListener("email-copied", onCopy)
+  }, [showCopied])
 
   return (
     <div className="relative group">
@@ -64,12 +76,13 @@ function EmailPill() {
         aria-describedby="email-tooltip"
         className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color] duration-150 ease-out hover:bg-accent hover:border-foreground/20"
       >
-        {copied ? (
-          <Check className="h-3.5 w-3.5 text-emerald-500" />
-        ) : (
-          <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-        )}
+        <Mail className="h-3.5 w-3.5 text-muted-foreground" />
         <span>{EMAIL}</span>
+        {copied ? (
+          <Check className="hidden h-3.5 w-3.5 text-emerald-500 md:block" />
+        ) : (
+          <Kbd className="hidden md:inline-flex">E</Kbd>
+        )}
       </button>
       <span
         id="email-tooltip"
