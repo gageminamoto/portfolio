@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -48,6 +49,8 @@ function ToolSkeletonRow() {
 export default function AboutPage() {
   const { extendedBio, designManifesto, learning, hobbies, speaking } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
+  const { resolvedTheme } = useTheme()
+  const penflowColor = resolvedTheme === "dark" ? "#ffffff" : "#0f1117"
   const { data: toolsData, isLoading: toolsLoading } = useSWR<{
     tools: NotionToolItem[]
     lastUpdated: string | null
@@ -86,7 +89,7 @@ export default function AboutPage() {
           <Penflow
             text="gage"
             fontUrl="/fonts/BrittanySignature.ttf"
-            color="#ffffff"
+            color={penflowColor}
             size={48}
             lineHeight={1.6}
             animate
