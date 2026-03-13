@@ -18,7 +18,10 @@ import type { NotionToolItem } from "@/lib/notion"
 
 const Penflow = dynamic(
   () => import("penflow/react").then((m) => m.Penflow),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => <div className="h-16 w-24 bg-muted rounded animate-pulse" />
+  }
 )
 
 const PokemonCards = dynamic(
