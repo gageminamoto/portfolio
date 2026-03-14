@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from "react"
 import { useReducedMotion } from "framer-motion"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { useTouchDevice } from "@/hooks/use-mobile"
 
 const TRAIL_LENGTH = 8
 const FADE_AFTER_IDLE_MS = 800
@@ -27,6 +28,8 @@ export function CursorTrail() {
   const fadingRef = useRef(false)
   const prefersReducedMotion = useReducedMotion()
   const { activeWord, cursorTrailActive, setCursorTrailActive, shaderEnabled } = useGradientWord()
+
+  const isTouchDevice = useTouchDevice()
 
   const hue = HUE_MAP[activeWord] ?? 250
 
@@ -67,7 +70,7 @@ export function CursorTrail() {
   }, [shaderEnabled, cursorTrailActive, setCursorTrailActive])
 
   useEffect(() => {
-    if (!cursorTrailActive || !shaderEnabled || prefersReducedMotion) return
+    if (!cursorTrailActive || !shaderEnabled || prefersReducedMotion || isTouchDevice) return
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -104,9 +107,9 @@ export function CursorTrail() {
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [cursorTrailActive, prefersReducedMotion, draw])
+  }, [cursorTrailActive, prefersReducedMotion, isTouchDevice, draw])
 
-  if (prefersReducedMotion) return null
+  if (prefersReducedMotion || isTouchDevice) return null
 
   return (
     <canvas

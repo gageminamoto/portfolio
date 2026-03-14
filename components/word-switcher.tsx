@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { useTouchDevice } from "@/hooks/use-mobile"
 
 interface WordSwitcherProps {
   options: string[]
@@ -15,6 +16,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
   const selected = options[selectedIndex]
   const prefersReducedMotion = useReducedMotion()
   const { shaderEnabled } = useGradientWord()
+  const isTouchDevice = useTouchDevice()
   const effectsDisabled = prefersReducedMotion || !shaderEnabled
 
   const p = {
@@ -53,6 +55,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
       return
     }
     const underlineTimer = setTimeout(() => setShowUnderline(true), 2000)
+    if (isTouchDevice) return () => clearTimeout(underlineTimer)
     const cycleTimers: ReturnType<typeof setTimeout>[] = []
     const startDelay = 3500
     const interval = 5000
@@ -72,7 +75,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
       cycleTimers.forEach(clearTimeout)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectsDisabled])
+  }, [effectsDisabled, isTouchDevice])
 
   const handleToggle = () => {
     hasInteracted.current = true
@@ -90,7 +93,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
         ref={measureRef}
         aria-hidden
         className="pointer-events-none"
-        style={{ position: "absolute", visibility: "hidden", whiteSpace: "nowrap" }}
+        style={{ position: "fixed", visibility: "hidden", whiteSpace: "nowrap", top: 0, left: 0 }}
       >
         {options.map((option) => (
           <span key={option} className="inline-block">{option}</span>
