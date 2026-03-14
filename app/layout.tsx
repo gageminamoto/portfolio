@@ -1,17 +1,13 @@
-import type { Metadata, Viewport } from 'next'
+import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Agentation } from 'agentation'
-import { DialRoot } from 'dialkit'
-import 'dialkit/styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
 import './globals.css'
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
+const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const _jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',
@@ -35,13 +31,6 @@ export const metadata: Metadata = {
   },
 }
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#252525" },
-  ],
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning style={{ colorScheme: "light dark" }}>
-      <body className={`${inter.variable} ${jetbrainsMono.variable} relative font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:text-background focus:outline-none"
@@ -68,9 +57,6 @@ export default function RootLayout({
           </GradientWordProvider>
         </ThemeProvider>
         <Analytics />
-        <SpeedInsights />
-        {process.env.NODE_ENV === "development" && <Agentation />}
-        {process.env.NODE_ENV === "development" && <DialRoot />}
       </body>
     </html>
   )

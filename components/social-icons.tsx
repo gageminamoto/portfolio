@@ -1,13 +1,6 @@
 import type { SocialLink } from "@/lib/portfolio-data"
 import { Icon } from "@iconify/react"
-import { Copy, ExternalLink } from "lucide-react"
 import { useState } from "react"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"
 
 function TwitterIcon({ className }: { className?: string }) {
   return (
@@ -70,7 +63,7 @@ export function SocialIcons({
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+            className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
             aria-label={social.label}
           >
             <Icon className={sizeClass} />
@@ -78,42 +71,29 @@ export function SocialIcons({
         )
       })}
       {email && (
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="flex cursor-pointer items-center gap-1.5 text-muted-foreground transition-colors duration-150 ease hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-              aria-label="Email options"
-              title={email}
-            >
-              <span className="relative" style={{ width: "1.25rem", height: "1.25rem" }}>
-                <Icon
-                  icon="solar:mailbox-bold"
-                  className={`${sizeClass} absolute inset-0 transition-opacity duration-200 motion-reduce:transition-none ${copied ? "opacity-0" : "opacity-100"}`}
-                />
-                <Icon
-                  icon="solar:letter-opened-bold"
-                  className={`${sizeClass} absolute inset-0 transition-opacity duration-200 motion-reduce:transition-none ${copied ? "opacity-100 animate-mail-shake motion-reduce:animate-none" : "opacity-0"}`}
-                />
-              </span>
-              <span
-                className={`text-sm transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${copied ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 pointer-events-none"}`}
-                aria-live="polite"
-              >
-                Email Copied!
-              </span>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="bottom" sideOffset={8}>
-            <DropdownMenuItem onSelect={handleCopyEmail}>
-              <Copy className="size-4" />
-              Copy email
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => window.open(`mailto:${email}`, "_self")}>
-              <ExternalLink className="size-4" />
-              Open in email client
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <button
+          onClick={handleCopyEmail}
+          className="flex items-center gap-1.5 text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+          aria-label={copied ? "Email copied" : "Copy email"}
+          title={email}
+        >
+          <span className="relative" style={{ width: "1.25rem", height: "1.25rem" }}>
+            <Icon
+              icon="solar:mailbox-bold"
+              className={`${sizeClass} absolute inset-0 transition-opacity duration-200 ${copied ? "opacity-0" : "opacity-100"}`}
+            />
+            <Icon
+              icon="solar:letter-opened-bold"
+              className={`${sizeClass} absolute inset-0 transition-opacity duration-200 ${copied ? "opacity-100 animate-mail-shake" : "opacity-0"}`}
+            />
+          </span>
+          <span
+            className={`text-sm transition-all duration-200 ${copied ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 pointer-events-none"}`}
+            aria-live="polite"
+          >
+            Copied!
+          </span>
+        </button>
       )}
     </div>
   )

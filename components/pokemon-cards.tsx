@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect, useSyncExternalStore } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import {
   motion,
   AnimatePresence,
@@ -44,16 +44,6 @@ const CARDS: PokemonCard[] = [
 const CARD_BACK =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pokemon_card_back-dXWV0DNIYtGMZQ1FuvhU38VcKlM7eb.png"
 
-// All image sources for preloading
-const ALL_IMAGE_SRCS = [...CARDS.map((c) => c.image), CARD_BACK]
-
-function preloadImages(srcs: string[]) {
-  srcs.forEach((src) => {
-    const img = new Image()
-    img.src = src
-  })
-}
-
 // Card native ratio 719:1000
 const CARD_RATIO = 719 / 1000
 
@@ -63,9 +53,9 @@ const FAN_CARD_W = Math.round(FAN_CARD_H * CARD_RATIO) // ~100
 
 // Fan spread configs (relative to center)
 const FAN_CONFIGS = [
-  { rotate: -10, x: -14, y: -20 },
-  { rotate: 0, x: 0, y: -34 },
-  { rotate: 18, x: 28, y: -20 },
+  { rotate: -18, x: -58, y: -105 },
+  { rotate: 0, x: 0, y: -120 },
+  { rotate: 18, x: 58, y: -105 },
 ]
 
 /* ------------------------------------------------------------------ */
@@ -223,17 +213,14 @@ function StaticHoloOverlay() {
 function Card3DModal({
   card,
   onClose,
-  isTouchDevice,
 }: {
   card: PokemonCard
   onClose: () => void
-  isTouchDevice: boolean
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const lastMouse = useRef({ x: 0, y: 0 })
-  const cachedRect = useRef<DOMRect | null>(null)
   const [isFlipped, setIsFlipped] = useState(false)
 
   // Motion values for 3D tilt
@@ -247,18 +234,6 @@ function Card3DModal({
   const springRotateY = useSpring(rotateY, springConfig)
   const springX = useSpring(x, { stiffness: 200, damping: 25 })
   const springY = useSpring(y, { stiffness: 200, damping: 25 })
-
-  // Cache bounding rect and update via ResizeObserver instead of per-frame getBoundingClientRect
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    cachedRect.current = el.getBoundingClientRect()
-    const observer = new ResizeObserver(() => {
-      cachedRect.current = el.getBoundingClientRect()
-    })
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
 
   // Drag threshold to differentiate click vs drag
   const DRAG_THRESHOLD = 5
@@ -275,14 +250,13 @@ function Card3DModal({
         lastMouse.current = { x: e.clientX, y: e.clientY }
       } else {
         // Tilt based on pointer position relative to card center
-        const rect = cachedRect.current
-        if (!rect) return
+        const rect = containerRef.current.getBoundingClientRect()
         const cx = rect.left + rect.width / 2
         const cy = rect.top + rect.height / 2
         const mx = e.clientX - cx
         const my = e.clientY - cy
-        rotateY.set((mx / (rect.width / 2)) * 12)
-        rotateX.set(-(my / (rect.height / 2)) * 12)
+        rotateY.set((mx / (rect.width / 2)) * 22)
+        rotateX.set(-(my / (rect.height / 2)) * 22)
       }
     },
     [rotateX, rotateY, x, y]
@@ -305,10 +279,6 @@ function Card3DModal({
     }
 
     isDragging.current = false
-    // Refresh cached rect after drag changes card position
-    if (containerRef.current) {
-      cachedRect.current = containerRef.current.getBoundingClientRect()
-    }
   }, [])
 
   const handlePointerLeave = useCallback(() => {
@@ -334,10 +304,11 @@ function Card3DModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
+      onPointerMove={handlePointerMove}
     >
       {/* Backdrop */}
       <motion.div
-        className="absolute inset-0 bg-black/80"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -347,7 +318,7 @@ function Card3DModal({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 z-[60] rounded-full bg-foreground/10 p-2 text-foreground/70 transition-colors duration-200 hover:bg-foreground/20 hover:text-foreground"
+        className="absolute right-4 top-4 z-[60] rounded-full bg-foreground/10 p-2 text-foreground/70 backdrop-blur-sm transition-colors duration-200 hover:bg-foreground/20 hover:text-foreground"
         aria-label="Close card view"
       >
         <X className="h-5 w-5" />
@@ -355,14 +326,12 @@ function Card3DModal({
 
       {/* Hint text */}
       <motion.p
-        className="pointer-events-none absolute bottom-8 left-1/2 z-[60] -translate-x-1/2 whitespace-nowrap text-sm text-foreground/40 select-none"
+        className="pointer-events-none absolute bottom-8 left-1/2 z-[60] -translate-x-1/2 text-sm text-foreground/40 select-none"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.4 }}
       >
-        {isTouchDevice
-          ? "Drag to move \u00B7 Touch to tilt \u00B7 Tap to flip"
-          : "Drag to move \u00B7 Hover to tilt \u00B7 Click to flip"}
+        Drag to move &middot; Hover to tilt &middot; Click to flip
       </motion.p>
 
       {/* 3D Card with flip + holo shader */}
@@ -388,7 +357,6 @@ function Card3DModal({
           damping: 22,
           mass: 1,
         }}
-        onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerLeave}
@@ -437,6 +405,12 @@ function Card3DModal({
               className="pointer-events-none h-full w-full rounded-xl object-contain"
               draggable={false}
             />
+            {/* Holo shader on back too */}
+            <HoloOverlay
+              rotateX={springRotateX}
+              rotateY={springRotateY}
+              intensity={0.6}
+            />
             <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-white/20" />
           </div>
         </motion.div>
@@ -453,70 +427,17 @@ export function PokemonCards() {
   const [isFanned, setIsFanned] = useState(false)
   const [selectedCard, setSelectedCard] = useState<PokemonCard | null>(null)
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const preloadedRef = useRef(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const isTouchDevice = useSyncExternalStore(
-    () => () => {},
-    () => "ontouchstart" in window || navigator.maxTouchPoints > 0,
-    () => false
-  )
-
-  const preloadAll = useCallback(() => {
-    if (preloadedRef.current) return
-    preloadedRef.current = true
-    preloadImages(ALL_IMAGE_SRCS)
-  }, [])
-
-  // Preload images when the component approaches the viewport
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          preloadAll()
-          observer.disconnect()
-        }
-      },
-      { rootMargin: "200px" }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [preloadAll])
 
   const handleMouseEnter = useCallback(() => {
-    preloadAll()
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
     setIsFanned(true)
-  }, [preloadAll])
+  }, [])
 
   const handleMouseLeave = useCallback(() => {
     hoverTimeoutRef.current = setTimeout(() => {
       setIsFanned(false)
     }, 300)
   }, [])
-
-  // Tap-to-toggle for mobile
-  const handleTriggerClick = useCallback(() => {
-    if (!isTouchDevice) return
-    preloadAll()
-    setIsFanned((f) => !f)
-  }, [isTouchDevice, preloadAll])
-
-  // Close fan when tapping outside on mobile
-  useEffect(() => {
-    if (!isFanned || !isTouchDevice) return
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setIsFanned(false)
-      }
-    }
-    document.addEventListener("click", handleOutsideClick)
-    return () => document.removeEventListener("click", handleOutsideClick)
-  }, [isFanned, isTouchDevice])
 
   const handleCardClick = useCallback(
     (card: PokemonCard, e: React.MouseEvent) => {
@@ -534,16 +455,12 @@ export function PokemonCards() {
   return (
     <>
       <div
-        ref={containerRef}
         className="relative inline-flex"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Trigger text styled like other hobby links */}
-        <span
-          className="cursor-pointer font-medium text-foreground underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-foreground"
-          onClick={handleTriggerClick}
-        >
+        <span className="cursor-pointer font-medium text-foreground underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-foreground">
           Pokemon cards
         </span>
 
@@ -603,7 +520,6 @@ export function PokemonCards() {
                       damping: 20,
                     },
                   }}
-                  whileTap={{ scale: 1.08 }}
                   onClick={(e) => handleCardClick(card, e)}
                 >
                   <div className="relative h-full w-full overflow-hidden rounded-lg shadow-lg shadow-black/40 ring-1 ring-white/10 transition-shadow duration-200 hover:shadow-xl hover:shadow-black/50">
@@ -627,7 +543,7 @@ export function PokemonCards() {
       {/* Full-screen 3D modal */}
       <AnimatePresence>
         {selectedCard && (
-          <Card3DModal card={selectedCard} onClose={handleCloseModal} isTouchDevice={isTouchDevice} />
+          <Card3DModal card={selectedCard} onClose={handleCloseModal} />
         )}
       </AnimatePresence>
     </>
