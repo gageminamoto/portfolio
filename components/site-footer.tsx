@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react"
 import { Mail, Check, Info } from "lucide-react"
 import { Kbd } from "@/components/ui/kbd"
-import { playChime } from "@/lib/sounds"
+
 import useSWR from "swr"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
@@ -61,7 +61,6 @@ function EmailPill() {
 
   const showCopied = useCallback(() => {
     setCopied(true)
-    playChime()
     setTimeout(() => setCopied(false), 2000)
   }, [])
 
@@ -95,11 +94,7 @@ function EmailPill() {
         aria-describedby="email-tooltip"
         className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color] duration-150 ease-out hover:bg-accent hover:border-foreground/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        {copied ? (
-          <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
-        ) : (
-          <Mail className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-        )}
+        <Mail className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
         <span>{EMAIL}</span>
         {copied ? (
           <Check className="hidden h-3.5 w-3.5 text-emerald-500 md:block" />

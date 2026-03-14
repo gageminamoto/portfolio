@@ -4,6 +4,8 @@ import { useState, useRef, useEffect, useLayoutEffect, useMemo, useCallback } fr
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
+import { ProjectPreviewCard } from "@/components/project-preview-card"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
@@ -32,7 +34,6 @@ const PokemonCards = dynamic(
 
 export function LayoutOne() {
   const { name, bio, socials, email, projects, hobbies, learning } = portfolioData
-  const [projectFilter, setProjectFilter] = useState<"all" | "building" | "production">("all")
   const [viewMode, setViewMode] = useState<"cards" | "list">("cards")
   const gridRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
@@ -83,14 +84,6 @@ export function LayoutOne() {
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [isMobile, shortcutMap, projects, toggleTheme, email])
 
-  const filteredProjects = projects.filter((p) => projectFilter === "all" || p.status === projectFilter)
-
-  useLayoutEffect(() => {
-    // Reset tracked max when filter changes so stale heights don't persist
-    gridMaxH.current = 0
-    listMaxH.current = 0
-  }, [projectFilter])
-
   useLayoutEffect(() => {
     const activeRef = viewMode === "cards" ? gridRef : listRef
     const maxH = viewMode === "cards" ? gridMaxH : listMaxH
@@ -99,7 +92,7 @@ export function LayoutOne() {
     const natural = activeRef.current.scrollHeight
     maxH.current = Math.max(maxH.current, natural)
     activeRef.current.style.minHeight = `${maxH.current}px`
-  }, [projectFilter, viewMode])
+  }, [viewMode])
 
   return (
     <main
@@ -124,67 +117,17 @@ export function LayoutOne() {
       <motion.div variants={item}>
         <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setProjectFilter("all")}
-                className={cn(
-                  "text-sm transition-colors",
-                  projectFilter === "all"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground/70"
-                )}
-              >
-                Projects
-              </button>
-              <button
-                onClick={() => setProjectFilter("building")}
-                className={cn(
-                  "text-sm transition-colors",
-                  projectFilter === "building"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground/70"
-                )}
-              >
-                Building
-              </button>
-              <button
-                onClick={() => setProjectFilter("production")}
-                className={cn(
-                  "text-sm transition-colors",
-                  projectFilter === "production"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground/70"
-                )}
-              >
-                Shipped
-              </button>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setViewMode("cards")}
-                className={cn(
-                  "rounded-md p-1.5 transition-colors",
-                  viewMode === "cards"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground/70"
-                )}
-                aria-label="Card view"
-              >
-                <Icon icon="solar:widget-5-bold" className="size-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={cn(
-                  "rounded-md p-1.5 transition-colors",
-                  viewMode === "list"
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground/70"
-                )}
-                aria-label="List view"
-              >
-                <Icon icon="solar:smartphone-2-bold" className="size-4" />
-              </button>
-            </div>
+            <h2 className="text-sm text-muted-foreground">Projects</h2>
+            <button
+              onClick={() => setViewMode(viewMode === "cards" ? "list" : "cards")}
+              className="rounded-md p-1.5 text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground/70"
+              aria-label={viewMode === "cards" ? "Switch to list view" : "Switch to card view"}
+            >
+              <Icon
+                icon={viewMode === "cards" ? "solar:smartphone-2-bold" : "solar:widget-5-bold"}
+                className="size-4"
+              />
+            </button>
           </div>
 
           <div
@@ -194,35 +137,47 @@ export function LayoutOne() {
               viewMode !== "cards" && "hidden"
             )}
           >
-            {filteredProjects.map((project, i) => (
-                <ProjectCard key={project.name} project={project} index={i} />
-              ))}
+            {projects.map((project, i) => (
+              <ProjectCard key={project.name} project={project} index={i} />
+            ))}
           </div>
 
           {viewMode === "list" && (
             <div ref={listRef} className="flex flex-col gap-3">
-              {filteredProjects.map((project) => (
-                    <div key={project.name} className="flex flex-col gap-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        {project.url ? (
-                          <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                            {project.name}
-                          </HoverLink>
-                        ) : (
-                          <span className="font-medium text-foreground">{project.name}</span>
-                        )}
-                        {shortcutMap.get(project.name) && (
-                          <Kbd className="hidden md:inline-flex">{shortcutMap.get(project.name)!.toUpperCase()}</Kbd>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="truncate text-sm text-muted-foreground">{project.description}</span>
-                        {project.status === "building" && (
-                          <Badge className="shrink-0 bg-[#3A81F5]/15 text-[#3A81F5] border-transparent text-[11px]">Building</Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+              {projects.map((project) => (
+                <div key={project.name} className="flex flex-col gap-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    {project.url ? (
+                      <HoverCard openDelay={300} closeDelay={100}>
+                        <HoverCardTrigger asChild>
+                          <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group inline-flex items-center gap-1 font-medium text-foreground underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-150 ease-out hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+                          >
+                            <span>{project.name}</span>
+                          </a>
+                        </HoverCardTrigger>
+                        <HoverCardContent side="top" align="start" sideOffset={8} className="w-64 p-0 overflow-hidden">
+                          <ProjectPreviewCard project={project} />
+                        </HoverCardContent>
+                      </HoverCard>
+                    ) : (
+                      <span className="font-medium text-foreground">{project.name}</span>
+                    )}
+                    {shortcutMap.get(project.name) && (
+                      <Kbd className="hidden md:inline-flex">{shortcutMap.get(project.name)!.toUpperCase()}</Kbd>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="truncate text-sm text-muted-foreground">{project.description}</span>
+                    {project.status === "building" && (
+                      <Badge className="shrink-0 bg-[#3A81F5]/15 text-[#3A81F5] border-transparent text-[11px]">Building</Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </section>
