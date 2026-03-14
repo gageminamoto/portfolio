@@ -31,27 +31,8 @@ function Section({
   )
 }
 
-function ToolRow({
-  name,
-  url,
-  description,
-}: {
-  name: string
-  url: string
-  description: string
-}) {
-  return (
-    <div className="flex items-baseline gap-2 min-w-0">
-      <HoverLink href={url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
-        {name}
-      </HoverLink>
-      <span className="truncate text-sm text-muted-foreground">{description}</span>
-    </div>
-  )
-}
-
 export function LayoutOne() {
-  const { name, bio, socials, email, build, productivity, projects, hobbies, learning } = portfolioData
+  const { name, bio, socials, email, projects, hobbies, learning } = portfolioData
 
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-16 px-6 py-16 md:py-24">
@@ -90,24 +71,6 @@ export function LayoutOne() {
       {/* Writing — Notion CMS */}
       <Section title="Writing">
         <WritingSection variant="default" />
-      </Section>
-
-      {/* Build tools */}
-      <Section title="Build">
-        <div className="flex flex-col gap-3">
-          {build.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Productivity */}
-      <Section title="Productivity">
-        <div className="flex flex-col gap-3">
-          {productivity.map((tool) => (
-            <ToolRow key={tool.name} {...tool} />
-          ))}
-        </div>
       </Section>
 
       {/* Hobbies */}
