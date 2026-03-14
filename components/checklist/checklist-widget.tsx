@@ -29,7 +29,6 @@ export function ChecklistWidget() {
     toggleItem,
     isOpen,
     setIsOpen,
-    dismissed,
     restart,
     resetKey,
     progress,
@@ -62,31 +61,23 @@ export function ChecklistWidget() {
   const message = PROGRESS_MESSAGES[Math.min(completed, PROGRESS_MESSAGES.length - 1)]
 
   return (
-    <AnimatePresence>
-      {!dismissed && (
-        <motion.div
-          className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6"
-          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={
-            shouldReduceMotion
-              ? { opacity: 0 }
-              : { opacity: 0, scale: 0.96, y: 8, filter: "blur(4px)" }
-          }
-          transition={{ duration: 0.2, ease: easeOut }}
-          style={{ transformOrigin: "bottom right" }}
-        >
+    <motion.div
+      className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6"
+      initial={shouldReduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15, ease: easeOut }}
+    >
       <LayoutGroup>
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           {isOpen ? (
             <motion.div
               ref={panelRef}
               key="panel"
               layoutId={shouldReduceMotion ? undefined : "checklist-container"}
-              initial={shouldReduceMotion ? { opacity: 0 } : false}
+              initial={false}
               animate={{ opacity: 1 }}
-              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
-              transition={{ layout: layoutSpring, opacity: { duration: 0.12 } }}
+              exit={{ opacity: 0 }}
+              transition={{ layout: layoutSpring, opacity: { duration: 0.1 } }}
               className="w-[calc(100vw-2rem)] origin-bottom-right overflow-hidden rounded-2xl border border-border/60 bg-background shadow-xl sm:w-72"
               style={{ borderRadius: 16 }}
             >
@@ -135,14 +126,9 @@ export function ChecklistWidget() {
                 {Array.from({ length: total }, (_, i) => (
                   <motion.div
                     key={i}
-                    className="h-1 rounded-full"
+                    className={`h-1 rounded-full transition-colors duration-300 ${i < completed ? "bg-foreground" : "bg-border"}`}
                     initial={false}
-                    animate={{
-                      width: i < completed ? 16 : 8,
-                      backgroundColor: i < completed
-                        ? "var(--foreground)"
-                        : "var(--border)",
-                    }}
+                    animate={{ width: i < completed ? 16 : 8 }}
                     transition={dotSpring}
                   />
                 ))}
@@ -190,10 +176,10 @@ export function ChecklistWidget() {
             <motion.button
               key="trigger"
               layoutId={shouldReduceMotion ? undefined : "checklist-container"}
-              initial={shouldReduceMotion ? { opacity: 0 } : false}
+              initial={false}
               animate={{ opacity: 1 }}
-              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
-              transition={{ layout: layoutSpring, opacity: { duration: 0.12 } }}
+              exit={{ opacity: 0 }}
+              transition={{ layout: layoutSpring, opacity: { duration: 0.1 } }}
               onClick={() => setIsOpen(true)}
               className="group inline-flex items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-background px-3 py-2.5 shadow-lg transition-shadow duration-200 hover:shadow-xl"
               style={{ borderRadius: 16 }}
@@ -204,14 +190,14 @@ export function ChecklistWidget() {
                 {Array.from({ length: total }, (_, i) => (
                   <motion.div
                     key={i}
-                    className="h-1 rounded-full"
-                    animate={{
-                      width: i < completed ? 8 : 4,
-                      backgroundColor: i < completed
-                        ? "var(--foreground)"
-                        : "var(--border)",
+                    className={`h-1 rounded-full transition-colors duration-300 ${i < completed ? "bg-foreground" : "bg-border"}`}
+                    initial={shouldReduceMotion ? false : { scaleX: 0 }}
+                    animate={{ width: i < completed ? 8 : 4, scaleX: 1 }}
+                    style={{ originX: 0 }}
+                    transition={{
+                      ...dotSpring,
+                      scaleX: { duration: 0.15, ease: easeOut, delay: i * 0.06 },
                     }}
-                    transition={dotSpring}
                   />
                 ))}
               </div>
@@ -222,8 +208,6 @@ export function ChecklistWidget() {
           )}
         </AnimatePresence>
       </LayoutGroup>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </motion.div>
   )
 }

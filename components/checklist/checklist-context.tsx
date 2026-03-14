@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react"
 import { usePathname } from "next/navigation"
+import { useGradientWord } from "@/components/gradient-word-context"
 
 export const CHECKLIST_ITEMS = [
   { id: "read-article", label: "Read something I wrote" },
@@ -15,14 +16,12 @@ type GradientVariant = "blue" | "violet" | "peach" | null
 
 interface ChecklistState {
   checked: Record<string, boolean>
-  dismissed: boolean
   achievementUnlocked: boolean
   activeGradient: GradientVariant
 }
 
 const defaultState: ChecklistState = {
   checked: Object.fromEntries(CHECKLIST_ITEMS.map((i) => [i.id, false])),
-  dismissed: false,
   achievementUnlocked: false,
   activeGradient: null,
 }
@@ -35,8 +34,6 @@ interface ChecklistContextValue {
   markItem: (id: string) => void
   isOpen: boolean
   setIsOpen: (open: boolean) => void
-  dismissed: boolean
-  dismiss: () => void
   restart: () => void
   resetKey: number
   progress: { completed: number; total: number }
@@ -53,8 +50,6 @@ const ChecklistContext = createContext<ChecklistContextValue>({
   markItem: () => {},
   isOpen: false,
   setIsOpen: () => {},
-  dismissed: false,
-  dismiss: () => {},
   restart: () => {},
   resetKey: 0,
   progress: { completed: 0, total: CHECKLIST_ITEMS.length },
@@ -75,6 +70,7 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
   const [resetKey, setResetKey] = useState(0)
   const pathname = usePathname()
+  const { shaderEnabled } = useGradientWord()
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -92,15 +88,15 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
     setMounted(true)
   }, [])
 
-  // Apply gradient to document
+  // Apply gradient to document (only when effects are enabled)
   useEffect(() => {
     if (!mounted) return
-    if (state.activeGradient) {
+    if (state.activeGradient && shaderEnabled) {
       document.documentElement.setAttribute("data-gradient", state.activeGradient)
     } else {
       document.documentElement.removeAttribute("data-gradient")
     }
-  }, [state.activeGradient, mounted])
+  }, [state.activeGradient, shaderEnabled, mounted])
 
   // Auto-detect route visits
   useEffect(() => {
@@ -143,11 +139,6 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
     })
   }, [updateState])
 
-  const dismiss = useCallback(() => {
-    updateState((prev) => ({ ...prev, dismissed: true }))
-    setIsOpen(false)
-  }, [updateState])
-
   const restart = useCallback(() => {
     const fresh: ChecklistState = {
       ...defaultState,
@@ -173,8 +164,6 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
         markItem,
         isOpen,
         setIsOpen,
-        dismissed: state.dismissed,
-        dismiss,
         restart,
         resetKey,
         progress: { completed, total },

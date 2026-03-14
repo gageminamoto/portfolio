@@ -39,13 +39,30 @@ export function ChecklistAchievement() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease, delay: 0.25 }}
       >
+        <motion.button
+          onClick={() => setActiveGradient(null)}
+          className="relative h-7 w-7 rounded-full border border-border bg-background"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          aria-label="Default theme"
+          aria-pressed={!activeGradient}
+        >
+          {!activeGradient && (
+            <motion.div
+              layoutId="gradient-ring"
+              className="absolute -inset-1 rounded-full border-2 border-foreground"
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            />
+          )}
+        </motion.button>
         {GRADIENT_OPTIONS.map((opt) => {
           const isActive = activeGradient === opt.id
           const color = isDark ? opt.dark : opt.light
           return (
             <motion.button
               key={opt.id}
-              onClick={() => setActiveGradient(isActive ? null : opt.id)}
+              onClick={() => setActiveGradient(opt.id)}
               className="relative h-7 w-7 rounded-full"
               style={{ backgroundColor: color }}
               whileHover={{ scale: 1.1 }}
@@ -64,17 +81,6 @@ export function ChecklistAchievement() {
             </motion.button>
           )
         })}
-        {activeGradient && (
-          <motion.button
-            initial={{ opacity: 0, x: -4 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.2, ease }}
-            onClick={() => setActiveGradient(null)}
-            className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
-          >
-            Clear
-          </motion.button>
-        )}
       </motion.div>
     </div>
   )
