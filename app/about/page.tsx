@@ -127,8 +127,8 @@ export default function AboutPage() {
             {hobbies.map((hobby) => {
               if (hobby.name === "Pokemon cards") {
                 return (
-                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                    <PokemonCards />
+                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                    <span className="shrink-0"><PokemonCards /></span>
                     <span className="truncate text-sm text-muted-foreground">
                       {hobby.description}
                     </span>
@@ -136,7 +136,7 @@ export default function AboutPage() {
                 )
               }
               return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
                   {hobby.url ? (
                     <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
                       {hobby.name}
@@ -161,10 +161,10 @@ export default function AboutPage() {
         <Section title="Speaking">
           <div className="flex flex-col gap-3">
             {speaking.map((item) => (
-              <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
+              <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                <span className="truncate font-medium text-foreground">{item.name}</span>
                 {item.description && (
-                  <span className="truncate text-sm text-muted-foreground">
+                  <span className="shrink-0 text-sm text-muted-foreground">
                     {item.description}
                   </span>
                 )}
