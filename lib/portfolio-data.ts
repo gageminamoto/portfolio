@@ -34,11 +34,22 @@ export interface ManifestoItem {
   description: string
 }
 
+export interface Collaborator {
+  name: string
+  avatarUrl: string
+  role: string
+  url?: string
+}
+
 export interface ProjectItem {
   name: string
   url?: string
+  githubUrl?: string
   description: string
   status: "production" | "building"
+  image?: string
+  hoverImage?: string
+  collaborators?: Collaborator[]
 }
 
 export interface SocialLink {
@@ -96,8 +107,32 @@ Today, I use that foundation to design thoughtful software and brands in and for
     { name: "Camping", description: "Eating outdoors is peak" },
   ],
   projects: [
-    { name: "Mizen", url: "https://www.mizen.recipes/", description: "Calmest way to cook online\u00a0recipes", status: "production" },
-    { name: "Yahtzee Scorecard", url: "https://yahtzee-score-card.vercel.app/", description: "Play Yahtzee on the go with a beautiful intuitive\u00a0experience", status: "production" },
+    {
+      name: "Mizen",
+      url: "https://www.mizen.recipes/",
+      githubUrl: "https://github.com/parse-n-plate/mizen",
+      description: "Calm online cooking",
+      status: "building",
+      image: "/projects/mizen.png",
+      hoverImage: "/projects/mizen-hover.svg",
+      collaborators: [
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.jpg", role: "Design Eng", url: "https://linkedin.com/in/gageminamoto" },
+        { name: "Michelle Tran", avatarUrl: "/avatars/michelle.jpg", role: "PM", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
+        { name: "William Liang", avatarUrl: "/avatars/william.jpg", role: "Dev", url: "https://www.linkedin.com/in/william-liang808/" },
+      ],
+    },
+    {
+      name: "Yahtzee Scorecard",
+      url: "https://yahtzee-score-card.vercel.app/",
+      githubUrl: "https://github.com/gageminamoto/yahtzee-score-card",
+      description: "Scorecard on the go",
+      status: "production",
+      image: "/projects/yahtzee.png",
+      hoverImage: "/projects/yahtzee-hover.svg",
+      collaborators: [
+        { name: "Gage Minamoto", avatarUrl: "/placeholder-avatar.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
+      ],
+    },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
