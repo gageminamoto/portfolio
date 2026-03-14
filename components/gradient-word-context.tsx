@@ -7,11 +7,14 @@ const GradientWordContext = createContext<{
   setActiveWord: (word: string) => void
   shaderEnabled: boolean
   setShaderEnabled: (enabled: boolean) => void
-}>({ activeWord: "software", setActiveWord: () => {}, shaderEnabled: true, setShaderEnabled: () => {} })
+  cursorTrailActive: boolean
+  setCursorTrailActive: (active: boolean) => void
+}>({ activeWord: "software", setActiveWord: () => {}, shaderEnabled: true, setShaderEnabled: () => {}, cursorTrailActive: false, setCursorTrailActive: () => {} })
 
 export function GradientWordProvider({ children }: { children: React.ReactNode }) {
   const [activeWord, setActiveWord] = useState("software")
   const [shaderEnabled, setShaderEnabledState] = useState(true)
+  const [cursorTrailActive, setCursorTrailActive] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export function GradientWordProvider({ children }: { children: React.ReactNode }
   }
 
   return (
-    <GradientWordContext.Provider value={{ activeWord, setActiveWord, shaderEnabled: mounted ? shaderEnabled : true, setShaderEnabled }}>
+    <GradientWordContext.Provider value={{ activeWord, setActiveWord, shaderEnabled: mounted ? shaderEnabled : true, setShaderEnabled, cursorTrailActive, setCursorTrailActive }}>
       {children}
     </GradientWordContext.Provider>
   )

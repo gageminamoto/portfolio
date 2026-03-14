@@ -19,6 +19,7 @@ import { useTheme } from "next-themes"
 import dynamic from "next/dynamic"
 import { Section } from "@/components/section"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { CursorTrail } from "@/components/cursor-trail"
 import { motion } from "framer-motion"
 import { useEntranceMotion } from "@/lib/animations"
 
@@ -42,7 +43,7 @@ export function LayoutOne() {
   const { theme, setTheme } = useTheme()
   const shortcutMap = useMemo(() => assignShortcutKeys(projects), [projects])
   const { item, containerProps } = useEntranceMotion()
-  const { setActiveWord } = useGradientWord()
+  const { setActiveWord, setCursorTrailActive } = useGradientWord()
 
   const toggleTheme = useCallback(() => {
     setTheme(theme === "dark" ? "light" : "dark")
@@ -101,24 +102,23 @@ export function LayoutOne() {
   }, [projectFilter, viewMode])
 
   return (
-    <motion.main
+    <main
       id="main-content"
       className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
-      {...containerProps}
     >
       {/* Header */}
-      <motion.header variants={item} className="flex flex-col gap-6">
+      <header className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
               {name}
             </h1>
-            <BioSection bio={bio} onWordChange={setActiveWord} />
+            <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
           </div>
           <ThemeToggle />
         </div>
         <SocialIcons socials={socials} email={email} />
-      </motion.header>
+      </header>
 
       {/* Projects */}
       <motion.div variants={item}>
@@ -229,11 +229,9 @@ export function LayoutOne() {
       </motion.div>
 
       {/* Writing — Notion CMS */}
-      <motion.div variants={item}>
-        <Section title="Writing" href="/writing">
-          <WritingSection variant="default" />
-        </Section>
-      </motion.div>
+      <Section title="Writing" href="/writing">
+        <WritingSection variant="default" />
+      </Section>
 
       {/* Learning */}
       <motion.div variants={item}>
@@ -289,17 +287,15 @@ export function LayoutOne() {
       </motion.div>
 
       {/* About */}
-      <motion.div variants={item}>
-        <Section title="About" href="/about">
-          <p className="text-sm text-muted-foreground">
-            Design manifesto, tools, and&nbsp;hobbies.
-          </p>
-        </Section>
-      </motion.div>
+      <Section title="About" href="/about">
+        <p className="text-sm text-muted-foreground">
+          Design manifesto, tools, and&nbsp;hobbies.
+        </p>
+      </Section>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
-    </motion.main>
+      <SiteFooter />
+
+      <CursorTrail />
+    </main>
   )
 }

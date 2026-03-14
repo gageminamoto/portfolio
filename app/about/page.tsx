@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -11,8 +12,6 @@ import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { portfolioData } from "@/lib/portfolio-data"
-import { motion } from "framer-motion"
-import { useEntranceMotion } from "@/lib/animations"
 import dynamic from "next/dynamic"
 import useSWR from "swr"
 import type { NotionToolItem } from "@/lib/notion"
@@ -50,6 +49,8 @@ function ToolSkeletonRow() {
 export default function AboutPage() {
   const { extendedBio, designManifesto, learning, hobbies, speaking } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
+  const { resolvedTheme } = useTheme()
+  const penflowColor = resolvedTheme === "dark" ? "#ffffff" : "#0f1117"
   const { data: toolsData, isLoading: toolsLoading } = useSWR<{
     tools: NotionToolItem[]
     lastUpdated: string | null
@@ -58,16 +59,13 @@ export default function AboutPage() {
   const build = toolsData?.tools.filter((t) => t.category === "Build") ?? []
   const productivity = toolsData?.tools.filter((t) => t.category === "Productivity") ?? []
   const skills = toolsData?.tools.filter((t) => t.category === "Skills") ?? []
-  const { item, containerProps } = useEntranceMotion()
-
   return (
-    <motion.main
+    <main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      {...containerProps}
     >
       {/* Header */}
-      <motion.header variants={item} className="flex items-center justify-between">
+      <header className="flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -76,10 +74,10 @@ export default function AboutPage() {
           Home
         </Link>
         <ThemeToggle />
-      </motion.header>
+      </header>
 
       {/* Title + Extended About */}
-      <motion.div variants={item} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           About
         </h1>
@@ -91,17 +89,17 @@ export default function AboutPage() {
           <Penflow
             text="gage"
             fontUrl="/fonts/BrittanySignature.ttf"
-            color="#ffffff"
+            color={penflowColor}
             size={48}
             lineHeight={1.6}
             animate
             playheadKey={penflowKey}
           />
         </div>
-      </motion.div>
+      </div>
 
       {/* Sections */}
-      <motion.div variants={item} className="flex flex-col">
+      <div className="flex flex-col">
         {/* Design Manifesto */}
         <div className="pb-8">
         <Section title="Design Manifesto">
@@ -129,8 +127,8 @@ export default function AboutPage() {
             {hobbies.map((hobby) => {
               if (hobby.name === "Pokemon cards") {
                 return (
-                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                    <PokemonCards />
+                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                    <span className="shrink-0"><PokemonCards /></span>
                     <span className="truncate text-sm text-muted-foreground">
                       {hobby.description}
                     </span>
@@ -138,7 +136,7 @@ export default function AboutPage() {
                 )
               }
               return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
                   {hobby.url ? (
                     <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
                       {hobby.name}
@@ -163,10 +161,10 @@ export default function AboutPage() {
         <Section title="Speaking">
           <div className="flex flex-col gap-3">
             {speaking.map((item) => (
-              <div key={item.name} className="flex items-baseline gap-2 min-w-0">
-                <span className="shrink-0 font-medium text-foreground">{item.name}</span>
+              <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                <span className="truncate font-medium text-foreground">{item.name}</span>
                 {item.description && (
-                  <span className="truncate text-sm text-muted-foreground">
+                  <span className="shrink-0 text-sm text-muted-foreground">
                     {item.description}
                   </span>
                 )}
@@ -261,11 +259,9 @@ export default function AboutPage() {
           )}
         </Tabs>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
-    </motion.main>
+      <SiteFooter />
+    </main>
   )
 }
