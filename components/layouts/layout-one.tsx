@@ -87,10 +87,17 @@ export function LayoutOne() {
         <WritingSection variant="default" />
       </Section>
 
+      {/* Tools */}
+      <Section title="Tools" href="/tools">
+        <p className="text-sm text-muted-foreground">
+          Everything I build with.
+        </p>
+      </Section>
+
       {/* About */}
       <Section title="About" href="/about">
         <p className="text-sm text-muted-foreground">
-          Design manifesto, tools, and&nbsp;hobbies.
+          Design manifesto and&nbsp;hobbies.
         </p>
       </Section>
 
