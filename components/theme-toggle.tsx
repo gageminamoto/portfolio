@@ -4,10 +4,12 @@ import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
 import { Moon, Sun, Monitor, Sparkles } from "lucide-react"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { useChecklist } from "@/components/checklist/checklist-context"
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme()
   const { shaderEnabled, setShaderEnabled } = useGradientWord()
+  const { markItem } = useChecklist()
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
   const [closing, setClosing] = useState(false)
@@ -67,21 +69,21 @@ export function ThemeToggle() {
           }}
         >
           <button
-            onClick={() => setTheme("light")}
+            onClick={() => { setTheme("light"); markItem("try-theme") }}
             className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "light" ? "text-foreground" : "text-muted-foreground"}`}
           >
             <Sun className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Light</span>
           </button>
           <button
-            onClick={() => setTheme("dark")}
+            onClick={() => { setTheme("dark"); markItem("try-theme") }}
             className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "dark" ? "text-foreground" : "text-muted-foreground"}`}
           >
             <Moon className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Dark</span>
           </button>
           <button
-            onClick={() => setTheme("system")}
+            onClick={() => { setTheme("system"); markItem("try-theme") }}
             className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "system" ? "text-foreground" : "text-muted-foreground"}`}
           >
             <Monitor className="h-3.5 w-3.5" aria-hidden="true" />

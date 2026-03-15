@@ -8,6 +8,8 @@ import 'dialkit/styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
+import { ChecklistProvider } from '@/components/checklist/checklist-context'
+import { ChecklistWidget } from '@/components/checklist/checklist-widget'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -63,8 +65,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <GradientWordProvider>
-            <GradientOverlay />
-            {children}
+            <ChecklistProvider>
+              <GradientOverlay />
+              {children}
+              <ChecklistWidget />
+            </ChecklistProvider>
           </GradientWordProvider>
         </ThemeProvider>
         <Analytics />
