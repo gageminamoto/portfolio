@@ -232,14 +232,6 @@ function getCategory(page: PageObjectResponse): ToolCategory {
   return "Build"
 }
 
-function getOrder(page: PageObjectResponse): number {
-  const orderProp = page.properties["Order"]
-  if (orderProp?.type === "number" && orderProp.number != null) {
-    return orderProp.number
-  }
-  return 999
-}
-
 export async function fetchTools(): Promise<ToolsResponse> {
   const databaseId = process.env.NOTION_TOOLS_DATABASE_ID
 
@@ -258,7 +250,6 @@ export async function fetchTools(): Promise<ToolsResponse> {
       start_cursor: cursor,
       sorts: [
         { property: "Category", direction: "ascending" },
-        { property: "Order", direction: "ascending" },
       ],
     })
     allPages.push(...(response.results as PageObjectResponse[]))
