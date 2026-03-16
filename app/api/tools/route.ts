@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import { fetchTools } from "@/lib/notion"
 
-// Revalidate every 10 minutes
-export const revalidate = 600
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export async function GET() {
   try {

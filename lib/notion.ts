@@ -232,19 +232,12 @@ function getCategory(page: PageObjectResponse): ToolCategory {
   return "Build"
 }
 
-function getOrder(page: PageObjectResponse): number {
-  const orderProp = page.properties["Order"]
-  if (orderProp?.type === "number" && orderProp.number != null) {
-    return orderProp.number
-  }
-  return 999
-}
-
 export async function fetchTools(): Promise<ToolsResponse> {
   const databaseId = process.env.NOTION_TOOLS_DATABASE_ID
 
   if (!databaseId) {
-    throw new Error("NOTION_TOOLS_DATABASE_ID environment variable is not set")
+    console.warn("[notion] NOTION_TOOLS_DATABASE_ID is not set — tools feature is disabled")
+    return { tools: [], lastUpdated: null }
   }
 
   const dataSourceId = await resolveDataSourceId(databaseId)
@@ -257,7 +250,6 @@ export async function fetchTools(): Promise<ToolsResponse> {
       start_cursor: cursor,
       sorts: [
         { property: "Category", direction: "ascending" },
-        { property: "Order", direction: "ascending" },
       ],
     })
     allPages.push(...(response.results as PageObjectResponse[]))

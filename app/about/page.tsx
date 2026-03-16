@@ -26,7 +26,11 @@ const PokemonCards = dynamic(
   { ssr: false, loading: () => <span className="relative inline-flex font-medium text-foreground">Pokemon cards</span> }
 )
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+const fetcher = (url: string) =>
+  fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`Failed to fetch: ${r.status}`)
+    return r.json()
+  })
 
 function formatLastUpdated(dateStr: string | null): string {
   if (!dateStr) return ""
@@ -51,7 +55,7 @@ export default function AboutPage() {
   const [penflowKey, setPenflowKey] = useState(0)
   const { resolvedTheme } = useTheme()
   const penflowColor = resolvedTheme === "dark" ? "#ffffff" : "#0f1117"
-  const { data: toolsData, isLoading: toolsLoading } = useSWR<{
+  const { data: toolsData, isLoading: toolsLoading, error: toolsError } = useSWR<{
     tools: NotionToolItem[]
     lastUpdated: string | null
   }>("/api/tools", fetcher, { revalidateOnFocus: false })
@@ -221,6 +225,8 @@ export default function AboutPage() {
                 <ToolSkeletonRow key={i} />
               ))}
             </div>
+          ) : toolsError ? (
+            <p className="text-sm text-muted-foreground">Unable to load tools right now.</p>
           ) : (
             <>
               <TabsContent value="all">
