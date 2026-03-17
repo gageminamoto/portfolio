@@ -69,7 +69,12 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         </motion.span>
       )}
       <div className="flex h-16 items-center justify-center text-muted-foreground/20">
-        {shape(colors[0])}
+        {project.favicon ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={project.favicon} alt="" className="size-10 rounded-lg" />
+        ) : (
+          shape(colors[0])
+        )}
       </div>
       <h3 className="text-base font-medium text-foreground">{project.name}</h3>
       <p className="text-sm text-muted-foreground">{project.description}</p>
