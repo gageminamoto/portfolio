@@ -49,6 +49,7 @@ export interface ProjectItem {
   status: "production" | "building"
   image?: string
   hoverImage?: string
+  favicon?: string
   collaborators?: Collaborator[]
 }
 
@@ -115,6 +116,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       status: "building",
       image: "/projects/mizen.png",
       hoverImage: "/projects/mizen-hover.svg",
+      favicon: "/projects/mizen-favicon.png",
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.jpg", role: "Design Eng", url: "https://linkedin.com/in/gageminamoto" },
         { name: "Michelle Tran", avatarUrl: "/avatars/michelle.jpg", role: "PM", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
@@ -129,6 +131,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       status: "production",
       image: "/projects/yahtzee.png",
       hoverImage: "/projects/yahtzee-hover.svg",
+      favicon: "/projects/yahtzee-favicon.png",
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/placeholder-avatar.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],

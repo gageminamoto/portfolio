@@ -43,7 +43,7 @@ export function LayoutOne() {
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Pin size={14} weight="Bold" />
-            Projects
+            Recent Projects
           </h2>
           <button
             onClick={() => setProjectView(projectView === "list" ? "card" : "list")}
@@ -62,13 +62,19 @@ export function LayoutOne() {
           <div className="flex flex-col gap-4">
             {projects.map((project) => (
               <div key={project.name} className="flex flex-col gap-0.5">
-                {project.url ? (
-                  <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                    {project.name}
-                  </HoverLink>
-                ) : (
-                  <span className="font-medium text-foreground">{project.name}</span>
-                )}
+                <div className="flex items-center gap-2">
+                  {project.favicon && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={project.favicon} alt="" className="size-4 rounded-sm" />
+                  )}
+                  {project.url ? (
+                    <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
+                      {project.name}
+                    </HoverLink>
+                  ) : (
+                    <span className="font-medium text-foreground">{project.name}</span>
+                  )}
+                </div>
                 <span className="text-sm text-muted-foreground">{project.description}</span>
               </div>
             ))}
