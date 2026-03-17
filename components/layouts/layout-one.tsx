@@ -17,7 +17,7 @@ import { CursorTrail } from "@/components/cursor-trail"
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
-  const [projectView, setProjectView] = useState<"list" | "card">("list")
+  const [projectView, setProjectView] = useState<"list" | "card">("card")
 
   return (
     <main
