@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { HamburgerMenu, Pin, Widget2 } from "@solar-icons/react"
+import { HamburgerMenu, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
@@ -89,12 +89,12 @@ export function LayoutOne() {
       </section>
 
       {/* Writing — Notion CMS */}
-      <Section title="Writing" href="/writing">
+      <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
         <WritingSection variant="default" />
       </Section>
 
       {/* About */}
-      <Section title="About" href="/about">
+      <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
         <p className="text-sm text-muted-foreground">
           Design manifesto, tools, and&nbsp;hobbies.
         </p>
