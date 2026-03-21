@@ -2,8 +2,8 @@
 
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { useMounted } from "@/hooks/use-mounted"
 
 const GRADIENT_CONFIG = {
   software:    { hue: 250, lightL: 0.95, darkL: 0.20 },
@@ -17,7 +17,7 @@ export function GradientOverlay() {
   const { activeWord, shaderEnabled } = useGradientWord()
   const { resolvedTheme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
-  const [mounted, setMounted] = useState(false)
+  const mounted = useMounted()
 
   const p = {
     opacity: 0.73,
@@ -29,10 +29,6 @@ export function GradientOverlay() {
     noiseFrequency: 1.3,
     noiseScale: 212,
   }
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   if (!mounted) return null
 

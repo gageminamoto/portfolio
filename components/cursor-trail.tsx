@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useCallback } from "react"
+import { useEffect, useRef } from "react"
 import { useReducedMotion } from "framer-motion"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useTouchDevice } from "@/hooks/use-mobile"
@@ -33,35 +33,6 @@ export function CursorTrail() {
 
   const hue = HUE_MAP[activeWord] ?? 250
 
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    if (fadingRef.current) {
-      fadeRef.current = Math.max(0, fadeRef.current - 0.04)
-    } else {
-      fadeRef.current = Math.min(1, fadeRef.current + 0.08)
-    }
-
-    const points = pointsRef.current
-    for (let i = 0; i < points.length; i++) {
-      const progress = i / points.length
-      const alpha = (1 - progress) * 0.5 * fadeRef.current
-      const radius = 3 - progress * 1.5
-      if (alpha <= 0 || radius <= 0) continue
-      ctx.beginPath()
-      ctx.arc(points[i].x, points[i].y, radius, 0, Math.PI * 2)
-      ctx.fillStyle = `oklch(0.7 0.15 ${hue} / ${alpha})`
-      ctx.fill()
-    }
-
-    rafRef.current = requestAnimationFrame(draw)
-  }, [hue])
-
   // Reset trail when effects are turned off
   useEffect(() => {
     if (!shaderEnabled && cursorTrailActive) {
@@ -72,19 +43,46 @@ export function CursorTrail() {
   useEffect(() => {
     if (!cursorTrailActive || !shaderEnabled || prefersReducedMotion || isTouchDevice) return
 
-    const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvasRef.current) return
+    const canvasElement = canvasRef.current
 
     function resize() {
-      if (!canvas) return
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      canvasElement.width = window.innerWidth
+      canvasElement.height = window.innerHeight
     }
     resize()
     window.addEventListener("resize", resize)
 
     fadeRef.current = 1
     fadingRef.current = false
+
+    function draw() {
+      const ctx = canvasElement.getContext("2d")
+      if (!ctx) return
+
+      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height)
+
+      if (fadingRef.current) {
+        fadeRef.current = Math.max(0, fadeRef.current - 0.04)
+      } else {
+        fadeRef.current = Math.min(1, fadeRef.current + 0.08)
+      }
+
+      const points = pointsRef.current
+      for (let i = 0; i < points.length; i++) {
+        const progress = i / points.length
+        const alpha = (1 - progress) * 0.5 * fadeRef.current
+        const radius = 3 - progress * 1.5
+        if (alpha <= 0 || radius <= 0) continue
+        ctx.beginPath()
+        ctx.arc(points[i].x, points[i].y, radius, 0, Math.PI * 2)
+        ctx.fillStyle = `oklch(0.7 0.15 ${hue} / ${alpha})`
+        ctx.fill()
+      }
+
+      rafRef.current = requestAnimationFrame(draw)
+    }
+
     rafRef.current = requestAnimationFrame(draw)
 
     function onPointerMove(e: PointerEvent) {
@@ -107,7 +105,7 @@ export function CursorTrail() {
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [cursorTrailActive, prefersReducedMotion, isTouchDevice, draw])
+  }, [cursorTrailActive, shaderEnabled, prefersReducedMotion, isTouchDevice, hue])
 
   if (prefersReducedMotion || isTouchDevice) return null
 
