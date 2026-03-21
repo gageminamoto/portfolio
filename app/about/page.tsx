@@ -96,7 +96,7 @@ export default function AboutPage() {
             {hobbies.map((hobby) => {
               if (hobby.name === "Pokemon cards") {
                 return (
-                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
                     <span className="shrink-0"><PokemonCards /></span>
                     <span className="truncate text-sm text-muted-foreground">
                       {hobby.description}
