@@ -1,3 +1,4 @@
+import { cache } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { fetchPostBySlug } from "@/lib/notion"
@@ -9,13 +10,13 @@ interface ArticlePageProps {
   searchParams: Promise<{ from?: string }>
 }
 
-async function getPost(slug: string): Promise<NotionWritingPost | null> {
+const getPost = cache(async (slug: string): Promise<NotionWritingPost | null> => {
   try {
     return await fetchPostBySlug(slug)
   } catch {
     return null
   }
-}
+})
 
 export async function generateMetadata({
   params,

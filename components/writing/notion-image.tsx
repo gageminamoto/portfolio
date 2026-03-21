@@ -44,6 +44,8 @@ export function NotionImage({ block }: NotionImageProps) {
           <img
             src={inlineSrc}
             alt={alt}
+            width={1200}
+            height={675}
             loading="lazy"
             onLoad={() => setLoaded(true)}
             className={`w-full rounded-lg transition-opacity duration-300 ease-out hover:opacity-90 ${

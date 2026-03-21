@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
-import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
@@ -13,6 +13,54 @@ import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { CursorTrail } from "@/components/cursor-trail"
+import type { ProjectItem } from "@/lib/portfolio-data"
+
+const BADGE_COLORS: Record<string, string> = {
+  software: "oklch(0.55 0.2 250)",
+  experiences: "oklch(0.55 0.2 330)",
+  tools: "oklch(0.55 0.2 145)",
+}
+
+function ProjectListItem({ project }: { project: ProjectItem }) {
+  const [badgeTilt] = useState(() => Math.random() * 14 - 7)
+  const { activeWord } = useGradientWord()
+
+  return (
+    <div className="group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm">
+      {project.url && (
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute inset-0 z-0 rounded-xl"
+          aria-label={project.name}
+          tabIndex={0}
+        />
+      )}
+        {project.status === "building" && (
+          <motion.span
+            className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
+            style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
+            initial={{ rotate: 0 }}
+            animate={{ rotate: badgeTilt }}
+            whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
+          >
+            Building
+          </motion.span>
+        )}
+        {project.favicon && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-sm font-medium text-foreground">{project.name}</span>
+          <span className="truncate text-xs text-muted-foreground">{project.description}</span>
+        </div>
+    </div>
+  )
+}
 
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
@@ -59,24 +107,9 @@ export function LayoutOne() {
         </div>
 
         {projectView === "list" ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {projects.map((project) => (
-              <div key={project.name} className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                  {project.favicon && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={project.favicon} alt="" className="size-4 rounded-sm" />
-                  )}
-                  {project.url ? (
-                    <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {project.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="font-medium text-foreground">{project.name}</span>
-                  )}
-                </div>
-                <span className="text-sm text-muted-foreground">{project.description}</span>
-              </div>
+              <ProjectListItem key={project.name} project={project} />
             ))}
           </div>
         ) : (

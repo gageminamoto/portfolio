@@ -52,9 +52,11 @@ export default function AboutPage() {
           About
         </h1>
         <BioSection bio={extendedBio} />
-        <div
+        <button
+          type="button"
           className="mt-2 w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
           onClick={() => setPenflowKey((k) => k + 1)}
+          aria-label="Replay signature animation"
         >
           <Penflow
             text="gage"
@@ -65,7 +67,7 @@ export default function AboutPage() {
             animate
             playheadKey={penflowKey}
           />
-        </div>
+        </button>
       </div>
 
       {/* Sections */}

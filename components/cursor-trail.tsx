@@ -27,21 +27,17 @@ export function CursorTrail() {
   const fadeRef = useRef(1)
   const fadingRef = useRef(false)
   const prefersReducedMotion = useReducedMotion()
-  const { activeWord, cursorTrailActive, setCursorTrailActive, shaderEnabled } = useGradientWord()
+  const { activeWord, cursorTrailActive, shaderEnabled } = useGradientWord()
 
   const isTouchDevice = useTouchDevice()
+
+  const effectiveActive = cursorTrailActive && shaderEnabled
 
   const hue = HUE_MAP[activeWord] ?? 250
 
   // Reset trail when effects are turned off
   useEffect(() => {
-    if (!shaderEnabled && cursorTrailActive) {
-      setCursorTrailActive(false)
-    }
-  }, [shaderEnabled, cursorTrailActive, setCursorTrailActive])
-
-  useEffect(() => {
-    if (!cursorTrailActive || !shaderEnabled || prefersReducedMotion || isTouchDevice) return
+    if (!effectiveActive || prefersReducedMotion || isTouchDevice) return
 
     if (!canvasRef.current) return
     const canvasElement = canvasRef.current
