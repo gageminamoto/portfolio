@@ -3,6 +3,7 @@ import type {
   BlockObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints"
+import { slugify } from "./utils"
 
 export const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -54,10 +55,23 @@ function getTitle(page: PageObjectResponse): string {
 function getSlug(page: PageObjectResponse): string {
   const slugProp = page.properties["Slug"]
   if (slugProp?.type === "rich_text") {
-    return slugProp.rich_text.map((t) => t.plain_text).join("") || page.id
+    const explicit = slugProp.rich_text.map((t) => t.plain_text).join("")
+    if (explicit) return explicit
   }
-  // Fall back to the page ID for a stable slug that survives title changes
-  return page.id
+  return slugify(getTitle(page))
+}
+
+function deduplicateSlugs(posts: NotionWritingPost[]): NotionWritingPost[] {
+  const slugCount = new Map<string, number>()
+  for (const post of posts) {
+    slugCount.set(post.slug, (slugCount.get(post.slug) ?? 0) + 1)
+  }
+  return posts.map((post) => {
+    if ((slugCount.get(post.slug) ?? 0) > 1) {
+      return { ...post, slug: `${post.slug}-${post.id.slice(0, 8)}` }
+    }
+    return post
+  })
 }
 
 function getDate(page: PageObjectResponse): string | null {
@@ -68,43 +82,21 @@ function getDate(page: PageObjectResponse): string | null {
   return page.created_time ?? null
 }
 
-export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> {
-  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
-
-  if (!databaseId) {
-    warnMissingDatabaseId()
-    return []
-  }
-
-  const dataSourceId = await resolveDataSourceId(databaseId)
-  const response = await notion.dataSources.query({
-    data_source_id: dataSourceId,
-    page_size: limit,
-    sorts: [
-      {
-        timestamp: "created_time",
-        direction: "descending",
-      },
-    ],
-  })
-
-  return (response.results as PageObjectResponse[]).map((page) => ({
-    id: page.id,
-    title: getTitle(page),
-    slug: getSlug(page),
-    date: getDate(page),
-    url: page.url,
-  }))
+function mapWritingPosts(pages: PageObjectResponse[]): NotionWritingPost[] {
+  return deduplicateSlugs(
+    pages.map((page) => ({
+      id: page.id,
+      title: getTitle(page),
+      slug: getSlug(page),
+      date: getDate(page),
+      url: page.url,
+    }))
+  )
 }
 
-export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
-  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
-
-  if (!databaseId) {
-    warnMissingDatabaseId()
-    return []
-  }
-
+async function fetchAllWritingPostsForDatabase(
+  databaseId: string
+): Promise<NotionWritingPost[]> {
   const dataSourceId = await resolveDataSourceId(databaseId)
   const allPages: PageObjectResponse[] = []
   let cursor: string | undefined = undefined
@@ -124,13 +116,30 @@ export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
     cursor = response.has_more ? response.next_cursor ?? undefined : undefined
   } while (cursor)
 
-  return allPages.map((page) => ({
-    id: page.id,
-    title: getTitle(page),
-    slug: getSlug(page),
-    date: getDate(page),
-    url: page.url,
-  }))
+  return mapWritingPosts(allPages)
+}
+
+export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> {
+  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
+
+  if (!databaseId) {
+    warnMissingDatabaseId()
+    return []
+  }
+
+  const posts = await fetchAllWritingPostsForDatabase(databaseId)
+  return posts.slice(0, limit)
+}
+
+export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
+  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
+
+  if (!databaseId) {
+    warnMissingDatabaseId()
+    return []
+  }
+
+  return fetchAllWritingPostsForDatabase(databaseId)
 }
 
 export async function fetchPostBySlug(
@@ -171,7 +180,12 @@ export async function fetchPostBySlug(
     // Slug property doesn't exist in this database — fall through to title-based matching
   }
 
-  // Fall back: try fetching by page ID directly (slug is the page ID)
+  // Try matching by computed slug (title-derived)
+  const allPosts = await fetchAllPosts()
+  const matched = allPosts.find((p) => p.slug === slug)
+  if (matched) return matched
+
+  // Fall back: try fetching by page ID directly (backward compat for old UUID URLs)
   try {
     const page = (await notion.pages.retrieve({
       page_id: slug,

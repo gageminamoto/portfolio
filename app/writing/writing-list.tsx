@@ -7,7 +7,16 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import type { NotionWritingPost } from "@/lib/notion"
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+async function fetcher(url: string) {
+  const response = await fetch(url)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Failed to fetch writing posts")
+  }
+
+  return data
+}
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",

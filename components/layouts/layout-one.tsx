@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { HamburgerMenu, Pin, Widget2 } from "@solar-icons/react"
+import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -114,14 +114,21 @@ export function LayoutOne() {
       </section>
 
       {/* Writing — Notion CMS */}
-      <Section title="Writing" href="/writing">
+      <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
         <WritingSection variant="default" />
       </Section>
 
-      {/* About */}
-      <Section title="About" href="/about">
+      {/* Tools */}
+      <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
         <p className="text-sm text-muted-foreground">
-          Design manifesto, tools, and&nbsp;hobbies.
+          Everything I build with.
+        </p>
+      </Section>
+
+      {/* About */}
+      <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
+        <p className="text-sm text-muted-foreground">
+          Design manifesto and&nbsp;hobbies.
         </p>
       </Section>
 

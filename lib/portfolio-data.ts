@@ -59,6 +59,15 @@ export interface SocialLink {
   label: string
 }
 
+export interface WorkHistoryItem {
+  company: string
+  role: string
+  period: string
+  description: string
+  url?: string
+  icon?: string
+}
+
 export interface PortfolioData {
   name: string
   bio: string
@@ -71,6 +80,7 @@ export interface PortfolioData {
   projects: ProjectItem[]
   learning: LearningItem[]
   speaking: SpeakingItem[]
+  workHistory: WorkHistoryItem[]
 }
 
 export const portfolioData: PortfolioData = {
@@ -150,6 +160,63 @@ Today, I use that foundation to design thoughtful software and brands in and for
     { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
     { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
     { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
+  ],
+  workHistory: [
+    {
+      company: "Freelance",
+      role: "Product & Brand Designer",
+      period: "2026 – Present",
+      url: "https://gageminamoto.com/",
+      icon: "/icons/freelance.png",
+      description: "Helping Hawai'i businesses, local innovators and growing teams, build digital products that connect and speak to local communities and audiences. I build brand identities, design web and mobile products, and put together design systems. Running my own practice taught me how to scope work, talk to non-designers, and ship with real constraints.",
+    },
+    {
+      company: "Becoming Impossible to Ignore",
+      role: "UXHI Speaker",
+      period: "2025",
+      url: "https://uxhiconference.com/",
+      icon: "/icons/uxhi.png",
+      description: "A talk about increasing your surface area for luck as a designer. Co-presented with Michelle at UXHI Conference 2025, I shared how side projects, genuine community involvement, and putting yourself out there create conditions where opportunities show up, with stories from both our careers breaking into UX in Hawai'i.",
+    },
+    {
+      company: "NVIDIA",
+      role: "Generative AI Analyst",
+      period: "2024 – 2025",
+      url: "https://www.nvidia.com/",
+      icon: "/icons/nvidia.ico",
+      description: "Understanding how generative AI models behave in the real world. I analyzed output quality across text and image generation and documented edge cases. It showed me that AI products are shaped by evaluation rigor, not just model size.",
+    },
+    {
+      company: "University of Hawai'i Esports",
+      role: "Creative Director",
+      period: "2023 – 2025",
+      url: "https://uhesports.com/",
+      description: "Shaping the look and feel of collegiate esports at UH. I led an overhaul of UHE's brand with a whole new look, grew and managed a team of 4 designers, and created graphics for our collaboration with Activision Blizzard's production team. My first leadership role where I learned to set direction instead of doing everything myself.",
+    },
+    {
+      company: "Umi Language Learning App",
+      role: "UX Designer",
+      period: "2024",
+      url: "https://umiapp.co/",
+      icon: "/icons/umi.png",
+      description: "Making Japanese language learning feel intuitive and encouraging. I researched with real learners, designed lesson flows and spaced repetition UI, and prototyped with 20+ users. Good education design means getting out of the learner's way.",
+    },
+    {
+      company: "Gen.G Esports",
+      role: "Intern",
+      period: "2024",
+      url: "https://geng.gg/",
+      icon: "/icons/geng.png",
+      description: "Design at a global esports org based in Seoul spanning Korean and North American teams. I made social graphics, campaign assets, and shipped content for League of Legends and Valorant. Working across cultures taught me to communicate visually when words aren't enough.",
+    },
+    {
+      company: "Servco",
+      role: "Design Intern",
+      period: "2023 – 2024",
+      icon: "/icons/servco.png",
+      description: "Brand and digital design for Hawai'i's largest private company. I worked on marketing across automotive and lifestyle brands, built digital campaigns and landing pages, and helped keep 10+ sub-brands visually consistent. My first corporate environment where I saw how design fits into bigger business goals.",
+      url: "https://www.servco.com/",
+    },
   ],
 }
 

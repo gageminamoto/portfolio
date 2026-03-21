@@ -1,5 +1,6 @@
 import { cache } from "react"
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 import { fetchPostBySlug } from "@/lib/notion"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ArticleContent } from "./article-content"
@@ -41,6 +42,10 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   const { slug } = await params
   const { from } = await searchParams
   const post = await getPost(slug)
+
+  if (!post) {
+    notFound()
+  }
 
   return <ArticleContent slug={slug} from={from} initialPost={post ?? undefined} />
 }

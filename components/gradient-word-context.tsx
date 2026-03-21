@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
+import { useMounted } from "@/hooks/use-mounted"
 
 const GradientWordContext = createContext<{
   activeWord: string
@@ -13,15 +14,12 @@ const GradientWordContext = createContext<{
 
 export function GradientWordProvider({ children }: { children: React.ReactNode }) {
   const [activeWord, setActiveWord] = useState("software")
-  const [shaderEnabled, setShaderEnabledState] = useState(true)
+  const [shaderEnabled, setShaderEnabledState] = useState(() => {
+    if (typeof window === "undefined") return true
+    return localStorage.getItem("shader-enabled") !== "false"
+  })
   const [cursorTrailActive, setCursorTrailActive] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    const stored = localStorage.getItem("shader-enabled")
-    if (stored === "false") setShaderEnabledState(false)
-    setMounted(true)
-  }, [])
+  const mounted = useMounted()
 
   function setShaderEnabled(enabled: boolean) {
     setShaderEnabledState(enabled)

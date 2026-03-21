@@ -4,18 +4,15 @@ import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
 import { Moon, Sun, Monitor, Sparkles } from "lucide-react"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { useMounted } from "@/hooks/use-mounted"
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme()
   const { shaderEnabled, setShaderEnabled } = useGradientWord()
-  const [mounted, setMounted] = useState(false)
+  const mounted = useMounted()
   const [open, setOpen] = useState(false)
   const [closing, setClosing] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   function close() {
     setClosing(true)
