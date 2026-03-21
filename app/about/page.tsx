@@ -50,6 +50,15 @@ function ToolSkeletonRow() {
   )
 }
 
+function SkillSkeletonRow() {
+  return (
+    <div className="flex items-center gap-2 min-w-0">
+      <div className="h-6 w-20 shrink-0 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800" />
+      <div className="h-3 w-44 animate-pulse rounded bg-muted" />
+    </div>
+  )
+}
+
 export default function AboutPage() {
   const { extendedBio, designManifesto, learning, hobbies, speaking } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
@@ -219,47 +228,76 @@ export default function AboutPage() {
               </span>
             )}
           </div>
-          {toolsLoading ? (
-            <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading tools">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <ToolSkeletonRow key={i} />
-              ))}
-            </div>
-          ) : toolsError ? (
+          {toolsError ? (
             <p className="text-sm text-muted-foreground">Unable to load tools right now.</p>
           ) : (
             <>
               <TabsContent value="all">
-                <div className="flex flex-col gap-3">
-                  {[
-                    ...build.map((t) => ({ ...t, tag: "Build" as const })),
-                    ...productivity.map((t) => ({ ...t, tag: "Productivity" as const })),
-                    ...skills.map((s) => ({ ...s, tag: "Skills" as const, isSkill: true })),
-                  ].map((item) => (
-                    <ToolRow key={item.name} name={item.name} url={item.url ?? undefined} description={item.description} tag={item.tag} isSkill={"isSkill" in item ? item.isSkill : undefined} />
-                  ))}
-                </div>
+                {toolsLoading ? (
+                  <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading tools">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <ToolSkeletonRow key={i} />
+                    ))}
+                    {[0, 1, 2].map((i) => (
+                      <SkillSkeletonRow key={`skill-${i}`} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {[
+                      ...build.map((t) => ({ ...t, tag: "Build" as const })),
+                      ...productivity.map((t) => ({ ...t, tag: "Productivity" as const })),
+                      ...skills.map((s) => ({ ...s, tag: "Skills" as const, isSkill: true })),
+                    ].map((item) => (
+                      <ToolRow key={item.name} name={item.name} url={item.url ?? undefined} description={item.description} tag={item.tag} isSkill={"isSkill" in item ? item.isSkill : undefined} />
+                    ))}
+                  </div>
+                )}
               </TabsContent>
               <TabsContent value="build">
-                <div className="flex flex-col gap-3">
-                  {build.map((tool) => (
-                    <ToolRow key={tool.name} name={tool.name} url={tool.url ?? undefined} description={tool.description} />
-                  ))}
-                </div>
+                {toolsLoading ? (
+                  <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading tools">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <ToolSkeletonRow key={i} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {build.map((tool) => (
+                      <ToolRow key={tool.name} name={tool.name} url={tool.url ?? undefined} description={tool.description} />
+                    ))}
+                  </div>
+                )}
               </TabsContent>
               <TabsContent value="productivity">
-                <div className="flex flex-col gap-3">
-                  {productivity.map((tool) => (
-                    <ToolRow key={tool.name} name={tool.name} url={tool.url ?? undefined} description={tool.description} />
-                  ))}
-                </div>
+                {toolsLoading ? (
+                  <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading tools">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <ToolSkeletonRow key={i} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {productivity.map((tool) => (
+                      <ToolRow key={tool.name} name={tool.name} url={tool.url ?? undefined} description={tool.description} />
+                    ))}
+                  </div>
+                )}
               </TabsContent>
               <TabsContent value="skills">
-                <div className="flex flex-col gap-3">
-                  {skills.map((skill) => (
-                    <ToolRow key={skill.name} name={skill.name} url={skill.url ?? undefined} description={skill.description} isSkill />
-                  ))}
-                </div>
+                {toolsLoading ? (
+                  <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading skills">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <SkillSkeletonRow key={i} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {skills.map((skill) => (
+                      <ToolRow key={skill.name} name={skill.name} url={skill.url ?? undefined} description={skill.description} isSkill />
+                    ))}
+                  </div>
+                )}
               </TabsContent>
             </>
           )}
