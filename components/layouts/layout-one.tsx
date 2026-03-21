@@ -15,8 +15,15 @@ import { useGradientWord } from "@/components/gradient-word-context"
 import { CursorTrail } from "@/components/cursor-trail"
 import type { ProjectItem } from "@/lib/portfolio-data"
 
+const BADGE_COLORS: Record<string, string> = {
+  software: "oklch(0.55 0.2 250)",
+  experiences: "oklch(0.55 0.2 330)",
+  tools: "oklch(0.55 0.2 145)",
+}
+
 function ProjectListItem({ project }: { project: ProjectItem }) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
+  const { activeWord } = useGradientWord()
 
   return (
     <div className="group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm">
@@ -32,7 +39,8 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
       )}
         {project.status === "building" && (
           <motion.span
-            className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full bg-[#3A81F5] px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
+            className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
+            style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
             initial={{ rotate: 0 }}
             animate={{ rotate: badgeTilt }}
             whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}

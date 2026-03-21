@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import type { ProjectItem } from "@/lib/portfolio-data"
 import { useTouchDevice } from "@/hooks/use-mobile"
+import { useGradientWord } from "@/components/gradient-word-context"
 import { DiceFallAnimation } from "@/components/hover-animations/dice-fall"
 import { PotLidRattleAnimation } from "@/components/hover-animations/pot-lid-rattle"
 
@@ -44,10 +45,17 @@ const colors = [
   "currentColor",
 ]
 
+const BADGE_COLORS: Record<string, string> = {
+  software: "oklch(0.55 0.2 250)",
+  experiences: "oklch(0.55 0.2 330)",
+  tools: "oklch(0.55 0.2 145)",
+}
+
 export function ProjectCard({ project, index = 0 }: { project: ProjectItem; index?: number }) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
   const [isHovered, setIsHovered] = useState(false)
   const isTouch = useTouchDevice()
+  const { activeWord } = useGradientWord()
 
   const shape = shapes[index % shapes.length]
   const showAnimations = !isTouch
@@ -70,7 +78,8 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
       )}
       {project.status === "building" && (
         <motion.span
-          className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full bg-[#3A81F5] px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
+          className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
+          style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
           initial={{ rotate: 0 }}
           animate={{ rotate: badgeTilt }}
           whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}
