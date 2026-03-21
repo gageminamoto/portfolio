@@ -63,11 +63,8 @@ function SkeletonRows() {
           className="flex items-center gap-3 border-b border-border/40 py-3 last:border-b-0"
         >
           <div className="h-8 w-8 shrink-0 animate-pulse rounded-md bg-muted" />
-          <div className="flex flex-1 flex-col gap-1.5">
-            <div className="h-4 w-28 animate-pulse rounded bg-muted" />
-            <div className="h-3 w-44 animate-pulse rounded bg-muted" />
-          </div>
-          <div className="h-5 w-16 animate-pulse rounded-full bg-muted" />
+          <div className="h-4 w-28 shrink-0 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-44 flex-1 animate-pulse rounded bg-muted" />
         </div>
       ))}
     </div>
@@ -85,7 +82,6 @@ function SkeletonCards() {
           <div className="h-8 w-8 animate-pulse rounded-md bg-muted" />
           <div className="h-4 w-24 animate-pulse rounded bg-muted" />
           <div className="h-3 w-full animate-pulse rounded bg-muted" />
-          <div className="h-5 w-16 animate-pulse rounded-full bg-muted" />
         </div>
       ))}
     </div>
@@ -212,7 +208,7 @@ export default function ToolsPage() {
                   className="flex items-center gap-3 border-b border-border/40 py-3 transition-colors duration-100 last:border-b-0 hover:bg-muted/30"
                 >
                   <ToolIcon name={tool.name} url={tool.url} />
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <div className="flex min-w-0 shrink-0">
                     {isSkill ? (
                       <div className="flex items-center gap-1.5">
                         {tool.url ? (
@@ -248,12 +244,9 @@ export default function ToolsPage() {
                         {displayName}
                       </span>
                     )}
-                    <span className="truncate text-xs text-muted-foreground">
-                      {tool.description}
-                    </span>
                   </div>
-                  <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                    {tool.category}
+                  <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
+                    {tool.description}
                   </span>
                 </div>
               )
@@ -289,9 +282,6 @@ export default function ToolsPage() {
                     <h3 className="text-sm font-medium text-foreground">{displayName}</h3>
                   )}
                   <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
-                  <span className="mt-auto w-fit shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                    {tool.category}
-                  </span>
                 </Wrapper>
               )
             })}
