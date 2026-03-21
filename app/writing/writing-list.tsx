@@ -2,9 +2,11 @@
 
 import Link from "next/link"
 import useSWR from "swr"
+import { useDialKit } from "dialkit"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
+import { generateSeedPosts } from "@/lib/seed-posts"
 import type { NotionWritingPost } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -113,6 +115,11 @@ interface WritingListProps {
 }
 
 export function WritingList({ initialPosts }: WritingListProps) {
+  const dial = useDialKit("Seed Posts", {
+    enabled: false,
+    count: [5, 1, 20, 1],
+  })
+
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
     fetcher,
@@ -121,7 +128,10 @@ export function WritingList({ initialPosts }: WritingListProps) {
       fallbackData: initialPosts ? { posts: initialPosts } : undefined,
     }
   )
-  const posts = data?.posts ?? []
+  const realPosts = data?.posts ?? []
+  const posts = dial.enabled
+    ? [...realPosts, ...generateSeedPosts(dial.count)]
+    : realPosts
   const groups = groupPosts(posts)
 
   return (
