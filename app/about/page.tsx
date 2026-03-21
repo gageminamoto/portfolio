@@ -11,6 +11,7 @@ import { ToolRow } from "@/components/tool-row"
 import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { portfolioData } from "@/lib/portfolio-data"
+import { WorkHistorySection } from "@/components/work-history-section"
 import dynamic from "next/dynamic"
 
 const Penflow = dynamic(
@@ -24,7 +25,7 @@ const PokemonCards = dynamic(
 )
 
 export default function AboutPage() {
-  const { extendedBio, designManifesto, learning, hobbies, speaking } = portfolioData
+  const { extendedBio, designManifesto, learning, hobbies, speaking, workHistory } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { resolvedTheme } = useTheme()
   const penflowColor = resolvedTheme === "dark" ? "#ffffff" : "#0f1117"
@@ -69,8 +70,15 @@ export default function AboutPage() {
 
       {/* Sections */}
       <div className="flex flex-col">
-        {/* Design Manifesto */}
+        {/* Work History */}
         <div className="pb-8">
+          <WorkHistorySection items={workHistory} />
+        </div>
+
+        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+
+        {/* Design Manifesto */}
+        <div className="pb-8 pt-8">
         <Section title="Design Manifesto">
           {designManifesto.length > 0 ? (
             <div className="flex flex-col gap-3">
