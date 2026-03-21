@@ -19,7 +19,7 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
 
   return (
-    <div className="group relative">
+    <div className="group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm">
       {project.url && (
         <a
           href={project.url}
@@ -30,7 +30,6 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
           tabIndex={0}
         />
       )}
-      <div className="relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] group-hover:-translate-y-px group-hover:bg-accent/50 group-hover:shadow-sm">
         {project.status === "building" && (
           <motion.span
             className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full bg-[#3A81F5] px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
@@ -51,45 +50,6 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
           <span className="text-sm font-medium text-foreground">{project.name}</span>
           <span className="truncate text-xs text-muted-foreground">{project.description}</span>
         </div>
-        {project.collaborators && project.collaborators.length > 0 && (
-          <div className="relative z-10 flex shrink-0 -space-x-2">
-            {project.collaborators.map((collaborator) => {
-              const avatar = (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={collaborator.avatarUrl}
-                  alt={collaborator.name}
-                  width={24}
-                  height={24}
-                  className="size-6 rounded-full object-cover"
-                  draggable={false}
-                />
-              )
-              return collaborator.url ? (
-                <a
-                  key={collaborator.name}
-                  href={collaborator.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={`${collaborator.name} · ${collaborator.role}`}
-                  className="relative size-6 shrink-0 overflow-hidden rounded-full border-2 border-card bg-muted transition-[transform,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-110 hover:shadow-md"
-                  aria-label={`Visit ${collaborator.name}'s profile`}
-                >
-                  {avatar}
-                </a>
-              ) : (
-                <span
-                  key={collaborator.name}
-                  title={`${collaborator.name} · ${collaborator.role}`}
-                  className="relative size-6 shrink-0 overflow-hidden rounded-full border-2 border-card bg-muted transition-[transform,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-110 hover:shadow-md"
-                >
-                  {avatar}
-                </span>
-              )
-            })}
-          </div>
-        )}
-      </div>
     </div>
   )
 }

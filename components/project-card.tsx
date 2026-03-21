@@ -100,44 +100,6 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
       </div>
       <h3 className="text-base font-medium text-foreground">{project.name}</h3>
       <p className="line-clamp-2 text-sm text-muted-foreground [text-wrap:balance]">{project.description}</p>
-      {project.collaborators && project.collaborators.length > 0 && (
-        <div className="relative z-10 mt-1 flex -space-x-2">
-          {project.collaborators.map((collaborator) => {
-            const avatar = (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={collaborator.avatarUrl}
-                alt={collaborator.name}
-                width={24}
-                height={24}
-                className="size-6 rounded-full object-cover"
-                draggable={false}
-              />
-            )
-            return collaborator.url ? (
-              <a
-                key={collaborator.name}
-                href={collaborator.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`${collaborator.name} · ${collaborator.role}`}
-                className="relative size-6 shrink-0 overflow-hidden rounded-full border-2 border-card bg-muted transition-[transform,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-110 hover:shadow-md"
-                aria-label={`Visit ${collaborator.name}'s profile`}
-              >
-                {avatar}
-              </a>
-            ) : (
-              <span
-                key={collaborator.name}
-                title={`${collaborator.name} · ${collaborator.role}`}
-                className="relative size-6 shrink-0 overflow-hidden rounded-full border-2 border-card bg-muted transition-[transform,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-110 hover:shadow-md"
-              >
-                {avatar}
-              </span>
-            )
-          })}
-        </div>
-      )}
     </div>
   )
 }
