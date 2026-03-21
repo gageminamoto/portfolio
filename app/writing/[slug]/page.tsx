@@ -41,6 +41,12 @@ export async function generateMetadata({
 export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
   const { slug } = await params
   const { from } = await searchParams
+
+  // Let seed posts through for dev dial kit
+  if (slug.startsWith("seed-")) {
+    return <ArticleContent slug={slug} from={from} />
+  }
+
   const post = await getPost(slug)
 
   if (!post) {

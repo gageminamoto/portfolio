@@ -125,7 +125,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   }
 
   return (
-    <nav aria-label="Table of contents" className="sticky top-8">
+    <nav aria-label="Table of contents" className="space-y-2">
       <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground">
         On this page
       </span>
