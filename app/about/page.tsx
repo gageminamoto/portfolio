@@ -156,16 +156,6 @@ export default function AboutPage() {
         </Section>
         </div>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
-
-        {/* Tools */}
-        <div className="pt-8">
-        <Section title="Tools" href="/tools">
-          <p className="text-sm text-muted-foreground">
-            Everything I build with.
-          </p>
-        </Section>
-        </div>
       </div>
 
       <SiteFooter />
