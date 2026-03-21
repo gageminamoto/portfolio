@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { HamburgerMenu, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
+import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { HoverLink } from "@/components/hover-link"
@@ -94,7 +94,7 @@ export function LayoutOne() {
       </Section>
 
       {/* Tools */}
-      <Section title="Tools" href="/tools">
+      <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
         <p className="text-sm text-muted-foreground">
           Everything I build with.
         </p>
