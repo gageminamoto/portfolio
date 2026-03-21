@@ -3,7 +3,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ChevronLeft, Search, ArrowUpRight } from "lucide-react"
-import { Widget2, HamburgerMenu } from "@solar-icons/react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
@@ -91,7 +90,8 @@ function SkeletonCards() {
 export default function ToolsPage() {
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("All")
-  const [viewMode, setViewMode] = useState<"list" | "card">("list")
+
+  const viewMode = activeCategory === "All" ? "list" : "card"
 
   const { data, isLoading } = useSWR<{
     tools: NotionToolItem[]
@@ -174,17 +174,6 @@ export default function ToolsPage() {
                 {cat.label}
               </button>
             ))}
-            <button
-              onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
-              className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-              aria-label={viewMode === "list" ? "Switch to card view" : "Switch to list view"}
-            >
-              {viewMode === "list" ? (
-                <Widget2 size={14} weight="Bold" />
-              ) : (
-                <HamburgerMenu size={14} weight="Bold" />
-              )}
-            </button>
           </div>
           {data?.lastUpdated && (
             <span className="text-xs text-muted-foreground/60">
@@ -205,7 +194,7 @@ export default function ToolsPage() {
               return (
                 <div
                   key={tool.id}
-                  className="flex items-center gap-3 border-b border-border/40 py-3 transition-colors duration-100 last:border-b-0 hover:bg-muted/30"
+                  className="flex items-center gap-3 border-b border-border/40 px-3 py-3 rounded-lg transition-colors duration-100 last:border-b-0 hover:bg-muted/30"
                 >
                   <ToolIcon name={tool.name} url={tool.url} />
                   <div className="flex min-w-0 shrink-0">
