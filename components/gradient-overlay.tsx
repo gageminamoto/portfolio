@@ -6,9 +6,9 @@ import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
 
 const GRADIENT_CONFIG = {
-  software:    { hue: 250, lightL: 0.95, darkL: 0.20 },
-  experiences: { hue: 330, lightL: 0.95, darkL: 0.20 },
-  tools:       { hue: 145, lightL: 0.95, darkL: 0.20 },
+  software:    { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
+  experiences: { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
+  tools:       { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
 } as const
 
 type GradientWord = keyof typeof GRADIENT_CONFIG
@@ -21,7 +21,6 @@ export function GradientOverlay() {
 
   const p = {
     opacity: 0.73,
-    saturation: 0.05,
     width: 74,
     height: 35,
     duration: 0.5,
@@ -73,9 +72,10 @@ export function GradientOverlay() {
           }}
         >
           {(Object.keys(GRADIENT_CONFIG) as GradientWord[]).map((word) => {
-            const { hue, lightL, darkL } = GRADIENT_CONFIG[word]
+            const { hue, lightL, lightS, darkL, darkS } = GRADIENT_CONFIG[word]
             const l = isDark ? darkL : lightL
-            const color = `oklch(${l} ${p.saturation} ${hue})`
+            const s = isDark ? darkS : lightS
+            const color = `oklch(${l} ${s} ${hue})`
             const isActive = activeWord === word
 
             return (
