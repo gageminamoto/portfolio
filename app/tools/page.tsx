@@ -22,8 +22,29 @@ function formatLastUpdated(dateStr: string | null): string {
   })
 }
 
-function ToolIcon({ name }: { name: string }) {
+function ToolIcon({ name, url }: { name: string; url: string | null }) {
   const initials = name.slice(0, 2)
+  const [failed, setFailed] = useState(false)
+
+  if (url && !failed) {
+    try {
+      const hostname = new URL(url).hostname
+      return (
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
+            alt=""
+            className="size-5 rounded-sm"
+            onError={() => setFailed(true)}
+          />
+        </div>
+      )
+    } catch {
+      // invalid URL, fall through to initials
+    }
+  }
+
   return (
     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
       <span className="font-mono text-[11px] font-semibold text-muted-foreground">
@@ -190,7 +211,7 @@ export default function ToolsPage() {
                   key={tool.id}
                   className="flex items-center gap-3 border-b border-border/40 py-3 transition-colors duration-100 last:border-b-0 hover:bg-muted/30"
                 >
-                  <ToolIcon name={tool.name} />
+                  <ToolIcon name={tool.name} url={tool.url} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     {isSkill ? (
                       <div className="flex items-center gap-1.5">
@@ -259,7 +280,7 @@ export default function ToolsPage() {
                   {...linkProps}
                   className="group flex flex-col gap-2 rounded-xl border border-border/50 p-5 transition-colors hover:bg-muted/50"
                 >
-                  <ToolIcon name={tool.name} />
+                  <ToolIcon name={tool.name} url={tool.url} />
                   {isSkill ? (
                     <span className="w-fit rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
                       {displayName}
