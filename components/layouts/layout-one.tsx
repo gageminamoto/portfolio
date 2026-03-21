@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { HamburgerMenu, Pin, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
-import { HoverLink } from "@/components/hover-link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
@@ -13,6 +13,86 @@ import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { CursorTrail } from "@/components/cursor-trail"
+import type { ProjectItem } from "@/lib/portfolio-data"
+
+function ProjectListItem({ project }: { project: ProjectItem }) {
+  const [badgeTilt] = useState(() => Math.random() * 14 - 7)
+
+  return (
+    <div className="group relative">
+      {project.url && (
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute inset-0 z-0 rounded-xl"
+          aria-label={project.name}
+          tabIndex={0}
+        />
+      )}
+      <div className="relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] group-hover:-translate-y-px group-hover:bg-accent/50 group-hover:shadow-sm">
+        {project.status === "building" && (
+          <motion.span
+            className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full bg-[#3A81F5] px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
+            initial={{ rotate: 0 }}
+            animate={{ rotate: badgeTilt }}
+            whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
+          >
+            Building
+          </motion.span>
+        )}
+        {project.favicon && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-sm font-medium text-foreground">{project.name}</span>
+          <span className="truncate text-xs text-muted-foreground">{project.description}</span>
+        </div>
+        {project.collaborators && project.collaborators.length > 0 && (
+          <div className="relative z-10 flex shrink-0 -space-x-2">
+            {project.collaborators.map((collaborator) => {
+              const avatar = (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={collaborator.avatarUrl}
+                  alt={collaborator.name}
+                  width={24}
+                  height={24}
+                  className="size-6 rounded-full object-cover"
+                  draggable={false}
+                />
+              )
+              return collaborator.url ? (
+                <a
+                  key={collaborator.name}
+                  href={collaborator.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`${collaborator.name} · ${collaborator.role}`}
+                  className="relative size-6 shrink-0 overflow-hidden rounded-full border-2 border-card bg-muted transition-[transform,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-110 hover:shadow-md"
+                  aria-label={`Visit ${collaborator.name}'s profile`}
+                >
+                  {avatar}
+                </a>
+              ) : (
+                <span
+                  key={collaborator.name}
+                  title={`${collaborator.name} · ${collaborator.role}`}
+                  className="relative size-6 shrink-0 overflow-hidden rounded-full border-2 border-card bg-muted transition-[transform,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:z-10 hover:-translate-y-0.5 hover:scale-110 hover:shadow-md"
+                >
+                  {avatar}
+                </span>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
@@ -59,24 +139,9 @@ export function LayoutOne() {
         </div>
 
         {projectView === "list" ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {projects.map((project) => (
-              <div key={project.name} className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                  {project.favicon && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={project.favicon} alt="" className="size-4 rounded-sm" />
-                  )}
-                  {project.url ? (
-                    <HoverLink href={project.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
-                      {project.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="font-medium text-foreground">{project.name}</span>
-                  )}
-                </div>
-                <span className="text-sm text-muted-foreground">{project.description}</span>
-              </div>
+              <ProjectListItem key={project.name} project={project} />
             ))}
           </div>
         ) : (

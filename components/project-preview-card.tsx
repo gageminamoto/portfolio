@@ -33,6 +33,8 @@ export function ProjectPreviewCard({ project }: { project: ProjectItem }) {
           <img
             src={project.image}
             alt={`${project.name} preview`}
+            width={800}
+            height={500}
             className="size-full object-cover"
           />
         </div>

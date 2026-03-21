@@ -118,9 +118,12 @@ Today, I use that foundation to design thoughtful software and brands in and for
       hoverImage: "/projects/mizen-hover.svg",
       favicon: "/projects/mizen-favicon.png",
       collaborators: [
-        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.jpg", role: "Design Eng", url: "https://linkedin.com/in/gageminamoto" },
-        { name: "Michelle Tran", avatarUrl: "/avatars/michelle.jpg", role: "PM", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
-        { name: "William Liang", avatarUrl: "/avatars/william.jpg", role: "Dev", url: "https://www.linkedin.com/in/william-liang808/" },
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Design Eng", url: "https://linkedin.com/in/gageminamoto" },
+        { name: "Michelle Tran", avatarUrl: "/avatars/michelle.png", role: "PM", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
+        { name: "Michele Tang", avatarUrl: "/avatars/michele-tang.jpg", role: "Contributor", url: "https://www.linkedin.com/in/michele-tang/" },
+        { name: "Zelda Cole", avatarUrl: "/avatars/zelda.jpg", role: "Contributor", url: "https://www.linkedin.com/in/zeldacole" },
+        { name: "William Liang", avatarUrl: "/avatars/william.jpg", role: "Contributor", url: "https://www.linkedin.com/in/william-liang808/" },
+        { name: "Rahul Jain", avatarUrl: "/avatars/rahul.jpg", role: "Contributor", url: "https://www.linkedin.com/in/rahulj24/" },
       ],
     },
     {
@@ -133,7 +136,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       hoverImage: "/projects/yahtzee-hover.svg",
       favicon: "/projects/yahtzee-favicon.png",
       collaborators: [
-        { name: "Gage Minamoto", avatarUrl: "/placeholder-avatar.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
     },
   ],

@@ -54,6 +54,8 @@ function preloadImages(srcs: string[]) {
   })
 }
 
+const subscribeNoop = () => () => {}
+
 // Card native ratio 719:1000
 const CARD_RATIO = 719 / 1000
 
@@ -330,6 +332,9 @@ function Card3DModal({
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${card.name} Pokemon card viewer`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -409,6 +414,8 @@ function Card3DModal({
             <img
               src={card.image}
               alt={`${card.name} Pokemon card front`}
+              width={719}
+              height={1000}
               className="pointer-events-none h-full w-full rounded-xl object-contain"
               draggable={false}
             />
@@ -434,6 +441,8 @@ function Card3DModal({
             <img
               src={CARD_BACK}
               alt="Pokemon card back"
+              width={719}
+              height={1000}
               className="pointer-events-none h-full w-full rounded-xl object-contain"
               draggable={false}
             />
@@ -456,7 +465,7 @@ export function PokemonCards() {
   const preloadedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const isTouchDevice = useSyncExternalStore(
-    () => () => {},
+    subscribeNoop,
     () => "ontouchstart" in window || navigator.maxTouchPoints > 0,
     () => false
   )
@@ -540,12 +549,14 @@ export function PokemonCards() {
         onMouseLeave={handleMouseLeave}
       >
         {/* Trigger text styled like other hobby links */}
-        <span
+        <button
           className="cursor-pointer font-medium text-foreground underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-foreground"
           onClick={handleTriggerClick}
+          aria-label="View Pokemon cards"
+          aria-expanded={isFanned}
         >
           Pokemon cards
-        </span>
+        </button>
 
         {/* Fan of cards peeking upward */}
         <AnimatePresence>
@@ -611,6 +622,8 @@ export function PokemonCards() {
                     <img
                       src={card.image}
                       alt={`${card.name} Pokemon card`}
+                      width={FAN_CARD_W}
+                      height={FAN_CARD_H}
                       className="h-full w-full rounded-lg object-contain"
                       draggable={false}
                     />

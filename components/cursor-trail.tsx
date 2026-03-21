@@ -27,9 +27,11 @@ export function CursorTrail() {
   const fadeRef = useRef(1)
   const fadingRef = useRef(false)
   const prefersReducedMotion = useReducedMotion()
-  const { activeWord, cursorTrailActive, setCursorTrailActive, shaderEnabled } = useGradientWord()
+  const { activeWord, cursorTrailActive, shaderEnabled } = useGradientWord()
 
   const isTouchDevice = useTouchDevice()
+
+  const effectiveActive = cursorTrailActive && shaderEnabled
 
   const hue = HUE_MAP[activeWord] ?? 250
 
@@ -62,15 +64,8 @@ export function CursorTrail() {
     rafRef.current = requestAnimationFrame(draw)
   }, [hue])
 
-  // Reset trail when effects are turned off
   useEffect(() => {
-    if (!shaderEnabled && cursorTrailActive) {
-      setCursorTrailActive(false)
-    }
-  }, [shaderEnabled, cursorTrailActive, setCursorTrailActive])
-
-  useEffect(() => {
-    if (!cursorTrailActive || !shaderEnabled || prefersReducedMotion || isTouchDevice) return
+    if (!effectiveActive || prefersReducedMotion || isTouchDevice) return
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -107,7 +102,7 @@ export function CursorTrail() {
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [cursorTrailActive, prefersReducedMotion, isTouchDevice, draw])
+  }, [effectiveActive, prefersReducedMotion, isTouchDevice, draw])
 
   if (prefersReducedMotion || isTouchDevice) return null
 
