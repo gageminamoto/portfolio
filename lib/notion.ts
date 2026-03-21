@@ -82,44 +82,21 @@ function getDate(page: PageObjectResponse): string | null {
   return page.created_time ?? null
 }
 
-export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> {
-  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
-
-  if (!databaseId) {
-    warnMissingDatabaseId()
-    return []
-  }
-
-  const dataSourceId = await resolveDataSourceId(databaseId)
-  const response = await notion.dataSources.query({
-    data_source_id: dataSourceId,
-    page_size: limit,
-    sorts: [
-      {
-        timestamp: "created_time",
-        direction: "descending",
-      },
-    ],
-  })
-
-  const posts = (response.results as PageObjectResponse[]).map((page) => ({
-    id: page.id,
-    title: getTitle(page),
-    slug: getSlug(page),
-    date: getDate(page),
-    url: page.url,
-  }))
-  return deduplicateSlugs(posts)
+function mapWritingPosts(pages: PageObjectResponse[]): NotionWritingPost[] {
+  return deduplicateSlugs(
+    pages.map((page) => ({
+      id: page.id,
+      title: getTitle(page),
+      slug: getSlug(page),
+      date: getDate(page),
+      url: page.url,
+    }))
+  )
 }
 
-export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
-  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
-
-  if (!databaseId) {
-    warnMissingDatabaseId()
-    return []
-  }
-
+async function fetchAllWritingPostsForDatabase(
+  databaseId: string
+): Promise<NotionWritingPost[]> {
   const dataSourceId = await resolveDataSourceId(databaseId)
   const allPages: PageObjectResponse[] = []
   let cursor: string | undefined = undefined
@@ -139,14 +116,30 @@ export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
     cursor = response.has_more ? response.next_cursor ?? undefined : undefined
   } while (cursor)
 
-  const posts = allPages.map((page) => ({
-    id: page.id,
-    title: getTitle(page),
-    slug: getSlug(page),
-    date: getDate(page),
-    url: page.url,
-  }))
-  return deduplicateSlugs(posts)
+  return mapWritingPosts(allPages)
+}
+
+export async function fetchLatestPosts(limit = 3): Promise<NotionWritingPost[]> {
+  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
+
+  if (!databaseId) {
+    warnMissingDatabaseId()
+    return []
+  }
+
+  const posts = await fetchAllWritingPostsForDatabase(databaseId)
+  return posts.slice(0, limit)
+}
+
+export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
+  const databaseId = process.env.NOTION_BLOG_DATABASE_ID
+
+  if (!databaseId) {
+    warnMissingDatabaseId()
+    return []
+  }
+
+  return fetchAllWritingPostsForDatabase(databaseId)
 }
 
 export async function fetchPostBySlug(
