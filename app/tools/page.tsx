@@ -8,7 +8,16 @@ import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+async function fetcher(url: string) {
+  const response = await fetch(url)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Failed to fetch tools")
+  }
+
+  return data
+}
 
 type FilterCategory = "All" | ToolCategory
 
@@ -24,24 +33,28 @@ function formatLastUpdated(dateStr: string | null): string {
 function ToolIcon({ name, url }: { name: string; url: string | null }) {
   const initials = name.slice(0, 2)
   const [failed, setFailed] = useState(false)
+  let hostname: string | null = null
 
-  if (url && !failed) {
+  if (url) {
     try {
-      const hostname = new URL(url).hostname
-      return (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
-            alt=""
-            className="size-5 rounded-sm"
-            onError={() => setFailed(true)}
-          />
-        </div>
-      )
+      hostname = new URL(url).hostname
     } catch {
-      // invalid URL, fall through to initials
+      hostname = null
     }
+  }
+
+  if (hostname && !failed) {
+    return (
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
+          alt=""
+          className="size-5 rounded-sm"
+          onError={() => setFailed(true)}
+        />
+      </div>
+    )
   }
 
   return (
@@ -93,7 +106,7 @@ export default function ToolsPage() {
 
   const viewMode = activeCategory === "All" ? "list" : "card"
 
-  const { data, isLoading } = useSWR<{
+  const { data, error, isLoading } = useSWR<{
     tools: NotionToolItem[]
     lastUpdated: string | null
   }>("/api/tools", fetcher, { revalidateOnFocus: false })
@@ -185,6 +198,10 @@ export default function ToolsPage() {
         {/* Content */}
         {isLoading ? (
           viewMode === "list" ? <SkeletonRows /> : <SkeletonCards />
+        ) : error ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            Could not load tools.
+          </p>
         ) : viewMode === "list" ? (
           <div className="flex flex-col">
             {filtered.map((tool) => {

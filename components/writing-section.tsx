@@ -7,7 +7,16 @@ import type { NotionWritingPost } from "@/lib/notion"
 import { HoverLink } from "@/components/hover-link"
 import { cn } from "@/lib/utils"
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+async function fetcher(url: string) {
+  const response = await fetch(url)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Failed to fetch writing posts")
+  }
+
+  return data
+}
 const INITIAL_COUNT = 5
 
 function formatDate(dateStr: string | null): string {
