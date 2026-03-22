@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
@@ -13,6 +13,7 @@ import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { CursorTrail } from "@/components/cursor-trail"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { ProjectItem } from "@/lib/portfolio-data"
 
 const BADGE_COLORS: Record<string, string> = {
@@ -66,14 +67,19 @@ export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const [projectView, setProjectView] = useState<"list" | "card">("card")
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
 
   return (
-    <main
+    <motion.main
       id="main-content"
       className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
     >
       {/* Header */}
-      <header className="flex flex-col gap-6">
+      <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
@@ -84,10 +90,10 @@ export function LayoutOne() {
           <ThemeToggle />
         </div>
         <SocialIcons socials={socials} email={email} />
-      </header>
+      </motion.header>
 
       {/* Projects */}
-      <section className="flex flex-col gap-4">
+      <motion.section variants={item} className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Pin size={14} weight="Bold" />
@@ -119,30 +125,38 @@ export function LayoutOne() {
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
 
       {/* Writing — Notion CMS */}
-      <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
-        <WritingSection variant="default" />
-      </Section>
+      <motion.div variants={item}>
+        <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
+          <WritingSection variant="default" />
+        </Section>
+      </motion.div>
 
       {/* Tools */}
-      <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
-        <p className="text-sm text-muted-foreground">
-          Everything I build with.
-        </p>
-      </Section>
+      <motion.div variants={item}>
+        <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
+          <p className="text-sm text-muted-foreground">
+            Everything I build with.
+          </p>
+        </Section>
+      </motion.div>
 
       {/* About */}
-      <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
-        <p className="text-sm text-muted-foreground">
-          Design manifesto and&nbsp;hobbies.
-        </p>
-      </Section>
+      <motion.div variants={item}>
+        <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
+          <p className="text-sm text-muted-foreground">
+            Design manifesto and&nbsp;hobbies.
+          </p>
+        </Section>
+      </motion.div>
 
-      <SiteFooter />
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
 
       <CursorTrail />
-    </main>
+    </motion.main>
   )
 }

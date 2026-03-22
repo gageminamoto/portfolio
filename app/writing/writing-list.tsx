@@ -3,10 +3,12 @@
 import Link from "next/link"
 import useSWR from "swr"
 import { useDialKit } from "dialkit"
+import { motion, useReducedMotion } from "framer-motion"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import { generateSeedPosts } from "@/lib/seed-posts"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -119,6 +121,8 @@ export function WritingList({ initialPosts }: WritingListProps) {
     enabled: false,
     count: [5, 1, 20, 1],
   })
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
 
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
@@ -135,12 +139,15 @@ export function WritingList({ initialPosts }: WritingListProps) {
   const groups = groupPosts(posts)
 
   return (
-    <main
+    <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
     >
       {/* Header */}
-      <header className="flex items-center justify-between">
+      <motion.header variants={item} className="flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -149,17 +156,17 @@ export function WritingList({ initialPosts }: WritingListProps) {
           Home
         </Link>
         <ThemeToggle />
-      </header>
+      </motion.header>
 
       {/* Title */}
-      <div className="flex flex-col gap-4">
+      <motion.div variants={item} className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Writing
         </h1>
-      </div>
+      </motion.div>
 
       {/* Posts list */}
-      <div className="flex flex-col gap-10">
+      <motion.div variants={item} className="flex flex-col gap-10">
         {isLoading && (
           <div
             className="flex flex-col gap-3"
@@ -194,9 +201,11 @@ export function WritingList({ initialPosts }: WritingListProps) {
               </div>
             </section>
           ))}
-      </div>
+      </motion.div>
 
-      <SiteFooter />
-    </main>
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
+    </motion.main>
   )
 }

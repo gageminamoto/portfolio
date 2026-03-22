@@ -1,11 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import { ChevronLeft, Search, ArrowUpRight } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -103,6 +105,8 @@ function SkeletonCards() {
 export default function ToolsPage() {
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("All")
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
 
   const viewMode = activeCategory === "All" ? "list" : "card"
 
@@ -131,12 +135,15 @@ export default function ToolsPage() {
   ]
 
   return (
-    <main
+    <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
     >
       {/* Header */}
-      <header className="flex items-center justify-between">
+      <motion.header variants={item} className="flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 rounded-sm text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -145,20 +152,20 @@ export default function ToolsPage() {
           Home
         </Link>
         <ThemeToggle />
-      </header>
+      </motion.header>
 
       {/* Title */}
-      <div className="flex flex-col gap-4">
+      <motion.div variants={item} className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Tools
         </h1>
         <p className="text-sm text-muted-foreground">
           Everything I build with, stay productive, and keep learning.
         </p>
-      </div>
+      </motion.div>
 
       {/* Search + Filters + Table */}
-      <div className="flex flex-col gap-5">
+      <motion.div variants={item} className="flex flex-col gap-5">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
@@ -298,9 +305,11 @@ export default function ToolsPage() {
             )}
           </div>
         )}
-      </div>
+      </motion.div>
 
-      <SiteFooter />
-    </main>
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
+    </motion.main>
   )
 }
