@@ -4,6 +4,7 @@ import Link from "next/link"
 import useSWR from "swr"
 import { useState, useCallback } from "react"
 import { useDialKit } from "dialkit"
+import { motion, useReducedMotion } from "framer-motion"
 import { ChevronLeft, Link as LinkIcon, Check } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NotionBlocksRenderer } from "@/components/writing/notion-blocks-renderer"
@@ -13,6 +14,7 @@ import {
 } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
 import { generateSeedPosts, getSeedPost, generateSeedBlocks } from "@/lib/seed-posts"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionWritingPost, NotionBlock } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -62,6 +64,8 @@ interface ArticleContentProps {
 
 export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
   const dial = useDialKit("Seed Posts", {
     enabled: false,
     count: [5, 1, 20, 1],
@@ -122,7 +126,11 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
   const hasFooter = (isSeed || (!isLoading && !error)) && (prevPost || nextPost)
 
   return (
-    <>
+    <motion.div
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
+    >
       {/* Fixed desktop tracks keep the article centered while letting the TOC sidebar stick normally. */}
       <div
         className={`mx-auto w-full px-6 pt-16 md:pt-24 ${hasFooter ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[14rem_minmax(0,36rem)_14rem] xl:items-start xl:justify-center`}
@@ -132,7 +140,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
 
           <main id="main-content" className="min-w-0 max-w-xl xl:max-w-none mx-auto w-full">
             {/* Header */}
-            <header className="mb-10 flex flex-col gap-6">
+            <motion.header variants={item} className="mb-10 flex flex-col gap-6">
               <nav className="flex items-center justify-between">
                 <Link
                   href={backHref}
@@ -173,7 +181,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
                   )}
                 </>
               )}
-            </header>
+            </motion.header>
 
             {/* Mobile TOC */}
             {!isLoading && !error && headings.length > 0 && (
@@ -183,29 +191,29 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
             )}
 
             {/* Content */}
-            <div>
-            {!isSeed && isLoading && <ArticleSkeleton />}
+            <motion.div variants={item}>
+              {!isSeed && isLoading && <ArticleSkeleton />}
 
-            {!isSeed && error && (
-              <div className="flex flex-col gap-3">
-                <p className="text-sm text-muted-foreground">
-                  Could not load article.
-                </p>
-                <Link
-                  href="/writing"
-                  className="text-sm text-muted-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-colors duration-150 ease-out hover:text-foreground"
-                >
-                  Back to writing
-                </Link>
-              </div>
-            )}
+              {!isSeed && error && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    Could not load article.
+                  </p>
+                  <Link
+                    href="/writing"
+                    className="text-sm text-muted-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-colors duration-150 ease-out hover:text-foreground"
+                  >
+                    Back to writing
+                  </Link>
+                </div>
+              )}
 
-            {(isSeed || (!isLoading && !error)) && blocks.length > 0 && (
-              <article>
-                <NotionBlocksRenderer blocks={blocks} />
-              </article>
-            )}
-            </div>
+              {(isSeed || (!isLoading && !error)) && blocks.length > 0 && (
+                <article>
+                  <NotionBlocksRenderer blocks={blocks} />
+                </article>
+              )}
+            </motion.div>
           </main>
 
           {/* Desktop TOC sidebar */}
@@ -219,10 +227,10 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
       </div>
 
       {hasFooter && (
-        <div className="px-6">
+        <motion.div variants={item} className="px-6">
           <ArticleFooter prevPost={prevPost} nextPost={nextPost} />
-        </div>
+        </motion.div>
       )}
-    </>
+    </motion.div>
   )
 }

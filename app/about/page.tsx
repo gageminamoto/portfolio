@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
@@ -12,6 +13,7 @@ import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { portfolioData } from "@/lib/portfolio-data"
 import { WorkHistorySection } from "@/components/work-history-section"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import dynamic from "next/dynamic"
 
 const Penflow = dynamic(
@@ -28,14 +30,19 @@ export default function AboutPage() {
   const { extendedBio, designManifesto, learning, hobbies, speaking, workHistory } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { resolvedTheme } = useTheme()
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
   const penflowColor = resolvedTheme === "dark" ? "#ffffff" : "#0f1117"
   return (
-    <main
+    <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
     >
       {/* Header */}
-      <header className="flex items-center justify-between">
+      <motion.header variants={item} className="flex items-center justify-between">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -44,10 +51,10 @@ export default function AboutPage() {
           Home
         </Link>
         <ThemeToggle />
-      </header>
+      </motion.header>
 
       {/* Title + Extended About */}
-      <div className="flex flex-col gap-4">
+      <motion.div variants={item} className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           About
         </h1>
@@ -68,10 +75,10 @@ export default function AboutPage() {
             playheadKey={penflowKey}
           />
         </button>
-      </div>
+      </motion.div>
 
       {/* Sections */}
-      <div className="flex flex-col">
+      <motion.div variants={item} className="flex flex-col">
         {/* Work History */}
         <div className="pb-8">
           <WorkHistorySection items={workHistory} />
@@ -166,9 +173,11 @@ export default function AboutPage() {
         </Section>
         </div>
 
-      </div>
+      </motion.div>
 
-      <SiteFooter />
-    </main>
+      <motion.div variants={item}>
+        <SiteFooter />
+      </motion.div>
+    </motion.main>
   )
 }
