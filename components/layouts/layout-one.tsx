@@ -8,6 +8,7 @@ import { SocialIcons } from "@/components/social-icons"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
+import { AsciiTrainFooter } from "@/components/ascii-train-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
@@ -141,6 +142,8 @@ export function LayoutOne() {
       </Section>
 
       <SiteFooter />
+
+      <AsciiTrainFooter />
 
       <CursorTrail />
     </main>
