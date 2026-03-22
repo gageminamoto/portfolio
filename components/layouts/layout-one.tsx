@@ -7,7 +7,7 @@ import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
-import { SiteFooter } from "@/components/site-footer"
+
 import { AsciiTrainFooter } from "@/components/ascii-train-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
@@ -140,8 +140,6 @@ export function LayoutOne() {
           Design manifesto and&nbsp;hobbies.
         </p>
       </Section>
-
-      <SiteFooter />
 
       <AsciiTrainFooter />
 
