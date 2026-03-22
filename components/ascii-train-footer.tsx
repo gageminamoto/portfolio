@@ -38,7 +38,7 @@ export function AsciiTrainFooter() {
   const smoke = SMOKE_FRAMES[smokeFrame]
 
   return (
-    <div className="relative w-full overflow-hidden border-t border-border mt-8">
+    <div className="relative mt-8 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen overflow-hidden border-t border-border">
       <div className="train-scroll py-4">
         <pre
           className="inline-block font-mono text-[10px] leading-[1.2] text-muted-foreground/60 select-none sm:text-xs whitespace-pre"
