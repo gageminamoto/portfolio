@@ -152,7 +152,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
     },
   ],
   learning: [
-    { name: "Animations.dev", url: "https://animations.dev/learn", description: "Course on how to create great animations." },
+    { name: "Animations.dev", url: "https://animations.dev/", description: "Course on how to create great animations." },
     { name: "日本語", description: "Learning nihongo" },
   ],
   speaking: [
