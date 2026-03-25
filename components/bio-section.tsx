@@ -2,7 +2,6 @@
 
 import React from "react"
 import { HoverLink } from "@/components/hover-link"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { WordSwitcher } from "@/components/word-switcher"
 
 interface BioLink {
@@ -73,12 +72,12 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   return (
                     <React.Fragment key={index}>
                       {before}
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="text-foreground underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-150 ease-out hover:decoration-foreground cursor-default">Negi</span>
-                        </TooltipTrigger>
-                        <TooltipContent>Coming soon</TooltipContent>
-                      </Tooltip>
+                      <HoverLink
+                        href="https://negi.studio"
+                        className="no-underline decoration-transparent hover:decoration-foreground"
+                      >
+                        Negi
+                      </HoverLink>
                       {after}
                     </React.Fragment>
                   )
