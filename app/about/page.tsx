@@ -7,7 +7,7 @@ import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
-import { Section } from "@/components/section"
+import { BentoCard } from "@/components/bento-card"
 import { ToolRow } from "@/components/tool-row"
 import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
@@ -36,7 +36,7 @@ export default function AboutPage() {
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -53,7 +53,7 @@ export default function AboutPage() {
         <ThemeToggle />
       </motion.header>
 
-      {/* Title + Extended About */}
+      {/* Bio */}
       <motion.div variants={item} className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           About
@@ -77,102 +77,92 @@ export default function AboutPage() {
         </button>
       </motion.div>
 
-      {/* Sections */}
-      <motion.div variants={item} className="flex flex-col">
-        {/* Work History */}
-        <div className="pb-8">
-          <WorkHistorySection items={workHistory} />
-        </div>
-
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
-
-        {/* Design Manifesto */}
-        <div className="pb-8 pt-8">
-        <Section title="Design Manifesto">
-          {designManifesto.length > 0 ? (
-            <div className="flex flex-col gap-3">
-              {designManifesto.map((item) => (
-                <div key={item.principle} className="flex flex-col gap-0.5">
-                  <span className="font-medium text-foreground">{item.principle}</span>
-                  <span className="text-sm text-muted-foreground">{item.description}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">Coming soon ☺︎</p>
-          )}
-        </Section>
-        </div>
-
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+      {/* Bento Grid */}
+      <motion.div
+        className="grid grid-cols-1 gap-3 md:grid-cols-2"
+        variants={shouldReduceMotion ? undefined : stagger}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Work History — full width */}
+        <motion.div variants={item} className="col-span-1 md:col-span-2">
+          <BentoCard className="h-full">
+            <WorkHistorySection items={workHistory} />
+          </BentoCard>
+        </motion.div>
 
         {/* Hobbies */}
-        <div className="py-8">
-        <Section title="Hobbies">
-          <div className="flex flex-col gap-3">
-            {hobbies.map((hobby) => {
-              if (hobby.name === "Pokemon cards") {
-                return (
-                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
+        <motion.div variants={item} className="relative z-10 col-span-1">
+          <BentoCard label="Hobbies" className="h-full overflow-visible">
+            <div className="flex flex-col gap-4">
+              {hobbies.map((hobby) => (
+                <div key={hobby.name} className="flex flex-col gap-0.5">
+                  {hobby.name === "Pokemon cards" ? (
                     <span className="shrink-0"><PokemonCards /></span>
-                    <span className="truncate text-sm text-muted-foreground">
-                      {hobby.description}
-                    </span>
-                  </div>
-                )
-              }
-              return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
-                  {hobby.url ? (
-                    <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
+                  ) : hobby.url ? (
+                    <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-foreground">
                       {hobby.name}
                     </HoverLink>
                   ) : (
-                    <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                    <span className="font-medium text-foreground">{hobby.name}</span>
                   )}
-                  <span className="truncate text-sm text-muted-foreground">
-                    {hobby.description}
-                  </span>
+                  {hobby.description && (
+                    <span className="text-sm text-muted-foreground/80">
+                      {hobby.description}
+                    </span>
+                  )}
                 </div>
-              )
-            })}
-          </div>
-        </Section>
-        </div>
-
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+              ))}
+            </div>
+          </BentoCard>
+        </motion.div>
 
         {/* Speaking */}
-        <div className="py-8">
-        <Section title="Speaking">
-          <div className="flex flex-col gap-3">
-            {speaking.map((item) => (
-              <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
-                <span className="truncate font-medium text-foreground">{item.name}</span>
-                {item.description && (
-                  <span className="shrink-0 text-sm text-muted-foreground">
-                    {item.description}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </Section>
-        </div>
+        <motion.div variants={item} className="col-span-1">
+          <BentoCard label="Speaking" className="h-full">
+            <div className="flex flex-col gap-4">
+              {speaking.map((item) => (
+                <div key={item.name} className="flex flex-col gap-0.5">
+                  <span className="font-medium text-foreground">{item.name}</span>
+                  {item.description && (
+                    <span className="text-sm text-muted-foreground/80">
+                      {item.description}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </BentoCard>
+        </motion.div>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+        {/* Design Manifesto */}
+        <motion.div variants={item} className="col-span-1">
+          <BentoCard label="Design Manifesto" className="h-full">
+            {designManifesto.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {designManifesto.map((item) => (
+                  <div key={item.principle} className="flex flex-col gap-0.5">
+                    <span className="font-medium text-foreground">{item.principle}</span>
+                    <span className="text-sm text-muted-foreground">{item.description}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Coming soon ☺︎</p>
+            )}
+          </BentoCard>
+        </motion.div>
 
         {/* Learning */}
-        <div className="py-8">
-        <Section title="Learning">
-          <div className="flex flex-col gap-3">
-            {learning.map((item) => (
-              <ToolRow key={item.name} {...item} />
-            ))}
-          </div>
-        </Section>
-        </div>
-
+        <motion.div variants={item} className="col-span-1">
+          <BentoCard label="Learning" className="h-full">
+            <div className="flex flex-col gap-3">
+              {learning.map((item) => (
+                <ToolRow key={item.name} {...item} />
+              ))}
+            </div>
+          </BentoCard>
+        </motion.div>
       </motion.div>
 
       <motion.div variants={item}>
