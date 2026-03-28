@@ -46,7 +46,7 @@ export function ThemeToggle() {
     <div ref={ref} className="relative">
       <button
         onClick={() => open ? close() : setOpen(true)}
-        className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+        className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-[color,transform] duration-150 ease-out hover:text-foreground active:scale-[0.97]"
         aria-label="Display settings"
         aria-expanded={open}
       >
