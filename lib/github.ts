@@ -22,11 +22,12 @@ function formatRelativeTime(dateStr: string): string {
   const distance = formatDistanceToNowStrict(new Date(dateStr), {
     addSuffix: false,
   })
-  // Compact: "3 hours" → "3hrs", "5 minutes" → "5min", "2 days" → "2d"
+  // Compact: "3 hours" → "3hrs", "1 hour" → "1hr", "5 minutes" → "5min"
   return distance
     .replace(/ seconds?/, "s")
     .replace(/ minutes?/, "min")
-    .replace(/ hours?/, "hrs")
+    .replace(/ hours/, "hrs")
+    .replace(/ hour/, "hr")
     .replace(/ days?/, "d")
     .replace(/ months?/, "mo")
     .replace(/ years?/, "yr")
