@@ -86,6 +86,21 @@ export default function AboutPage() {
 
         <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
 
+        {/* Building a Studio */}
+        <div className="py-8">
+        <Section title="Building a Studio">
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            I get a lot of inspiration from indie video game design; the resourcefulness, the craft, and the care small teams put into every detail. That same spirit is how I created and run{" "}
+            <HoverLink href="https://negi.studio" previewImage="/negi-studio-preview.jpg" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-foreground">
+              Negi
+            </HoverLink>
+            , our simple design studio. More on how we build it coming soon.
+          </p>
+        </Section>
+        </div>
+
+        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+
         {/* Design Manifesto */}
         <div className="pb-8 pt-8">
         <Section title="Design Manifesto">
