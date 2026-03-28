@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { Mail, Check, Info } from "lucide-react"
+import { useClickSound } from "@/hooks/use-click-sound"
 import useSWR from "swr"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
@@ -56,8 +57,10 @@ function Colophon() {
 
 function EmailPill() {
   const [copied, setCopied] = useState(false)
+  const playClick = useClickSound()
 
   const handleCopy = useCallback(async () => {
+    playClick()
     try {
       await navigator.clipboard.writeText(EMAIL)
       setCopied(true)
@@ -73,7 +76,7 @@ function EmailPill() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
-  }, [])
+  }, [playClick])
 
   return (
     <div className="relative group">
