@@ -28,8 +28,8 @@ function CommitTracker() {
     <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
       <span className="text-foreground/60">{commit.hash}</span>
       <span className="text-muted-foreground/40">{"·"}</span>
-      <span className="text-red-400/80">{`-${commit.deletions.toLocaleString()}`}</span>
       <span className="text-emerald-400/80">{`+${commit.additions.toLocaleString()}`}</span>
+      <span className="text-red-400/80">{`-${commit.deletions.toLocaleString()}`}</span>
       <span className="text-muted-foreground/40">{"·"}</span>
       <span>{commit.relativeTime}</span>
     </div>
