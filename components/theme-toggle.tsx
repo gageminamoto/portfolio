@@ -55,7 +55,7 @@ export function ThemeToggle() {
 
       {open && (
         <div
-          className={`absolute right-0 top-full mt-2 w-fit origin-top-right rounded-lg border border-border bg-background p-1 shadow-md whitespace-nowrap ${closing ? "animate-out fade-out-0 zoom-out-95 slide-out-to-top-2" : "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"}`}
+          className={`absolute right-0 top-full z-50 mt-2 w-fit origin-top-right rounded-lg border border-border bg-background p-1 shadow-md whitespace-nowrap ${closing ? "animate-out fade-out-0 zoom-out-95 slide-out-to-top-2" : "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"}`}
           onAnimationEnd={() => {
             if (closing) {
               setOpen(false)
