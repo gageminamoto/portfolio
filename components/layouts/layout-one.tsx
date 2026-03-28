@@ -101,7 +101,7 @@ export function LayoutOne() {
           </h2>
           <button
             onClick={() => setProjectView(projectView === "list" ? "card" : "list")}
-            className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+            className="rounded-md p-1 text-muted-foreground/50 transition-[color,transform] hover:text-muted-foreground active:scale-[0.97]"
             aria-label={projectView === "list" ? "Switch to card view" : "Switch to list view"}
           >
             {projectView === "list" ? (

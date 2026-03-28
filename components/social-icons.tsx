@@ -70,7 +70,7 @@ export function SocialIcons({
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+            className="text-muted-foreground transition-[color,transform] duration-150 ease-out hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
             aria-label={social.label}
           >
             <Icon className={sizeClass} />
@@ -81,7 +81,7 @@ export function SocialIcons({
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <button
-              className="flex cursor-pointer items-center gap-1.5 text-muted-foreground transition-colors duration-150 ease hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+              className="flex cursor-pointer items-center gap-1.5 text-muted-foreground transition-[color,transform] duration-150 ease hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
               aria-label="Email options"
               title={email}
               suppressHydrationWarning
