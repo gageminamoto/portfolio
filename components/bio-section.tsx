@@ -74,6 +74,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                       {before}
                       <HoverLink
                         href="https://negi.studio"
+                        previewImage="/negi-studio-preview.jpg"
                         className="no-underline decoration-transparent hover:decoration-foreground"
                       >
                         Negi
@@ -85,10 +86,14 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                 return part
               }
               if (isBioLink(part)) {
+                const previewImages: Record<string, string> = {
+                  "Mizen": "/mizen-preview.jpg",
+                }
                 return (
                   <HoverLink
                     key={index}
                     href={part.url}
+                    previewImage={previewImages[part.text]}
                     className="no-underline decoration-transparent hover:decoration-foreground"
                   >
                     {part.text}
