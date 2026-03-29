@@ -127,10 +127,12 @@ export function LayoutOne() {
         )}
       </motion.section>
 
-      {/* Writing — Notion CMS */}
+      {/* About */}
       <motion.div variants={item}>
-        <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
-          <WritingSection variant="default" />
+        <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
+          <p className="text-sm text-muted-foreground">
+            More about me.
+          </p>
         </Section>
       </motion.div>
 
@@ -143,12 +145,10 @@ export function LayoutOne() {
         </Section>
       </motion.div>
 
-      {/* About */}
+      {/* Writing — Notion CMS */}
       <motion.div variants={item}>
-        <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
-          <p className="text-sm text-muted-foreground">
-            Design manifesto and&nbsp;hobbies.
-          </p>
+        <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
+          <WritingSection variant="default" />
         </Section>
       </motion.div>
 
