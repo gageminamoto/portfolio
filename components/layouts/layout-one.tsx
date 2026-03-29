@@ -12,6 +12,7 @@ import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { GitHubIcon } from "@/components/social-icons"
 import { CursorTrail } from "@/components/cursor-trail"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { ProjectItem } from "@/lib/portfolio-data"
@@ -59,6 +60,18 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
           <span className="text-sm font-medium text-foreground">{project.name}</span>
           <span className="truncate text-xs text-muted-foreground">{project.description}</span>
         </div>
+        {project.githubUrl && (
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 shrink-0 rounded-md p-1.5 text-muted-foreground/50 transition-colors hover:text-foreground"
+            aria-label={`${project.name} on GitHub`}
+          >
+            <GitHubIcon className="size-4" />
+          </a>
+        )}
     </div>
   )
 }
