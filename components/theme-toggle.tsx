@@ -2,13 +2,13 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
-import { Moon, Sun, Monitor, Sparkles } from "lucide-react"
+import { Moon, Sun, Monitor, Sparkles, Volume2 } from "lucide-react"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme()
-  const { shaderEnabled, setShaderEnabled } = useGradientWord()
+  const { shaderEnabled, setShaderEnabled, soundEnabled, setSoundEnabled } = useGradientWord()
   const mounted = useMounted()
   const [open, setOpen] = useState(false)
   const [closing, setClosing] = useState(false)
@@ -55,7 +55,7 @@ export function ThemeToggle() {
 
       {open && (
         <div
-          className={`absolute right-0 top-full mt-2 w-fit origin-top-right rounded-lg border border-border bg-background p-1 shadow-md whitespace-nowrap ${closing ? "animate-out fade-out-0 zoom-out-95 slide-out-to-top-2" : "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"}`}
+          className={`absolute right-0 top-full z-50 mt-2 w-fit origin-top-right rounded-lg border border-border bg-background p-1 shadow-md whitespace-nowrap ${closing ? "animate-out fade-out-0 zoom-out-95 slide-out-to-top-2" : "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"}`}
           onAnimationEnd={() => {
             if (closing) {
               setOpen(false)
@@ -92,6 +92,14 @@ export function ThemeToggle() {
           >
             <Sparkles className={`h-3.5 w-3.5 text-muted-foreground${shaderEnabled ? "" : " opacity-40"}`} aria-hidden="true" />
             <span>Effects {shaderEnabled ? "on" : "off"}</span>
+          </button>
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors duration-150 ease-out hover:bg-accent"
+            aria-pressed={soundEnabled}
+          >
+            <Volume2 className={`h-3.5 w-3.5 text-muted-foreground${soundEnabled ? "" : " opacity-40"}`} aria-hidden="true" />
+            <span>Sound {soundEnabled ? "on" : "off"}</span>
           </button>
         </div>
       )}

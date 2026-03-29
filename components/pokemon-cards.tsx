@@ -562,7 +562,7 @@ export function PokemonCards() {
         <AnimatePresence>
           {isFanned && (
             <div
-              className="pointer-events-none absolute bottom-full left-1/2 z-40"
+              className="pointer-events-none absolute bottom-full left-1/2 z-50"
               style={{ transform: "translateX(-50%)" }}
             >
               {CARDS.map((card, index) => (

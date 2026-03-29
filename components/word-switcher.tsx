@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useTouchDevice } from "@/hooks/use-mobile"
+import { useClickSound } from "@/hooks/use-click-sound"
 
 interface WordSwitcherProps {
   options: string[]
@@ -77,8 +78,11 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectsDisabled, isTouchDevice])
 
+  const playClick = useClickSound()
+
   const handleToggle = () => {
     hasInteracted.current = true
+    playClick()
     const nextIndex = (selectedIndex + 1) % options.length
     setSelectedIndex(nextIndex)
     onWordChange?.(options[nextIndex])
