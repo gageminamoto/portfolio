@@ -92,7 +92,7 @@ I grew up in Hawai’i, surrounded by diverse cultures, including my Japanese he
 
 I first stepped into design through esports and brand marketing at the [University of Hawai’i](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
 
-Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where great design is still rare but deeply needed.`,
+Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where thoughtful craft is still rare but deeply needed.`,
   designManifesto: [
     /*
     { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
