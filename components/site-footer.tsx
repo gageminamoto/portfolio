@@ -5,6 +5,7 @@ import { Mail, Check, Info } from "lucide-react"
 import { GitHubIcon } from "@/components/social-icons"
 import { useClickSound } from "@/hooks/use-click-sound"
 import useSWR from "swr"
+import Link from "next/link"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
 const EMAIL = "info@gageminamoto.com"
@@ -42,15 +43,16 @@ function Colophon() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Link
+          href="/colophon"
           aria-label="Colophon"
           className="cursor-default text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
         >
           <Info className="h-3.5 w-3.5" aria-hidden="true" />
-        </button>
+        </Link>
       </TooltipTrigger>
       <TooltipContent side="bottom" sideOffset={6} className="text-left">
-        Built with Next.js and TypeScript.<br />Content from Notion. Set in Inter.<br />Deployed on Vercel.<br />Made with v0, Conductor, and Claude.
+        Colophon
       </TooltipContent>
     </Tooltip>
   )
