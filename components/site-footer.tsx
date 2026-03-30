@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { Mail, Check, Info } from "lucide-react"
+import { GitHubIcon } from "@/components/social-icons"
 import { useClickSound } from "@/hooks/use-click-sound"
 import useSWR from "swr"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
@@ -110,6 +111,15 @@ export function SiteFooter() {
       <EmailPill />
       <div className="flex items-center gap-2">
         <CommitTracker />
+        <a
+          href="https://github.com/gageminamoto/portfolio"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View source on GitHub"
+          className="text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        >
+          <GitHubIcon className="h-3.5 w-3.5" />
+        </a>
         <Colophon />
       </div>
     </footer>
