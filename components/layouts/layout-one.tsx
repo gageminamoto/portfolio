@@ -95,8 +95,10 @@ export function LayoutOne() {
       <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
-              {name}
+            <h1 className="text-2xl font-semibold tracking-tight [text-wrap:balance]">
+              <span className="text-foreground">{name}</span>
+              {" "}
+              <span className="text-muted-foreground">Design Engineer</span>
             </h1>
             <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
           </div>
