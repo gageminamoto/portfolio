@@ -10,7 +10,7 @@ const FADE_AFTER_IDLE_MS = 800
 
 const HUE_MAP: Record<string, number> = {
   software: 250,
-  experiences: 330,
+  brands: 330,
   tools: 145,
 }
 

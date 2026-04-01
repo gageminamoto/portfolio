@@ -47,7 +47,7 @@ const colors = [
 
 const BADGE_COLORS: Record<string, string> = {
   software: "oklch(0.55 0.2 250)",
-  experiences: "oklch(0.55 0.2 330)",
+  brands: "oklch(0.55 0.2 330)",
   tools: "oklch(0.55 0.2 145)",
 }
 
