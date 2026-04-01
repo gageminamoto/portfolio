@@ -7,7 +7,7 @@ import { useMounted } from "@/hooks/use-mounted"
 
 const GRADIENT_CONFIG = {
   software:    { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  experiences: { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
+  brands: { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
   tools:       { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
 } as const
 
