@@ -23,8 +23,8 @@ export function ChecklistAchievement() {
       {/* Earned message */}
       <motion.p
         className="text-[13px] text-foreground"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={shouldReduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.3, ease, delay: 0.1 }}
       >
         You explored everything.
@@ -35,8 +35,8 @@ export function ChecklistAchievement() {
       {/* Gradient swatches */}
       <motion.div
         className="flex items-center gap-2"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={shouldReduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.3, ease, delay: 0.25 }}
       >
         <motion.button

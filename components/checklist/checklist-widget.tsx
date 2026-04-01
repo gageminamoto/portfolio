@@ -30,7 +30,6 @@ export function ChecklistWidget() {
     isOpen,
     setIsOpen,
     restart,
-    resetKey,
     progress,
     achievementUnlocked,
     mounted,
@@ -86,9 +85,9 @@ export function ChecklistWidget() {
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={message}
-                    initial={shouldReduceMotion ? false : { opacity: 0, y: 3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -3 }}
+                    initial={shouldReduceMotion ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.2, ease: easeOut }}
                     className="text-[13px] font-medium text-foreground"
                   >
@@ -136,40 +135,37 @@ export function ChecklistWidget() {
 
               {/* Content — items or achievement */}
               <div className="relative px-2 pb-3">
-                <AnimatePresence initial={false} mode="wait">
-                  {achievementUnlocked ? (
-                    <motion.div
-                      key="achievement"
-                      initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.22, ease: easeOut }}
-                    >
-                      <ChecklistAchievement />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key={`items-${resetKey}`}
-                      initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.22, ease: easeOut }}
-                      className="flex flex-col"
-                    >
-                      {CHECKLIST_ITEMS.map((item, index) => (
-                        <ChecklistItem
-                          key={item.id}
-                          id={item.id}
-                          label={item.label}
-                          checked={!!checked[item.id]}
-                          onToggle={toggleItem}
-                          auto={AUTO_ITEMS.has(item.id)}
-                          index={index}
-                        />
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {achievementUnlocked ? (
+                  <motion.div
+                    initial={shouldReduceMotion ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.22, ease: easeOut }}
+                  >
+                    <ChecklistAchievement />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={shouldReduceMotion ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.22, ease: easeOut }}
+                    className="flex flex-col"
+                  >
+                    {CHECKLIST_ITEMS.map((item, index) => (
+                      <ChecklistItem
+                        key={item.id}
+                        id={item.id}
+                        label={item.label}
+                        hint={item.hint}
+                        href={item.href}
+                        target={item.target}
+                        checked={!!checked[item.id]}
+                        onToggle={toggleItem}
+                        auto={AUTO_ITEMS.has(item.id)}
+                        index={index}
+                      />
+                    ))}
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           ) : (

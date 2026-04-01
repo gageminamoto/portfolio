@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation"
 import { useGradientWord } from "@/components/gradient-word-context"
 
 export const CHECKLIST_ITEMS = [
-  { id: "read-article", label: "Read something I wrote" },
-  { id: "visit-about", label: "Find out who I am" },
-  { id: "try-theme", label: "Switch up the vibe" },
+  { id: "read-article", label: "Read something I wrote", hint: "Check out the writing page", href: "/writing", target: 'a[href="/writing"]:not([data-checklist-hint])' },
+  { id: "visit-about", label: "Find out who I am", hint: "Head over to the about page", href: "/about", target: 'a[href="/about"]:not([data-checklist-hint])' },
+  { id: "try-theme", label: "Switch up the vibe", hint: "Try the theme switcher", href: "#theme", target: '[aria-label="Display settings"]' },
 ] as const
 
 export type ChecklistItemId = (typeof CHECKLIST_ITEMS)[number]["id"]
@@ -27,6 +27,7 @@ const defaultState: ChecklistState = {
 }
 
 const STORAGE_KEY = "visitor-checklist"
+const DISMISSED_KEY = "visitor-checklist-dismissed"
 
 interface ChecklistContextValue {
   checked: Record<string, boolean>
@@ -35,7 +36,6 @@ interface ChecklistContextValue {
   isOpen: boolean
   setIsOpen: (open: boolean) => void
   restart: () => void
-  resetKey: number
   progress: { completed: number; total: number }
   isComplete: boolean
   achievementUnlocked: boolean
@@ -51,7 +51,6 @@ const ChecklistContext = createContext<ChecklistContextValue>({
   isOpen: false,
   setIsOpen: () => {},
   restart: () => {},
-  resetKey: 0,
   progress: { completed: 0, total: CHECKLIST_ITEMS.length },
   isComplete: false,
   achievementUnlocked: false,
@@ -66,17 +65,24 @@ function persist(state: ChecklistState) {
 
 export function ChecklistProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<ChecklistState>(defaultState)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpenRaw] = useState(false)
+  const setIsOpen = useCallback((open: boolean) => {
+    setIsOpenRaw(open)
+    if (!open) {
+      try { localStorage.setItem(DISMISSED_KEY, "1") } catch {}
+    }
+  }, [])
   const [mounted, setMounted] = useState(false)
-  const [resetKey, setResetKey] = useState(0)
   const pathname = usePathname()
   const { shaderEnabled } = useGradientWord()
 
   // Load from localStorage on mount
   useEffect(() => {
+    let isNewVisitor = true
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) {
+        isNewVisitor = false
         const parsed = JSON.parse(stored) as Partial<ChecklistState>
         setState((prev) => ({
           ...prev,
@@ -86,7 +92,13 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {}
     setMounted(true)
-  }, [])
+
+    // Auto-open for first-time visitors after a short delay, unless they've dismissed before
+    if (isNewVisitor && !localStorage.getItem(DISMISSED_KEY)) {
+      const timer = setTimeout(() => setIsOpen(true), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Apply gradient to document (only when effects are enabled)
   useEffect(() => {
@@ -97,16 +109,6 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.removeAttribute("data-gradient")
     }
   }, [state.activeGradient, shaderEnabled, mounted])
-
-  // Auto-detect route visits
-  useEffect(() => {
-    if (!mounted) return
-    if (pathname === "/about") {
-      markItem("visit-about")
-    } else if (pathname?.startsWith("/writing/") && pathname !== "/writing") {
-      markItem("read-article")
-    }
-  }, [pathname, mounted])
 
   const updateState = useCallback((updater: (prev: ChecklistState) => ChecklistState) => {
     setState((prev) => {
@@ -139,6 +141,16 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
     })
   }, [updateState])
 
+  // Auto-detect route visits
+  useEffect(() => {
+    if (!mounted) return
+    if (pathname === "/about") {
+      markItem("visit-about")
+    } else if (pathname?.startsWith("/writing/") && pathname !== "/writing") {
+      markItem("read-article")
+    }
+  }, [pathname, mounted, markItem])
+
   const restart = useCallback(() => {
     const fresh: ChecklistState = {
       ...defaultState,
@@ -146,7 +158,6 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
     }
     setState(fresh)
     persist(fresh)
-    setResetKey((k) => k + 1)
   }, [])
 
   const setActiveGradient = useCallback((variant: GradientVariant) => {
@@ -165,7 +176,6 @@ export function ChecklistProvider({ children }: { children: React.ReactNode }) {
         isOpen,
         setIsOpen,
         restart,
-        resetKey,
         progress: { completed, total },
         isComplete: completed === total,
         achievementUnlocked: state.achievementUnlocked,
