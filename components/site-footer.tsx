@@ -87,7 +87,7 @@ function EmailPill() {
         onClick={handleCopy}
         aria-label={`Copy email address ${EMAIL}`}
         aria-describedby="email-tooltip"
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color,transform] duration-150 ease-out hover:bg-accent hover:border-foreground/20 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color,transform] duration-150 ease-out hover:border-foreground/20 hover:bg-accent active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {copied ? (
           <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
