@@ -31,6 +31,13 @@ async function fetcher(url: string) {
 
 type FilterCategory = "All" | ToolCategory
 
+/**
+ * Custom ease-in-out (quart) from the animations.dev / Emil Kowalski easing blueprint —
+ * on-screen motion (padding, opacity, color) vs default CSS ease-in-out.
+ * @see https://animations.dev/learn/easing-curves
+ */
+const HOVER_EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)"
+
 /** Fine-pointer list uses tracked hover for inset padding + dimmed text; skip on touch / coarse pointers and when reduced motion is on. */
 function useFinePointerHover() {
   const [fine, setFine] = useState(false)
@@ -145,12 +152,15 @@ export default function ToolsPage() {
   const hoverColorMs = Math.round(100 / hoverSpeed)
   const rowPadTransitionStyle: CSSProperties = {
     transitionDuration: `${hoverPadMs}ms`,
+    transitionTimingFunction: HOVER_EASE_IN_OUT,
   }
   const textColorTransitionStyle: CSSProperties = {
     transitionDuration: `${hoverColorMs}ms`,
+    transitionTimingFunction: HOVER_EASE_IN_OUT,
   }
   const rowHighlightFadeStyle: CSSProperties = {
     transitionDuration: `${hoverPadMs}ms`,
+    transitionTimingFunction: HOVER_EASE_IN_OUT,
   }
 
   const viewMode = activeCategory === "All" ? "list" : "card"
@@ -289,7 +299,7 @@ export default function ToolsPage() {
                   }
 
                   const rowClass = cn(
-                    "relative flex items-center gap-3 overflow-hidden rounded-lg py-3 transition-[padding] ease-in-out",
+                    "relative flex items-center gap-3 overflow-hidden rounded-lg py-3 transition-[padding]",
                     isActive ? "px-3" : "px-0",
                     tool.url &&
                       "group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -298,7 +308,7 @@ export default function ToolsPage() {
                   const rowBody = (
                     <>
                       <div
-                        className="pointer-events-none absolute inset-0 rounded-lg bg-muted/40 transition-opacity ease-in-out motion-reduce:transition-none"
+                        className="pointer-events-none absolute inset-0 rounded-lg bg-muted/40 transition-opacity motion-reduce:transition-none"
                         style={{
                           opacity: isActive ? 1 : 0,
                           ...rowHighlightFadeStyle,
@@ -312,7 +322,7 @@ export default function ToolsPage() {
                             <div className="flex items-center gap-1.5">
                               <span
                                 className={cn(
-                                  "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium transition-colors ease-in-out",
+                                  "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium transition-colors",
                                   tool.url && "group-hover:bg-accent",
                                   isActive
                                     ? "text-foreground"
@@ -325,7 +335,7 @@ export default function ToolsPage() {
                                   <ArrowUpRight
                                     size={10}
                                     className={cn(
-                                      "shrink-0 transition-colors ease-in-out",
+                                      "shrink-0 transition-colors",
                                       isActive
                                         ? "text-muted-foreground"
                                         : "text-muted-foreground/50",
@@ -339,7 +349,7 @@ export default function ToolsPage() {
                           ) : (
                             <span
                               className={cn(
-                                "truncate text-sm font-medium transition-colors ease-in-out",
+                                "truncate text-sm font-medium transition-colors",
                                 isActive
                                   ? "text-foreground"
                                   : "text-muted-foreground",
@@ -352,7 +362,7 @@ export default function ToolsPage() {
                         </div>
                         <span
                           className={cn(
-                            "min-w-0 flex-1 truncate text-right text-xs transition-colors ease-in-out",
+                            "min-w-0 flex-1 truncate text-right text-xs transition-colors",
                             isActive
                               ? "text-muted-foreground"
                               : "text-muted-foreground/55",
@@ -400,7 +410,7 @@ export default function ToolsPage() {
                 const displayName = isSkill ? `/${tool.name}` : tool.name
 
                 const rowClass = cn(
-                  "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] ease-in-out hover:bg-muted/30 hover:px-3 focus-within:bg-muted/30 focus-within:px-3",
+                  "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] hover:bg-muted/30 hover:px-3 focus-within:bg-muted/30 focus-within:px-3",
                   tool.url &&
                     "group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 )
@@ -413,7 +423,7 @@ export default function ToolsPage() {
                         <div className="flex items-center gap-1.5">
                           <span
                             className={cn(
-                              "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors ease-in-out",
+                              "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors",
                               tool.url && "group-hover:bg-accent",
                             )}
                             style={textColorTransitionStyle}
