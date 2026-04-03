@@ -25,6 +25,8 @@ import {
 } from "@/lib/animations"
 import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
+import { HOVER_EASE_IN_OUT } from "@/lib/hover-constants"
+import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -39,26 +41,6 @@ async function fetcher(url: string) {
 }
 
 type FilterCategory = "All" | ToolCategory
-
-/**
- * Custom ease-in-out (quart) from the animations.dev / Emil Kowalski easing blueprint —
- * on-screen motion (padding, opacity, color) vs default CSS ease-in-out.
- * @see https://animations.dev/learn/easing-curves
- */
-const HOVER_EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)"
-
-/** Fine-pointer list uses tracked hover for inset padding + dimmed text; skip on touch / coarse pointers and when reduced motion is on. */
-function useFinePointerHover() {
-  const [fine, setFine] = useState(false)
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)")
-    const update = () => setFine(mq.matches)
-    update()
-    mq.addEventListener("change", update)
-    return () => mq.removeEventListener("change", update)
-  }, [])
-  return fine
-}
 
 function formatLastUpdated(dateStr: string | null): string {
   if (!dateStr) return ""
