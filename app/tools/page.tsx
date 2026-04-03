@@ -9,6 +9,7 @@ import {
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import { ChevronLeft, Search, ArrowUpRight } from "lucide-react"
+import { ListRow } from "@/components/list-row"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
@@ -436,69 +437,34 @@ export default function ToolsPage() {
                 const isSkill = tool.category === "Skills"
                 const displayName = isSkill ? `/${tool.name}` : tool.name
 
-                const rowClass = cn(
-                  "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] hover:bg-muted/30 hover:px-3 focus-within:bg-muted/30 focus-within:px-3",
-                  tool.url &&
-                    "group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                const nameNode = isSkill ? (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors",
+                      tool.url && "group-hover:bg-accent",
+                    )}
+                  >
+                    {displayName}
+                    {tool.url ? (
+                      <ArrowUpRight size={10} className="shrink-0 text-muted-foreground" aria-hidden />
+                    ) : null}
+                  </span>
+                ) : (
+                  displayName
                 )
 
-                const rowInner = (
-                  <>
-                    <ToolIcon name={tool.name} url={tool.url} />
-                    <div className="flex min-w-0 shrink-0">
-                      {isSkill ? (
-                        <div className="flex items-center gap-1.5">
-                          <span
-                            className={cn(
-                              "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors",
-                              tool.url && "group-hover:bg-accent",
-                            )}
-                            style={textColorTransitionStyle}
-                          >
-                            {displayName}
-                            {tool.url ? (
-                              <ArrowUpRight
-                                size={10}
-                                className="shrink-0 text-muted-foreground"
-                                aria-hidden
-                              />
-                            ) : null}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="truncate text-sm font-medium text-foreground">
-                          {displayName}
-                        </span>
-                      )}
-                    </div>
-                    <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
-                      {tool.description}
-                    </span>
-                  </>
-                )
-
-                return tool.url ? (
-                  <motion.a
+                return (
+                  <ListRow
                     key={tool.id}
-                    variants={toolRowItem}
                     href={tool.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={rowClass}
+                    external
+                    icon={<ToolIcon name={tool.name} url={tool.url} />}
+                    name={nameNode}
+                    meta={tool.description}
+                    variants={toolRowItem}
                     style={rowPadTransitionStyle}
                     aria-label={`${displayName} — ${tool.description}`}
-                  >
-                    {rowInner}
-                  </motion.a>
-                ) : (
-                  <motion.div
-                    key={tool.id}
-                    variants={toolRowItem}
-                    className={rowClass}
-                    style={rowPadTransitionStyle}
-                  >
-                    {rowInner}
-                  </motion.div>
+                  />
                 )
               })
             )}

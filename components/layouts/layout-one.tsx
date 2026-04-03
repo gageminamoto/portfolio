@@ -96,9 +96,9 @@ export function LayoutOne() {
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-4">
             <h1 className="font-semibold tracking-tight [text-wrap:balance]">
-              <span className="text-xl text-foreground">{name}</span>
+              <span className="text-base text-foreground">{name}</span>
               <br />
-              <span className="text-xl text-muted-foreground">Design Engineer</span>
+              <span className="text-base font-normal text-muted-foreground">Design Engineer</span>
             </h1>
             <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
           </div>

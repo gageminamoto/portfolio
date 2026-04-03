@@ -3,8 +3,10 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { ChevronDown } from "lucide-react"
+import { useDialKit } from "dialkit"
 import type { NotionWritingPost } from "@/lib/notion"
-import { HoverLink } from "@/components/hover-link"
+import { ListRow } from "@/components/list-row"
+import { generateSeedPosts } from "@/lib/seed-writing"
 import { cn } from "@/lib/utils"
 
 async function fetcher(url: string) {
@@ -36,36 +38,29 @@ interface WritingSectionProps {
 
 function SkeletonRow() {
   return (
-    <div className="flex items-baseline gap-2 min-w-0">
+    <div className="flex items-center gap-3 px-0 py-3">
       <div className="h-4 w-48 shrink-0 animate-pulse rounded bg-muted" />
-      <div className="h-3 w-20 animate-pulse rounded bg-muted" />
+      <div className="h-3 w-20 flex-1 animate-pulse rounded bg-muted" />
     </div>
   )
 }
 
 function PostRow({ post }: { post: NotionWritingPost }) {
   return (
-    <div className="flex items-baseline gap-2 min-w-0">
-      <span className="shrink-0 font-medium">
-        <HoverLink
-          href={`/writing/${post.slug}?from=home`}
-          external={false}
-          className="no-underline decoration-transparent hover:decoration-foreground"
-        >
-          {post.title}
-        </HoverLink>
-      </span>
-      {post.date && (
-        <span className="truncate text-sm text-muted-foreground">
-          {formatDate(post.date)}
-        </span>
-      )}
-    </div>
+    <ListRow
+      href={`/writing/${post.slug}?from=home`}
+      name={post.title}
+      meta={post.date ? formatDate(post.date) : undefined}
+    />
   )
 }
 
 export function WritingSection({ variant = "default" }: WritingSectionProps) {
   const [expanded, setExpanded] = useState(false)
+  const seedDial = useDialKit("Seed writing", {
+    enabled: false,
+    count: [5, 1, 10, 1],
+  })
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
     fetcher,
@@ -82,7 +77,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
 
   if (isLoading || !data) {
     return (
-      <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading writing posts">
+      <div className="flex flex-col" aria-busy="true" aria-label="Loading writing posts">
         {[0, 1, 2].map((i) => (
           <SkeletonRow key={i} />
         ))}
@@ -90,7 +85,10 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
     )
   }
 
-  const posts = data?.posts ?? []
+  const realPosts = data?.posts ?? []
+  const posts = seedDial.enabled
+    ? [...realPosts, ...generateSeedPosts(seedDial.count)]
+    : realPosts
 
   if (!Array.isArray(posts) || posts.length === 0) {
     return (
@@ -102,7 +100,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
 
   return (
     <div
-      className="flex flex-col gap-3"
+      className="flex flex-col"
       style={!expanded && hasMore ? { maskImage: 'linear-gradient(to bottom, black calc(100% - 2rem), transparent)' } : undefined}
     >
       {posts.slice(0, INITIAL_COUNT).map((post) => (
@@ -119,7 +117,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
               )}
             >
               <div className="overflow-hidden">
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col">
                   {posts.slice(INITIAL_COUNT).map((post) => (
                     <PostRow key={post.id} post={post} />
                   ))}
