@@ -13,7 +13,15 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
 import { useDialKit } from "dialkit"
-import { fadeUp, noMotion, stagger } from "@/lib/animations"
+import {
+  fadeUp,
+  noMotion,
+  stagger,
+  toolsPanelEnter,
+  toolsPanelChild,
+  toolListStagger,
+  toolListRow,
+} from "@/lib/animations"
 import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
@@ -146,6 +154,10 @@ export default function ToolsPage() {
   const prefersFinePointer = useFinePointerHover()
   const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
   const item = shouldReduceMotion ? noMotion : fadeUp
+  const toolsPanelParent = shouldReduceMotion ? noMotion : toolsPanelEnter
+  const toolsPanelPiece = shouldReduceMotion ? noMotion : toolsPanelChild
+  const toolRowStagger = shouldReduceMotion ? noMotion : toolListStagger
+  const toolRowItem = shouldReduceMotion ? noMotion : toolListRow
 
   const hoverSpeed = Math.max(0.25, hoverSpeedDial.speed)
   const hoverPadMs = Math.round(100 / hoverSpeed)
@@ -222,10 +234,10 @@ export default function ToolsPage() {
         </p>
       </motion.div>
 
-      {/* Search + Filters + Table */}
-      <motion.div variants={item} className="flex flex-col gap-5">
+      {/* Search + Filters + Table — nested stagger (ease-out, transform + opacity only) */}
+      <motion.div variants={toolsPanelParent} className="flex flex-col gap-5">
         {/* Search */}
-        <div className="relative">
+        <motion.div variants={toolsPanelPiece} className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
           <input
             type="text"
@@ -234,10 +246,13 @@ export default function ToolsPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
           />
-        </div>
+        </motion.div>
 
         {/* Category pills + updated date */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <motion.div
+          variants={toolsPanelPiece}
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
           <div
             className="flex flex-wrap items-center gap-2"
             role="group"
@@ -268,9 +283,24 @@ export default function ToolsPage() {
               Updated {formatLastUpdated(data.lastUpdated)}
             </span>
           )}
-        </div>
+        </motion.div>
 
-        {/* Content */}
+        {/* Content — loading/error fade as one block; list/cards stagger rows */}
+        <motion.div
+          variants={isLoading || error ? toolsPanelPiece : toolRowStagger}
+          className={cn(
+            !isLoading && !error && viewMode === "list" && "flex flex-col",
+            !isLoading &&
+              !error &&
+              viewMode === "card" &&
+              "grid grid-cols-2 gap-3",
+          )}
+          onMouseLeave={
+            !isLoading && !error && viewMode === "list" && useFluidListHover
+              ? () => setHoveredToolId(null)
+              : undefined
+          }
+        >
         {isLoading ? (
           viewMode === "list" ? <SkeletonRows /> : <SkeletonCards />
         ) : error ? (
@@ -278,12 +308,7 @@ export default function ToolsPage() {
             Could not load tools.
           </p>
         ) : viewMode === "list" ? (
-          <div
-            className="flex flex-col"
-            onMouseLeave={
-              useFluidListHover ? () => setHoveredToolId(null) : undefined
-            }
-          >
+          <>
             {useFluidListHover ? (
               <>
                 {filtered.map((tool) => {
@@ -376,8 +401,9 @@ export default function ToolsPage() {
                   )
 
                   return tool.url ? (
-                    <a
+                    <motion.a
                       key={tool.id}
+                      variants={toolRowItem}
                       data-tool-row={tool.id}
                       href={tool.url}
                       target="_blank"
@@ -390,17 +416,18 @@ export default function ToolsPage() {
                       aria-label={`${displayName} — ${tool.description}`}
                     >
                       {rowBody}
-                    </a>
+                    </motion.a>
                   ) : (
-                    <div
+                    <motion.div
                       key={tool.id}
+                      variants={toolRowItem}
                       data-tool-row={tool.id}
                       className={rowClass}
                       style={rowPadTransitionStyle}
                       onMouseEnter={() => setHoveredToolId(tool.id)}
                     >
                       {rowBody}
-                    </div>
+                    </motion.div>
                   )
                 })}
               </>
@@ -451,8 +478,9 @@ export default function ToolsPage() {
                 )
 
                 return tool.url ? (
-                  <a
+                  <motion.a
                     key={tool.id}
+                    variants={toolRowItem}
                     href={tool.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -461,11 +489,16 @@ export default function ToolsPage() {
                     aria-label={`${displayName} — ${tool.description}`}
                   >
                     {rowInner}
-                  </a>
+                  </motion.a>
                 ) : (
-                  <div key={tool.id} className={rowClass} style={rowPadTransitionStyle}>
+                  <motion.div
+                    key={tool.id}
+                    variants={toolRowItem}
+                    className={rowClass}
+                    style={rowPadTransitionStyle}
+                  >
                     {rowInner}
-                  </div>
+                  </motion.div>
                 )
               })
             )}
@@ -474,22 +507,23 @@ export default function ToolsPage() {
                 No tools found.
               </p>
             )}
-          </div>
+          </>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <>
             {filtered.map((tool) => {
               const isSkill = tool.category === "Skills"
               const displayName = isSkill ? `/${tool.name}` : tool.name
-              const Wrapper = tool.url ? "a" : "div"
-              const linkProps = tool.url
-                ? { href: tool.url, target: "_blank" as const, rel: "noopener noreferrer" }
-                : {}
+              const cardClassName =
+                "group flex flex-col gap-2 rounded-xl border border-border/50 p-5 transition-colors hover:bg-muted/50"
 
-              return (
-                <Wrapper
+              return tool.url ? (
+                <motion.a
                   key={tool.id}
-                  {...linkProps}
-                  className="group flex flex-col gap-2 rounded-xl border border-border/50 p-5 transition-colors hover:bg-muted/50"
+                  variants={toolRowItem}
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cardClassName}
                 >
                   <ToolIcon name={tool.name} url={tool.url} />
                   {isSkill ? (
@@ -500,7 +534,19 @@ export default function ToolsPage() {
                     <h3 className="text-sm font-medium text-foreground">{displayName}</h3>
                   )}
                   <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
-                </Wrapper>
+                </motion.a>
+              ) : (
+                <motion.div key={tool.id} variants={toolRowItem} className={cardClassName}>
+                  <ToolIcon name={tool.name} url={tool.url} />
+                  {isSkill ? (
+                    <span className="w-fit rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
+                      {displayName}
+                    </span>
+                  ) : (
+                    <h3 className="text-sm font-medium text-foreground">{displayName}</h3>
+                  )}
+                  <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+                </motion.div>
               )
             })}
             {filtered.length === 0 && (
@@ -508,8 +554,9 @@ export default function ToolsPage() {
                 No tools found.
               </p>
             )}
-          </div>
+          </>
         )}
+        </motion.div>
       </motion.div>
 
       <motion.div variants={item}>
