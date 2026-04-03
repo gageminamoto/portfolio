@@ -1,13 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import {
+  useState,
+  useEffect,
+  type CSSProperties,
+  type FocusEvent,
+} from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import { ChevronLeft, Search, ArrowUpRight } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
+import { useDialKit } from "dialkit"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
+import { generateSeedTools } from "@/lib/seed-tools"
+import { cn } from "@/lib/utils"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -22,6 +30,19 @@ async function fetcher(url: string) {
 }
 
 type FilterCategory = "All" | ToolCategory
+
+/** Fine-pointer list uses tracked hover for inset padding + dimmed text; skip on touch / coarse pointers and when reduced motion is on. */
+function useFinePointerHover() {
+  const [fine, setFine] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const update = () => setFine(mq.matches)
+    update()
+    mq.addEventListener("change", update)
+    return () => mq.removeEventListener("change", update)
+  }, [])
+  return fine
+}
 
 function formatLastUpdated(dateStr: string | null): string {
   if (!dateStr) return ""
@@ -74,7 +95,7 @@ function SkeletonRows() {
       {[0, 1, 2, 3, 4, 5].map((i) => (
         <div
           key={i}
-          className="flex items-center gap-3 border-b border-border/40 py-3 last:border-b-0"
+          className="flex items-center gap-3 px-0 py-3"
         >
           <div className="h-8 w-8 shrink-0 animate-pulse rounded-md bg-muted" />
           <div className="h-4 w-28 shrink-0 animate-pulse rounded bg-muted" />
@@ -103,10 +124,34 @@ function SkeletonCards() {
 }
 
 export default function ToolsPage() {
+  const seedDial = useDialKit("Seed tools", {
+    enabled: false,
+    count: [5, 1, 20, 1],
+  })
+  /** 1 = default; higher = snappier hover (padding, text, background fade). */
+  const hoverSpeedDial = useDialKit("Tools hover speed", {
+    speed: [1, 0.25, 2.5, 0.05],
+  })
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("All")
+  const [hoveredToolId, setHoveredToolId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
+  const prefersFinePointer = useFinePointerHover()
+  const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
   const item = shouldReduceMotion ? noMotion : fadeUp
+
+  const hoverSpeed = Math.max(0.25, hoverSpeedDial.speed)
+  const hoverPadMs = Math.round(100 / hoverSpeed)
+  const hoverColorMs = Math.round(100 / hoverSpeed)
+  const rowPadTransitionStyle: CSSProperties = {
+    transitionDuration: `${hoverPadMs}ms`,
+  }
+  const textColorTransitionStyle: CSSProperties = {
+    transitionDuration: `${hoverColorMs}ms`,
+  }
+  const rowHighlightFadeStyle: CSSProperties = {
+    transitionDuration: `${hoverPadMs}ms`,
+  }
 
   const viewMode = activeCategory === "All" ? "list" : "card"
 
@@ -115,7 +160,10 @@ export default function ToolsPage() {
     lastUpdated: string | null
   }>("/api/tools", fetcher, { revalidateOnFocus: false })
 
-  const tools = data?.tools ?? []
+  const realTools = data?.tools ?? []
+  const tools = seedDial.enabled
+    ? [...realTools, ...generateSeedTools(seedDial.count)]
+    : realTools
 
   const filtered = tools.filter((t) => {
     const matchesCategory =
@@ -178,22 +226,32 @@ export default function ToolsPage() {
           />
         </div>
 
-        {/* Filter tabs + view toggle + updated date */}
-        <div className="flex items-baseline justify-between gap-3">
-          <div className="flex items-center gap-4">
-            {categories.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setActiveCategory(cat.value)}
-                className={`cursor-pointer text-sm transition-opacity duration-150 ease-out hover:opacity-70 ${
-                  activeCategory === cat.value
-                    ? "font-medium text-foreground underline underline-offset-4 decoration-foreground/50"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
+        {/* Category pills + updated date */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div
+            className="flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label="Filter by category"
+          >
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat.value
+              return (
+                <button
+                  key={cat.value}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => setActiveCategory(cat.value)}
+                  className={cn(
+                    "cursor-pointer rounded-full border px-3 py-1.5 text-sm font-medium transition-colors duration-150 ease motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    isActive
+                      ? "border-transparent bg-foreground text-background"
+                      : "border-border/60 bg-background text-muted-foreground hover:bg-muted/50",
+                  )}
+                >
+                  {cat.label}
+                </button>
+              )
+            })}
           </div>
           {data?.lastUpdated && (
             <span className="text-xs text-muted-foreground/60">
@@ -210,60 +268,197 @@ export default function ToolsPage() {
             Could not load tools.
           </p>
         ) : viewMode === "list" ? (
-          <div className="flex flex-col">
-            {filtered.map((tool) => {
-              const isSkill = tool.category === "Skills"
-              const displayName = isSkill ? `/${tool.name}` : tool.name
+          <div
+            className="flex flex-col"
+            onMouseLeave={
+              useFluidListHover ? () => setHoveredToolId(null) : undefined
+            }
+          >
+            {useFluidListHover ? (
+              <>
+                {filtered.map((tool) => {
+                  const isSkill = tool.category === "Skills"
+                  const displayName = isSkill ? `/${tool.name}` : tool.name
+                  const isActive = hoveredToolId === tool.id
 
-              return (
-                <div
-                  key={tool.id}
-                  className="flex items-center gap-3 border-b border-border/40 px-3 py-3 rounded-lg transition-colors duration-100 last:border-b-0 hover:bg-muted/30"
-                >
-                  <ToolIcon name={tool.name} url={tool.url} />
-                  <div className="flex min-w-0 shrink-0">
-                    {isSkill ? (
-                      <div className="flex items-center gap-1.5">
-                        {tool.url ? (
-                          <a
-                            href={tool.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors duration-150 hover:bg-accent"
+                  const clearRowHover = (e: FocusEvent<HTMLElement>) => {
+                    const next = e.relatedTarget
+                    const row = e.currentTarget.closest("[data-tool-row]")
+                    if (next && row?.contains(next)) return
+                    setHoveredToolId((h) => (h === tool.id ? null : h))
+                  }
+
+                  const rowClass = cn(
+                    "relative flex items-center gap-3 overflow-hidden rounded-lg py-3 transition-[padding] ease-in-out",
+                    isActive ? "px-3" : "px-0",
+                    tool.url &&
+                      "group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  )
+
+                  const rowBody = (
+                    <>
+                      <div
+                        className="pointer-events-none absolute inset-0 rounded-lg bg-muted/40 transition-opacity ease-in-out motion-reduce:transition-none"
+                        style={{
+                          opacity: isActive ? 1 : 0,
+                          ...rowHighlightFadeStyle,
+                        }}
+                        aria-hidden
+                      />
+                      <div className="relative z-10 flex min-w-0 flex-1 items-center gap-3">
+                        <ToolIcon name={tool.name} url={tool.url} />
+                        <div className="flex min-w-0 shrink-0">
+                          {isSkill ? (
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className={cn(
+                                  "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium transition-colors ease-in-out",
+                                  tool.url && "group-hover:bg-accent",
+                                  isActive
+                                    ? "text-foreground"
+                                    : "text-muted-foreground",
+                                )}
+                                style={textColorTransitionStyle}
+                              >
+                                {displayName}
+                                {tool.url ? (
+                                  <ArrowUpRight
+                                    size={10}
+                                    className={cn(
+                                      "shrink-0 transition-colors ease-in-out",
+                                      isActive
+                                        ? "text-muted-foreground"
+                                        : "text-muted-foreground/50",
+                                    )}
+                                    style={textColorTransitionStyle}
+                                    aria-hidden
+                                  />
+                                ) : null}
+                              </span>
+                            </div>
+                          ) : (
+                            <span
+                              className={cn(
+                                "truncate text-sm font-medium transition-colors ease-in-out",
+                                isActive
+                                  ? "text-foreground"
+                                  : "text-muted-foreground",
+                              )}
+                              style={textColorTransitionStyle}
+                            >
+                              {displayName}
+                            </span>
+                          )}
+                        </div>
+                        <span
+                          className={cn(
+                            "min-w-0 flex-1 truncate text-right text-xs transition-colors ease-in-out",
+                            isActive
+                              ? "text-muted-foreground"
+                              : "text-muted-foreground/55",
+                          )}
+                          style={textColorTransitionStyle}
+                        >
+                          {tool.description}
+                        </span>
+                      </div>
+                    </>
+                  )
+
+                  return tool.url ? (
+                    <a
+                      key={tool.id}
+                      data-tool-row={tool.id}
+                      href={tool.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={rowClass}
+                      style={rowPadTransitionStyle}
+                      onMouseEnter={() => setHoveredToolId(tool.id)}
+                      onFocus={() => setHoveredToolId(tool.id)}
+                      onBlur={clearRowHover}
+                      aria-label={`${displayName} — ${tool.description}`}
+                    >
+                      {rowBody}
+                    </a>
+                  ) : (
+                    <div
+                      key={tool.id}
+                      data-tool-row={tool.id}
+                      className={rowClass}
+                      style={rowPadTransitionStyle}
+                      onMouseEnter={() => setHoveredToolId(tool.id)}
+                    >
+                      {rowBody}
+                    </div>
+                  )
+                })}
+              </>
+            ) : (
+              filtered.map((tool) => {
+                const isSkill = tool.category === "Skills"
+                const displayName = isSkill ? `/${tool.name}` : tool.name
+
+                const rowClass = cn(
+                  "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] ease-in-out hover:bg-muted/30 hover:px-3 focus-within:bg-muted/30 focus-within:px-3",
+                  tool.url &&
+                    "group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                )
+
+                const rowInner = (
+                  <>
+                    <ToolIcon name={tool.name} url={tool.url} />
+                    <div className="flex min-w-0 shrink-0">
+                      {isSkill ? (
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors ease-in-out",
+                              tool.url && "group-hover:bg-accent",
+                            )}
+                            style={textColorTransitionStyle}
                           >
                             {displayName}
-                            <ArrowUpRight
-                              size={10}
-                              className="shrink-0 text-muted-foreground"
-                            />
-                          </a>
-                        ) : (
-                          <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
-                            {displayName}
+                            {tool.url ? (
+                              <ArrowUpRight
+                                size={10}
+                                className="shrink-0 text-muted-foreground"
+                                aria-hidden
+                              />
+                            ) : null}
                           </span>
-                        )}
-                      </div>
-                    ) : tool.url ? (
-                      <a
-                        href={tool.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="truncate text-sm font-medium text-foreground transition-colors duration-150 hover:text-foreground/70"
-                      >
-                        {displayName}
-                      </a>
-                    ) : (
-                      <span className="truncate text-sm font-medium text-foreground">
-                        {displayName}
-                      </span>
-                    )}
+                        </div>
+                      ) : (
+                        <span className="truncate text-sm font-medium text-foreground">
+                          {displayName}
+                        </span>
+                      )}
+                    </div>
+                    <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
+                      {tool.description}
+                    </span>
+                  </>
+                )
+
+                return tool.url ? (
+                  <a
+                    key={tool.id}
+                    href={tool.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={rowClass}
+                    style={rowPadTransitionStyle}
+                    aria-label={`${displayName} — ${tool.description}`}
+                  >
+                    {rowInner}
+                  </a>
+                ) : (
+                  <div key={tool.id} className={rowClass} style={rowPadTransitionStyle}>
+                    {rowInner}
                   </div>
-                  <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
-                    {tool.description}
-                  </span>
-                </div>
-              )
-            })}
+                )
+              })
+            )}
             {filtered.length === 0 && (
               <p className="py-8 text-center text-sm text-muted-foreground">
                 No tools found.
