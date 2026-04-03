@@ -58,9 +58,13 @@ export const toolsPanelChild: Variants = {
 
 /** Stagger rows/cards inside the tools list after the panel children. */
 export const toolListStagger: Variants = {
-  hidden: {},
+  hidden: { opacity: 0, y: 10 },
   show: {
+    opacity: 1,
+    y: 0,
     transition: {
+      duration: 0.24,
+      ease: [0.215, 0.61, 0.355, 1],
       staggerChildren: 0.032,
       delayChildren: 0.02,
     },
