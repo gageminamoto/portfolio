@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "framer-motion"
 import { ChevronLeft } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
+import { ListRow } from "@/components/list-row"
 import { generateSeedPosts } from "@/lib/seed-posts"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
@@ -82,33 +83,24 @@ function groupPosts(
 
 function SkeletonRow() {
   return (
-    <div className="flex w-full items-baseline justify-between gap-4">
-      <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-      <div className="h-3 w-20 shrink-0 animate-pulse rounded bg-muted" />
+    <div className="flex items-center gap-3 px-0 py-3">
+      <div className="h-4 w-48 shrink-0 animate-pulse rounded bg-muted" />
+      <div className="h-3 w-20 flex-1 animate-pulse rounded bg-muted" />
     </div>
   )
 }
 
 function PostRow({ post }: { post: NotionWritingPost }) {
   return (
-    <div className="flex w-full items-baseline justify-between gap-4">
-      <span className="min-w-0 truncate">
-        <Link
-          href={`/writing/${post.slug}`}
-          className="font-medium text-foreground underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-        >
-          {post.title}
-        </Link>
-      </span>
-      {post.date && (
-        <time
-          dateTime={post.date}
-          className="shrink-0 text-sm tabular-nums text-muted-foreground"
-        >
-          {formatDate(post.date)}
-        </time>
-      )}
-    </div>
+    <ListRow
+      href={`/writing/${post.slug}`}
+      name={post.title}
+      meta={
+        post.date ? (
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+        ) : undefined
+      }
+    />
   )
 }
 
@@ -194,7 +186,7 @@ export function WritingList({ initialPosts }: WritingListProps) {
           groups.map((group) => (
             <section key={group.label} className="flex flex-col gap-4">
               <h2 className="text-sm text-muted-foreground">{group.label}</h2>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col">
                 {group.posts.map((post) => (
                   <PostRow key={post.id} post={post} />
                 ))}

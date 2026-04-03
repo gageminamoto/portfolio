@@ -84,7 +84,6 @@ export default function AboutPage() {
           <WorkHistorySection items={workHistory} />
         </div>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
 
         {/* Building a Studio */}
         <div className="py-8">
@@ -107,7 +106,6 @@ export default function AboutPage() {
         </Section>
         </div>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
 
         {/* Hobbies */}
         <div className="py-8">
@@ -143,7 +141,6 @@ export default function AboutPage() {
         </Section>
         </div>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
 
         {/* Speaking */}
         <div className="py-8">
@@ -163,7 +160,6 @@ export default function AboutPage() {
         </Section>
         </div>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
 
         {/* Learning */}
         <div className="py-8">

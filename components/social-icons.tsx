@@ -88,7 +88,7 @@ export function SocialIcons({
             >
               <span className="relative" style={{ width: "1.25rem", height: "1.25rem" }}>
                 <Icon
-                  icon="solar:mailbox-bold"
+                  icon="solar:plain-bold"
                   className={`${sizeClass} absolute inset-0 transition-opacity duration-200 motion-reduce:transition-none ${copied ? "opacity-0" : "opacity-100"}`}
                 />
                 <Icon
@@ -96,12 +96,14 @@ export function SocialIcons({
                   className={`${sizeClass} absolute inset-0 transition-opacity duration-200 motion-reduce:transition-none ${copied ? "opacity-100 animate-mail-shake motion-reduce:animate-none" : "opacity-0"}`}
                 />
               </span>
-              <span
-                className={`text-sm transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${copied ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1 pointer-events-none"}`}
-                aria-live="polite"
-              >
-                Email Copied!
-              </span>
+              {copied && (
+                <span
+                  className="text-sm animate-in fade-in slide-in-from-left-1 duration-200"
+                  aria-live="polite"
+                >
+                  Email Copied!
+                </span>
+              )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" sideOffset={8}>

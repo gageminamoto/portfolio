@@ -11,10 +11,12 @@ const EXTRA_REPOS = (process.env.GITHUB_EXTRA_REPOS ?? "")
 
 interface CommitData {
   hash: string
+  sha: string
   additions: number
   deletions: number
   relativeTime: string
   repoName: string
+  repoFullName: string
   commitMessage: string
 }
 
@@ -243,12 +245,14 @@ export async function fetchLatestCommit(): Promise<CommitData | null> {
 
     return {
       hash: sha.slice(0, 7),
+      sha,
       additions: detail.stats?.additions ?? 0,
       deletions: detail.stats?.deletions ?? 0,
       relativeTime: formatRelativeTime(
         detail.commit?.committer?.date ?? detail.commit?.author?.date ?? new Date().toISOString()
       ),
       repoName: repo.name as string,
+      repoFullName: repoName,
       commitMessage: (detail.commit?.message as string)?.split("\n")[0] ?? "",
     }
   } catch (error) {

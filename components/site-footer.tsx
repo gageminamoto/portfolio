@@ -1,129 +1,121 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { Mail, Check, Info } from "lucide-react"
-import { GitHubIcon } from "@/components/social-icons"
-import { useClickSound } from "@/hooks/use-click-sound"
+import { useState, useRef, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import Link from "next/link"
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 
-const EMAIL = "info@gageminamoto.com"
+const CHARS = "!@#$%^&*()_+-=[]{}|;:,.<>?0123456789abcdef"
+const HOVER_TEXT = "View GitHub"
+const SCRAMBLE_DURATION = 400
 
 const fallbackCommit = {
   hash: "-------",
+  sha: "",
   additions: 0,
   deletions: 0,
   relativeTime: "…",
+  repoFullName: "",
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
-function CommitTracker() {
+function buildCommitText(commit: typeof fallbackCommit) {
+  return `${commit.hash} +${commit.additions.toLocaleString()} -${commit.deletions.toLocaleString()} ${commit.relativeTime}`
+}
+
+function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
+  const commitText = buildCommitText(commit)
+  const [display, setDisplay] = useState(commitText)
+  const rafRef = useRef(0)
+  const hoveredRef = useRef(false)
+  const displayRef = useRef(display)
+  displayRef.current = display
+
+  // When commit data changes and not hovered, sync display
+  useEffect(() => {
+    if (!hoveredRef.current) {
+      setDisplay(commitText)
+    }
+  }, [commitText])
+
+  const scrambleTo = useCallback((target: string) => {
+    cancelAnimationFrame(rafRef.current)
+    const targetLen = target.length
+    const start = performance.now()
+
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / SCRAMBLE_DURATION, 1)
+      const resolved = Math.floor(progress * targetLen)
+
+      let result = ""
+      for (let i = 0; i < targetLen; i++) {
+        if (i < resolved) {
+          result += target[i]
+        } else {
+          result += CHARS[Math.floor(Math.random() * CHARS.length)]
+        }
+      }
+
+      displayRef.current = result
+      setDisplay(result)
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(tick)
+      } else {
+        displayRef.current = target
+        setDisplay(target)
+      }
+    }
+
+    rafRef.current = requestAnimationFrame(tick)
+  }, [])
+
+  useEffect(() => {
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [])
+
+  return (
+    <a
+      href="https://github.com/gageminamoto/portfolio"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block min-w-[var(--foot-w)] transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+      style={{ "--foot-w": `${Math.max(commitText.length, HOVER_TEXT.length)}ch` } as React.CSSProperties}
+      aria-label="View GitHub repository"
+      onMouseEnter={() => {
+        hoveredRef.current = true
+        scrambleTo(HOVER_TEXT)
+      }}
+      onMouseLeave={() => {
+        hoveredRef.current = false
+        scrambleTo(commitText)
+      }}
+    >
+      {display}
+    </a>
+  )
+}
+
+export function SiteFooter() {
   const { data } = useSWR("/api/commits", fetcher, {
-    refreshInterval: 600_000, // 10 minutes, matches server cache
+    refreshInterval: 600_000,
     dedupingInterval: 60_000,
   })
 
   const commit = data?.commit ?? fallbackCommit
 
   return (
-    <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-      <span className="text-foreground/60">{commit.hash}</span>
-      <span className="text-muted-foreground/40">{"·"}</span>
-      <span className="text-emerald-400/80">{`+${commit.additions.toLocaleString()}`}</span>
-      <span className="text-red-400/80">{`-${commit.deletions.toLocaleString()}`}</span>
-      <span className="text-muted-foreground/40">{"·"}</span>
-      <span>{commit.relativeTime}</span>
-    </div>
-  )
-}
-
-function Colophon() {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link
-          href="/colophon"
-          aria-label="Colophon"
-          className="cursor-default text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-        >
-          <Info className="h-3.5 w-3.5" aria-hidden="true" />
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent side="bottom" sideOffset={6} className="text-left">
-        Colophon
-      </TooltipContent>
-    </Tooltip>
-  )
-}
-
-function EmailPill() {
-  const [copied, setCopied] = useState(false)
-  const playClick = useClickSound()
-
-  const handleCopy = useCallback(async () => {
-    playClick()
-    try {
-      await navigator.clipboard.writeText(EMAIL)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // Fallback for older browsers
-      const textarea = document.createElement("textarea")
-      textarea.value = EMAIL
-      document.body.appendChild(textarea)
-      textarea.select()
-      document.execCommand("copy")
-      document.body.removeChild(textarea)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }
-  }, [playClick])
-
-  return (
-    <div className="relative group">
-      <button
-        onClick={handleCopy}
-        aria-label={`Copy email address ${EMAIL}`}
-        aria-describedby="email-tooltip"
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-[background-color,border-color,transform] duration-150 ease-out hover:border-foreground/20 hover:bg-accent active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+    <footer className="flex items-center justify-between pt-6 pb-10 font-sans text-[11px] text-muted-foreground/40">
+      <CommitLink commit={commit} />
+      <Link
+        href="/colophon"
+        aria-label="Colophon"
+        className="transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
       >
-        {copied ? (
-          <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
-        ) : (
-          <Mail className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-        )}
-        <span>{EMAIL}</span>
-      </button>
-      <span
-        id="email-tooltip"
-        role="tooltip"
-        className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-foreground px-2.5 py-1 text-xs text-background opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-      >
-        {copied ? "Email Copied!" : "Copy email"}
-      </span>
-    </div>
-  )
-}
-
-export function SiteFooter() {
-  return (
-    <footer className="flex flex-col gap-4 border-t border-border pt-6 pb-10 sm:flex-row sm:items-center sm:justify-between">
-      <EmailPill />
-      <div className="flex items-center gap-2">
-        <CommitTracker />
-        <a
-          href="https://github.com/gageminamoto/portfolio"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="View source on GitHub"
-          className="text-muted-foreground/40 transition-colors duration-150 ease-out hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-        >
-          <GitHubIcon className="h-3.5 w-3.5" />
-        </a>
-        <Colophon />
-      </div>
+        <Info className="h-3.5 w-3.5" aria-hidden="true" />
+      </Link>
     </footer>
   )
 }
