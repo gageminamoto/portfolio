@@ -18,6 +18,9 @@ interface CommitData {
   repoName: string
   repoFullName: string
   commitMessage: string
+  prNumber: number | null
+  prUrl: string | null
+  prMerged: boolean
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -243,6 +246,27 @@ export async function fetchLatestCommit(): Promise<CommitData | null> {
 
     const detail = await detailRes.json()
 
+    // 4. Get associated pull request (if any)
+    let prNumber: number | null = null
+    let prUrl: string | null = null
+    let prMerged = false
+    try {
+      const prRes = await fetch(
+        `https://api.github.com/repos/${repoName}/commits/${sha}/pulls`,
+        { headers: headers() }
+      )
+      if (prRes.ok) {
+        const prs = await prRes.json()
+        if (Array.isArray(prs) && prs.length > 0) {
+          prNumber = prs[0].number
+          prUrl = prs[0].html_url
+          prMerged = prs[0].merged_at != null
+        }
+      }
+    } catch {
+      // PR lookup is best-effort
+    }
+
     return {
       hash: sha.slice(0, 7),
       sha,
@@ -254,6 +278,9 @@ export async function fetchLatestCommit(): Promise<CommitData | null> {
       repoName: repo.name as string,
       repoFullName: repoName,
       commitMessage: (detail.commit?.message as string)?.split("\n")[0] ?? "",
+      prNumber,
+      prUrl,
+      prMerged,
     }
   } catch (error) {
     console.error("[github] unexpected error:", error)

@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import Link from "next/link"
-import { Info } from "lucide-react"
+import { Info, GitMerge, GitPullRequest } from "lucide-react"
 
 const CHARS = "!@#$%^&*()_+-=[]{}|;:,.<>?0123456789abcdef"
 const HOVER_TEXT = "View GitHub"
@@ -16,6 +16,9 @@ const fallbackCommit = {
   deletions: 0,
   relativeTime: "…",
   repoFullName: "",
+  prNumber: null as number | null,
+  prUrl: null as string | null,
+  prMerged: false,
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -27,6 +30,8 @@ function buildCommitText(commit: typeof fallbackCommit) {
 function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
   const commitText = buildCommitText(commit)
   const [display, setDisplay] = useState(commitText)
+  const [settled, setSettled] = useState(true)
+  const [showCommit, setShowCommit] = useState(true)
   const rafRef = useRef(0)
   const hoveredRef = useRef(false)
   const displayRef = useRef(display)
@@ -36,11 +41,14 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
   useEffect(() => {
     if (!hoveredRef.current) {
       setDisplay(commitText)
+      setSettled(true)
+      setShowCommit(true)
     }
   }, [commitText])
 
-  const scrambleTo = useCallback((target: string) => {
+  const scrambleTo = useCallback((target: string, isCommit: boolean) => {
     cancelAnimationFrame(rafRef.current)
+    setSettled(false)
     const targetLen = target.length
     const start = performance.now()
 
@@ -66,6 +74,8 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
       } else {
         displayRef.current = target
         setDisplay(target)
+        setSettled(true)
+        setShowCommit(isCommit)
       }
     }
 
@@ -75,6 +85,18 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
   useEffect(() => {
     return () => cancelAnimationFrame(rafRef.current)
   }, [])
+
+  const renderColoredCommit = () => (
+    <>
+      <span>{commit.hash}</span>
+      {" "}
+      <span className="text-green-500/60">+{commit.additions.toLocaleString()}</span>
+      {" "}
+      <span className="text-red-500/60">-{commit.deletions.toLocaleString()}</span>
+      {" "}
+      <span>{commit.relativeTime}</span>
+    </>
+  )
 
   return (
     <a
@@ -86,14 +108,14 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
       aria-label="View GitHub repository"
       onMouseEnter={() => {
         hoveredRef.current = true
-        scrambleTo(HOVER_TEXT)
+        scrambleTo(HOVER_TEXT, false)
       }}
       onMouseLeave={() => {
         hoveredRef.current = false
-        scrambleTo(commitText)
+        scrambleTo(commitText, true)
       }}
     >
-      {display}
+      {settled && showCommit ? renderColoredCommit() : display}
     </a>
   )
 }
@@ -108,7 +130,25 @@ export function SiteFooter() {
 
   return (
     <footer className="flex items-center justify-between pt-6 pb-10 font-sans text-[11px] text-muted-foreground/40">
-      <CommitLink commit={commit} />
+      <div className="flex items-center gap-2">
+        {commit.prNumber != null && (
+          <a
+            href={commit.prUrl ?? "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-0.5 transition-colors duration-150 hover:text-muted-foreground"
+            aria-label={`Pull request #${commit.prNumber}`}
+          >
+            {commit.prMerged ? (
+              <GitMerge className="h-3 w-3 text-purple-500/60" aria-hidden="true" />
+            ) : (
+              <GitPullRequest className="h-3 w-3 text-green-500/60" aria-hidden="true" />
+            )}
+            <span>#{commit.prNumber}</span>
+          </a>
+        )}
+        <CommitLink commit={commit} />
+      </div>
       <Link
         href="/colophon"
         aria-label="Colophon"
