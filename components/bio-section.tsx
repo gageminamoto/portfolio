@@ -89,6 +89,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                 const previewImages: Record<string, string> = {
                   "Mizen": "/mizen-preview.jpg",
                   "University of Hawai\u2019i": "/uh-preview.jpg",
+                  "local design community": "/piiku-preview.jpg",
                 }
                 return (
                   <HoverLink
