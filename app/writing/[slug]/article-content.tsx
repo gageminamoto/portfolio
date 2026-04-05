@@ -201,7 +201,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
                   </p>
                   <Link
                     href="/writing"
-                    className="text-sm text-muted-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-colors duration-150 ease-out hover:text-foreground"
+                    className="text-sm text-muted-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-colors duration-150 ease-out hover:text-primary"
                   >
                     Back to writing
                   </Link>

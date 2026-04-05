@@ -102,7 +102,7 @@ export default function ColophonPage() {
                 href="https://github.com/gageminamoto/portfolio"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-foreground underline decoration-transparent transition-colors duration-150 hover:decoration-foreground"
+                className="font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:decoration-primary"
               >
                 open on GitHub
               </a>
@@ -128,7 +128,7 @@ function Row({ label, value, href }: { label: string; value: string; href?: stri
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="truncate text-sm text-muted-foreground underline decoration-transparent transition-colors duration-150 hover:text-foreground hover:decoration-foreground"
+          className="truncate text-sm text-muted-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:text-primary hover:decoration-primary"
         >
           {value}
         </a>
