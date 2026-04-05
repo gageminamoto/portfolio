@@ -550,7 +550,7 @@ export function PokemonCards() {
       >
         {/* Trigger text styled like other hobby links */}
         <button
-          className="cursor-pointer font-medium text-foreground underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-foreground"
+          className="cursor-pointer font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-primary"
           onClick={handleTriggerClick}
           aria-label="View Pokemon cards"
           aria-expanded={isFanned}

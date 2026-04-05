@@ -106,7 +106,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
 
       <button
         onClick={handleToggle}
-        className={`inline-flex items-center rounded-md px-1 -mx-1 text-foreground underline decoration-dashed underline-offset-[3px] cursor-pointer transition-[text-decoration-color] duration-700 ease-out ${showUnderline ? "decoration-muted-foreground/50 hover:decoration-foreground" : "decoration-transparent"}`}
+        className={`inline-flex items-center rounded-md px-1 -mx-1 text-foreground underline decoration-dashed underline-offset-[3px] cursor-pointer transition-[text-decoration-color] duration-700 ease-out ${showUnderline ? "decoration-muted-foreground/50 hover:decoration-primary" : "decoration-transparent"}`}
       >
         <motion.span
           className="inline-flex overflow-hidden"

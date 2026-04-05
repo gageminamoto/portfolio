@@ -20,7 +20,7 @@ export function HoverLink({
   previewImage,
   className = "",
 }: HoverLinkProps) {
-  const linkClassName = `group inline-flex items-center gap-1 text-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
+  const linkClassName = `group inline-flex items-center gap-1 text-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
 
   const inner = (
     <>

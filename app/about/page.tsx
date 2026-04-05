@@ -90,15 +90,15 @@ export default function AboutPage() {
         <Section title="Building a Studio">
           <p className="text-base leading-relaxed text-muted-foreground">
             Indie games have always inspired me. Small teams pour their craft into every detail with whatever they have. That energy is what drives {" "}
-            <HoverLink href="https://negi.studio" previewImage="/negi-studio-preview.jpg" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-foreground">
+            <HoverLink href="https://negi.studio" previewImage="/negi-studio-preview.jpg" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-primary">
               Negi
             </HoverLink>
             , the design studio I co-founded with{" "}
-            <HoverLink href="https://www.michellesunnyside.com/" previewImage="/michelle-preview.jpg" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-foreground">
+            <HoverLink href="https://www.michellesunnyside.com/" previewImage="/michelle-preview.jpg" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-primary">
               Michelle
             </HoverLink>
             . Follow the journey{" "}
-            <HoverLink href="https://x.com/negi__studio" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-foreground">
+            <HoverLink href="https://x.com/negi__studio" className="font-medium text-foreground no-underline decoration-transparent hover:decoration-primary">
               here
             </HoverLink>
             .
@@ -125,7 +125,7 @@ export default function AboutPage() {
               return (
                 <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
                   {hobby.url ? (
-                    <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground">
+                    <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-primary">
                       {hobby.name}
                     </HoverLink>
                   ) : (
