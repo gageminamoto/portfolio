@@ -56,6 +56,30 @@ export const toolsPanelChild: Variants = {
   },
 }
 
+/** Content swap — matches WordSwitcher blur+slide pattern for homepage section transitions. */
+export const contentSwap: Variants = {
+  initial: { opacity: 0, y: 6, filter: "blur(4px)" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.24, ease: [0.23, 1, 0.32, 1] },
+  },
+  exit: {
+    opacity: 0,
+    y: -6,
+    filter: "blur(4px)",
+    transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] },
+  },
+}
+
+/** No-motion content swap for reduced motion preference. */
+export const contentSwapNoMotion: Variants = {
+  initial: { opacity: 1, y: 0 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0 },
+}
+
 /** Stagger rows/cards inside the tools list after the panel children. */
 export const toolListStagger: Variants = {
   hidden: { opacity: 0, y: 10 },

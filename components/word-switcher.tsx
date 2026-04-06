@@ -50,9 +50,18 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
   const onWordChangeRef = useRef(onWordChange)
   onWordChangeRef.current = onWordChange
 
+  // Find the index of "design" — the cycle target where auto-rotation stops
+  const designIndex = options.indexOf("design")
+  const stopIndex = designIndex >= 0 ? designIndex : 0
+
   useEffect(() => {
     if (effectsDisabled) {
       setShowUnderline(true)
+      // Jump straight to the stop word when effects are disabled
+      if (stopIndex !== 0) {
+        setSelectedIndex(stopIndex)
+        onWordChangeRef.current?.(options[stopIndex])
+      }
       return
     }
     const underlineTimer = setTimeout(() => setShowUnderline(true), 2000)
@@ -60,7 +69,9 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
     const cycleTimers: ReturnType<typeof setTimeout>[] = []
     const startDelay = 3500
     const interval = 5000
-    for (let i = 0; i < options.length; i++) {
+    // Cycle through options and stop at "design" instead of looping
+    const stepsToDesign = stopIndex === 0 ? options.length : stopIndex
+    for (let i = 0; i < stepsToDesign; i++) {
       cycleTimers.push(
         setTimeout(() => {
           if (!hasInteracted.current) {
