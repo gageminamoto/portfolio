@@ -117,6 +117,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
     { name: "NewJeans", url: "https://www.youtube.com/watch?v=iXlH5AhHLZY&t=407s", description: "#njz" },
     { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
+    { name: "Notion", url: "https://www.linkedin.com/in/gageminamoto/details/certifications/", description: "Notion certified" },
   ],
   projects: [
     {
