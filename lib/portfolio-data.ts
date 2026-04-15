@@ -66,6 +66,8 @@ export interface WorkHistoryItem {
   description: string
   url?: string
   icon?: string
+  hoverImage?: string
+  hoverComponent?: string
 }
 
 export interface PortfolioData {
@@ -90,7 +92,7 @@ export const portfolioData: PortfolioData = {
 
 I grew up in Hawai’i, surrounded by diverse cultures. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
 
-I first stepped into design through esports and brand marketing at the [University of Hawai’i](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
+I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
 
 Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where thoughtful craft is still rare but deeply needed.`,
   designManifesto: [
@@ -178,6 +180,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       period: "2025",
       url: "https://uxhiconference.com/",
       icon: "/icons/uxhi.png",
+      hoverImage: "/images/uxhi-hover.jpg",
       description: "A talk about increasing your surface area for luck as a designer. Co-presented with Michelle at UXHI Conference 2025, I shared how side projects, genuine community involvement, and putting yourself out there create conditions where opportunities show up, with stories from both our careers breaking into UX in Hawai'i.",
     },
     {
@@ -186,6 +189,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       period: "2024 – 2025",
       url: "https://www.nvidia.com/",
       icon: "/icons/nvidia.ico",
+      hoverComponent: "nvidia",
       description: "Understanding how generative AI models behave in the real world. I analyzed output quality across text and image generation and documented edge cases. It showed me that AI products are shaped by evaluation rigor, not just model size.",
     },
     {
@@ -193,6 +197,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       role: "Creative Director",
       period: "2023 – 2025",
       url: "https://uhesports.com/",
+      hoverImage: "/uh-preview.jpg",
       description: "Shaping the look and feel of collegiate esports at UH. I led an overhaul of UHE's brand with a whole new look, grew and managed a team of 4 designers, and created graphics for our collaboration with Activision Blizzard's production team. My first leadership role where I learned to set direction instead of doing everything myself.",
     },
     {
@@ -201,6 +206,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       period: "2024",
       url: "https://umiapp.co/",
       icon: "/icons/umi.png",
+      hoverImage: "/images/umi-hover.jpg",
       description: "Making Japanese language learning feel intuitive and encouraging. I researched with real learners, designed lesson flows and spaced repetition UI, and prototyped with 20+ users. Good education design means getting out of the learner's way.",
     },
     {
@@ -209,6 +215,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       period: "2024",
       url: "https://geng.gg/",
       icon: "/icons/geng.png",
+      hoverImage: "/images/geng-hover.gif",
       description: "Design at a global esports org based in Seoul spanning Korean and North American teams. I made social graphics, campaign assets, and shipped content for League of Legends and Valorant. Working across cultures taught me to communicate visually when words aren't enough.",
     },
     {
@@ -216,6 +223,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       role: "Design Intern",
       period: "2023 – 2024",
       icon: "/icons/servco.png",
+      hoverImage: "/images/servco-hover.gif",
       description: "Brand and digital design for Hawai'i's largest private company. I worked on marketing across automotive and lifestyle brands, built digital campaigns and landing pages, and helped keep 10+ sub-brands visually consistent. My first corporate environment where I saw how design fits into bigger business goals.",
       url: "https://www.servco.com/",
     },
