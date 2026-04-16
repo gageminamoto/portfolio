@@ -101,9 +101,11 @@ function renderParagraph(paragraph: string, onWordChange?: (word: string) => voi
       const previewImages: Record<string, string> = {
         "Mizen": "/mizen-preview.jpg",
         "University of Hawai\u2019i": "/uh-preview.jpg",
+        "University of Hawaiʻi Esports": "/uh-preview.jpg",
         "local design community": "/piiku-preview.jpg",
         "Piʻiku": "/piiku-preview.jpg",
         "UH": "/uh-preview.jpg",
+        "Servco": "/images/servco-hover.gif",
         "Figma": undefined as unknown as string,
         "Cursor": undefined as unknown as string,
         "Vercel": undefined as unknown as string,

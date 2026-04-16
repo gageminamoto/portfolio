@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useCallback } from "react"
 import { ChevronDown } from "lucide-react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -10,25 +10,59 @@ import {
   fluidHoverTextStyle,
   fluidHoverHighlightStyle,
 } from "@/lib/hover-constants"
+import { NvidiaHover } from "@/components/nvidia-hover"
 import type { WorkHistoryItem } from "@/lib/portfolio-data"
+
+const hoverComponents: Record<string, React.ComponentType> = {
+  nvidia: NvidiaHover,
+}
 
 export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const floaterRef = useRef<HTMLDivElement>(null)
   const shouldReduceMotion = useReducedMotion()
   const prefersFinePointer = useFinePointerHover()
   const useFluidHover = Boolean(!shouldReduceMotion && prefersFinePointer)
 
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!floaterRef.current) return
+    floaterRef.current.style.left = `${e.clientX}px`
+    floaterRef.current.style.top = `${e.clientY - 160}px`
+  }, [])
+
+  const hoveredItem = hoveredIndex !== null ? items[hoveredIndex] : null
+  const hasHover = hoveredItem?.hoverImage || hoveredItem?.hoverComponent
+  const HoverComp = hoveredItem?.hoverComponent ? hoverComponents[hoveredItem.hoverComponent] : null
+
   return (
     <div
-      className="flex flex-col"
+      className="relative flex flex-col"
+      onMouseMove={useFluidHover ? handleMouseMove : undefined}
       onMouseLeave={useFluidHover ? () => setHoveredIndex(null) : undefined}
     >
+      {useFluidHover && hasHover && (
+        <div
+          ref={floaterRef}
+          className="pointer-events-none fixed z-50"
+          style={{ width: 256, height: 144, transform: "translateX(-50%)" }}
+        >
+          {HoverComp ? (
+            <HoverComp />
+          ) : (
+            <img
+              src={hoveredItem!.hoverImage}
+              alt=""
+              className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover shadow-lg"
+            />
+          )}
+        </div>
+      )}
       {items.map((item, i) => {
         const isActive = hoveredIndex === i || openIndex === i
 
         return (
-          <div key={item.company}>
+          <div key={item.company} className="relative">
             {useFluidHover ? (
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -160,9 +194,6 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
                 </motion.div>
               )}
             </AnimatePresence>
-            {i < items.length - 1 && (
-              <hr className="border-t border-border/50" />
-            )}
           </div>
         )
       })}
