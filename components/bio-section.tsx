@@ -60,7 +60,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
   const paragraphs = bio.split("\n\n")
 
   return (
-    <div className={`text-base leading-relaxed text-muted-foreground ${className}`}>
+    <div className={`text-base leading-relaxed text-muted-foreground text-wrap ${className}`}>
       {paragraphs.map((paragraph, pIndex) => {
         const parts = parseBio(paragraph)
         return (
@@ -89,8 +89,12 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                 const previewImages: Record<string, string> = {
                   "Mizen": "/mizen-preview.jpg",
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
+                  "UH Esports": "/uh-preview.jpg",
                   "local design community": "/piiku-preview.jpg",
+                  "Piʻiku": "/piiku-preview.jpg",
                   "Servco": "/images/servco-hover.gif",
+                  "Umi": "/images/umi-hover.jpg",
+                  "Michelle": "/michelle-preview.jpg",
                 }
                 return (
                   <HoverLink
