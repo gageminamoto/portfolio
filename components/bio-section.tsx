@@ -94,6 +94,10 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "Piʻiku": "/piiku-preview.jpg",
                   "Servco": "/images/servco-hover.gif",
                   "Umi": "/images/umi-hover.jpg",
+                  "Aura": "/images/aura-placeholder.svg",
+                  "Kilo": "/images/kilo-placeholder.svg",
+                  "Spero": "/images/spero-placeholder.svg",
+                  "MemberSpace": "/images/memberspace-placeholder.svg",
                   "Michelle": "/michelle-preview.jpg",
                 }
                 return (
