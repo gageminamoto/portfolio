@@ -3,6 +3,7 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { ChevronDown } from "lucide-react"
+import { Pin } from "@solar-icons/react"
 import { useDialKit } from "dialkit"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ListRow } from "@/components/list-row"
@@ -103,6 +104,12 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
       className="flex flex-col"
       style={!expanded && hasMore ? { maskImage: 'linear-gradient(to bottom, black calc(100% - 2rem), transparent)' } : undefined}
     >
+      <ListRow
+        href="/tools"
+        icon={<Pin size={14} weight="Bold" className="text-muted-foreground" />}
+        name="Tools"
+        meta="Pinned"
+      />
       {posts.slice(0, INITIAL_COUNT).map((post) => (
         <PostRow key={post.id} post={post} />
       ))}

@@ -7,7 +7,7 @@ import { useMounted } from "@/hooks/use-mounted"
 const THEME_HUES: Record<string, { hue: number; chroma: number }> = {
   software: { hue: 250, chroma: 0.14 },
   brands:   { hue: 330, chroma: 0.15 },
-  tools:    { hue: 145, chroma: 0.17 },
+  play:     { hue: 145, chroma: 0.17 },
 }
 
 const GradientWordContext = createContext<{
@@ -19,10 +19,10 @@ const GradientWordContext = createContext<{
   setCursorTrailActive: (active: boolean) => void
   soundEnabled: boolean
   setSoundEnabled: (enabled: boolean) => void
-}>({ activeWord: "software", setActiveWord: () => {}, shaderEnabled: true, setShaderEnabled: () => {}, cursorTrailActive: false, setCursorTrailActive: () => {}, soundEnabled: true, setSoundEnabled: () => {} })
+}>({ activeWord: "design", setActiveWord: () => {}, shaderEnabled: true, setShaderEnabled: () => {}, cursorTrailActive: false, setCursorTrailActive: () => {}, soundEnabled: true, setSoundEnabled: () => {} })
 
 export function GradientWordProvider({ children }: { children: React.ReactNode }) {
-  const [activeWord, setActiveWord] = useState("software")
+  const [activeWord, setActiveWord] = useState("design")
   const [shaderEnabled, setShaderEnabledState] = useState(() => {
     if (typeof window === "undefined") return true
     return localStorage.getItem("shader-enabled") !== "false"

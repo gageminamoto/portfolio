@@ -129,7 +129,7 @@ export function SiteFooter() {
   const commit = data?.commit ?? fallbackCommit
 
   return (
-    <footer className="flex items-center justify-between pt-6 pb-10 font-sans text-[11px] text-muted-foreground/40">
+    <footer className="flex items-center justify-between pt-6 pb-10 font-sans text-[11px] font-medium text-muted-foreground/40">
       <div className="flex items-center gap-2">
         {commit.prNumber != null && (
           <a

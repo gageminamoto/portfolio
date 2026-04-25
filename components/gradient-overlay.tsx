@@ -2,16 +2,21 @@
 
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
+import { GrainGradient } from "@paper-design/shaders-react"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
 
-const GRADIENT_CONFIG = {
-  software:    { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  brands: { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  tools:       { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-} as const
+const GRADIENT_COLORS: Record<string, string> = {
+  software: "#C7E9FA",
+  brands: "#F5C7E9",
+  play: "#C7FAD8",
+}
 
-type GradientWord = keyof typeof GRADIENT_CONFIG
+const GRADIENT_COLORS_DARK: Record<string, string> = {
+  software: "#1A3A4A",
+  brands: "#4A1A3A",
+  play: "#1A4A2A",
+}
 
 export function GradientOverlay() {
   const { activeWord, shaderEnabled } = useGradientWord()
@@ -19,81 +24,47 @@ export function GradientOverlay() {
   const prefersReducedMotion = useReducedMotion()
   const mounted = useMounted()
 
-  const p = {
-    opacity: 0.73,
-    width: 74,
-    height: 35,
-    duration: 0.5,
-    noiseOpacity: 0.08,
-    noiseFrequency: 1.3,
-    noiseScale: 212,
-  }
-
   if (!mounted) return null
 
   const isDark = resolvedTheme === "dark"
+  const colorMap = isDark ? GRADIENT_COLORS_DARK : GRADIENT_COLORS
+  const color = colorMap[activeWord]
+  const showShader = shaderEnabled && !!color
 
   return (
     <AnimatePresence>
-      {shaderEnabled && (
+      {showShader && (
         <motion.div
-          key="noise"
-          className="pointer-events-none fixed inset-0 -z-10"
+          key="grain-gradient"
+          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10 [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)]"
           aria-hidden="true"
           initial={{ opacity: 0 }}
-          animate={{ opacity: p.opacity }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: prefersReducedMotion ? 0 : p.duration,
+            duration: prefersReducedMotion ? 0 : 0.5,
             ease: [0.4, 0, 0.2, 1],
           }}
         >
-          <div
-            className="absolute inset-0 mix-blend-overlay"
+          <GrainGradient
+            speed={prefersReducedMotion ? 0 : 1.24}
+            scale={1.71}
+            rotation={92}
+            offsetX={0}
+            offsetY={0}
+            softness={0.33}
+            intensity={isDark ? 0.1 : 0.15}
+            noise={0.35}
+            shape="blob"
+            colors={[color]}
+            colorBack="#00000000"
             style={{
-              opacity: p.noiseOpacity,
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='${p.noiseFrequency}' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-              backgroundSize: `${p.noiseScale}px ${p.noiseScale}px`,
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
             }}
           />
-        </motion.div>
-      )}
-      {shaderEnabled && (
-        <motion.div
-          key="gradients"
-          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
-          aria-hidden="true"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: p.opacity }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: prefersReducedMotion ? 0 : p.duration,
-            ease: [0.4, 0, 0.2, 1],
-          }}
-        >
-          {(Object.keys(GRADIENT_CONFIG) as GradientWord[]).map((word) => {
-            const { hue, lightL, lightS, darkL, darkS } = GRADIENT_CONFIG[word]
-            const l = isDark ? darkL : lightL
-            const s = isDark ? darkS : lightS
-            const color = `oklch(${l} ${s} ${hue})`
-            const isActive = activeWord === word
-
-            return (
-              <motion.div
-                key={word}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : p.duration,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-                style={{
-                  background: `radial-gradient(ellipse ${p.width}% ${p.height}% at 50% 0%, ${color} 0%, color-mix(in oklch, ${color} 70%, transparent) 25%, color-mix(in oklch, ${color} 35%, transparent) 50%, color-mix(in oklch, ${color} 10%, transparent) 75%, transparent 100%)`,
-                }}
-              />
-            )
-          })}
         </motion.div>
       )}
     </AnimatePresence>
