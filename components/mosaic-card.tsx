@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useRef, useState } from "react"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { useGradientWord } from "@/components/gradient-word-context"
+import type { LightboxRect } from "@/components/image-lightbox"
 
 export interface GalleryItem {
   name: string
@@ -10,6 +12,8 @@ export interface GalleryItem {
   description: string
   year?: number
   status?: "production" | "building"
+  image?: string
+  aspectRatio?: string
 }
 
 const BADGE_COLORS: Record<string, string> = {
@@ -23,13 +27,29 @@ const ASPECT_RATIOS = ["5/4", "16/9", "1/1"] as const
 
 const ease = [0.215, 0.61, 0.355, 1] as const
 
-export function MosaicCard({ project, index = 0 }: { project: GalleryItem; index?: number }) {
+interface MosaicCardProps {
+  project: GalleryItem
+  index?: number
+  isLightboxOpen?: boolean
+  onOpenLightbox?: (rect: LightboxRect) => void
+}
+
+export function MosaicCard({ project, index = 0, isLightboxOpen, onOpenLightbox }: MosaicCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
+
+  const cardRef = useRef<HTMLDivElement>(null)
 
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
   const { activeWord } = useGradientWord()
 
-  const aspectRatio = ASPECT_RATIOS[index % ASPECT_RATIOS.length]
+  const aspectRatio = project.aspectRatio ?? ASPECT_RATIOS[index % ASPECT_RATIOS.length]
+
+  const openLightbox = useCallback(() => {
+    if (!project.image || !cardRef.current || !onOpenLightbox) return
+    const rect = cardRef.current.getBoundingClientRect()
+    onOpenLightbox({ top: rect.top, left: rect.left, width: rect.width, height: rect.height })
+  }, [project.image, onOpenLightbox])
 
   return (
     <div
@@ -55,23 +75,45 @@ export function MosaicCard({ project, index = 0 }: { project: GalleryItem; index
         className="absolute inset-0 transition-transform [transition-duration:var(--card-hover-speed,200ms)] [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:[transform:scale(var(--card-hover-scale,0.98))]"
       >
       <div
+        ref={cardRef}
         className="group absolute inset-0 overflow-hidden rounded-xl border border-border/50 bg-card transition-[background-color,border-color,box-shadow] duration-200 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:border-border/80 hover:bg-accent/50"
+        style={{ visibility: isLightboxOpen ? "hidden" : undefined }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {project.url && (
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute inset-0 z-0 rounded-xl"
-            aria-label={project.name}
-            tabIndex={0}
-          />
+        {project.image ? (
+          <div
+            className="absolute inset-0 cursor-zoom-in"
+            onClick={openLightbox}
+          >
+            {!imageLoaded && (
+              <div className="absolute inset-0 animate-pulse bg-muted" />
+            )}
+            <Image
+              src={project.image}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 50vw, 400px"
+              className={`object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              unoptimized={project.image.endsWith(".gif")}
+              onLoad={() => setImageLoaded(true)}
+            />
+          </div>
+        ) : project.url ? (
+          <>
+            <div className="absolute inset-0 bg-muted/30 dark:bg-white/[0.03]" />
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute inset-0 z-10 rounded-xl"
+              aria-label={project.name}
+              tabIndex={0}
+            />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-muted/30 dark:bg-white/[0.03]" />
         )}
-
-        {/* Placeholder thumbnail — fills the card */}
-        <div className="absolute inset-0 bg-muted/30 dark:bg-white/[0.03]" />
 
         {/* Bottom content tray — slides up from below on hover */}
       <AnimatePresence>

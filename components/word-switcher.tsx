@@ -13,10 +13,11 @@ interface WordSwitcherProps {
 }
 
 export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitcherProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const { activeWord, shaderEnabled } = useGradientWord()
+  const initialIndex = Math.max(0, options.indexOf(activeWord))
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex)
   const selected = options[selectedIndex]
   const prefersReducedMotion = useReducedMotion()
-  const { shaderEnabled } = useGradientWord()
   const isTouchDevice = useTouchDevice()
   const effectsDisabled = prefersReducedMotion || !shaderEnabled
 
@@ -69,13 +70,13 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
     const cycleTimers: ReturnType<typeof setTimeout>[] = []
     const startDelay = 3500
     const interval = 5000
-    // Cycle through options and stop at "design" instead of looping
-    const stepsToDesign = stopIndex === 0 ? options.length : stopIndex
+    // Cycle from current position to "design" and stop there
+    const stepsToDesign = (stopIndex - initialIndex + options.length) % options.length
     for (let i = 0; i < stepsToDesign; i++) {
       cycleTimers.push(
         setTimeout(() => {
           if (!hasInteracted.current) {
-            const nextIndex = (i + 1) % options.length
+            const nextIndex = (initialIndex + i + 1) % options.length
             setSelectedIndex(nextIndex)
             onWordChangeRef.current?.(options[nextIndex])
           }

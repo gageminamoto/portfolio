@@ -9,13 +9,13 @@ import { useMounted } from "@/hooks/use-mounted"
 const GRADIENT_COLORS: Record<string, string> = {
   software: "#C7E9FA",
   brands: "#F5C7E9",
-  tools: "#C7FAD8",
+  play: "#C7FAD8",
 }
 
 const GRADIENT_COLORS_DARK: Record<string, string> = {
   software: "#1A3A4A",
   brands: "#4A1A3A",
-  tools: "#1A4A2A",
+  play: "#1A4A2A",
 }
 
 export function GradientOverlay() {

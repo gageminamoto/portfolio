@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react"
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion"
-import { Layers, Palette, Pin, Pen2 } from "@solar-icons/react"
+import { Palette, Pin, Pen2, StarShine } from "@solar-icons/react"
+import { ChevronRight } from "lucide-react"
+import Link from "next/link"
 import { useDialKit } from "dialkit"
 import { portfolioData, WORD_SECTION_CONFIG } from "@/lib/portfolio-data"
-import type { BrandItem, ProjectItem, ToolHighlight } from "@/lib/portfolio-data"
+import type { BrandItem, ProjectItem } from "@/lib/portfolio-data"
 import { generateSeedProjects } from "@/lib/seed-projects"
 import { SocialIcons } from "@/components/social-icons"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -20,20 +22,25 @@ import { CursorTrail } from "@/components/cursor-trail"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { faviconUrl } from "@/lib/favicon-url"
 
+/** Sections that link to a dedicated page get a chevron. */
+const SECTION_LINKS: Record<string, string> = {
+  writing: "/writing",
+}
+
 const BADGE_COLORS: Record<string, string> = {
   design: "oklch(0.55 0.2 250)",
   software: "oklch(0.55 0.2 250)",
   brands: "oklch(0.55 0.2 330)",
-  tools: "oklch(0.55 0.2 145)",
+  play: "oklch(0.55 0.2 145)",
 }
 
-const SECTION_ORDER = ["software", "brands", "tools", "writing"] as const
+const SECTION_ORDER = ["software", "brands", "play", "writing"] as const
 
 const SECTION_ICONS: Record<string, React.ReactNode> = {
   design: <Pin size={14} weight="Bold" />,
   software: <Pin size={14} weight="Bold" />,
   brands: <Palette size={14} weight="Bold" />,
-  tools: <Layers size={14} weight="Bold" />,
+  play: <StarShine size={14} weight="Bold" />,
   writing: <Pen2 size={14} weight="Bold" />,
 }
 
@@ -117,35 +124,8 @@ function BrandListItem({ brand }: { brand: BrandItem }) {
   )
 }
 
-function ToolListItem({ tool }: { tool: ToolHighlight }) {
-  const icon = tool.favicon ?? faviconUrl(tool.url, 32)
-
-  return (
-    <div className="group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color] [transition-duration:var(--card-hover-speed,200ms)] [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:bg-accent/50 hover:[transform:scale(var(--card-hover-scale,0.98))]">
-      {tool.url && (
-        <a
-          href={tool.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute inset-0 z-0 rounded-xl"
-          aria-label={tool.name}
-          tabIndex={0}
-        />
-      )}
-      {icon && (
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img src={icon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
-      )}
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-sm font-medium text-foreground">{tool.name}</span>
-        <span className="truncate text-xs text-muted-foreground">{tool.description}</span>
-      </div>
-    </div>
-  )
-}
-
 export function LayoutOne() {
-  const { name, bio, socials, email, projects, brands, favoriteTools } = portfolioData
+  const { name, bio, socials, email, projects, brands } = portfolioData
   const { activeWord, setActiveWord, setCursorTrailActive } = useGradientWord()
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
@@ -163,7 +143,7 @@ export function LayoutOne() {
   const orderedSections = useMemo(() => {
     const projectItems: GalleryItem[] = projects.map((p) => ({
       name: p.name, url: p.url, description: p.description,
-      year: p.year, status: p.status,
+      year: p.year, status: p.status, image: p.image, aspectRatio: p.aspectRatio,
     }))
     const seedItems: GalleryItem[] = seedDial.enabled
       ? generateSeedProjects(seedDial.count).map((p) => ({
@@ -181,12 +161,15 @@ export function LayoutOne() {
       brands: {
         title: WORD_SECTION_CONFIG.brands.title,
         icon: SECTION_ICONS.brands,
-        items: brands.map((b) => ({ name: b.name, url: b.url, description: b.description })),
+        items: brands.map((b) => ({ name: b.name, url: b.url, description: b.description, image: b.image, aspectRatio: b.aspectRatio })),
       },
-      tools: {
-        title: WORD_SECTION_CONFIG.tools.title,
-        icon: SECTION_ICONS.tools,
-        items: favoriteTools.map((t) => ({ name: t.name, url: t.url, description: t.description })),
+      play: {
+        title: WORD_SECTION_CONFIG.play.title,
+        icon: SECTION_ICONS.play,
+        items: [
+          { name: "Coming Soon", description: "Explorations in progress" },
+          { name: "Coming Soon", description: "Explorations in progress" },
+        ],
       },
       writing: {
         title: WORD_SECTION_CONFIG.writing.title,
@@ -205,12 +188,12 @@ export function LayoutOne() {
     }
 
     return order.map((key) => ({ key, ...sectionData[key] }))
-  }, [projects, brands, favoriteTools, activeWord, seedDial.enabled, seedDial.count])
+  }, [projects, brands, activeWord, seedDial.enabled, seedDial.count])
 
   return (
     <motion.main
       id="main-content"
-      className="relative z-10 mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-6 pb-16 pt-16 md:pb-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 pb-16 pt-16 md:pb-24"
       style={{
         "--card-hover-scale": hoverDial.scale,
         "--card-hover-speed": `${hoverDial.speed}ms`,
@@ -263,8 +246,21 @@ export function LayoutOne() {
                   },
                 }}
               >
-                {section.icon}
-                {section.title}
+                {SECTION_LINKS[section.key] ? (
+                  <Link
+                    href={SECTION_LINKS[section.key]}
+                    className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+                  >
+                    {section.icon}
+                    {section.title}
+                    <ChevronRight className="h-3 w-3 fill-current" aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <>
+                    {section.icon}
+                    {section.title}
+                  </>
+                )}
               </motion.h2>
               {section.key === "writing" ? (
                 <WritingSection />

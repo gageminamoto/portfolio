@@ -49,6 +49,7 @@ export interface ProjectItem {
   status: "production" | "building"
   year?: number
   image?: string
+  aspectRatio?: string
   hoverImage?: string
   favicon?: string
   collaborators?: Collaborator[]
@@ -59,6 +60,7 @@ export interface BrandItem {
   url?: string
   description: string
   image?: string
+  aspectRatio?: string
   favicon?: string
 }
 
@@ -107,21 +109,21 @@ export const WORD_SECTION_CONFIG: Record<string, { title: string; icon: string }
   design: { title: "Work", icon: "Pin" },
   software: { title: "Projects", icon: "Pin" },
   brands: { title: "Brand", icon: "Star" },
-  tools: { title: "Tools", icon: "Layers" },
+  play: { title: "Play", icon: "StarShine" },
   writing: { title: "Writing", icon: "Pen2" },
 }
 
 /** Second bio paragraph, swapped based on the active word in the switcher. */
 export const BIO_PARAGRAPHS: Record<string, string> = {
-  design: "Growing Hawai'i's [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes. Sometimes I [write](/writing) about it too.",
-  software: "I like building things on the side — small, focused products that solve one problem well. Right now that's [Mizen](https://www.mizen.recipes/), a calm way to cook online recipes. Sometimes I [write](/writing) about the process.",
-  brands: "Shaping identities for Hawai'i businesses and communities — from [Piʻiku](https://piiku.co/) to collegiate esports at [UH](https://uhesports.com/). Sometimes I [write](/writing) about it too.",
-  tools: "Always refining the toolkit. Right now it's [Figma](https://figma.com), [Cursor](https://cursor.com), and a lot of [Vercel](https://vercel.com). Sometimes I [write](/writing) about it too.",
+  design: "Growing Hawai'i's [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
+  software: "I like building things on the side — small, focused products that solve one problem well. Right now that's [Mizen](https://www.mizen.recipes/), a calm way to cook online recipes.",
+  brands: "Shaping identities for Hawai'i businesses and communities — from [Piʻiku](https://piiku.co/) to collegiate esports at [UH](https://uhesports.com/).",
+  play: "Exploring outside of work — collecting [Pokémon cards](https://www.pokemon.com/us/pokemon-tcg), camping, and always learning something new.",
 }
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Design engineer building everyday products.\n\nCurrently, crafting simple {software|brands|tools|design} at Negi. [About Me](/about)\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
+  bio: "Design engineer building everyday products.\n\nCurrently, crafting simple {software|brands|play|design} at Negi. [About Me](/about)\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
   extendedBio: `I’m a design engineer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
 
 I grew up in Hawai’i, surrounded by diverse cultures. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
@@ -163,7 +165,8 @@ Today, I use that foundation to design thoughtful software and brands in and for
       description: "Calm online cooking",
       status: "building",
       year: 2025,
-      image: "/projects/mizen.png",
+      image: "/projects/mizen.webp",
+      aspectRatio: "16/9",
       hoverImage: "/projects/mizen-hover.svg",
       favicon: "/projects/mizen-favicon.png",
       collaborators: [
@@ -182,12 +185,21 @@ Today, I use that foundation to design thoughtful software and brands in and for
       description: "Scorecard on the go",
       status: "production",
       year: 2025,
-      image: "/projects/yahtzee.png",
+      image: "/projects/yahtzee-card.gif",
+      aspectRatio: "1/1",
       hoverImage: "/projects/yahtzee-hover.svg",
       favicon: "/projects/yahtzee-favicon.png",
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
+    },
+    {
+      name: "Coming Soon",
+      description: "Something new is brewing",
+    },
+    {
+      name: "Coming Soon 2",
+      description: "Stay tuned",
     },
   ],
   brands: [
@@ -195,16 +207,24 @@ Today, I use that foundation to design thoughtful software and brands in and for
       name: "Servco",
       url: "https://www.servco.com/",
       description: "Marketing across automotive and lifestyle brands",
+      image: "/images/servco-hover.gif",
     },
     {
       name: "UH Esports",
       url: "https://uhesports.com/",
       description: "Full rebrand for collegiate esports at UH",
+      image: "/projects/uh-esports.webp",
+      aspectRatio: "4/3",
     },
     {
       name: "Piʻiku",
       url: "https://piiku.co/",
       description: "Identity for Hawai'i's local design community",
+    },
+    {
+      name: "MemberSpace",
+      url: "https://www.memberspace.com/",
+      description: "Brand identity for a membership platform",
     },
   ],
   favoriteTools: [
