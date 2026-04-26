@@ -6,7 +6,6 @@ import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-ico
 import { useDialKit } from "dialkit"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
@@ -116,14 +115,11 @@ export function LayoutOne() {
     >
       {/* Header */}
       <motion.header variants={item} className="flex flex-col gap-6">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              {name}
-            </h1>
-            <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
-          </div>
-          <ThemeToggle />
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            {name}
+          </h1>
+          <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
         </div>
         <SocialIcons socials={socials} email={email} />
       </motion.header>

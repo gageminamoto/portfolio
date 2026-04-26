@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
 import { ToolRow } from "@/components/tool-row"
@@ -42,7 +41,7 @@ export default function AboutPage() {
       animate="show"
     >
       {/* Header */}
-      <motion.header variants={item} className="flex items-center justify-between">
+      <motion.header variants={item}>
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -50,7 +49,6 @@ export default function AboutPage() {
           <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Home
         </Link>
-        <ThemeToggle />
       </motion.header>
 
       {/* Title + Extended About */}

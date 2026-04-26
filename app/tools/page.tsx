@@ -10,7 +10,6 @@ import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import { ChevronLeft, Search, ArrowUpRight } from "lucide-react"
 import { ListRow } from "@/components/list-row"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
 import { useDialKit } from "dialkit"
@@ -196,7 +195,7 @@ export default function ToolsPage() {
       animate="show"
     >
       {/* Header */}
-      <motion.header variants={item} className="flex items-center justify-between">
+      <motion.header variants={item}>
         <Link
           href="/"
           className="inline-flex items-center gap-1 rounded-sm text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -204,7 +203,6 @@ export default function ToolsPage() {
           <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Home
         </Link>
-        <ThemeToggle />
       </motion.header>
 
       {/* Title */}
