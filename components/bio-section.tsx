@@ -91,6 +91,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
                   "local design community": "/piiku-preview.jpg",
                   "Servco": "/images/servco-hover.gif",
+                  "Michelle": "/michelle-preview.jpg",
                 }
                 return (
                   <HoverLink
