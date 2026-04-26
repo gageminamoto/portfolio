@@ -153,6 +153,24 @@ Today, I use that foundation to design thoughtful software and brands in and for
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
     },
+    {
+      name: "Guandan Rules",
+      url: "https://guan-duan-rules.vercel.app/",
+      githubUrl: "https://github.com/gageminamoto/Guan-Duan-Rules",
+      description: "Quick guide to Guan Dan",
+      status: "production",
+      collaborators: [
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
+      ],
+    },
+    {
+      name: "More soon",
+      description: "Something new in the works",
+      status: "building",
+      collaborators: [
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
+      ],
+    },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/", description: "Course on how to create great animations." },

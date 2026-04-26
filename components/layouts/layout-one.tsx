@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
+import { useDialKit } from "dialkit"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -26,9 +27,15 @@ const BADGE_COLORS: Record<string, string> = {
 function ProjectListItem({ project }: { project: ProjectItem }) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
   const { activeWord } = useGradientWord()
+  const isGuandan = project.name === "Guandan Rules"
+  const isInteractive = Boolean(project.url)
 
   return (
-    <div className="group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm">
+    <div
+      className={`group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)]${
+        isInteractive ? " hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm" : ""
+      }`}
+    >
       {project.url && (
         <a
           href={project.url}
@@ -52,9 +59,20 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
             Building
           </motion.span>
         )}
-        {project.favicon && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+        {isGuandan ? (
+          <div className="flex size-8 shrink-0 items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/projects/guandian-rules-logo.svg"
+              alt=""
+              className="h-4 w-auto"
+            />
+          </div>
+        ) : (
+          project.favicon && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+          )
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-sm font-medium text-foreground">{project.name}</span>
@@ -82,6 +100,11 @@ export function LayoutOne() {
   const [projectView, setProjectView] = useState<"list" | "card">("card")
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
+  const guandanDial = useDialKit("Guandan Rules", {
+    visual: { type: "select", options: ["Logo", "Cards"], default: "Logo" },
+  })
+  const guandanVariant: "logo" | "cards" =
+    guandanDial.visual === "Cards" ? "cards" : "logo"
 
   return (
     <motion.main
@@ -134,7 +157,12 @@ export function LayoutOne() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {projects.map((project, index) => (
-              <ProjectCard key={project.name} project={project} index={index} />
+              <ProjectCard
+                key={project.name}
+                project={project}
+                index={index}
+                guandanVariant={guandanVariant}
+              />
             ))}
           </div>
         )}
