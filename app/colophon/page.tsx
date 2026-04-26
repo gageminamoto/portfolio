@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 
@@ -20,7 +19,7 @@ export default function ColophonPage() {
       animate="show"
     >
       {/* Header */}
-      <motion.header variants={item} className="flex items-center justify-between">
+      <motion.header variants={item}>
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -28,7 +27,6 @@ export default function ColophonPage() {
           <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Home
         </Link>
-        <ThemeToggle />
       </motion.header>
 
       {/* Title */}

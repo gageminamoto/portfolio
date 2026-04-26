@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "framer-motion"
 import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
@@ -26,9 +25,15 @@ const BADGE_COLORS: Record<string, string> = {
 function ProjectListItem({ project }: { project: ProjectItem }) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
   const { activeWord } = useGradientWord()
+  const isGuandan = project.name === "Guandan Rules"
+  const isInteractive = Boolean(project.url)
 
   return (
-    <div className="group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm">
+    <div
+      className={`group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)]${
+        isInteractive ? " hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm" : ""
+      }`}
+    >
       {project.url && (
         <a
           href={project.url}
@@ -52,9 +57,20 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
             Building
           </motion.span>
         )}
-        {project.favicon && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+        {isGuandan ? (
+          <div className="flex size-8 shrink-0 items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/projects/guandian-rules-logo.svg"
+              alt=""
+              className="h-4 w-auto"
+            />
+          </div>
+        ) : (
+          project.favicon && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+          )
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-sm font-medium text-foreground">{project.name}</span>
@@ -93,14 +109,11 @@ export function LayoutOne() {
     >
       {/* Header */}
       <motion.header variants={item} className="flex flex-col gap-6">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              {name}
-            </h1>
-            <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
-          </div>
-          <ThemeToggle />
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            {name}
+          </h1>
+          <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
         </div>
         <SocialIcons socials={socials} email={email} />
       </motion.header>
@@ -134,7 +147,12 @@ export function LayoutOne() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {projects.map((project, index) => (
-              <ProjectCard key={project.name} project={project} index={index} />
+              <ProjectCard
+                key={project.name}
+                project={project}
+                index={index}
+                guandanVariant="cards"
+              />
             ))}
           </div>
         )}

@@ -94,7 +94,7 @@ I grew up in Hawai’i, surrounded by diverse cultures. This background taught m
 
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
 
-Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where thoughtful craft is still rare but deeply needed.`,
+Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where thoughtful craft is still rare but deeply needed. Indie games have always inspired me. Small teams pour their craft into every detail with whatever they have. That same energy drives Negi, the design studio I co-founded with [Michelle](https://www.michellesunnyside.com/). Follow the journey [here](https://www.linkedin.com/company/negi-studio/).`,
   designManifesto: [
     /*
     { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
@@ -149,6 +149,24 @@ Today, I use that foundation to design thoughtful software and brands in and for
       image: "/projects/yahtzee.png",
       hoverImage: "/projects/yahtzee-hover.svg",
       favicon: "/projects/yahtzee-favicon.png",
+      collaborators: [
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
+      ],
+    },
+    {
+      name: "Guandan Rules",
+      url: "https://guan-duan-rules.vercel.app/",
+      githubUrl: "https://github.com/gageminamoto/Guan-Duan-Rules",
+      description: "Quick guide to Guan Dan",
+      status: "production",
+      collaborators: [
+        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
+      ],
+    },
+    {
+      name: "More soon",
+      description: "Something new in the works",
+      status: "building",
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
