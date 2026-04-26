@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import Link from "next/link"
 import { Info, GitMerge, GitPullRequest } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const CHARS = "!@#$%^&*()_+-=[]{}|;:,.<>?0123456789abcdef"
 const HOVER_TEXT = "View GitHub"
@@ -149,13 +150,16 @@ export function SiteFooter() {
         )}
         <CommitLink commit={commit} />
       </div>
-      <Link
-        href="/colophon"
-        aria-label="Colophon"
-        className="transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
-      >
-        <Info className="h-3.5 w-3.5" aria-hidden="true" />
-      </Link>
+      <div className="flex items-center gap-2">
+        <ThemeToggle placement="top" compact />
+        <Link
+          href="/colophon"
+          aria-label="Colophon"
+          className="inline-flex h-3.5 w-3.5 items-center justify-center transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+        >
+          <Info className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
+      </div>
     </footer>
   )
 }
