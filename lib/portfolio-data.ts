@@ -156,6 +156,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
     {
       name: "Guandan Rules",
       url: "https://guan-duan-rules.vercel.app/",
+      githubUrl: "https://github.com/gageminamoto/Guan-Duan-Rules",
       description: "Quick guide to Guan Dan",
       status: "production",
       collaborators: [
