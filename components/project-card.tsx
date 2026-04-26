@@ -7,6 +7,7 @@ import { useTouchDevice } from "@/hooks/use-mobile"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { DiceFallAnimation } from "@/components/hover-animations/dice-fall"
 import { PotLidRattleAnimation } from "@/components/hover-animations/pot-lid-rattle"
+import { GuandanCards } from "@/components/guandan-cards"
 
 const shapes = [
   // Rounded square
@@ -51,7 +52,15 @@ const BADGE_COLORS: Record<string, string> = {
   tools: "oklch(0.55 0.2 145)",
 }
 
-export function ProjectCard({ project, index = 0 }: { project: ProjectItem; index?: number }) {
+export function ProjectCard({
+  project,
+  index = 0,
+  guandanVariant = "logo",
+}: {
+  project: ProjectItem
+  index?: number
+  guandanVariant?: "logo" | "cards"
+}) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
   const [isHovered, setIsHovered] = useState(false)
   const isTouch = useTouchDevice()
@@ -59,10 +68,14 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
 
   const shape = shapes[index % shapes.length]
   const showAnimations = !isTouch
+  const isGuandan = project.name === "Guandan Rules"
+  const isInteractive = Boolean(project.url)
 
   return (
     <div
-      className="group relative flex flex-col gap-2 rounded-xl border border-border/50 bg-card p-5 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)] hover:-translate-y-px hover:bg-muted/50 hover:shadow-sm"
+      className={`group relative flex flex-col gap-2 rounded-xl border border-border/50 bg-card p-5 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)]${
+        isInteractive ? " hover:-translate-y-px hover:bg-muted/50 hover:shadow-sm" : ""
+      }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -93,11 +106,23 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectItem; inde
         <DiceFallAnimation isHovered={isHovered} />
       )}
       <div className="flex h-16 items-center justify-center text-muted-foreground/20">
-        {project.favicon ? (
+        {isGuandan ? (
+          guandanVariant === "cards" ? (
+            <GuandanCards isHovered={isHovered} />
+          ) : (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src="/projects/guandian-rules-logo.svg"
+              alt=""
+              className="h-9 w-auto"
+              style={{ color: "#EA3A4B" }}
+            />
+          )
+        ) : project.favicon ? (
           showAnimations && project.name === "Mizen" ? (
             <PotLidRattleAnimation isHovered={isHovered}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={project.favicon} alt="" width={40} height={40} className="size-10 rounded-lg" />
+              <img src={project.favicon} alt="" width={48} height={48} className="size-12 rounded-lg" />
             </PotLidRattleAnimation>
           ) : (
             /* eslint-disable-next-line @next/next/no-img-element */
