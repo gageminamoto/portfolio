@@ -123,7 +123,7 @@ export function LayoutOne() {
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Pin size={14} weight="Bold" />
-            Recent Projects
+            Projects
           </h2>
           <button
             onClick={() => setProjectView(projectView === "list" ? "card" : "list")}
