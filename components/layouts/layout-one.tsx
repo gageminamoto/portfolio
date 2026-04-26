@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
-import { useDialKit } from "dialkit"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
@@ -99,11 +98,6 @@ export function LayoutOne() {
   const [projectView, setProjectView] = useState<"list" | "card">("card")
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
-  const guandanDial = useDialKit("Guandan Rules", {
-    visual: { type: "select", options: ["Logo", "Cards"], default: "Logo" },
-  })
-  const guandanVariant: "logo" | "cards" =
-    guandanDial.visual === "Cards" ? "cards" : "logo"
 
   return (
     <motion.main
@@ -157,7 +151,7 @@ export function LayoutOne() {
                 key={project.name}
                 project={project}
                 index={index}
-                guandanVariant={guandanVariant}
+                guandanVariant="cards"
               />
             ))}
           </div>
