@@ -27,6 +27,7 @@ export interface HobbyItem {
 export interface SpeakingItem {
   name: string
   description: string
+  url?: string
 }
 
 export interface ManifestoItem {
@@ -46,7 +47,7 @@ export interface ProjectItem {
   url?: string
   githubUrl?: string
   description: string
-  status: "production" | "building"
+  status: "production" | "building" | "new"
   image?: string
   hoverImage?: string
   favicon?: string
@@ -88,13 +89,13 @@ export interface PortfolioData {
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
   bio: "Design engineer building everyday products. Currently, crafting simple {software|brands|tools} at Negi.\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
-  extendedBio: `I’m a design engineer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
+  extendedBio: `I’m a design engineer based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible, getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
 
-I grew up in Hawai’i, surrounded by diverse cultures. This background taught me to value empathy, community, and restraint. That perspective continues to influence my approach to design, fostering care and curiosity for the people I’m designing for.
+I grew up in Hawai’i, surrounded by diverse cultures. That background taught me to value empathy, community, and restraint, qualities that still shape how I approach design.
 
-I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued growing at [Servco](https://www.servco.com/). Those early experiences taught me how to move fast, collaborate across teams, and communicate with clarity.
+I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/). Those early roles taught me how to move fast, collaborate across teams, and communicate with clarity.
 
-Today, I use that foundation to design thoughtful software and brands in and for Hawai’i, where thoughtful craft is still rare but deeply needed. Indie games have always inspired me. Small teams pour their craft into every detail with whatever they have. That same energy drives Negi, the design studio I co-founded with [Michelle](https://www.michellesunnyside.com/). Follow the journey [here](https://www.linkedin.com/company/negi-studio/).`,
+Indie games have always inspired me. Small teams pour their craft into every detail with whatever they have. That same energy drives Negi, the design studio I co-founded with [Michelle](https://www.michellesunnyside.com/), where we design thoughtful software and brands in and for Hawai’i. Craft is still rare here, but deeply needed. Follow the journey [here](https://www.linkedin.com/company/negi-studio/).`,
   designManifesto: [
     /*
     { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
@@ -158,7 +159,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
       url: "https://guan-duan-rules.vercel.app/",
       githubUrl: "https://github.com/gageminamoto/Guan-Duan-Rules",
       description: "Quick guide to Guan Dan",
-      status: "production",
+      status: "new",
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
@@ -166,7 +167,7 @@ Today, I use that foundation to design thoughtful software and brands in and for
     {
       name: "More soon",
       description: "Something new in the works",
-      status: "building",
+      status: "production",
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
@@ -177,6 +178,11 @@ Today, I use that foundation to design thoughtful software and brands in and for
     { name: "日本語", description: "Learning nihongo" },
   ],
   speaking: [
+    {
+      name: "Cutting Through the AI Noise as a Designer",
+      description: "Apr 2026",
+      url: "https://www.linkedin.com/posts/piiku-co_hot-take-ai-tools-activity-7449913912835338240-4tUX",
+    },
     { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
     { name: "UX 101 for University of Hawaiʻi at Mānoa Students", description: "Sep 2025" },
     { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },

@@ -89,7 +89,7 @@ export function ProjectCard({
           tabIndex={0}
         />
       )}
-      {project.status === "building" && (
+      {(project.status === "building" || project.status === "new") && (
         <motion.span
           className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
           style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
@@ -99,7 +99,7 @@ export function ProjectCard({
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
         >
-          Building
+          {project.status === "new" ? "New" : "Building"}
         </motion.span>
       )}
       {showAnimations && project.name === "Yahtzee Scorecard" && (
