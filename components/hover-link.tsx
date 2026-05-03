@@ -43,7 +43,7 @@ export function HoverLink({
           <img
             src={previewImage}
             alt=""
-            className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-top shadow-lg"
+            className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
           />
         </span>
       </span>
