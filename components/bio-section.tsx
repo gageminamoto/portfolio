@@ -90,7 +90,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "Mizen": "/mizen-preview.jpg",
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
                   "UH Esports": "/uh-preview.jpg",
-                  "local design community": "/images/piiku-hover.gif",
+                  "local design community": "/piiku-preview.jpg",
                   "Piʻiku": "/images/piiku-hover.gif",
                   "Servco": "/images/servco-hover.gif",
                   "Umi": "/images/umi-hover.jpg",
