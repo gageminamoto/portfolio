@@ -93,7 +93,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "local design community": "/piiku-preview.jpg",
                   "Piʻiku": "/images/piiku-hover.gif",
                   "Servco": "/images/servco-hover.gif",
-                  "Umi": "/images/umi-hover.jpg",
+                  "Umi": "/images/umi-hover.gif",
                   "Aura": "/images/aura-hover.gif",
                   "Kilo": "/images/kilo-hover.jpg",
                   "Spero": "/images/spero-hover.gif",
