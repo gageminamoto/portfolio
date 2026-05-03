@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { HamburgerMenu, Layers, Pen, Pin, UserCircle, Widget2 } from "@solar-icons/react"
+import { HamburgerMenu, Layers, Pen, Pin, Suitcase, UserCircle, Widget2 } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
+import { WorkSection } from "@/components/work-section"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { GitHubIcon } from "@/components/social-icons"
 import { CursorTrail } from "@/components/cursor-trail"
@@ -117,6 +118,15 @@ export function LayoutOne() {
         </div>
         <SocialIcons socials={socials} email={email} />
       </motion.header>
+
+      {/* Work */}
+      <motion.section variants={item} className="flex flex-col gap-4">
+        <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Suitcase size={14} weight="Bold" />
+          Work
+        </h2>
+        <WorkSection />
+      </motion.section>
 
       {/* Projects */}
       <motion.section variants={item} className="flex flex-col gap-4">
