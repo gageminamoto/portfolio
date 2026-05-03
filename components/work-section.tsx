@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useRef, useState } from "react"
+
 interface WorkItem {
   name: string
   url: string
@@ -16,6 +18,48 @@ const workItems: WorkItem[] = [
   { name: "Servco", url: "https://www.servco.com/", image: "/images/servco-hover.gif" },
 ]
 
+function HoverPlayMedia({ src, alt }: { src: string; alt: string }) {
+  const [hovered, setHovered] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      const ctx = canvas.getContext("2d")
+      ctx?.drawImage(img, 0, 0)
+    }
+    img.src = src
+  }, [src])
+
+  return (
+    <div
+      className="relative aspect-video w-full overflow-hidden"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-150 ${
+          hovered ? "opacity-0" : "opacity-100"
+        }`}
+      />
+      {hovered && (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={src}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+      )}
+    </div>
+  )
+}
+
 export function WorkSection() {
   return (
     <div className="flex flex-col gap-3">
@@ -28,12 +72,7 @@ export function WorkSection() {
           className="group block overflow-hidden rounded-xl border border-border/50 bg-card transition-[transform,border-color,box-shadow] duration-150 ease-out hover:-translate-y-px hover:border-border hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           aria-label={item.name}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={item.image}
-            alt={item.name}
-            className="block aspect-video w-full object-cover object-center transition-transform duration-200 ease-out group-hover:scale-[1.02]"
-          />
+          <HoverPlayMedia src={item.image} alt={item.name} />
         </a>
       ))}
     </div>
