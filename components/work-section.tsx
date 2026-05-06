@@ -46,14 +46,17 @@ function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active
           active ? "opacity-0" : "opacity-100"
         }`}
       />
-      {active && (
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img
-          src={src}
-          alt={alt}
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        loading="eager"
+        decoding="async"
+        aria-hidden="true"
+        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-150 ${
+          active ? "opacity-100" : "opacity-0"
+        }`}
+      />
     </div>
   )
 }
@@ -131,8 +134,8 @@ export function WorkSection({ filter }: { filter: WorkFilter }) {
         className="flex flex-col gap-8"
         initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={shouldReduceMotion ? false : { opacity: 0, y: -4 }}
-        transition={{ duration: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
+        exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: [0.215, 0.61, 0.355, 1] }}
       >
         {filtered.map((item) => (
           <WorkItemCard key={item.name} item={item} />
