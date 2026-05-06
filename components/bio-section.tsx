@@ -60,7 +60,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
   const paragraphs = bio.split("\n\n")
 
   return (
-    <div className={`text-base leading-relaxed text-muted-foreground ${className}`}>
+    <div className={`text-base leading-relaxed text-muted-foreground text-wrap ${className}`}>
       {paragraphs.map((paragraph, pIndex) => {
         const parts = parseBio(paragraph)
         return (
@@ -89,15 +89,26 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                 const previewImages: Record<string, string> = {
                   "Mizen": "/mizen-preview.jpg",
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
+                  "UH Esports": "/uh-preview.jpg",
                   "local design community": "/piiku-preview.jpg",
-                  "Servco": "/images/servco-hover.gif",
                   "Michelle": "/michelle-preview.jpg",
                 }
+                const workSyncIds = new Set([
+                  "Aura",
+                  "Kilo",
+                  "Umi",
+                  "Piʻiku",
+                  "Spero",
+                  "MemberSpace",
+                  "Servco",
+                ])
+                const syncWorkId = workSyncIds.has(part.text) ? part.text : undefined
                 return (
                   <HoverLink
                     key={index}
                     href={part.url}
                     previewImage={previewImages[part.text]}
+                    syncWorkId={syncWorkId}
                     className="no-underline decoration-transparent hover:decoration-primary"
                   >
                     {part.text}
