@@ -10,7 +10,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
-import { WorkSection } from "@/components/work-section"
+import { WorkSection, WorkFilterTabs, type WorkFilter } from "@/components/work-section"
+import { WorkHoverProvider } from "@/components/work-hover-context"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { GitHubIcon } from "@/components/social-icons"
 import { CursorTrail } from "@/components/cursor-trail"
@@ -22,6 +23,7 @@ const BADGE_COLORS: Record<string, string> = {
   brands: "oklch(0.55 0.2 330)",
   tools: "oklch(0.55 0.2 145)",
 }
+
 
 function ProjectListItem({ project }: { project: ProjectItem }) {
   const [badgeTilt] = useState(() => Math.random() * 14 - 7)
@@ -97,10 +99,12 @@ export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const [projectView, setProjectView] = useState<"list" | "card">("card")
+  const [workFilter, setWorkFilter] = useState<WorkFilter>(null)
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
 
   return (
+    <WorkHoverProvider>
     <motion.main
       id="main-content"
       className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
@@ -111,7 +115,7 @@ export function LayoutOne() {
       {/* Header */}
       <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             {name}
           </h1>
           <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
@@ -121,11 +125,16 @@ export function LayoutOne() {
 
       {/* Work */}
       <motion.section variants={item} className="flex flex-col gap-4">
-        <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Suitcase size={14} weight="Bold" />
-          Work
-        </h2>
-        <WorkSection />
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Suitcase size={14} weight="Bold" />
+            Work
+          </h2>
+          <WorkFilterTabs active={workFilter} onChange={setWorkFilter} />
+        </div>
+        <div className="-mx-8">
+          <WorkSection filter={workFilter} />
+        </div>
       </motion.section>
 
       {/* Projects */}
@@ -199,5 +208,6 @@ export function LayoutOne() {
 
       <CursorTrail />
     </motion.main>
+    </WorkHoverProvider>
   )
 }

@@ -91,20 +91,24 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
                   "UH Esports": "/uh-preview.jpg",
                   "local design community": "/piiku-preview.jpg",
-                  "Piʻiku": "/images/piiku-hover.gif",
-                  "Servco": "/images/servco-hover.gif",
-                  "Umi": "/images/umi-hover.gif",
-                  "Aura": "/images/aura-hover.gif",
-                  "Kilo": "/images/kilo-hover.jpg",
-                  "Spero": "/images/spero-hover.gif",
-                  "MemberSpace": "/images/memberspace-hover.gif",
                   "Michelle": "/michelle-preview.jpg",
                 }
+                const workSyncIds = new Set([
+                  "Aura",
+                  "Kilo",
+                  "Umi",
+                  "Piʻiku",
+                  "Spero",
+                  "MemberSpace",
+                  "Servco",
+                ])
+                const syncWorkId = workSyncIds.has(part.text) ? part.text : undefined
                 return (
                   <HoverLink
                     key={index}
                     href={part.url}
                     previewImage={previewImages[part.text]}
+                    syncWorkId={syncWorkId}
                     className="no-underline decoration-transparent hover:decoration-primary"
                   >
                     {part.text}
