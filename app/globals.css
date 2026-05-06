@@ -120,10 +120,14 @@
     @apply border-border outline-ring/50;
   }
   html {
-    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: gray transparent;
     color-scheme: light dark;
+  }
+  @media (pointer: fine) {
+    html {
+      scrollbar-gutter: stable;
+    }
   }
   body {
     @apply bg-background text-foreground;
