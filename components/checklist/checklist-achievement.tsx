@@ -41,7 +41,7 @@ export function ChecklistAchievement() {
       >
         <motion.button
           onClick={() => setActiveGradient(null)}
-          className="relative h-7 w-7 rounded-full border border-border bg-background"
+          className="relative h-7 w-7 cursor-pointer rounded-full border border-border bg-background"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -50,9 +50,10 @@ export function ChecklistAchievement() {
         >
           {!activeGradient && (
             <motion.div
-              layoutId="gradient-ring"
               className="absolute -inset-1 rounded-full border-2 border-foreground"
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.86 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.16, ease }}
             />
           )}
         </motion.button>
@@ -63,7 +64,7 @@ export function ChecklistAchievement() {
             <motion.button
               key={opt.id}
               onClick={() => setActiveGradient(opt.id)}
-              className="relative h-7 w-7 rounded-full"
+              className="relative h-7 w-7 cursor-pointer rounded-full"
               style={{ backgroundColor: color }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -73,9 +74,10 @@ export function ChecklistAchievement() {
             >
               {isActive && (
                 <motion.div
-                  layoutId="gradient-ring"
                   className="absolute -inset-1 rounded-full border-2 border-foreground"
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.86 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.16, ease }}
                 />
               )}
             </motion.button>

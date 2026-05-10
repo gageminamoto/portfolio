@@ -22,6 +22,7 @@ const layoutSpring = { type: "spring", duration: 0.45, bounce: 0.05 } as const
 const dotSpring = { type: "spring", stiffness: 250, damping: 22 } as const
 // Standard ease-out for entering elements
 const easeOut: [number, number, number, number] = [0.23, 1, 0.32, 1]
+const triggerContentTransition = { duration: 0.08, ease: easeOut } as const
 
 export function ChecklistWidget() {
   const {
@@ -103,7 +104,7 @@ export function ChecklistWidget() {
                         exit={{ opacity: 0, scale: 0.75 }}
                         transition={{ duration: 0.15, ease: easeOut }}
                         onClick={restart}
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:text-foreground"
+                        className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:text-foreground"
                         aria-label="Start over"
                       >
                         <RotateCcw className="h-3 w-3" />
@@ -112,7 +113,7 @@ export function ChecklistWidget() {
                   </AnimatePresence>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="inline-flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:text-foreground"
+                    className="inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:text-foreground"
                     aria-label="Minimize checklist"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -177,29 +178,42 @@ export function ChecklistWidget() {
               exit={{ opacity: 0 }}
               transition={{ layout: layoutSpring, opacity: { duration: 0.1 } }}
               onClick={() => setIsOpen(true)}
-              className="group inline-flex items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-background px-3 py-2.5 shadow-lg transition-shadow duration-200 hover:shadow-xl"
+              className="group inline-flex cursor-pointer items-center gap-2 overflow-hidden rounded-2xl border border-border/60 bg-background px-3 py-2.5 shadow-lg transition-shadow duration-200 hover:shadow-xl"
               style={{ borderRadius: 16 }}
               aria-label="Site exploration checklist"
               aria-expanded={false}
             >
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: total }, (_, i) => (
-                  <motion.div
-                    key={i}
-                    className={`h-1 rounded-full transition-colors duration-300 ${i < completed ? "bg-foreground" : "bg-border"}`}
-                    initial={shouldReduceMotion ? false : { scaleX: 0 }}
-                    animate={{ width: i < completed ? 8 : 4, scaleX: 1 }}
-                    style={{ originX: 0 }}
-                    transition={{
-                      ...dotSpring,
-                      scaleX: { duration: 0.15, ease: easeOut, delay: i * 0.06 },
-                    }}
-                  />
-                ))}
-              </div>
-              <span className="text-xs font-medium text-muted-foreground transition-colors duration-150 group-hover:text-foreground">
-                {completed}/{total}
-              </span>
+              <motion.div
+                layout="position"
+                className="flex items-center gap-2"
+                initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={triggerContentTransition}
+                style={{ transformOrigin: "right center" }}
+              >
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: total }, (_, i) => (
+                    <motion.div
+                      key={i}
+                      className={`h-1 rounded-full transition-colors duration-300 ${i < completed ? "bg-foreground" : "bg-border"}`}
+                      initial={shouldReduceMotion ? false : { scaleX: 0 }}
+                      animate={{ width: i < completed ? 8 : 4, scaleX: 1 }}
+                      style={{ originX: 0 }}
+                      transition={{
+                        ...dotSpring,
+                        scaleX: { duration: 0.15, ease: easeOut, delay: i * 0.06 },
+                      }}
+                    />
+                  ))}
+                </div>
+                <motion.span
+                  layout="position"
+                  className="min-w-[2.25ch] text-right text-xs font-medium tabular-nums text-muted-foreground transition-colors duration-150 group-hover:text-foreground"
+                >
+                  {completed}/{total}
+                </motion.span>
+              </motion.div>
             </motion.button>
           )}
         </AnimatePresence>

@@ -73,7 +73,7 @@ export function ChecklistItem({ id, label, hint, href, target, checked, onToggle
       disabled={!isInteractive}
       className={cn(
         "group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors duration-150",
-        isInteractive && "hover:bg-accent/50 active:bg-accent/70",
+        isInteractive ? "cursor-pointer hover:bg-accent/50 active:bg-accent/70" : "cursor-default",
       )}
     >
       {/* Check circle: fill first, then draw the tick */}
@@ -125,6 +125,7 @@ export function ChecklistItem({ id, label, hint, href, target, checked, onToggle
             href={href}
             data-checklist-hint
             onClick={(e) => e.stopPropagation()}
+            className="cursor-pointer"
           >
             {hintContent}
           </Link>
