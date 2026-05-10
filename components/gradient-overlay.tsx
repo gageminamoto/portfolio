@@ -3,7 +3,6 @@
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useGradientWord } from "@/components/gradient-word-context"
-import { useChecklist } from "@/components/checklist/checklist-context"
 import { useMounted } from "@/hooks/use-mounted"
 
 const GRADIENT_CONFIG = {
@@ -17,7 +16,6 @@ type GradientWord = keyof typeof GRADIENT_CONFIG
 
 export function GradientOverlay() {
   const { activeWord, shaderEnabled } = useGradientWord()
-  const { activeGradient } = useChecklist()
   const { resolvedTheme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
   const mounted = useMounted()
@@ -38,7 +36,7 @@ export function GradientOverlay() {
 
   return (
     <AnimatePresence>
-      {shaderEnabled && !activeGradient && (
+      {shaderEnabled && (
         <motion.div
           key="noise"
           className="pointer-events-none fixed inset-0 -z-10"
@@ -61,7 +59,7 @@ export function GradientOverlay() {
           />
         </motion.div>
       )}
-      {shaderEnabled && !activeGradient && (
+      {shaderEnabled && (
         <motion.div
           key="gradients"
           className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
