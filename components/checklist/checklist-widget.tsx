@@ -160,8 +160,6 @@ export function ChecklistWidget() {
                         href={item.href}
                         target={item.target}
                         checked={!!checked[item.id]}
-                        onToggle={toggleItem}
-                        auto={AUTO_ITEMS.has(item.id)}
                         index={index}
                       />
                     ))}

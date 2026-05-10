@@ -13,8 +13,6 @@ interface ChecklistItemProps {
   href?: string
   target?: string
   checked: boolean
-  onToggle: (id: string) => void
-  auto?: boolean
   index?: number
 }
 
@@ -23,9 +21,9 @@ const easeOut: [number, number, number, number] = [0.23, 1, 0.32, 1]
 
 const WIGGLE_CLASS = "checklist-wiggle"
 
-export function ChecklistItem({ id, label, hint, href, target, checked, onToggle, auto, index = 0 }: ChecklistItemProps) {
+export function ChecklistItem({ id, label, hint, href, target, checked, index = 0 }: ChecklistItemProps) {
   const shouldReduceMotion = useReducedMotion()
-  const isInteractive = !(auto && checked)
+  const isInteractive = false
 
   const startWiggle = useCallback(() => {
     if (shouldReduceMotion || !target) return
@@ -47,7 +45,10 @@ export function ChecklistItem({ id, label, hint, href, target, checked, onToggle
     e.stopPropagation()
     if (href === "#theme") {
       const btn = document.querySelector<HTMLButtonElement>('[aria-label="Display settings"]')
-      btn?.click()
+      if (!btn) return
+      btn.scrollIntoView({ behavior: "smooth", block: "center" })
+      // Wait for scroll to settle before opening the dropdown
+      setTimeout(() => btn.click(), 400)
     }
   }
 
@@ -67,10 +68,8 @@ export function ChecklistItem({ id, label, hint, href, target, checked, onToggle
       initial={shouldReduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.22, delay: index * 0.04, ease: easeOut }}
-      onClick={() => isInteractive && onToggle(id)}
       onMouseEnter={startWiggle}
       onMouseLeave={stopWiggle}
-      disabled={!isInteractive}
       className={cn(
         "group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors duration-150",
         isInteractive ? "cursor-pointer hover:bg-accent/50 active:bg-accent/70" : "cursor-default",

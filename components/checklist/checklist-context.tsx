@@ -29,6 +29,7 @@ const defaultState: ChecklistState = {
 const STORAGE_KEY = "visitor-checklist"
 const DISMISSED_KEY = "visitor-checklist-dismissed"
 
+
 interface ChecklistContextValue {
   checked: Record<string, boolean>
   toggleItem: (id: string) => void
