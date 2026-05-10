@@ -2,7 +2,6 @@
 
 import React from "react"
 import { HoverLink } from "@/components/hover-link"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { WordSwitcher } from "@/components/word-switcher"
 
 interface BioLink {
@@ -54,13 +53,14 @@ interface BioSectionProps {
   bio: string
   className?: string
   onWordChange?: (word: string) => void
+  onUserClick?: (word: string) => void
 }
 
-export function BioSection({ bio, className = "", onWordChange }: BioSectionProps) {
+export function BioSection({ bio, className = "", onWordChange, onUserClick }: BioSectionProps) {
   const paragraphs = bio.split("\n\n")
 
   return (
-    <div className={`text-base leading-relaxed text-muted-foreground ${className}`}>
+    <div className={`text-base leading-relaxed text-muted-foreground text-wrap ${className}`}>
       {paragraphs.map((paragraph, pIndex) => {
         const parts = parseBio(paragraph)
         return (
@@ -72,12 +72,13 @@ export function BioSection({ bio, className = "", onWordChange }: BioSectionProp
                   return (
                     <React.Fragment key={index}>
                       {before}
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="underline decoration-dashed decoration-muted-foreground/50 underline-offset-[3px] transition-colors hover:decoration-foreground cursor-default">Negi</span>
-                        </TooltipTrigger>
-                        <TooltipContent>Coming soon</TooltipContent>
-                      </Tooltip>
+                      <HoverLink
+                        href="https://negi.studio"
+                        previewImage="/negi-studio-preview.jpg"
+                        className="no-underline decoration-transparent hover:decoration-primary"
+                      >
+                        Negi
+                      </HoverLink>
                       {after}
                     </React.Fragment>
                   )
@@ -85,18 +86,37 @@ export function BioSection({ bio, className = "", onWordChange }: BioSectionProp
                 return part
               }
               if (isBioLink(part)) {
+                const previewImages: Record<string, string> = {
+                  "Mizen": "/mizen-preview.jpg",
+                  "University of Hawaiʻi Esports": "/uh-preview.jpg",
+                  "UH Esports": "/uh-preview.jpg",
+                  "local design community": "/piiku-preview.jpg",
+                  "Michelle": "/michelle-preview.jpg",
+                }
+                const workSyncIds = new Set([
+                  "Aura",
+                  "Kilo",
+                  "Umi",
+                  "Piʻiku",
+                  "Spero",
+                  "MemberSpace",
+                  "Servco",
+                ])
+                const syncWorkId = workSyncIds.has(part.text) ? part.text : undefined
                 return (
                   <HoverLink
                     key={index}
                     href={part.url}
-                    className="no-underline decoration-transparent hover:decoration-foreground"
+                    previewImage={previewImages[part.text]}
+                    syncWorkId={syncWorkId}
+                    className="no-underline decoration-transparent hover:decoration-primary"
                   >
                     {part.text}
                   </HoverLink>
                 )
               }
               if (isBioSwitcher(part)) {
-                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} />
+                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} onUserClick={onUserClick} />
               }
               return null
             })}

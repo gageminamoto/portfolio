@@ -2,14 +2,25 @@
 
 import Link from "next/link"
 import useSWR from "swr"
+import { useDialKit } from "dialkit"
+import { motion, useReducedMotion } from "framer-motion"
 import { ChevronLeft } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { SiteFooter } from "@/components/site-footer"
-import { motion } from "framer-motion"
-import { useEntranceMotion } from "@/lib/animations"
+import { ListRow } from "@/components/list-row"
+import { generateSeedPosts } from "@/lib/seed-posts"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+async function fetcher(url: string) {
+  const response = await fetch(url)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Failed to fetch writing posts")
+  }
+
+  return data
+}
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -71,33 +82,24 @@ function groupPosts(
 
 function SkeletonRow() {
   return (
-    <div className="flex w-full items-baseline justify-between gap-4">
-      <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-      <div className="h-3 w-20 shrink-0 animate-pulse rounded bg-muted" />
+    <div className="flex items-center gap-3 px-0 py-3">
+      <div className="h-4 w-48 shrink-0 animate-pulse rounded bg-muted" />
+      <div className="h-3 w-20 flex-1 animate-pulse rounded bg-muted" />
     </div>
   )
 }
 
 function PostRow({ post }: { post: NotionWritingPost }) {
   return (
-    <div className="flex w-full items-baseline justify-between gap-4">
-      <span className="min-w-0 truncate">
-        <Link
-          href={`/writing/${post.slug}`}
-          className="font-medium text-foreground underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-        >
-          {post.title}
-        </Link>
-      </span>
-      {post.date && (
-        <time
-          dateTime={post.date}
-          className="shrink-0 text-sm tabular-nums text-muted-foreground"
-        >
-          {formatDate(post.date)}
-        </time>
-      )}
-    </div>
+    <ListRow
+      href={`/writing/${post.slug}`}
+      name={post.title}
+      meta={
+        post.date ? (
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+        ) : undefined
+      }
+    />
   )
 }
 
@@ -106,6 +108,13 @@ interface WritingListProps {
 }
 
 export function WritingList({ initialPosts }: WritingListProps) {
+  const dial = useDialKit("Seed Posts", {
+    enabled: false,
+    count: [5, 1, 20, 1],
+  })
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
+
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
     fetcher,
@@ -114,19 +123,22 @@ export function WritingList({ initialPosts }: WritingListProps) {
       fallbackData: initialPosts ? { posts: initialPosts } : undefined,
     }
   )
-  const { item, containerProps } = useEntranceMotion()
-
-  const posts = data?.posts ?? []
+  const realPosts = data?.posts ?? []
+  const posts = dial.enabled
+    ? [...realPosts, ...generateSeedPosts(dial.count)]
+    : realPosts
   const groups = groupPosts(posts)
 
   return (
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      {...containerProps}
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
     >
       {/* Header */}
-      <motion.header variants={item} className="flex items-center justify-between">
+      <motion.header variants={item}>
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
@@ -134,7 +146,6 @@ export function WritingList({ initialPosts }: WritingListProps) {
           <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Home
         </Link>
-        <ThemeToggle />
       </motion.header>
 
       {/* Title */}
@@ -173,7 +184,7 @@ export function WritingList({ initialPosts }: WritingListProps) {
           groups.map((group) => (
             <section key={group.label} className="flex flex-col gap-4">
               <h2 className="text-sm text-muted-foreground">{group.label}</h2>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col">
                 {group.posts.map((post) => (
                   <PostRow key={post.id} post={post} />
                 ))}

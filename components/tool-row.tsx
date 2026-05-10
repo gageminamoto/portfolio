@@ -34,7 +34,7 @@ export function ToolRow({
       ) : url ? (
         <HoverLink
           href={url}
-          className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-foreground"
+          className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-primary"
         >
           {displayName}
         </HoverLink>

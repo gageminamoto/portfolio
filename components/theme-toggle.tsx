@@ -2,22 +2,25 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
-import { Moon, Sun, Monitor, Sparkles } from "lucide-react"
+import { Moon, Sun, Monitor, Sparkles, Volume2 } from "lucide-react"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useChecklist } from "@/components/checklist/checklist-context"
+import { useMounted } from "@/hooks/use-mounted"
 
-export function ThemeToggle() {
+export function ThemeToggle({
+  placement = "bottom",
+  compact = false,
+}: {
+  placement?: "bottom" | "top"
+  compact?: boolean
+} = {}) {
   const { theme, resolvedTheme, setTheme } = useTheme()
-  const { shaderEnabled, setShaderEnabled } = useGradientWord()
+  const { shaderEnabled, setShaderEnabled, soundEnabled, setSoundEnabled } = useGradientWord()
   const { markItem } = useChecklist()
-  const [mounted, setMounted] = useState(false)
+  const mounted = useMounted()
   const [open, setOpen] = useState(false)
   const [closing, setClosing] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   function close() {
     setClosing(true)
@@ -40,27 +43,38 @@ export function ThemeToggle() {
   }, [open])
 
   if (!mounted) {
-    return <div className="h-8 w-8" />
+    return <div className={compact ? "h-3.5 w-3.5" : "h-8 w-8"} />
   }
 
   const isDark = resolvedTheme === "dark"
 
   const ThemeIcon = theme === "system" ? Monitor : isDark ? Sun : Moon
 
+  const triggerClass = compact
+    ? "inline-flex h-3.5 w-3.5 cursor-pointer items-center justify-center rounded-sm text-muted-foreground/40 transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    : "inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-[color,transform] duration-150 ease-out hover:text-foreground active:scale-[0.97]"
+
+  const iconClass = compact ? "h-3.5 w-3.5" : "h-4 w-4"
+
+  const isTop = placement === "top"
+  const panelPosition = isTop ? "bottom-full mb-2 origin-bottom-right" : "top-full mt-2 origin-top-right"
+  const enterAnim = isTop ? "animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2" : "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"
+  const exitAnim = isTop ? "animate-out fade-out-0 zoom-out-95 slide-out-to-bottom-2" : "animate-out fade-out-0 zoom-out-95 slide-out-to-top-2"
+
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className={compact ? "relative inline-flex" : "relative"}>
       <button
         onClick={() => open ? close() : setOpen(true)}
-        className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+        className={triggerClass}
         aria-label="Display settings"
         aria-expanded={open}
       >
-        <ThemeIcon className="h-4 w-4" aria-hidden="true" />
+        <ThemeIcon className={iconClass} aria-hidden="true" />
       </button>
 
       {open && (
         <div
-          className={`absolute right-0 top-full mt-2 w-fit origin-top-right rounded-lg border border-border bg-background p-1 shadow-md whitespace-nowrap ${closing ? "animate-out fade-out-0 zoom-out-95 slide-out-to-top-2" : "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"}`}
+          className={`absolute right-0 ${panelPosition} z-50 w-fit rounded-lg border border-border bg-background p-1 shadow-md whitespace-nowrap ${closing ? exitAnim : enterAnim}`}
           onAnimationEnd={() => {
             if (closing) {
               setOpen(false)
@@ -97,6 +111,14 @@ export function ThemeToggle() {
           >
             <Sparkles className={`h-3.5 w-3.5 text-muted-foreground${shaderEnabled ? "" : " opacity-40"}`} aria-hidden="true" />
             <span>Effects {shaderEnabled ? "on" : "off"}</span>
+          </button>
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors duration-150 ease-out hover:bg-accent"
+            aria-pressed={soundEnabled}
+          >
+            <Volume2 className={`h-3.5 w-3.5 text-muted-foreground${soundEnabled ? "" : " opacity-40"}`} aria-hidden="true" />
+            <span>Sound {soundEnabled ? "on" : "off"}</span>
           </button>
         </div>
       )}

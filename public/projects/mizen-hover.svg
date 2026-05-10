@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+  <rect width="1280" height="800" fill="#e8f4f8"/>
+  <text x="640" y="380" text-anchor="middle" font-family="system-ui, sans-serif" font-size="48" font-weight="600" fill="#2563eb">Mizen</text>
+  <text x="640" y="440" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#64748b">Hover State Placeholder</text>
+</svg>

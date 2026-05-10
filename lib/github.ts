@@ -11,22 +11,28 @@ const EXTRA_REPOS = (process.env.GITHUB_EXTRA_REPOS ?? "")
 
 interface CommitData {
   hash: string
+  sha: string
   additions: number
   deletions: number
   relativeTime: string
   repoName: string
+  repoFullName: string
   commitMessage: string
+  prNumber: number | null
+  prUrl: string | null
+  prMerged: boolean
 }
 
 function formatRelativeTime(dateStr: string): string {
   const distance = formatDistanceToNowStrict(new Date(dateStr), {
     addSuffix: false,
   })
-  // Compact: "3 hours" → "3hrs", "5 minutes" → "5min", "2 days" → "2d"
+  // Compact: "3 hours" → "3hrs", "1 hour" → "1hr", "5 minutes" → "5min"
   return distance
     .replace(/ seconds?/, "s")
     .replace(/ minutes?/, "min")
-    .replace(/ hours?/, "hrs")
+    .replace(/ hours/, "hrs")
+    .replace(/ hour/, "hr")
     .replace(/ days?/, "d")
     .replace(/ months?/, "mo")
     .replace(/ years?/, "yr")
@@ -240,15 +246,41 @@ export async function fetchLatestCommit(): Promise<CommitData | null> {
 
     const detail = await detailRes.json()
 
+    // 4. Get associated pull request (if any)
+    let prNumber: number | null = null
+    let prUrl: string | null = null
+    let prMerged = false
+    try {
+      const prRes = await fetch(
+        `https://api.github.com/repos/${repoName}/commits/${sha}/pulls`,
+        { headers: headers() }
+      )
+      if (prRes.ok) {
+        const prs = await prRes.json()
+        if (Array.isArray(prs) && prs.length > 0) {
+          prNumber = prs[0].number
+          prUrl = prs[0].html_url
+          prMerged = prs[0].merged_at != null
+        }
+      }
+    } catch {
+      // PR lookup is best-effort
+    }
+
     return {
       hash: sha.slice(0, 7),
+      sha,
       additions: detail.stats?.additions ?? 0,
       deletions: detail.stats?.deletions ?? 0,
       relativeTime: formatRelativeTime(
         detail.commit?.committer?.date ?? detail.commit?.author?.date ?? new Date().toISOString()
       ),
       repoName: repo.name as string,
+      repoFullName: repoName,
       commitMessage: (detail.commit?.message as string)?.split("\n")[0] ?? "",
+      prNumber,
+      prUrl,
+      prMerged,
     }
   } catch (error) {
     console.error("[github] unexpected error:", error)

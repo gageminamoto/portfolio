@@ -1,4 +1,6 @@
+import { cache } from "react"
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 import { fetchPostBySlug } from "@/lib/notion"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ArticleContent } from "./article-content"
@@ -8,13 +10,13 @@ interface ArticlePageProps {
   searchParams: Promise<{ from?: string }>
 }
 
-async function getPost(slug: string): Promise<NotionWritingPost | null> {
+const getPost = cache(async (slug: string): Promise<NotionWritingPost | null> => {
   try {
     return await fetchPostBySlug(slug)
   } catch {
     return null
   }
-}
+})
 
 export async function generateMetadata({
   params,
@@ -39,7 +41,17 @@ export async function generateMetadata({
 export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
   const { slug } = await params
   const { from } = await searchParams
+
+  // Let seed posts through for dev dial kit
+  if (slug.startsWith("seed-")) {
+    return <ArticleContent slug={slug} from={from} />
+  }
+
   const post = await getPost(slug)
+
+  if (!post) {
+    notFound()
+  }
 
   return <ArticleContent slug={slug} from={from} initialPost={post ?? undefined} />
 }

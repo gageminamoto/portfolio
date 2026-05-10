@@ -200,6 +200,8 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
             ref={imgRef}
             src={src}
             alt={alt}
+            width={2400}
+            height={1350}
             onLoad={() => setLoaded(true)}
             className="max-h-[85vh] max-w-[95vw] rounded-lg object-contain md:max-w-4xl"
             style={{

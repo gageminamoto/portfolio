@@ -121,6 +121,8 @@
   }
   html {
     scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: gray transparent;
     color-scheme: light dark;
   }
   body {
