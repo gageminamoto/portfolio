@@ -7,10 +7,11 @@ import { useChecklist } from "@/components/checklist/checklist-context"
 import { useMounted } from "@/hooks/use-mounted"
 
 const GRADIENT_CONFIG = {
-  software:    { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  brands: { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  tools:       { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
+  software: { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
+  brands:   { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
+  tools:    { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
 } as const
+
 
 type GradientWord = keyof typeof GRADIENT_CONFIG
 
@@ -60,7 +61,7 @@ export function GradientOverlay() {
           />
         </motion.div>
       )}
-      {shaderEnabled && (
+      {shaderEnabled && !activeGradient && (
         <motion.div
           key="gradients"
           className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
@@ -79,20 +80,14 @@ export function GradientOverlay() {
             const s = isDark ? darkS : lightS
             const color = `oklch(${l} ${s} ${hue})`
             const isActive = activeWord === word
-
             return (
               <motion.div
                 key={word}
                 className="absolute inset-0"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isActive ? 1 : 0 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : p.duration,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-                style={{
-                  background: `radial-gradient(ellipse ${p.width}% ${p.height}% at 50% 0%, ${color} 0%, color-mix(in oklch, ${color} 70%, transparent) 25%, color-mix(in oklch, ${color} 35%, transparent) 50%, color-mix(in oklch, ${color} 10%, transparent) 75%, transparent 100%)`,
-                }}
+                transition={{ duration: prefersReducedMotion ? 0 : p.duration, ease: [0.4, 0, 0.2, 1] }}
+                style={{ background: `radial-gradient(ellipse ${p.width}% ${p.height}% at 50% 0%, ${color} 0%, color-mix(in oklch, ${color} 70%, transparent) 25%, color-mix(in oklch, ${color} 35%, transparent) 50%, color-mix(in oklch, ${color} 10%, transparent) 75%, transparent 100%)` }}
               />
             )
           })}
