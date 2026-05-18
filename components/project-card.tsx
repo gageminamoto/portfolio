@@ -73,8 +73,8 @@ export function ProjectCard({
 
   return (
     <div
-      className={`group relative flex flex-col gap-2 rounded-xl border border-border/50 bg-card p-5 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)]${
-        isInteractive ? " hover:-translate-y-px hover:bg-muted/50 hover:shadow-sm" : ""
+      className={`group relative flex flex-col gap-3 overflow-hidden rounded-[1.25rem] border border-border/60 bg-card/85 p-4 shadow-[0_10px_30px_rgba(15,23,42,0.04)] transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)]${
+        isInteractive ? " hover:-translate-y-px hover:border-[color:var(--prototype-accent)] hover:bg-background hover:shadow-[0_18px_44px_rgba(15,23,42,0.08)]" : ""
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -84,7 +84,7 @@ export function ProjectCard({
           href={project.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute inset-0 z-0 rounded-xl"
+          className="absolute inset-0 z-0 rounded-[1.25rem]"
           aria-label={project.name}
           tabIndex={0}
         />
@@ -102,10 +102,11 @@ export function ProjectCard({
           {project.status === "new" ? "New" : "Building"}
         </motion.span>
       )}
+      <div className="pointer-events-none absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-[var(--prototype-accent)] to-transparent opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
       {showAnimations && project.name === "Yahtzee Scorecard" && (
         <DiceFallAnimation isHovered={isHovered} />
       )}
-      <div className="flex h-16 items-center justify-center text-muted-foreground/20">
+      <div className="flex h-14 items-center justify-center rounded-2xl bg-[var(--prototype-accent-soft)] text-[var(--prototype-accent)] ring-1 ring-inset ring-border/50">
         {isGuandan ? (
           guandanVariant === "cards" ? (
             <GuandanCards isHovered={isHovered} />
@@ -132,8 +133,10 @@ export function ProjectCard({
           shape(colors[0])
         )}
       </div>
-      <h3 className="text-base font-medium text-foreground">{project.name}</h3>
-      <p className="line-clamp-2 text-sm text-muted-foreground [text-wrap:balance]">{project.description}</p>
+      <div className="relative z-10 flex flex-col gap-1">
+        <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-foreground">{project.name}</h3>
+        <p className="line-clamp-2 text-xs leading-5 text-muted-foreground [text-wrap:balance]">{project.description}</p>
+      </div>
     </div>
   )
 }

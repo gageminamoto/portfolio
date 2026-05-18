@@ -78,21 +78,21 @@ function WorkItemCard({ item }: { item: WorkItem }) {
       onMouseLeave={() => setLocalHover(false)}
       onFocus={() => setLocalHover(true)}
       onBlur={() => setLocalHover(false)}
-      className="block scroll-mt-8 focus-visible:outline-none"
+      className="group block scroll-mt-8 focus-visible:outline-none"
       aria-label={item.name}
     >
       <div
-        className={`overflow-hidden rounded-xl border bg-card transition-[transform,border-color,box-shadow] duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring ${
+        className={`overflow-hidden rounded-[1.25rem] border bg-card/80 shadow-[0_10px_30px_rgba(15,23,42,0.04)] transition-[transform,border-color,box-shadow] duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring ${
           active
-            ? "-translate-y-px border-border shadow-sm"
-            : "border-border/50"
+            ? "-translate-y-px border-[color:var(--prototype-accent)] shadow-[0_18px_48px_rgba(15,23,42,0.1)]"
+            : "border-border/60"
         }`}
       >
         <HoverPlayMedia src={item.image} alt={item.name} active={active} />
       </div>
-      <div className="mt-2 text-sm flex items-baseline gap-1.5">
-        <span className="text-muted-foreground">{item.name}</span>
-        <span className="text-muted-foreground/40">{item.type}</span>
+      <div className="mt-2.5 flex items-baseline justify-between gap-3 px-1 text-sm">
+        <span className="font-semibold tracking-[-0.02em] text-foreground">{item.name}</span>
+        <span className="rounded-full bg-[var(--prototype-accent-soft)] px-2 py-0.5 text-[11px] font-medium text-[var(--prototype-accent)]">{item.type}</span>
       </div>
     </a>
   )
@@ -103,15 +103,15 @@ export type WorkFilter = (typeof WORK_FILTERS)[number] | null
 
 export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onChange: (f: WorkFilter) => void }) {
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-1 rounded-full border border-border/60 bg-background/60 p-1 shadow-sm">
       {WORK_FILTERS.map((f) => (
         <button
           key={f}
           onClick={() => onChange(active === f ? null : f)}
-          className={`cursor-pointer text-sm transition-colors duration-150 ease ${
+          className={`cursor-pointer rounded-full px-2.5 py-1 text-xs font-medium transition-[background-color,color,box-shadow] duration-150 ease ${
             active === f
-              ? "text-foreground"
-              : "text-muted-foreground/40 hover:text-muted-foreground"
+              ? "bg-card text-foreground shadow-sm"
+              : "text-muted-foreground/60 hover:text-muted-foreground"
           }`}
         >
           {f}
@@ -131,7 +131,7 @@ export function WorkSection({ filter }: { filter: WorkFilter }) {
     <AnimatePresence mode="wait">
       <motion.div
         key={filter ?? "all"}
-        className="flex flex-col gap-8"
+        className="flex flex-col gap-5"
         initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}

@@ -28,17 +28,17 @@ export function ListRow({
   "aria-label": ariaLabel,
 }: ListRowProps) {
   const rowClass = cn(
-    "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] motion-reduce:transition-none",
+    "flex items-center gap-3 rounded-xl px-0 py-2.5 transition-[padding,background-color,box-shadow] motion-reduce:transition-none",
     href
-      ? "hover:bg-muted/30 hover:px-3 focus-within:bg-muted/30 focus-within:px-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-      : "hover:bg-muted/30 hover:px-3",
+      ? "hover:bg-background/70 hover:px-3 hover:shadow-sm focus-within:bg-background/70 focus-within:px-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      : "hover:bg-background/70 hover:px-3",
     className,
   )
 
   const inner = (
     <>
       {icon}
-      <span className="shrink-0 text-sm font-medium text-foreground">{name}</span>
+      <span className="shrink-0 text-sm font-semibold tracking-[-0.02em] text-foreground">{name}</span>
       {meta != null && (
         <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
           {meta}

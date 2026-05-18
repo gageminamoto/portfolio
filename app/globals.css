@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.985 0.004 250);
+  --foreground: oklch(0.17 0.018 260);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -14,13 +14,13 @@
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
+  --muted: oklch(0.955 0.008 250);
+  --muted-foreground: oklch(0.49 0.025 260);
+  --accent: oklch(0.955 0.018 250);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: oklch(0.9 0.012 250);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -40,9 +40,9 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.145 0.014 260);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(0.18 0.015 260);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -131,6 +131,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 50% -10%, rgba(8, 118, 255, 0.12), transparent 34rem),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 18rem);
+  }
+  .dark body {
+    background-image:
+      radial-gradient(circle at 50% -10%, rgba(8, 118, 255, 0.16), transparent 34rem),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 18rem);
   }
   html body[data-scroll-locked] {
     margin-right: 0 !important;
