@@ -8,6 +8,7 @@ import 'dialkit/styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
+import { CommandKProvider } from '@/contexts/CommandKContext'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -63,13 +64,17 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <GradientWordProvider>
-            <GradientOverlay />
-            {children}
+            <CommandKProvider>
+              <GradientOverlay />
+              {children}
+            </CommandKProvider>
           </GradientWordProvider>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
-        {process.env.NODE_ENV === "development" && <Agentation />}
+        {process.env.NODE_ENV === "development" && (
+          <Agentation endpoint="http://localhost:4747" />
+        )}
         {process.env.NODE_ENV === "development" && <DialRoot />}
       </body>
     </html>
