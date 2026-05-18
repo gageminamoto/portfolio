@@ -15,7 +15,6 @@ import { WorkHoverProvider } from "@/components/work-hover-context"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { GitHubIcon } from "@/components/social-icons"
 import { CursorTrail } from "@/components/cursor-trail"
-import { SearchLauncherButton } from "@/components/search/SearchLauncherButton"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { ProjectItem } from "@/lib/portfolio-data"
 
@@ -116,12 +115,9 @@ export function LayoutOne() {
       {/* Header */}
       <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              {name}
-            </h1>
-            <SearchLauncherButton className="mt-1 shrink-0" />
-          </div>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+            {name}
+          </h1>
           <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
         </div>
         <SocialIcons socials={socials} email={email} />

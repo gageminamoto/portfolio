@@ -1,22 +1,27 @@
 'use client'
 
 import * as React from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
+import { Layers, Pen, UserCircle } from '@solar-icons/react'
 import {
-  BriefcaseBusiness,
+  Check,
   ExternalLink,
-  FileText,
   FolderOpen,
   Home,
-  Mail,
   MessageSquare,
-  PenLine,
-  Search,
-  UserCircle,
-  Wrench,
+  Monitor,
+  Moon,
+  Sparkles,
+  Sun,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react'
 
+import { useGradientWord } from '@/components/gradient-word-context'
+import { EmailIcon, socialIconMap } from '@/components/social-icons'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { portfolioData } from '@/lib/portfolio-data'
 import { cn } from '@/lib/utils'
@@ -29,7 +34,6 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from '@/components/ui/command'
 import {
   Drawer,
@@ -48,11 +52,26 @@ type PaletteItem = {
   id: string
   title: string
   description: string
-  href: string
+  href?: string
   keywords: string
-  group: 'Navigation' | 'Work' | 'Projects' | 'Writing' | 'Quick Actions'
+  group: 'Navigation' | 'Projects' | 'Writing' | 'Settings' | 'Social'
   external?: boolean
-  icon: React.ComponentType<{ className?: string }>
+  icon?: React.ComponentType<{ className?: string }>
+  iconSrc?: string
+  action?: () => void
+  active?: boolean
+}
+
+function AboutIcon({ className }: { className?: string }) {
+  return <UserCircle size={16} weight="Bold" className={className} />
+}
+
+function ToolsIcon({ className }: { className?: string }) {
+  return <Layers size={16} weight="Bold" className={className} />
+}
+
+function WritingIcon({ className }: { className?: string }) {
+  return <Pen size={16} weight="Bold" className={className} />
 }
 
 const staticItems: PaletteItem[] = [
@@ -72,7 +91,7 @@ const staticItems: PaletteItem[] = [
     href: '/about',
     keywords: 'about bio profile experience hobbies speaking learning',
     group: 'Navigation',
-    icon: UserCircle,
+    icon: AboutIcon,
   },
   {
     id: 'tools',
@@ -81,7 +100,7 @@ const staticItems: PaletteItem[] = [
     href: '/tools',
     keywords: 'tools stack apps build productivity skills',
     group: 'Navigation',
-    icon: Wrench,
+    icon: ToolsIcon,
   },
   {
     id: 'writing',
@@ -90,20 +109,9 @@ const staticItems: PaletteItem[] = [
     href: '/writing',
     keywords: 'writing posts articles blog essays',
     group: 'Navigation',
-    icon: PenLine,
+    icon: WritingIcon,
   },
 ]
-
-const workItems: PaletteItem[] = portfolioData.workHistory.map((item) => ({
-  id: `work-${item.company}`,
-  title: item.company,
-  description: `${item.role} · ${item.period}`,
-  href: item.url ?? '/about',
-  keywords: `${item.company} ${item.role} ${item.period} ${item.description}`,
-  group: 'Work',
-  external: Boolean(item.url),
-  icon: BriefcaseBusiness,
-}))
 
 const projectItems: PaletteItem[] = portfolioData.projects.map((project) => ({
   id: `project-${project.name}`,
@@ -113,7 +121,8 @@ const projectItems: PaletteItem[] = portfolioData.projects.map((project) => ({
   keywords: `${project.name} ${project.description} ${project.status}`,
   group: 'Projects',
   external: Boolean(project.url),
-  icon: FolderOpen,
+  icon: project.favicon ? undefined : FolderOpen,
+  iconSrc: project.name === 'Guandan Rules' ? '/projects/guandian-rules-logo.svg' : project.favicon,
 }))
 
 const writingItems: PaletteItem[] = portfolioData.writing.map((post) => ({
@@ -123,7 +132,7 @@ const writingItems: PaletteItem[] = portfolioData.writing.map((post) => ({
   href: `/writing/${post.slug}`,
   keywords: `${post.title} ${post.slug} writing post blog article`,
   group: 'Writing',
-  icon: FileText,
+  icon: WritingIcon,
 }))
 
 const quickActionItems: PaletteItem[] = [
@@ -133,9 +142,9 @@ const quickActionItems: PaletteItem[] = [
     description: portfolioData.email ?? 'Start a conversation',
     href: `mailto:${portfolioData.email ?? 'info@gageminamoto.com'}`,
     keywords: 'email contact mail message',
-    group: 'Quick Actions',
+    group: 'Social',
     external: true,
-    icon: Mail,
+    icon: EmailIcon,
   },
   ...portfolioData.socials.map((social) => ({
     id: `social-${social.platform}`,
@@ -143,21 +152,22 @@ const quickActionItems: PaletteItem[] = [
     description: `Open ${social.label}`,
     href: social.url,
     keywords: `${social.platform} ${social.label} social profile contact`,
-    group: 'Quick Actions' as const,
+    group: 'Social' as const,
     external: true,
-    icon: MessageSquare,
+    icon: socialIconMap[social.platform] ?? MessageSquare,
   })),
 ]
 
 const allItems = [
   ...staticItems,
-  ...workItems,
   ...projectItems,
   ...writingItems,
   ...quickActionItems,
 ]
 
 function openHref(item: PaletteItem, router: ReturnType<typeof useRouter>) {
+  if (!item.href) return
+
   if (item.href.startsWith('mailto:') || item.external) {
     window.location.href = item.href
     return
@@ -175,41 +185,105 @@ function PaletteItemRow({ item, onSelect }: { item: PaletteItem; onSelect: () =>
       onSelect={onSelect}
       className="group min-h-14 cursor-pointer gap-3 rounded-lg px-3 py-2"
     >
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground">
-        <Icon className="size-4" />
+      <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
+        {item.iconSrc ? (
+          <Image src={item.iconSrc} alt="" width={20} height={20} className="size-5 rounded-[4px] object-contain" />
+        ) : Icon ? (
+          <Icon className="size-4" />
+        ) : null}
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium text-foreground">{item.title}</span>
-        <span className="block truncate text-xs text-muted-foreground">{item.description}</span>
       </span>
       {item.external ? (
         <ExternalLink className="size-3.5 text-muted-foreground/60" />
-      ) : (
-        <CommandShortcut className="opacity-0 transition-opacity group-data-[selected=true]:opacity-100">
-          Jump to ↩
-        </CommandShortcut>
-      )}
+      ) : item.active ? (
+        <Check className="size-3.5 text-primary" />
+      ) : null}
     </CommandItem>
   )
 }
 
 function CommandListContent({ search, close }: { search: string; close: () => void }) {
   const router = useRouter()
+  const { theme, setTheme } = useTheme()
+  const { shaderEnabled, setShaderEnabled, soundEnabled, setSoundEnabled } = useGradientWord()
+
+  const settingsItems = React.useMemo<PaletteItem[]>(
+    () => [
+      {
+        id: 'theme-light',
+        title: 'Light theme',
+        description: 'Use the bright portfolio theme',
+        keywords: 'theme light bright appearance display',
+        group: 'Settings',
+        icon: Sun,
+        action: () => setTheme('light'),
+        active: theme === 'light',
+      },
+      {
+        id: 'theme-dark',
+        title: 'Dark theme',
+        description: 'Use the dark portfolio theme',
+        keywords: 'theme dark night appearance display',
+        group: 'Settings',
+        icon: Moon,
+        action: () => setTheme('dark'),
+        active: theme === 'dark',
+      },
+      {
+        id: 'theme-system',
+        title: 'System theme',
+        description: 'Follow the device theme',
+        keywords: 'theme system auto device appearance display',
+        group: 'Settings',
+        icon: Monitor,
+        action: () => setTheme('system'),
+        active: theme === 'system',
+      },
+      {
+        id: 'effects-toggle',
+        title: shaderEnabled ? 'Effects on' : 'Effects off',
+        description: 'Toggle gradient and cursor effects',
+        keywords: 'effects shader gradient cursor animation motion toggle visual',
+        group: 'Settings',
+        icon: Sparkles,
+        action: () => setShaderEnabled(!shaderEnabled),
+        active: shaderEnabled,
+      },
+      {
+        id: 'sound-toggle',
+        title: soundEnabled ? 'Sound on' : 'Sound off',
+        description: 'Toggle interface click sounds',
+        keywords: 'sound audio clicks mute volume toggle',
+        group: 'Settings',
+        icon: soundEnabled ? Volume2 : VolumeX,
+        action: () => setSoundEnabled(!soundEnabled),
+        active: soundEnabled,
+      },
+    ],
+    [setShaderEnabled, setSoundEnabled, setTheme, shaderEnabled, soundEnabled, theme],
+  )
+
   const visibleGroups = React.useMemo(() => {
     const groups = new Map<PaletteItem['group'], PaletteItem[]>()
 
-    for (const item of allItems) {
+    for (const item of [...staticItems, ...projectItems, ...writingItems, ...settingsItems, ...quickActionItems]) {
       const current = groups.get(item.group) ?? []
       current.push(item)
       groups.set(item.group, current)
     }
 
     return groups
-  }, [])
+  }, [settingsItems])
 
   const handleSelect = React.useCallback(
     (item: PaletteItem) => {
       close()
+      if (item.action) {
+        item.action()
+        return
+      }
       openHref(item, router)
     },
     [close, router],
@@ -227,7 +301,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
       {Array.from(visibleGroups.entries()).map(([heading, items], index) => (
         <React.Fragment key={heading}>
           {index > 0 && <CommandSeparator className="my-1" />}
-          <CommandGroup heading={search ? heading : heading === 'Quick Actions' ? 'Quick Actions' : heading}>
+          <CommandGroup heading={heading}>
             {items.map((item) => (
               <PaletteItemRow key={item.id} item={item} onSelect={() => handleSelect(item)} />
             ))}
@@ -244,7 +318,7 @@ function SearchInputWithClear({ search, setSearch }: { search: string; setSearch
       <CommandInput
         value={search}
         onValueChange={setSearch}
-        placeholder="Search Gage's portfolio"
+        placeholder="Find the good stuff"
         className="pr-8"
       />
       {search.length > 0 && (
@@ -312,10 +386,6 @@ export function SearchCommandModal({ open, onOpenChange }: SearchCommandModalPro
     >
       <SearchInputWithClear search={search} setSearch={setSearch} />
       <CommandListContent search={search} close={close} />
-      <div className="flex items-center justify-between border-t bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
-        <span className="flex items-center gap-2"><Search className="size-3.5" /> Search everything</span>
-        <span className="flex items-center gap-1"><kbd className="rounded border bg-background px-1.5 py-0.5 font-mono text-[10px]">Esc</kbd> to close</span>
-      </div>
     </CommandDialog>
   )
 }
