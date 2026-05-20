@@ -19,20 +19,16 @@ export const metadata: Metadata = {
   description: 'Designer building everyday products. Growing Hawai\'i\'s local design community. Building Mizen.',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/favicon-light.svg?v=3', media: '(prefers-color-scheme: light)', type: 'image/svg+xml' },
+      { url: '/favicon-dark.svg?v=3', media: '(prefers-color-scheme: dark)', type: 'image/svg+xml' },
+      { url: '/favicon.svg?v=3', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.png?v=3', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png?v=3', sizes: '16x16', type: 'image/png' },
     ],
-    apple: '/apple-icon.png',
+    apple: '/apple-touch-icon.png?v=3',
+    other: [
+      { rel: 'manifest', url: '/site.webmanifest' },
+    ],
   },
 }
 
