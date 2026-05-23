@@ -132,7 +132,7 @@ export function LayoutOne() {
           </h2>
           <WorkFilterTabs active={workFilter} onChange={setWorkFilter} />
         </div>
-        <div className="mx-0 md:-mx-8">
+        <div className="min-w-0 max-w-full">
           <WorkSection filter={workFilter} />
         </div>
       </motion.section>
