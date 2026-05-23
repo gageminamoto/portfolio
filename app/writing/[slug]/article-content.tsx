@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import useSWR from "swr"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useDialKit } from "dialkit"
-import { motion, useReducedMotion } from "framer-motion"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { ChevronLeft, Link as LinkIcon, Check } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NotionBlocksRenderer } from "@/components/writing/notion-blocks-renderer"
@@ -56,6 +56,25 @@ function ArticleSkeleton() {
   )
 }
 
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia(query)
+
+    function updateMatches() {
+      setMatches(media.matches)
+    }
+
+    updateMatches()
+    media.addEventListener("change", updateMatches)
+
+    return () => media.removeEventListener("change", updateMatches)
+  }, [query])
+
+  return matches
+}
+
 interface ArticleContentProps {
   slug: string
   from?: string
@@ -65,6 +84,7 @@ interface ArticleContentProps {
 export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
   const shouldReduceMotion = useReducedMotion()
+  const isDesktopTocVisible = useMediaQuery("(min-width: 80rem)")
   const item = shouldReduceMotion ? noMotion : fadeUp
   const dial = useDialKit("Seed Posts", {
     enabled: false,
@@ -217,13 +237,25 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
           </main>
 
           {/* Desktop TOC sidebar */}
-          {!isLoading && !error && headings.length > 0 ? (
-            <aside className="hidden xl:sticky xl:top-6 xl:block xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-10">
-              <TableOfContents headings={headings} variant="list" />
-            </aside>
-          ) : (
-            <div className="hidden xl:block" />
-          )}
+          <div className="relative max-xl:pointer-events-none max-xl:fixed max-xl:right-6 max-xl:top-24 max-xl:z-20 max-xl:w-[min(18rem,calc(100vw-3rem))]">
+            <AnimatePresence initial={false}>
+              {!isLoading && !error && headings.length > 0 && isDesktopTocVisible && (
+                <motion.aside
+                  key="desktop-toc"
+                  initial={shouldReduceMotion ? false : { opacity: 0, x: 16 }}
+                  animate={shouldReduceMotion ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: 10 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.22,
+                    ease: [0.215, 0.61, 0.355, 1],
+                  }}
+                  className="sticky top-6 max-h-[calc(100vh-3rem)] self-start overflow-y-auto pl-10 will-change-transform"
+                >
+                  <TableOfContents headings={headings} variant="list" />
+                </motion.aside>
+              )}
+            </AnimatePresence>
+          </div>
       </div>
 
       {hasFooter && (

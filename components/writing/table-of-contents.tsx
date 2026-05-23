@@ -125,7 +125,7 @@ export function TableOfContents({
           key={heading.id}
           type="button"
           onClick={() => handleClick(heading.id)}
-          className={`text-left text-sm leading-6 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:underline ${
+          className={`cursor-pointer text-left text-sm leading-6 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:underline ${
             heading.level === 2 ? "pl-3" : heading.level === 3 ? "pl-6" : ""
           } ${
             activeId === heading.id
@@ -146,7 +146,7 @@ export function TableOfContents({
           type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
-          className="flex w-full items-center justify-between p-3 text-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg"
+          className="flex w-full cursor-pointer items-center justify-between rounded-lg p-3 text-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span>On this page</span>
           <ChevronDown
