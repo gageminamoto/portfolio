@@ -107,7 +107,7 @@ export function LayoutOne() {
     <WorkHoverProvider>
     <motion.main
       id="main-content"
-      className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col gap-8 px-6 py-16 md:py-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-8 overflow-x-clip px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -124,7 +124,7 @@ export function LayoutOne() {
       </motion.header>
 
       {/* Work */}
-      <motion.section variants={item} className="flex flex-col gap-4">
+      <motion.section variants={item} className="min-w-0 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Suitcase size={14} weight="Bold" />
@@ -138,7 +138,7 @@ export function LayoutOne() {
       </motion.section>
 
       {/* Projects */}
-      <motion.section variants={item} className="flex flex-col gap-4">
+      <motion.section variants={item} className="min-w-0 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Pin size={14} weight="Bold" />

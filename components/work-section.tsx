@@ -103,12 +103,12 @@ export type WorkFilter = (typeof WORK_FILTERS)[number] | null
 
 export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onChange: (f: WorkFilter) => void }) {
   return (
-    <div className="flex gap-3">
+    <div className="flex flex-wrap justify-end gap-x-3 gap-y-1">
       {WORK_FILTERS.map((f) => (
         <button
           key={f}
           onClick={() => onChange(active === f ? null : f)}
-          className={`cursor-pointer text-sm transition-colors duration-150 ease ${
+          className={`cursor-pointer text-xs sm:text-sm transition-colors duration-150 ease ${
             active === f
               ? "text-foreground"
               : "text-muted-foreground/40 hover:text-muted-foreground"
