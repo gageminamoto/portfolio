@@ -132,7 +132,7 @@ export function LayoutOne() {
           </h2>
           <WorkFilterTabs active={workFilter} onChange={setWorkFilter} />
         </div>
-        <div className="-mx-8">
+        <div className="mx-0 md:-mx-8">
           <WorkSection filter={workFilter} />
         </div>
       </motion.section>
@@ -164,7 +164,7 @@ export function LayoutOne() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {projects.map((project, index) => (
               <ProjectCard
                 key={project.name}
