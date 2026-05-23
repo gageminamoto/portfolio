@@ -57,7 +57,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
     return (
       <h3
         id={id}
-        className="mt-8 mb-3 scroll-mt-24 text-lg font-medium text-foreground [text-wrap:pretty]"
+        className="mt-8 mb-3 scroll-mt-24 text-xl font-medium text-foreground [text-wrap:pretty]"
       >
         <NotionRichText items={heading} />
       </h3>
