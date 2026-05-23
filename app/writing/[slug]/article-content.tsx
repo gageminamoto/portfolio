@@ -133,7 +133,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
     >
       {/* Fixed desktop tracks keep the article centered while letting the TOC sidebar stick normally. */}
       <div
-        className={`mx-auto w-full px-6 pt-16 md:pt-24 ${hasFooter ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[14rem_minmax(0,36rem)_14rem] xl:items-start xl:justify-center`}
+        className={`mx-auto w-full px-6 pt-16 md:pt-24 ${hasFooter ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center`}
       >
           {/* Left spacer balances the TOC width so the article stays centered. */}
           <div className="hidden xl:block" />
@@ -218,7 +218,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
 
           {/* Desktop TOC sidebar */}
           {!isLoading && !error && headings.length > 0 ? (
-            <aside className="hidden xl:sticky xl:top-6 xl:block xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-12">
+            <aside className="hidden xl:sticky xl:top-6 xl:block xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-10">
               <TableOfContents headings={headings} variant="list" />
             </aside>
           ) : (
