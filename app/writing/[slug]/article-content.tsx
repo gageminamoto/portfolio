@@ -186,7 +186,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
             {/* Mobile TOC */}
             {!isLoading && !error && headings.length > 0 && (
               <div className="md:hidden">
-                <TableOfContents headings={headings} />
+                <TableOfContents headings={headings} variant="collapsible" />
               </div>
             )}
 
@@ -218,8 +218,8 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
 
           {/* Desktop TOC sidebar */}
           {!isLoading && !error && headings.length > 0 ? (
-            <aside className="hidden xl:sticky xl:top-0 xl:block xl:self-start xl:pl-12">
-              <TableOfContents headings={headings} />
+            <aside className="hidden xl:sticky xl:top-6 xl:block xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-12">
+              <TableOfContents headings={headings} variant="list" />
             </aside>
           ) : (
             <div className="hidden xl:block" />

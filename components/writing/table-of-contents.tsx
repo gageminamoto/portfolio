@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { ChevronDown } from "lucide-react"
-import { useIsMobile } from "@/hooks/use-mobile"
 import type { NotionBlock } from "@/lib/notion"
 import { getHeadingId, type HeadingBlock } from "./notion-heading"
 
@@ -46,30 +45,67 @@ function getHeadingRichText(block: HeadingBlock) {
 
 interface TableOfContentsProps {
   headings: TocHeading[]
+  variant?: "list" | "collapsible"
 }
 
-export function TableOfContents({ headings }: TableOfContentsProps) {
+export function TableOfContents({
+  headings,
+  variant = "list",
+}: TableOfContentsProps) {
   const [activeId, setActiveId] = useState("")
   const [open, setOpen] = useState(false)
-  const isMobile = useIsMobile()
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting)
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id)
+    let frame = 0
+
+    function updateActiveHeading() {
+      frame = 0
+
+      if (headings.length === 0) {
+        setActiveId("")
+        return
+      }
+
+      const documentElement = document.documentElement
+      const isAtPageBottom =
+        window.scrollY + window.innerHeight >= documentElement.scrollHeight - 2
+
+      if (isAtPageBottom) {
+        setActiveId(headings[headings.length - 1].id)
+        return
+      }
+
+      const activationY = window.innerHeight * 0.45
+      let nextActiveId = headings[0].id
+
+      for (const heading of headings) {
+        const el = document.getElementById(heading.id)
+        if (!el) continue
+
+        if (el.getBoundingClientRect().top <= activationY) {
+          nextActiveId = heading.id
+        } else {
+          break
         }
-      },
-      { rootMargin: "0px 0px -80% 0px", threshold: 0 }
-    )
+      }
 
-    headings.forEach((h) => {
-      const el = document.getElementById(h.id)
-      if (el) observer.observe(el)
-    })
+      setActiveId(nextActiveId)
+    }
 
-    return () => observer.disconnect()
+    function requestUpdate() {
+      if (frame) return
+      frame = window.requestAnimationFrame(updateActiveHeading)
+    }
+
+    updateActiveHeading()
+    window.addEventListener("scroll", requestUpdate, { passive: true })
+    window.addEventListener("resize", requestUpdate)
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame)
+      window.removeEventListener("scroll", requestUpdate)
+      window.removeEventListener("resize", requestUpdate)
+    }
   }, [headings])
 
   function handleClick(id: string) {
@@ -77,7 +113,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" })
     }
-    if (isMobile) setOpen(false)
+    if (variant === "collapsible") setOpen(false)
   }
 
   if (headings.length === 0) return null
@@ -103,7 +139,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
     </div>
   )
 
-  if (isMobile) {
+  if (variant === "collapsible") {
     return (
       <nav aria-label="Table of contents" className="mb-6 rounded-lg border border-border">
         <button
