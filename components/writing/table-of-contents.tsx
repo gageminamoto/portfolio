@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import type { NotionBlock } from "@/lib/notion"
 import { getHeadingId, type HeadingBlock } from "./notion-heading"
@@ -54,6 +55,7 @@ export function TableOfContents({
 }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState("")
   const [open, setOpen] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     let frame = 0
@@ -140,6 +142,11 @@ export function TableOfContents({
   )
 
   if (variant === "collapsible") {
+    const contentTransition = {
+      duration: shouldReduceMotion ? 0 : 0.18,
+      ease: [0.215, 0.61, 0.355, 1],
+    }
+
     return (
       <nav aria-label="Table of contents" className="mb-6 rounded-lg border border-border">
         <button
@@ -155,7 +162,28 @@ export function TableOfContents({
             }`}
           />
         </button>
-        {open && <div className="px-3 pb-3">{tocItems}</div>}
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              key="mobile-toc-content"
+              initial={
+                shouldReduceMotion
+                  ? false
+                  : { height: 0, opacity: 0, y: -6 }
+              }
+              animate={{ height: "auto", opacity: 1, y: 0 }}
+              exit={
+                shouldReduceMotion
+                  ? { opacity: 0 }
+                  : { height: 0, opacity: 0, y: -4 }
+              }
+              transition={contentTransition}
+              className="overflow-hidden"
+            >
+              <div className="px-3 pb-3">{tocItems}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     )
   }
