@@ -18,6 +18,36 @@ import { CursorTrail } from "@/components/cursor-trail"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { ProjectItem } from "@/lib/portfolio-data"
 
+function BetaWelcomeCard({ email }: { email: string }) {
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card/95 p-5 shadow-sm">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Beta</p>
+      <h2 className="mt-2 text-xl font-semibold tracking-tight text-foreground">Welcome to the beta</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Thanks for trying things early. This beta includes custom experiences and mobile flows, and we&apos;re
+        still polishing the rough edges.
+      </p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        You may still run into bugs. Feedback is always welcome and helps us improve faster.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a
+          href={`mailto:${email}?subject=Beta%20feedback`}
+          className="inline-flex items-center rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90"
+        >
+          Share feedback
+        </a>
+        <a
+          href={`mailto:${email}?subject=Beta%20help`}
+          className="inline-flex items-center rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          Reach out for help
+        </a>
+      </div>
+    </div>
+  )
+}
+
 const BADGE_COLORS: Record<string, string> = {
   software: "oklch(0.55 0.2 250)",
   brands: "oklch(0.55 0.2 330)",
@@ -122,6 +152,10 @@ export function LayoutOne() {
         </div>
         <SocialIcons socials={socials} email={email} />
       </motion.header>
+
+      <motion.section variants={item}>
+        <BetaWelcomeCard email={email} />
+      </motion.section>
 
       {/* Work */}
       <motion.section variants={item} className="min-w-0 flex flex-col gap-4">
