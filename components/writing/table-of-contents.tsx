@@ -128,7 +128,13 @@ export function TableOfContents({
           type="button"
           onClick={() => handleClick(heading.id)}
           className={`cursor-pointer text-left text-sm leading-6 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:underline ${
-            heading.level === 2 ? "pl-3" : heading.level === 3 ? "pl-6" : ""
+            variant === "collapsible"
+              ? heading.level === 2
+                ? "pl-3"
+                : heading.level === 3
+                  ? "pl-6"
+                  : ""
+              : ""
           } ${
             activeId === heading.id
               ? "text-foreground"
