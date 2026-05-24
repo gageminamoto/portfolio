@@ -84,6 +84,7 @@ interface ArticleContentProps {
 export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
   const shouldReduceMotion = useReducedMotion()
+  const isMobileTocVisible = useMediaQuery("(max-width: 47.999rem)")
   const isDesktopTocVisible = useMediaQuery("(min-width: 80rem)")
   const item = shouldReduceMotion ? noMotion : fadeUp
   const dial = useDialKit("Seed Posts", {
@@ -204,11 +205,23 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
             </motion.header>
 
             {/* Mobile TOC */}
-            {!isLoading && !error && headings.length > 0 && (
-              <div className="md:hidden">
-                <TableOfContents headings={headings} variant="collapsible" />
-              </div>
-            )}
+            <AnimatePresence initial={false}>
+              {!isLoading && !error && headings.length > 0 && isMobileTocVisible && (
+                <motion.div
+                  key="mobile-toc"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.2,
+                    ease: [0.215, 0.61, 0.355, 1],
+                  }}
+                  className="will-change-transform"
+                >
+                  <TableOfContents headings={headings} variant="collapsible" />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Content */}
             <motion.div variants={item}>
@@ -237,7 +250,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
           </main>
 
           {/* Desktop TOC sidebar */}
-          <div className="relative max-xl:pointer-events-none max-xl:fixed max-xl:right-6 max-xl:top-24 max-xl:z-20 max-xl:w-[min(18rem,calc(100vw-3rem))]">
+          <div className="relative xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-10 max-xl:pointer-events-none max-xl:fixed max-xl:right-6 max-xl:top-24 max-xl:z-20 max-xl:w-[min(18rem,calc(100vw-3rem))]">
             <AnimatePresence initial={false}>
               {!isLoading && !error && headings.length > 0 && isDesktopTocVisible && (
                 <motion.aside
@@ -249,7 +262,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
                     duration: shouldReduceMotion ? 0 : 0.22,
                     ease: [0.215, 0.61, 0.355, 1],
                   }}
-                  className="sticky top-6 max-h-[calc(100vh-3rem)] self-start overflow-y-auto pl-10 will-change-transform"
+                  className="will-change-transform"
                 >
                   <TableOfContents headings={headings} variant="list" />
                 </motion.aside>
