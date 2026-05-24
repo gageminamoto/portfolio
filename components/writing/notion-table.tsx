@@ -23,13 +23,13 @@ export function NotionTable({ block }: NotionTableProps) {
   const bodyRows = block.table.has_column_header ? rows.slice(1) : rows
 
   return (
-    <div className="my-6 overflow-x-auto">
+    <div className="my-6 overflow-x-auto rounded-lg border border-border">
       <table className="w-full min-w-[38rem] border-collapse text-left text-sm">
         {headerRow && (
           <thead>
-            <tr className="border border-border bg-muted/40">
+            <tr className="bg-muted/40">
               {headerRow.table_row.cells.map((cell, index) => (
-                <th key={index} className="border border-border px-3 py-2 font-medium text-foreground">
+                <th key={index} className="border-b border-r border-border px-3 py-2 font-medium text-foreground last:border-r-0">
                   <NotionRichText items={cell} />
                 </th>
               ))}
@@ -37,14 +37,15 @@ export function NotionTable({ block }: NotionTableProps) {
           </thead>
         )}
         <tbody>
-          {bodyRows.map((row) => (
-            <tr key={row.id} className="border border-border align-top">
+          {bodyRows.map((row, rowIndex) => (
+            <tr key={row.id} className="align-top">
               {row.table_row.cells.map((cell, index) => {
+                const isLastBodyRow = rowIndex === bodyRows.length - 1
                 const CellTag = headerRow ? "td" : "th"
                 return (
                   <CellTag
                     key={index}
-                    className="border border-border px-3 py-2 text-foreground/90 first:whitespace-nowrap"
+                    className={`border-r border-b border-border px-3 py-2 text-foreground/90 first:whitespace-nowrap last:border-r-0 ${isLastBodyRow ? "border-b-0" : ""}`}
                   >
                     <NotionRichText items={cell} />
                   </CellTag>
