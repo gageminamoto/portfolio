@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import useSWR from "swr"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useDialKit } from "dialkit"
-import { motion, useReducedMotion } from "framer-motion"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { ChevronLeft, Link as LinkIcon, Check } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NotionBlocksRenderer } from "@/components/writing/notion-blocks-renderer"
@@ -56,6 +56,25 @@ function ArticleSkeleton() {
   )
 }
 
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia(query)
+
+    function updateMatches() {
+      setMatches(media.matches)
+    }
+
+    updateMatches()
+    media.addEventListener("change", updateMatches)
+
+    return () => media.removeEventListener("change", updateMatches)
+  }, [query])
+
+  return matches
+}
+
 interface ArticleContentProps {
   slug: string
   from?: string
@@ -65,6 +84,8 @@ interface ArticleContentProps {
 export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
   const shouldReduceMotion = useReducedMotion()
+  const isMobileTocVisible = useMediaQuery("(max-width: 47.999rem)")
+  const isDesktopTocVisible = useMediaQuery("(min-width: 80rem)")
   const item = shouldReduceMotion ? noMotion : fadeUp
   const dial = useDialKit("Seed Posts", {
     enabled: false,
@@ -133,7 +154,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
     >
       {/* Fixed desktop tracks keep the article centered while letting the TOC sidebar stick normally. */}
       <div
-        className={`mx-auto w-full px-6 pt-16 md:pt-24 ${hasFooter ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[14rem_minmax(0,36rem)_14rem] xl:items-start xl:justify-center`}
+        className={`mx-auto w-full px-6 pt-16 md:pt-24 ${hasFooter ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center`}
       >
           {/* Left spacer balances the TOC width so the article stays centered. */}
           <div className="hidden xl:block" />
@@ -184,11 +205,23 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
             </motion.header>
 
             {/* Mobile TOC */}
-            {!isLoading && !error && headings.length > 0 && (
-              <div className="md:hidden">
-                <TableOfContents headings={headings} />
-              </div>
-            )}
+            <AnimatePresence initial={false}>
+              {!isLoading && !error && headings.length > 0 && isMobileTocVisible && (
+                <motion.div
+                  key="mobile-toc"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.2,
+                    ease: [0.215, 0.61, 0.355, 1],
+                  }}
+                  className="will-change-transform"
+                >
+                  <TableOfContents headings={headings} variant="collapsible" />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Content */}
             <motion.div variants={item}>
@@ -217,13 +250,25 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
           </main>
 
           {/* Desktop TOC sidebar */}
-          {!isLoading && !error && headings.length > 0 ? (
-            <aside className="hidden xl:sticky xl:top-0 xl:block xl:self-start xl:pl-12">
-              <TableOfContents headings={headings} />
-            </aside>
-          ) : (
-            <div className="hidden xl:block" />
-          )}
+          <div className="relative xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-10 max-xl:pointer-events-none max-xl:fixed max-xl:right-6 max-xl:top-24 max-xl:z-20 max-xl:w-[min(18rem,calc(100vw-3rem))]">
+            <AnimatePresence initial={false}>
+              {!isLoading && !error && headings.length > 0 && isDesktopTocVisible && (
+                <motion.aside
+                  key="desktop-toc"
+                  initial={shouldReduceMotion ? false : { opacity: 0, x: 16 }}
+                  animate={shouldReduceMotion ? { opacity: 1, x: 0 } : { opacity: 1, x: 0 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: 10 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.22,
+                    ease: [0.215, 0.61, 0.355, 1],
+                  }}
+                  className="will-change-transform"
+                >
+                  <TableOfContents headings={headings} variant="list" />
+                </motion.aside>
+              )}
+            </AnimatePresence>
+          </div>
       </div>
 
       {hasFooter && (

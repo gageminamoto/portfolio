@@ -46,7 +46,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
     return (
       <h2
         id={id}
-        className="mt-10 mb-4 text-xl font-semibold text-foreground [text-wrap:pretty] scroll-mt-8"
+        className="mt-10 mb-4 scroll-mt-24 text-xl font-semibold text-foreground [text-wrap:pretty]"
       >
         <NotionRichText items={heading} />
       </h2>
@@ -57,7 +57,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
     return (
       <h3
         id={id}
-        className="mt-8 mb-3 text-xl font-medium text-foreground [text-wrap:pretty] scroll-mt-8"
+        className="mt-8 mb-3 scroll-mt-24 text-xl font-medium text-foreground [text-wrap:pretty]"
       >
         <NotionRichText items={heading} />
       </h3>
@@ -67,7 +67,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
   return (
     <h4
       id={id}
-      className="mt-6 mb-2 text-base font-medium text-foreground [text-wrap:pretty] scroll-mt-8"
+      className="mt-6 mb-2 scroll-mt-24 text-base font-medium text-foreground [text-wrap:pretty]"
     >
       <NotionRichText items={heading} />
     </h4>
