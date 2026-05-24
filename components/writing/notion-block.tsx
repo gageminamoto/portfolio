@@ -7,6 +7,7 @@ import { NotionCallout } from "./notion-callout"
 import { NotionImage } from "./notion-image"
 import { NotionToggle } from "./notion-toggle"
 import { NotionRichText } from "./notion-rich-text"
+import { NotionTable } from "./notion-table"
 
 interface NotionBlockComponentProps {
   block: NotionBlock
@@ -36,6 +37,12 @@ export function NotionBlockComponent({ block }: NotionBlockComponentProps) {
 
     case "toggle":
       return <NotionToggle block={block} />
+
+    case "table":
+      return <NotionTable block={block} />
+
+    case "table_row":
+      return null
 
     case "bulleted_list_item":
       return (
