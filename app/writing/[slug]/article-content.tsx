@@ -101,7 +101,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
     try {
       await navigator.clipboard.writeText(window.location.href)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 1200)
     } catch {
       const textarea = document.createElement("textarea")
       textarea.value = window.location.href
@@ -110,7 +110,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
       document.execCommand("copy")
       document.body.removeChild(textarea)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 1200)
     }
   }, [])
 

@@ -60,7 +60,7 @@ export function SocialIcons({
     if (email) {
       navigator.clipboard.writeText(email)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 1200)
     }
   }
 
