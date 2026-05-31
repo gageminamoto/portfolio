@@ -123,6 +123,8 @@
     scrollbar-width: thin;
     scrollbar-color: gray transparent;
     color-scheme: light dark;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   @media (pointer: fine) {
     html {
@@ -131,6 +133,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   html body[data-scroll-locked] {
     margin-right: 0 !important;
