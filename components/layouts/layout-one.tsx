@@ -9,7 +9,7 @@ import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
-import { ProjectCard } from "@/components/project-card"
+import { ProjectCard, ProjectStatusBadge } from "@/components/project-card"
 import { WorkSection, WorkFilterTabs, type WorkFilter } from "@/components/work-section"
 import { WorkHoverProvider } from "@/components/work-hover-context"
 import { useGradientWord } from "@/components/gradient-word-context"
@@ -18,16 +18,7 @@ import { CursorTrail } from "@/components/cursor-trail"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { ProjectItem } from "@/lib/portfolio-data"
 
-const BADGE_COLORS: Record<string, string> = {
-  software: "oklch(0.55 0.2 250)",
-  brands: "oklch(0.55 0.2 330)",
-  tools: "oklch(0.55 0.2 145)",
-}
-
-
 function ProjectListItem({ project }: { project: ProjectItem }) {
-  const [badgeTilt] = useState(() => Math.random() * 14 - 7)
-  const { activeWord } = useGradientWord()
   const isGuandan = project.name === "Guandan Rules"
   const isInteractive = Boolean(project.url)
 
@@ -47,19 +38,7 @@ function ProjectListItem({ project }: { project: ProjectItem }) {
           tabIndex={0}
         />
       )}
-        {(project.status === "building" || project.status === "new") && (
-          <motion.span
-            className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
-            style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
-            initial={{ rotate: 0 }}
-            animate={{ rotate: badgeTilt }}
-            whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
-          >
-            {project.status === "new" ? "New" : "Building"}
-          </motion.span>
-        )}
+        <ProjectStatusBadge status={project.status} />
         {isGuandan ? (
           <div className="flex size-8 shrink-0 items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
