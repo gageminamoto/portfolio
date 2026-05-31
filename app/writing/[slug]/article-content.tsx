@@ -66,6 +66,10 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
   const [copied, setCopied] = useState(false)
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
+  const copyIconTransition = {
+    duration: shouldReduceMotion ? 0 : 0.14,
+    ease: [0.23, 1, 0.32, 1],
+  } as const
   const dial = useDialKit("Seed Posts", {
     enabled: false,
     count: [5, 1, 20, 1],
@@ -149,20 +153,43 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
                   <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
                   {backLabel}
                 </Link>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    aria-label={copied ? "Link copied" : "Copy link"}
-                    className="inline-flex items-center text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm cursor-pointer"
-                  >
-                    {copied ? (
-                      <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
-                    ) : (
-                      <LinkIcon className="h-3.5 w-3.5" aria-hidden="true" />
-                    )}
-                  </button>
-                  <ThemeToggle />
+                <div className="flex items-center gap-1" aria-label="Article actions">
+                  <div className="flex h-8 w-8 items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      aria-label={copied ? "Link copied" : "Copy link"}
+                      className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-[color,transform] duration-150 ease-out hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    >
+                      <span className="relative inline-flex h-3.5 w-3.5 items-center justify-center">
+                        <motion.span
+                          className="absolute inset-0 inline-flex items-center justify-center"
+                          animate={{
+                            opacity: copied ? 0 : 1,
+                            filter: shouldReduceMotion || !copied ? "blur(0px)" : "blur(2px)",
+                          }}
+                          transition={copyIconTransition}
+                          style={{ willChange: "filter, opacity" }}
+                        >
+                          <LinkIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                        </motion.span>
+                        <motion.span
+                          className="absolute inset-0 inline-flex items-center justify-center"
+                          animate={{
+                            opacity: copied ? 1 : 0,
+                            filter: shouldReduceMotion || copied ? "blur(0px)" : "blur(2px)",
+                          }}
+                          transition={copyIconTransition}
+                          style={{ willChange: "filter, opacity" }}
+                        >
+                          <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
+                        </motion.span>
+                      </span>
+                    </button>
+                  </div>
+                  <div className="flex h-8 w-8 items-center justify-center">
+                    <ThemeToggle />
+                  </div>
                 </div>
               </nav>
 
