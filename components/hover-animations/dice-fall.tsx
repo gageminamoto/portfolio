@@ -1,40 +1,46 @@
 "use client"
 
-import { useRef, useState, useMemo, useEffect } from "react"
+import { useRef, useMemo, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useReducedMotion } from "framer-motion"
 import { Dice3D } from "./dice-3d"
 
+function pseudoRandom(seed: number) {
+  const value = Math.sin(seed * 9999.91) * 10000
+  return value - Math.floor(value)
+}
+
 function FallingDie({
   startPos,
   delay,
+  seed,
 }: {
   startPos: [number, number, number]
   delay: number
+  seed: number
 }) {
   const meshRef = useRef<THREE.Group>(null)
   const [started, setStarted] = useState(false)
-  const [landed, setLanded] = useState(false)
   const startedRef = useRef(false)
+  const landedRef = useRef(false)
   const elapsedRef = useRef(0)
 
   const velocityY = useRef(0)
-  const velocityZ = useRef(0.05 + Math.random() * 0.05)
-
-  const rotationSpeed = useRef([
-    (Math.random() - 0.5) * 0.2,
-    (Math.random() - 0.5) * 0.2,
-    (Math.random() - 0.5) * 0.2,
+  const velocityZ = useRef(0.05 + pseudoRandom(seed + 1) * 0.05)
+  const rotationSpeed = useRef<[number, number, number]>([
+    (pseudoRandom(seed + 2) - 0.5) * 0.2,
+    (pseudoRandom(seed + 3) - 0.5) * 0.2,
+    (pseudoRandom(seed + 4) - 0.5) * 0.2,
   ])
 
   const initialRotation = useMemo(
     () =>
       [
-        Math.random() * Math.PI * 2,
-        Math.random() * Math.PI * 2,
-        Math.random() * Math.PI * 2,
+        pseudoRandom(seed + 5) * Math.PI * 2,
+        pseudoRandom(seed + 6) * Math.PI * 2,
+        pseudoRandom(seed + 7) * Math.PI * 2,
       ] as [number, number, number],
-    []
+    [seed]
   )
 
   useFrame((_, delta) => {
@@ -47,9 +53,9 @@ function FallingDie({
       return
     }
 
-    if (meshRef.current && !landed) {
+    if (meshRef.current && !landedRef.current) {
       if (meshRef.current.position.z >= 0) {
-        setLanded(true)
+        landedRef.current = true
         meshRef.current.position.z = 0
         return
       }
@@ -80,13 +86,17 @@ function Scene({ count = 5 }: { count?: number }) {
   const { viewport } = useThree()
 
   const dice = useMemo(() => {
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      x: (Math.random() - 0.5) * viewport.width * 0.8,
-      y: viewport.height / 2 + 3 + Math.random(),
-      z: -5 - Math.random() * 5,
-      delay: Math.random() * 500,
-    }))
+    return Array.from({ length: count }).map((_, i) => {
+      const base = i + count * 100 + viewport.width * 10 + viewport.height * 100
+      return {
+        id: i,
+        seed: base,
+        x: (pseudoRandom(base + 1) - 0.5) * viewport.width * 0.8,
+        y: viewport.height / 2 + 3 + pseudoRandom(base + 2),
+        z: -5 - pseudoRandom(base + 3) * 5,
+        delay: pseudoRandom(base + 4) * 500,
+      }
+    })
   }, [viewport.width, viewport.height, count])
 
   return (
@@ -97,6 +107,7 @@ function Scene({ count = 5 }: { count?: number }) {
       {dice.map((die) => (
         <FallingDie
           key={die.id}
+          seed={die.seed}
           startPos={[die.x, die.y, die.z]}
           delay={die.delay}
         />
@@ -107,20 +118,12 @@ function Scene({ count = 5 }: { count?: number }) {
 
 export function DiceFallAnimation({ isHovered }: { isHovered: boolean }) {
   const reducedMotion = useReducedMotion()
-  const [key, setKey] = useState(0)
-
-  useEffect(() => {
-    if (isHovered) {
-      setKey((k) => k + 1)
-    }
-  }, [isHovered])
 
   if (reducedMotion || !isHovered) return null
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
       <Canvas
-        key={key}
         camera={{ position: [0, 0, 10], fov: 50 }}
         dpr={[1, 2]}
         gl={{ alpha: true, antialias: true }}

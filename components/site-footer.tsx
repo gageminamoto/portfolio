@@ -35,17 +35,7 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
   const [showCommit, setShowCommit] = useState(true)
   const rafRef = useRef(0)
   const hoveredRef = useRef(false)
-  const displayRef = useRef(display)
-  displayRef.current = display
 
-  // When commit data changes and not hovered, sync display
-  useEffect(() => {
-    if (!hoveredRef.current) {
-      setDisplay(commitText)
-      setSettled(true)
-      setShowCommit(true)
-    }
-  }, [commitText])
 
   const scrambleTo = useCallback((target: string, isCommit: boolean) => {
     cancelAnimationFrame(rafRef.current)
@@ -67,13 +57,11 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
         }
       }
 
-      displayRef.current = result
       setDisplay(result)
 
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(tick)
       } else {
-        displayRef.current = target
         setDisplay(target)
         setSettled(true)
         setShowCommit(isCommit)
