@@ -7,7 +7,6 @@ import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
-import { ToolRow } from "@/components/tool-row"
 import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { portfolioData } from "@/lib/portfolio-data"
@@ -26,7 +25,7 @@ const PokemonCards = dynamic(
 )
 
 export default function AboutPage() {
-  const { extendedBio, learning, hobbies, speaking, workHistory } = portfolioData
+  const { extendedBio, hobbies, speaking, workHistory } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { resolvedTheme } = useTheme()
   const shouldReduceMotion = useReducedMotion()
@@ -118,9 +117,9 @@ export default function AboutPage() {
         </div>
 
 
-        {/* Speaking */}
+        {/* Features */}
         <div className="py-8">
-        <Section title="Speaking">
+        <Section title="Features">
           <div className="flex flex-col gap-3">
             {speaking.map((item) => (
               <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
@@ -137,18 +136,6 @@ export default function AboutPage() {
                   </span>
                 )}
               </div>
-            ))}
-          </div>
-        </Section>
-        </div>
-
-
-        {/* Learning */}
-        <div className="py-8">
-        <Section title="Learning">
-          <div className="flex flex-col gap-3">
-            {learning.map((item) => (
-              <ToolRow key={item.name} {...item} />
             ))}
           </div>
         </Section>
