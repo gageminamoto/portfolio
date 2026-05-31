@@ -19,7 +19,7 @@ export function CopyFeedbackIcon({
 }: CopyFeedbackIconProps) {
   const shouldReduceMotion = useReducedMotion()
   const transition = {
-    duration: shouldReduceMotion ? 0 : 0.22,
+    duration: shouldReduceMotion ? 0 : 0.16,
     ease: [0.23, 1, 0.32, 1],
   } as const
 
