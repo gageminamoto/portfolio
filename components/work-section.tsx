@@ -123,10 +123,11 @@ export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onCha
 function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey: string }) {
   const shouldReduceMotion = useReducedMotion()
   const railRef = useRef<HTMLDivElement>(null)
-  const [bleedInsets, setBleedInsets] = useState({ left: 0, right: 0 })
+  const [bleedMetrics, setBleedMetrics] = useState({ left: 0, right: 0, width: 0 })
   const railStyle = {
-    "--work-start-inset": `${bleedInsets.left}px`,
-    "--work-end-inset": `${bleedInsets.right}px`,
+    "--work-start-inset": `${bleedMetrics.left}px`,
+    "--work-end-inset": `${bleedMetrics.right}px`,
+    "--work-viewport-width": bleedMetrics.width ? `${bleedMetrics.width}px` : "100%",
   } as CSSProperties
 
   useLayoutEffect(() => {
@@ -136,15 +137,25 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
 
     const updateInset = () => {
       const rect = parent.getBoundingClientRect()
-      setBleedInsets({
+      const viewportWidth = window.visualViewport?.width ?? window.innerWidth
+
+      setBleedMetrics({
         left: Math.max(0, Math.round(rect.left)),
-        right: Math.max(0, Math.round(window.innerWidth - rect.right)),
+        right: Math.max(0, Math.round(viewportWidth - rect.right)),
+        width: Math.round(viewportWidth),
       })
     }
 
     updateInset()
     window.addEventListener("resize", updateInset)
-    return () => window.removeEventListener("resize", updateInset)
+    window.visualViewport?.addEventListener("resize", updateInset)
+    window.visualViewport?.addEventListener("scroll", updateInset)
+
+    return () => {
+      window.removeEventListener("resize", updateInset)
+      window.visualViewport?.removeEventListener("resize", updateInset)
+      window.visualViewport?.removeEventListener("scroll", updateInset)
+    }
   }, [])
 
   useEffect(() => {
@@ -156,28 +167,32 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
   }, [filterKey])
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        ref={railRef}
-        key={filterKey}
-        className="-ml-[var(--work-start-inset)] -mt-2 flex w-dvw snap-x snap-mandatory gap-4 overflow-x-auto scroll-pl-[var(--work-start-inset)] scroll-pr-[var(--work-end-inset)] pb-1 pl-[var(--work-start-inset)] pr-[var(--work-end-inset)] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={railStyle}
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: [0.215, 0.61, 0.355, 1] }}
-      >
-        {items.map((item, index) => (
-          <div
-            key={item.name}
-            className={`shrink-0 ${index === items.length - 1 ? "snap-end" : "snap-start"}`}
-            style={{ width: "min(82vw, 36rem)" }}
-          >
-            <WorkItemCard item={item} />
-          </div>
-        ))}
-      </motion.div>
-    </AnimatePresence>
+    <div
+      className="-ml-[var(--work-start-inset)] w-[var(--work-viewport-width)] max-w-[100vw] overflow-x-hidden"
+      style={railStyle}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          ref={railRef}
+          key={filterKey}
+          className="-mt-2 flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-pl-[var(--work-start-inset)] scroll-pr-[var(--work-end-inset)] pb-1 pl-[var(--work-start-inset)] pr-[var(--work-end-inset)] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: [0.215, 0.61, 0.355, 1] }}
+        >
+          {items.map((item, index) => (
+            <div
+              key={item.name}
+              className={`shrink-0 ${index === items.length - 1 ? "snap-end" : "snap-start"}`}
+              style={{ width: "min(82vw, 36rem)" }}
+            >
+              <WorkItemCard item={item} />
+            </div>
+          ))}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   )
 }
 
