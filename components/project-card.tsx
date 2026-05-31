@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { Sledgehammer, Star } from "@solar-icons/react"
 import type { ProjectItem } from "@/lib/portfolio-data"
 import { useTouchDevice } from "@/hooks/use-mobile"
 import { useGradientWord } from "@/components/gradient-word-context"
@@ -52,6 +53,33 @@ const BADGE_COLORS: Record<string, string> = {
   tools: "oklch(0.55 0.2 145)",
 }
 
+export function ProjectStatusBadge({ status }: { status: ProjectItem["status"] }) {
+  const [badgeTilt] = useState(() => Math.random() * 14 - 7)
+  const { activeWord } = useGradientWord()
+
+  if (status !== "building" && status !== "new") {
+    return null
+  }
+
+  const Icon = status === "new" ? Star : Sledgehammer
+  const label = status === "new" ? "New" : "Building"
+
+  return (
+    <motion.span
+      className="absolute -right-1.5 -top-1.5 z-10 inline-flex cursor-default items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium leading-none text-white shadow-sm"
+      style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
+      initial={{ rotate: 0 }}
+      animate={{ rotate: badgeTilt }}
+      whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
+    >
+      <Icon size={12} weight="Bold" aria-hidden="true" />
+      {label}
+    </motion.span>
+  )
+}
+
 export function ProjectCard({
   project,
   index = 0,
@@ -61,10 +89,8 @@ export function ProjectCard({
   index?: number
   guandanVariant?: "logo" | "cards"
 }) {
-  const [badgeTilt] = useState(() => Math.random() * 14 - 7)
   const [isHovered, setIsHovered] = useState(false)
   const isTouch = useTouchDevice()
-  const { activeWord } = useGradientWord()
 
   const shape = shapes[index % shapes.length]
   const showAnimations = !isTouch
@@ -89,19 +115,7 @@ export function ProjectCard({
           tabIndex={0}
         />
       )}
-      {(project.status === "building" || project.status === "new") && (
-        <motion.span
-          className="absolute -right-1.5 -top-1.5 z-10 cursor-default rounded-full px-2 py-0.5 text-[11px] font-medium text-white shadow-sm"
-          style={{ backgroundColor: BADGE_COLORS[activeWord] ?? BADGE_COLORS.software }}
-          initial={{ rotate: 0 }}
-          animate={{ rotate: badgeTilt }}
-          whileHover={{ scale: 1.1, rotate: badgeTilt * 1.5 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
-        >
-          {project.status === "new" ? "New" : "Building"}
-        </motion.span>
-      )}
+      <ProjectStatusBadge status={project.status} />
       {showAnimations && project.name === "Yahtzee Scorecard" && (
         <DiceFallAnimation isHovered={isHovered} />
       )}
