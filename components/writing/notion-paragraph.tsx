@@ -14,7 +14,7 @@ export function NotionParagraph({ block }: NotionParagraphProps) {
   }
 
   return (
-    <p className="mb-5 text-base leading-7 text-foreground/90">
+    <p className="mb-[36px] text-base leading-7 text-foreground/90">
       <NotionRichText items={paragraph.rich_text} />
     </p>
   )

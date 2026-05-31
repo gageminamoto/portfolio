@@ -76,7 +76,11 @@ export function NotionRichText({ items }: NotionRichTextProps) {
           )
         }
 
-        return <span key={i}>{content}</span>
+        return (
+          <span key={i} className="leading-[0px]">
+            {content}
+          </span>
+        )
       })}
     </>
   )
