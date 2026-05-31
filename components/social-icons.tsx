@@ -1,4 +1,5 @@
 import type { SocialLink } from "@/lib/portfolio-data"
+import { CopyFeedbackIcon } from "@/components/copy-feedback-icon"
 import { Icon } from "@iconify/react"
 import { Copy, ExternalLink } from "lucide-react"
 import { useState } from "react"
@@ -90,16 +91,12 @@ export function SocialIcons({
               title={email}
               suppressHydrationWarning
             >
-              <span className="relative" style={{ width: "1.25rem", height: "1.25rem" }}>
-                <Icon
-                  icon="solar:plain-bold"
-                  className={`${sizeClass} absolute inset-0 transition-opacity duration-200 motion-reduce:transition-none ${copied ? "opacity-0" : "opacity-100"}`}
-                />
-                <Icon
-                  icon="solar:letter-opened-bold"
-                  className={`${sizeClass} absolute inset-0 transition-opacity duration-200 motion-reduce:transition-none ${copied ? "opacity-100 animate-mail-shake motion-reduce:animate-none" : "opacity-0"}`}
-                />
-              </span>
+              <CopyFeedbackIcon
+                copied={copied}
+                className="h-5 w-5"
+                idleIcon={<Icon icon="solar:plain-bold" className={sizeClass} aria-hidden="true" />}
+                copiedIcon={<Icon icon="solar:letter-opened-bold" className={sizeClass} aria-hidden="true" />}
+              />
               {copied && (
                 <span
                   className="text-sm animate-in fade-in slide-in-from-left-1 duration-200"
