@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 
@@ -12,6 +12,7 @@ interface WorkItem {
 }
 
 const workItems: WorkItem[] = [
+  { name: "Mizen", url: "https://www.mizen.recipes/", image: "/images/mizen-hover.gif", type: "Product" },
   { name: "Aura", url: "https://aurafinance.io", image: "/images/aura-hover.gif", type: "Product" },
   { name: "Kilo", url: "https://kilohnl.com/", image: "/images/kilo-hover.jpg", type: "Brand" },
   { name: "Umi", url: "https://umiapp.co/", image: "/images/umi-hover.gif", type: "Product" },
@@ -42,7 +43,7 @@ function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-150 ${
+        className={`absolute inset-0 z-10 h-full w-full object-cover object-center transition-opacity duration-150 ${
           active ? "opacity-0" : "opacity-100"
         }`}
       />
@@ -53,9 +54,7 @@ function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active
         loading="eager"
         decoding="async"
         aria-hidden="true"
-        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-150 ${
-          active ? "opacity-100" : "opacity-0"
-        }`}
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
     </div>
   )
@@ -90,7 +89,7 @@ function WorkItemCard({ item }: { item: WorkItem }) {
       >
         <HoverPlayMedia src={item.image} alt={item.name} active={active} />
       </div>
-      <div className="mt-2 text-sm flex items-baseline gap-1.5">
+      <div className="mt-2 flex items-baseline gap-1.5 text-sm">
         <span className="text-muted-foreground">{item.name}</span>
         <span className="text-muted-foreground/40">{item.type}</span>
       </div>
@@ -108,7 +107,7 @@ export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onCha
         <button
           key={f}
           onClick={() => onChange(active === f ? null : f)}
-          className={`cursor-pointer text-xs sm:text-sm transition-colors duration-150 ease ${
+          className={`cursor-pointer text-xs transition-colors duration-150 ease sm:text-sm ${
             active === f
               ? "text-foreground"
               : "text-muted-foreground/40 hover:text-muted-foreground"
@@ -121,26 +120,71 @@ export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onCha
   )
 }
 
-export function WorkSection({ filter }: { filter: WorkFilter }) {
+function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey: string }) {
   const shouldReduceMotion = useReducedMotion()
-  const filtered = filter === null
-    ? workItems
-    : workItems.filter((item) => item.type === filter)
+  const railRef = useRef<HTMLDivElement>(null)
+  const [bleedInsets, setBleedInsets] = useState({ left: 0, right: 0 })
+  const railStyle = {
+    "--work-start-inset": `${bleedInsets.left}px`,
+    "--work-end-inset": `${bleedInsets.right}px`,
+  } as CSSProperties
+
+  useLayoutEffect(() => {
+    const rail = railRef.current
+    const parent = rail?.parentElement
+    if (!parent) return
+
+    const updateInset = () => {
+      const rect = parent.getBoundingClientRect()
+      setBleedInsets({
+        left: Math.max(0, Math.round(rect.left)),
+        right: Math.max(0, Math.round(window.innerWidth - rect.right)),
+      })
+    }
+
+    updateInset()
+    window.addEventListener("resize", updateInset)
+    return () => window.removeEventListener("resize", updateInset)
+  }, [])
+
+  useEffect(() => {
+    const rail = railRef.current
+    if (!rail) return
+    requestAnimationFrame(() => {
+      rail.scrollLeft = 0
+    })
+  }, [filterKey])
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={filter ?? "all"}
-        className="flex flex-col gap-8"
+        ref={railRef}
+        key={filterKey}
+        className="-ml-[var(--work-start-inset)] -mt-2 flex w-dvw snap-x snap-mandatory gap-4 overflow-x-auto scroll-pl-[var(--work-start-inset)] scroll-pr-[var(--work-end-inset)] pb-1 pl-[var(--work-start-inset)] pr-[var(--work-end-inset)] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={railStyle}
         initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: [0.215, 0.61, 0.355, 1] }}
       >
-        {filtered.map((item) => (
-          <WorkItemCard key={item.name} item={item} />
+        {items.map((item, index) => (
+          <div
+            key={item.name}
+            className={`shrink-0 ${index === items.length - 1 ? "snap-end" : "snap-start"}`}
+            style={{ width: "min(82vw, 36rem)" }}
+          >
+            <WorkItemCard item={item} />
+          </div>
         ))}
       </motion.div>
     </AnimatePresence>
   )
+}
+
+export function WorkSection({ filter }: { filter: WorkFilter }) {
+  const filtered = filter === null
+    ? workItems
+    : workItems.filter((item) => item.type === filter)
+
+  return <WorkBleedCarousel filterKey={filter ?? "all"} items={filtered} />
 }

@@ -107,7 +107,7 @@ export function LayoutOne() {
     <WorkHoverProvider>
     <motion.main
       id="main-content"
-      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-8 overflow-x-clip px-6 py-16 md:py-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-8 px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
