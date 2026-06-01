@@ -231,7 +231,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
     {
       company: "Freelance",
       role: "Product & Brand Designer",
-      period: "2026 – Present",
+      period: "2024 – 2026",
       url: "https://gageminamoto.com/",
       icon: "/icons/freelance.png",
       description: "Helping Hawaiʻi businesses, local builders, and growing teams make websites, brands, and product ideas feel more considered. It’s been a practical way to learn how to scope work, communicate clearly, and ship within real constraints.",
