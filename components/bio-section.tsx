@@ -87,7 +87,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
               }
               if (isBioLink(part)) {
                 const previewImages: Record<string, string> = {
-                  "Mizen": "/mizen-preview.jpg",
+                  "Mizen": "/images/mizen-hover.mp4",
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
                   "UH Esports": "/uh-preview.jpg",
                   "local design community": "/piiku-preview.jpg",
