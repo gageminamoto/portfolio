@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback } from "react"
+import Image from "next/image"
 import { ChevronDown } from "lucide-react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -49,13 +50,15 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
         >
           {HoverComp ? (
             <HoverComp />
-          ) : (
-            <img
-              src={hoveredItem!.hoverImage}
+          ) : hoveredItem?.hoverImage ? (
+            <Image
+              src={hoveredItem.hoverImage}
               alt=""
+              width={256}
+              height={144}
               className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover shadow-lg"
             />
-          )}
+          ) : null}
         </div>
       )}
       {items.map((item, i) => {
@@ -90,7 +93,7 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
                 />
                 <div className="relative z-10 flex min-w-0 flex-1 items-center gap-3">
                   {item.icon ? (
-                    <img
+                    <Image
                       src={item.icon}
                       alt=""
                       width={16}
@@ -152,7 +155,7 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
                 className="cursor-pointer flex w-full items-center gap-3 rounded-lg px-0 py-3 text-left transition-[padding,background-color] motion-reduce:transition-none hover:bg-muted/30 hover:px-3"
               >
                 {item.icon ? (
-                  <img
+                  <Image
                     src={item.icon}
                     alt=""
                     width={16}
