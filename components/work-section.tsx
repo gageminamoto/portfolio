@@ -168,7 +168,7 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
 
   return (
     <div
-      className="-ml-[var(--work-start-inset)] w-[var(--work-viewport-width)] max-w-[100vw] overflow-x-hidden"
+      className="-ml-[var(--work-start-inset)] w-[var(--work-viewport-width)] max-w-[100vw] overflow-x-clip overflow-y-visible"
       style={railStyle}
     >
       <AnimatePresence mode="wait">

@@ -200,7 +200,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://www.mizen.recipes/",
       icon: faviconUrl("https://www.mizen.recipes/"),
       hoverImage: "/images/mizen-hover.gif",
-      description: "A side project for making online recipes calmer to cook from. I keep poking at parsing, grocery lists, recipe clipping, and the tiny product decisions that make cooking from a phone feel less annoying.",
+      description: "A side project to make online recipes easier to cook from. I’m exploring recipe parsing, grocery lists, clipping, and the small interaction details that make cooking from a phone feel smoother.",
     },
     {
       company: "Piʻiku",
@@ -209,7 +209,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://piiku.co/",
       icon: faviconUrl("https://piiku.co/"),
       hoverImage: "/piiku-preview.jpg",
-      description: "A small community project for designers in Hawai'i. It is part events, part gathering place, and part excuse to meet more people who care about making things here.",
+      description: "A local non-profit where I volunteer to support and grow Hawaiʻi’s local tech scene. It’s a way for me to help bring designers together, contribute to the community, and invest in the next generation of people making things.",
     },
     {
       company: "Negi",
@@ -218,7 +218,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://negi.studio/",
       icon: faviconUrl("https://negi.studio/"),
       hoverImage: "/negi-studio-preview.jpg",
-      description: "The studio Michelle and I started to make thoughtful software, brands, and odd little ideas in Hawai'i. It is where client work, experiments, taste-building, and learning how to run a practice all overlap.",
+      description: "The small studio Michelle and I started to make thoughtful software, brands, and experiments in Hawaiʻi. It’s where client work, side projects, and the practice of running a studio come together.",
     },
     {
       company: "Yahtzee Scorecard",
@@ -226,15 +226,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "Shipped",
       url: "https://yahtzee-score-card.vercel.app/",
       icon: "/projects/yahtzee-favicon.png",
-      description: "A tiny scorecard I built because paper score sheets disappear too easily. It is simple, a little playful, and mostly exists because small tools are fun when they solve one specific irritation.",
-    },
-    {
-      company: "Guandan Rules",
-      role: "Card game notes",
-      period: "Shipped",
-      url: "https://guan-duan-rules.vercel.app/",
-      icon: "/projects/guandian-rules-logo.svg",
-      description: "A quick rules guide for a card game I wanted to explain without making people read a wall of text. Mostly an excuse to turn a confusing set of rules into something friendlier.",
+      description: "A digital scorecard I built to make Yahtzee scoring easier, clearer, and more fun to use. I focused on ease of use, customization, and a different input pattern for logging dice that feels faster than a paper sheet.",
     },
     {
       company: "Freelance",
@@ -242,7 +234,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "2026 – Present",
       url: "https://gageminamoto.com/",
       icon: "/icons/freelance.png",
-      description: "Helping Hawai'i businesses, local builders, and growing teams make websites, brands, and product ideas feel more considered. It is client work, but also a lot of figuring things out in the open.",
+      description: "Helping Hawaiʻi businesses, local builders, and growing teams make websites, brands, and product ideas feel more considered. It’s been a practical way to learn how to scope work, communicate clearly, and ship within real constraints.",
     },
     {
       company: "Becoming Impossible to Ignore",
@@ -251,7 +243,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://uxhiconference.com/",
       icon: "/icons/uxhi.png",
       hoverImage: "/images/uxhi-hover.jpg",
-      description: "A talk Michelle and I gave about making more room for luck. It was really about side projects, community, awkward first steps, and how putting small things into the world can change what finds you.",
+      description: "A talk Michelle and I gave about creating more opportunities through side projects, community, and sharing work publicly. It reflects a lot of how I think about growth: start small, stay visible, and keep making things.",
     },
     {
       company: "NVIDIA",
@@ -260,7 +252,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://www.nvidia.com/",
       icon: "/icons/nvidia.ico",
       hoverComponent: "nvidia",
-      description: "Looking closely at how generative AI behaves when people ask it messy, real-world things. Lots of edge cases, pattern spotting, and learning that tiny wording changes can make systems act very differently.",
+      description: "I worked in QA for generative AI systems, testing inputs, reviewing outputs, and helping identify edge cases and failure patterns. It gave me a close look at how sensitive these systems are to wording, context, and evaluation.",
     },
     {
       company: "University of Hawai'i Esports",
@@ -268,7 +260,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "2023 – 2025",
       url: "https://uhesports.com/",
       hoverImage: "/uh-preview.jpg",
-      description: "Where I learned design by making a lot of things quickly. Brand systems, match graphics, event assets, and the occasional weird esports request. It became my first real playground for leading other designers.",
+      description: "I helped shape the visual identity of collegiate esports at UH through brand systems, match graphics, event assets, and team direction. It was an early turning point for me in learning how to lead design work, not just contribute to it.",
     },
     {
       company: "Umi Language Learning App",
@@ -277,7 +269,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://umiapp.co/",
       icon: "/icons/umi.png",
       hoverImage: "/images/umi-hover.jpg",
-      description: "A language learning project where I got to think about motivation, lessons, memory, and how quickly learning tools can become annoying. I tested flows with learners and kept trimming the interface back.",
+      description: "A language learning project where I thought deeply about lessons, motivation, memory, and interface clarity. I tested flows with learners and worked to make the product feel supportive without getting in the way.",
     },
     {
       company: "Gen.G Esports",
@@ -286,7 +278,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://geng.gg/",
       icon: "/icons/geng.png",
       hoverImage: "/images/geng-hover.gif",
-      description: "Making social graphics and campaign assets for esports teams across Seoul and North America. Fast-paced, highly online, and a good lesson in making work that still reads when everyone scrolls past it.",
+      description: "I worked in Seoul, then created graphics for Gen.G’s Western channels and social media. It gave me strong experience working across cultures and making design work that could translate clearly across different audiences.",
     },
     {
       company: "Servco",
@@ -294,7 +286,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "2023 – 2024",
       icon: "/icons/servco.png",
       hoverImage: "/images/servco-hover.gif",
-      description: "My first look at design inside a larger company. I worked across automotive and lifestyle brands, made campaign assets and landing pages, and learned how much of design is keeping many moving pieces understandable.",
+      description: "My first experience designing within a larger company environment. I worked across automotive and lifestyle brands on campaigns and landing pages, and learned how much design depends on keeping complex systems coherent.",
       url: "https://www.servco.com/",
     },
   ],
