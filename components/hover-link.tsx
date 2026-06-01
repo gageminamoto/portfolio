@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 
@@ -76,9 +77,11 @@ export function HoverLink({
               preload="metadata"
             />
           ) : (
-            <img
+            <Image
               src={previewImage}
               alt=""
+              width={256}
+              height={144}
               className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
             />
           )}
