@@ -209,7 +209,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://piiku.co/",
       icon: faviconUrl("https://piiku.co/"),
       hoverImage: "/piiku-preview.jpg",
-      description: "A local non-profit where I volunteer to support and grow Hawaiʻi’s local tech scene. It’s a way for me to help bring designers together, contribute to the community, and invest in the next generation of people making things.",
+      description: "A community project where I actively volunteer to support and grow Hawaiʻi’s local design scene. It’s a way for me to help bring designers together, contribute to the community, and invest in the next generation of people making things here.",
     },
     {
       company: "Negi",
@@ -218,7 +218,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://negi.studio/",
       icon: faviconUrl("https://negi.studio/"),
       hoverImage: "/negi-studio-preview.jpg",
-      description: "The small studio Michelle and I started to make thoughtful software, brands, and experiments in Hawaiʻi. It’s where client work, side projects, and the practice of running a studio come together.",
+      description: "The small studio Michelle and I started to make thoughtful software, brands, and experiments in Hawaiʻi. We divide our time across client work, community, and play, with a focus on intentional design, giving back locally, and making space for experimentation.",
     },
     {
       company: "Yahtzee Scorecard",
@@ -226,7 +226,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "Shipped",
       url: "https://yahtzee-score-card.vercel.app/",
       icon: "/projects/yahtzee-favicon.png",
-      description: "A digital scorecard I built to make Yahtzee scoring easier, clearer, and more fun to use. I focused on ease of use, customization, and a different input pattern for logging dice that feels faster than a paper sheet.",
+      description: "A digital scorecard I built to make Yahtzee scoring feel easier, faster, and more fun. I focused on clear UX, useful customization, and a new way to input dice that feels smoother than a paper sheet.",
     },
     {
       company: "Freelance",
