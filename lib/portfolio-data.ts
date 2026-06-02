@@ -60,7 +60,7 @@ export interface SocialLink {
   label: string
 }
 
-export interface WorkHistoryItem {
+export interface TimelineItem {
   company: string
   role: string
   period: string
@@ -83,7 +83,7 @@ export interface PortfolioData {
   projects: ProjectItem[]
   learning: LearningItem[]
   speaking: SpeakingItem[]
-  workHistory: WorkHistoryItem[]
+  timeline: TimelineItem[]
 }
 
 const faviconUrl = (url: string) =>
@@ -192,7 +192,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
     { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
     { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
   ],
-  workHistory: [
+  timeline: [
     {
       company: "Mizen",
       role: "Calm recipes",
@@ -222,7 +222,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
     },
     {
       company: "Yahtzee Scorecard",
-      role: "Weekend game tool",
+      role: "Weekend Project",
       period: "Shipped",
       url: "https://yahtzee-score-card.vercel.app/",
       icon: "/projects/yahtzee-favicon.png",
@@ -240,7 +240,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       company: "Becoming Impossible to Ignore",
       role: "UXHI Speaker",
       period: "2025",
-      url: "https://uxhiconference.com/",
+      url: "https://uxhiconference.com/conferences/2025/",
       icon: "/icons/uxhi.png",
       hoverImage: "/images/uxhi-hover.jpg",
       description: "A talk Michelle and I gave about creating more opportunities through side projects, community, and sharing work publicly. It reflects a lot of how I think about growth: start small, stay visible, and keep making things.",
@@ -258,7 +258,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       company: "University of Hawai'i Esports",
       role: "Creative Director",
       period: "2023 – 2025",
-      url: "https://uhesports.com/",
+      url: "https://www.instagram.com/uhesports/",
       hoverImage: "/uh-preview.jpg",
       description: "I helped shape the visual identity of collegiate esports at UH through brand systems, match graphics, event assets, and team direction. It was an early turning point for me in learning how to lead design work, not just contribute to it.",
     },

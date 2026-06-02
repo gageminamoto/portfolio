@@ -10,7 +10,7 @@ import { Section } from "@/components/section"
 import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { portfolioData } from "@/lib/portfolio-data"
-import { WorkHistorySection } from "@/components/work-history-section"
+import { TimelineSection } from "@/components/timeline-section"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import dynamic from "next/dynamic"
 
@@ -25,7 +25,7 @@ const PokemonCards = dynamic(
 )
 
 export default function AboutPage() {
-  const { extendedBio, hobbies, speaking, workHistory } = portfolioData
+  const { extendedBio, hobbies, speaking, timeline } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { resolvedTheme } = useTheme()
   const shouldReduceMotion = useReducedMotion()
@@ -76,9 +76,9 @@ export default function AboutPage() {
 
       {/* Sections */}
       <motion.div variants={item} className="flex flex-col">
-        {/* Work History */}
+        {/* Timeline */}
         <div className="pb-8">
-          <WorkHistorySection items={workHistory} />
+          <TimelineSection items={timeline} />
         </div>
 
 

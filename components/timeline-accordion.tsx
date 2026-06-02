@@ -12,13 +12,54 @@ import {
   fluidHoverHighlightStyle,
 } from "@/lib/hover-constants"
 import { NvidiaHover } from "@/components/nvidia-hover"
-import type { WorkHistoryItem } from "@/lib/portfolio-data"
+import type { TimelineItem } from "@/lib/portfolio-data"
 
 const hoverComponents: Record<string, React.ComponentType> = {
   nvidia: NvidiaHover,
 }
 
-export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
+function TimelineTitle({
+  item,
+  isActive,
+  useFluidHover,
+}: {
+  item: TimelineItem
+  isActive: boolean
+  useFluidHover: boolean
+}) {
+  const className = cn(
+    "shrink-0 rounded-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    useFluidHover
+      ? isActive
+        ? "text-foreground"
+        : "text-muted-foreground"
+      : "text-foreground",
+    item.url && "hover:underline hover:decoration-primary hover:underline-offset-4",
+  )
+
+  if (!item.url) {
+    return (
+      <span className={className} style={useFluidHover ? fluidHoverTextStyle : undefined}>
+        {item.company}
+      </span>
+    )
+  }
+
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noreferrer"
+      className={className}
+      style={useFluidHover ? fluidHoverTextStyle : undefined}
+      onClick={(event) => event.stopPropagation()}
+    >
+      {item.company}
+    </a>
+  )
+}
+
+export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const floaterRef = useRef<HTMLDivElement>(null)
@@ -67,10 +108,9 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
         return (
           <div key={item.company} className="relative">
             {useFluidHover ? (
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+              <div
                 onMouseEnter={() => setHoveredIndex(i)}
-                onFocus={() => setHoveredIndex(i)}
+                onFocusCapture={() => setHoveredIndex(i)}
                 onBlur={(e) => {
                   const next = e.relatedTarget
                   const row = e.currentTarget
@@ -78,7 +118,7 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
                   setHoveredIndex((h) => (h === i ? null : h))
                 }}
                 className={cn(
-                  "relative flex w-full items-center gap-3 overflow-hidden rounded-lg py-3 text-left transition-[padding] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  "relative flex w-full items-center gap-3 overflow-hidden rounded-lg py-3 text-left transition-[padding] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   isActive ? "px-3" : "px-0",
                 )}
                 style={fluidHoverPadStyle}
@@ -105,55 +145,51 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
                       {item.company.charAt(0)}
                     </span>
                   )}
-                  <span
-                    className={cn(
-                      "shrink-0 font-medium transition-colors",
-                      isActive ? "text-foreground" : "text-muted-foreground",
-                    )}
-                    style={fluidHoverTextStyle}
+                  <TimelineTitle item={item} isActive={isActive} useFluidHover />
+                  <button
+                    type="button"
+                    onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    aria-expanded={openIndex === i}
                   >
-                    {item.company}
-                  </span>
-                  <span
-                    className={cn(
-                      "min-w-0 truncate text-sm transition-colors",
-                      isActive
-                        ? "text-muted-foreground"
-                        : "text-muted-foreground/55",
-                    )}
-                    style={fluidHoverTextStyle}
-                  >
-                    {item.role}
-                  </span>
-                  <span
-                    className={cn(
-                      "ml-auto shrink-0 text-sm transition-colors",
-                      isActive
-                        ? "text-muted-foreground"
-                        : "text-muted-foreground/55",
-                    )}
-                    style={fluidHoverTextStyle}
-                  >
-                    {item.period}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
-                      isActive
-                        ? "text-muted-foreground"
-                        : "text-muted-foreground/55",
-                      openIndex === i && "rotate-180",
-                    )}
-                    style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
-                    aria-hidden="true"
-                  />
+                    <span
+                      className={cn(
+                        "min-w-0 truncate text-sm transition-colors",
+                        isActive
+                          ? "text-muted-foreground"
+                          : "text-muted-foreground/55",
+                      )}
+                      style={fluidHoverTextStyle}
+                    >
+                      {item.role}
+                    </span>
+                    <span
+                      className={cn(
+                        "ml-auto shrink-0 text-sm transition-colors",
+                        isActive
+                          ? "text-muted-foreground"
+                          : "text-muted-foreground/55",
+                      )}
+                      style={fluidHoverTextStyle}
+                    >
+                      {item.period}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+                        isActive
+                          ? "text-muted-foreground"
+                          : "text-muted-foreground/55",
+                        openIndex === i && "rotate-180",
+                      )}
+                      style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+                      aria-hidden="true"
+                    />
+                  </button>
                 </div>
-              </button>
+              </div>
             ) : (
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="cursor-pointer flex w-full items-center gap-3 rounded-lg px-0 py-3 text-left transition-[padding,background-color] motion-reduce:transition-none hover:bg-muted/30 hover:px-3"
-              >
+              <div className="flex w-full items-center gap-3 rounded-lg px-0 py-3 text-left transition-[padding,background-color] motion-reduce:transition-none hover:bg-muted/30 hover:px-3">
                 {item.icon ? (
                   <Image
                     src={item.icon}
@@ -167,15 +203,22 @@ export function WorkHistoryAccordion({ items }: { items: WorkHistoryItem[] }) {
                     {item.company.charAt(0)}
                   </span>
                 )}
-                <span className="shrink-0 font-medium text-foreground">{item.company}</span>
-                <span className="min-w-0 truncate text-sm text-muted-foreground">{item.role}</span>
-                <span className="ml-auto shrink-0 text-sm text-muted-foreground">{item.period}</span>
-                <ChevronDown
-                  className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
-                  style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
-                  aria-hidden="true"
-                />
-              </button>
+                <TimelineTitle item={item} isActive={isActive} useFluidHover={false} />
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  aria-expanded={openIndex === i}
+                >
+                  <span className="min-w-0 truncate text-sm text-muted-foreground">{item.role}</span>
+                  <span className="ml-auto shrink-0 text-sm text-muted-foreground">{item.period}</span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
+                    style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
             )}
             <AnimatePresence initial={false}>
               {openIndex === i && (
