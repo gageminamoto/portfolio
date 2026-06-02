@@ -60,7 +60,7 @@ export interface SocialLink {
   label: string
 }
 
-export interface WorkHistoryItem {
+export interface TimelineItem {
   company: string
   role: string
   period: string
@@ -83,8 +83,11 @@ export interface PortfolioData {
   projects: ProjectItem[]
   learning: LearningItem[]
   speaking: SpeakingItem[]
-  workHistory: WorkHistoryItem[]
+  timeline: TimelineItem[]
 }
+
+const faviconUrl = (url: string) =>
+  `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(url)}&sz=64`
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
@@ -131,7 +134,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       status: "building",
       image: "/projects/mizen.png",
       hoverImage: "/projects/mizen-hover.svg",
-      favicon: "/projects/mizen-favicon.png",
+      favicon: faviconUrl("https://www.mizen.recipes/"),
       collaborators: [
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Design Eng", url: "https://linkedin.com/in/gageminamoto" },
         { name: "Michelle Tran", avatarUrl: "/avatars/michelle.png", role: "PM", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
@@ -189,23 +192,58 @@ Indie games have always inspired me. Small teams pour their craft into every det
     { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
     { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
   ],
-  workHistory: [
+  timeline: [
+    {
+      company: "Mizen",
+      role: "Calm recipes",
+      period: "Building",
+      url: "https://www.mizen.recipes/",
+      icon: faviconUrl("https://www.mizen.recipes/"),
+      hoverImage: "/images/mizen-hover.gif",
+      description: "A side project to make online recipes easier to cook from. I’m exploring recipe parsing, grocery lists, clipping, and the small interaction details that make cooking from a phone feel smoother.",
+    },
+    {
+      company: "Piʻiku",
+      role: "Local design community",
+      period: "Ongoing",
+      url: "https://piiku.co/",
+      icon: faviconUrl("https://piiku.co/"),
+      hoverImage: "/piiku-preview.jpg",
+      description: "A community project where I actively volunteer to support and grow Hawaiʻi’s local design scene. It’s a way for me to help bring designers together, contribute to the community, and invest in the next generation of people making things here.",
+    },
+    {
+      company: "Negi",
+      role: "Tiny design studio",
+      period: "2025 – Present",
+      url: "https://negi.studio/",
+      icon: faviconUrl("https://negi.studio/"),
+      hoverImage: "/negi-studio-preview.jpg",
+      description: "The small studio Michelle and I started to make thoughtful software, brands, and experiments in Hawaiʻi. We divide our time across client work, community, and play, with a focus on intentional design, giving back locally, and making space for experimentation.",
+    },
+    {
+      company: "Yahtzee Scorecard",
+      role: "Weekend Project",
+      period: "Shipped",
+      url: "https://yahtzee-score-card.vercel.app/",
+      icon: "/projects/yahtzee-favicon.png",
+      description: "A digital scorecard I built to make Yahtzee scoring feel easier, faster, and more fun. I focused on clear UX, useful customization, and a new way to input dice that feels smoother than a paper sheet.",
+    },
     {
       company: "Freelance",
       role: "Product & Brand Designer",
-      period: "2026 – Present",
+      period: "2024 – 2026",
       url: "https://gageminamoto.com/",
       icon: "/icons/freelance.png",
-      description: "Helping Hawai'i businesses, local innovators and growing teams, build digital products that connect and speak to local communities and audiences. I build brand identities, design web and mobile products, and put together design systems. Running my own practice taught me how to scope work, talk to non-designers, and ship with real constraints.",
+      description: "Helping Hawaiʻi businesses, local builders, and growing teams make websites, brands, and product ideas feel more considered. It’s been a practical way to learn how to scope work, communicate clearly, and ship within real constraints.",
     },
     {
       company: "Becoming Impossible to Ignore",
       role: "UXHI Speaker",
       period: "2025",
-      url: "https://uxhiconference.com/",
+      url: "https://uxhiconference.com/conferences/2025/",
       icon: "/icons/uxhi.png",
       hoverImage: "/images/uxhi-hover.jpg",
-      description: "A talk about increasing your surface area for luck as a designer. Co-presented with Michelle at UXHI Conference 2025, I shared how side projects, genuine community involvement, and putting yourself out there create conditions where opportunities show up, with stories from both our careers breaking into UX in Hawai'i.",
+      description: "A talk Michelle and I gave about creating more opportunities through side projects, community, and sharing work publicly. It reflects a lot of how I think about growth: start small, stay visible, and keep making things.",
     },
     {
       company: "NVIDIA",
@@ -214,15 +252,15 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://www.nvidia.com/",
       icon: "/icons/nvidia.ico",
       hoverComponent: "nvidia",
-      description: "Understanding how generative AI models behave in the real world. I analyzed output quality across text and image generation and documented edge cases. It showed me that AI products are shaped by evaluation rigor, not just model size.",
+      description: "I worked in QA for generative AI systems, testing inputs, reviewing outputs, and helping identify edge cases and failure patterns. It gave me a close look at how sensitive these systems are to wording, context, and evaluation.",
     },
     {
       company: "University of Hawai'i Esports",
       role: "Creative Director",
       period: "2023 – 2025",
-      url: "https://uhesports.com/",
+      url: "https://www.instagram.com/uhesports/",
       hoverImage: "/uh-preview.jpg",
-      description: "Shaping the look and feel of collegiate esports at UH. I led an overhaul of UHE's brand with a whole new look, grew and managed a team of 4 designers, and created graphics for our collaboration with Activision Blizzard's production team. My first leadership role where I learned to set direction instead of doing everything myself.",
+      description: "I helped shape the visual identity of collegiate esports at UH through brand systems, match graphics, event assets, and team direction. It was an early turning point for me in learning how to lead design work, not just contribute to it.",
     },
     {
       company: "Umi Language Learning App",
@@ -231,7 +269,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://umiapp.co/",
       icon: "/icons/umi.png",
       hoverImage: "/images/umi-hover.jpg",
-      description: "Making Japanese language learning feel intuitive and encouraging. I researched with real learners, designed lesson flows and spaced repetition UI, and prototyped with 20+ users. Good education design means getting out of the learner's way.",
+      description: "A language learning project where I thought deeply about lessons, motivation, memory, and interface clarity. I tested flows with learners and worked to make the product feel supportive without getting in the way.",
     },
     {
       company: "Gen.G Esports",
@@ -240,7 +278,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       url: "https://geng.gg/",
       icon: "/icons/geng.png",
       hoverImage: "/images/geng-hover.gif",
-      description: "Design at a global esports org based in Seoul spanning Korean and North American teams. I made social graphics, campaign assets, and shipped content for League of Legends and Valorant. Working across cultures taught me to communicate visually when words aren't enough.",
+      description: "I worked in Seoul, then created graphics for Gen.G’s Western channels and social media. It gave me strong experience working across cultures and making design work that could translate clearly across different audiences.",
     },
     {
       company: "Servco",
@@ -248,7 +286,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "2023 – 2024",
       icon: "/icons/servco.png",
       hoverImage: "/images/servco-hover.gif",
-      description: "Brand and digital design for Hawai'i's largest private company. I worked on marketing across automotive and lifestyle brands, built digital campaigns and landing pages, and helped keep 10+ sub-brands visually consistent. My first corporate environment where I saw how design fits into bigger business goals.",
+      description: "My first experience designing within a larger company environment. I worked across automotive and lifestyle brands on campaigns and landing pages, and learned how much design depends on keeping complex systems coherent.",
       url: "https://www.servco.com/",
     },
   ],
