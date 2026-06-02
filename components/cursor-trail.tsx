@@ -101,7 +101,7 @@ export function CursorTrail() {
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
       cancelAnimationFrame(rafRef.current)
     }
-  }, [cursorTrailActive, shaderEnabled, prefersReducedMotion, isTouchDevice, hue])
+  }, [effectiveActive, prefersReducedMotion, isTouchDevice, hue])
 
   if (prefersReducedMotion || isTouchDevice) return null
 

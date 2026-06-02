@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 
@@ -25,6 +26,7 @@ export function HoverLink({
 }: HoverLinkProps) {
   const { setHoveredWorkId } = useWorkHover()
   const linkClassName = `group inline-flex items-center gap-1 text-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
+  const previewIsVideo = previewImage?.endsWith(".mp4")
 
   const handleSyncClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!syncWorkId) return
@@ -63,11 +65,26 @@ export function HoverLink({
           className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 scale-95 opacity-0 transition-[transform,opacity] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] origin-bottom group-hover/preview:scale-100 group-hover/preview:opacity-100 sm:block"
           style={{ width: 256, height: 144 }}
         >
-          <img
-            src={previewImage}
-            alt=""
-            className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
-          />
+          {previewIsVideo ? (
+            <video
+              src={previewImage}
+              aria-hidden="true"
+              className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <Image
+              src={previewImage}
+              alt=""
+              width={256}
+              height={144}
+              className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
+            />
+          )}
         </span>
       </span>
     )
