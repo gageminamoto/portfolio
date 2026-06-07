@@ -14,3 +14,7 @@ Personal portfolio site. Designer building everyday products, growing Hawai'i's 
 ## How it's built
 
 The site started in v0, then moved to GitHub where I use Claude and Conductor to make edits from there on. It runs on Next.js 16 and React 19, styled with Tailwind CSS and shadcn/ui components. Animations are handled with Framer Motion, and a few 3D touches use Three.js. Content comes from the Notion API. Deployed on Vercel.
+
+## Activity status
+
+The homepage presence card reads from `/api/activity`. By default it uses the latest GitHub commit activity for `gageminamoto`; set `ACTIVITY_LABEL` and/or `ACTIVITY_DETAIL` to override it manually. Optional manual fields are `ACTIVITY_STATUS` (`online`, `recent`, or `offline`), `ACTIVITY_SOURCE`, `ACTIVITY_URL`, and `ACTIVITY_UPDATED_AT`.

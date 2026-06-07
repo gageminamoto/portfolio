@@ -6,6 +6,7 @@ import { HamburgerMenu, Layers, Pen, Pin, Suitcase, UserCircle, Widget2 } from "
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
+import { ActivityStatus } from "@/components/activity-status"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
@@ -98,6 +99,7 @@ export function LayoutOne() {
             {name}
           </h1>
           <BioSection bio={bio} onWordChange={(word) => { setActiveWord(word) }} onUserClick={() => { setCursorTrailActive(true) }} />
+          <ActivityStatus />
         </div>
         <SocialIcons socials={socials} email={email} />
       </motion.header>
