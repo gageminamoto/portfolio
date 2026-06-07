@@ -12,6 +12,9 @@ const HUE_MAP: Record<string, number> = {
   software: 250,
   brands: 330,
   tools: 145,
+  "Interaction designer": 145,
+  "Software designer": 250,
+  "Experience designer": 330,
 }
 
 interface Point {

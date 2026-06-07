@@ -9,6 +9,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
 import { BioSection } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
+import { CursorTrail } from "@/components/cursor-trail"
+import { useGradientWord } from "@/components/gradient-word-context"
 import { portfolioData } from "@/lib/portfolio-data"
 import { TimelineSection } from "@/components/timeline-section"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
@@ -27,6 +29,7 @@ const PokemonCards = dynamic(
 export default function AboutPage() {
   const { extendedBio, hobbies, speaking, timeline } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
+  const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const { resolvedTheme } = useTheme()
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
@@ -55,7 +58,11 @@ export default function AboutPage() {
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           About
         </h1>
-        <BioSection bio={extendedBio} />
+        <BioSection
+          bio={extendedBio}
+          onWordChange={(word) => { setActiveWord(word) }}
+          onUserClick={() => { setCursorTrailActive(true) }}
+        />
         <button
           type="button"
           className="mt-2 w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
@@ -146,6 +153,7 @@ export default function AboutPage() {
       <motion.div variants={item}>
         <SiteFooter />
       </motion.div>
+      <CursorTrail />
     </motion.main>
   )
 }
