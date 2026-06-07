@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import type { NotionBlock } from "@/lib/notion"
@@ -55,6 +55,7 @@ export function TableOfContents({
 }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState("")
   const [open, setOpen] = useState(false)
+  const [pendingScrollId, setPendingScrollId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
@@ -110,12 +111,28 @@ export function TableOfContents({
     }
   }, [headings])
 
-  function handleClick(id: string) {
+  const scrollToHeading = useCallback((id: string) => {
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" })
     }
-    if (variant === "collapsible") setOpen(false)
+  }, [])
+
+  function handleClick(id: string) {
+    if (variant === "collapsible") {
+      setPendingScrollId(id)
+      setOpen(false)
+      return
+    }
+
+    scrollToHeading(id)
+  }
+
+  function handleMobileTocExitComplete() {
+    if (!pendingScrollId) return
+
+    scrollToHeading(pendingScrollId)
+    setPendingScrollId(null)
   }
 
   if (headings.length === 0) return null
@@ -168,7 +185,7 @@ export function TableOfContents({
             }`}
           />
         </button>
-        <AnimatePresence initial={false}>
+        <AnimatePresence initial={false} onExitComplete={handleMobileTocExitComplete}>
           {open && (
             <motion.div
               key="mobile-toc-content"
