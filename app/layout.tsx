@@ -63,7 +63,7 @@ export default function RootLayout({
             <CommandKProvider>
               <GradientOverlay />
               <div
-                className="pointer-events-none fixed inset-x-0 top-0 z-20 h-28 bg-gradient-to-b from-background via-background/45 to-transparent md:hidden"
+                className="pointer-events-none fixed inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-background via-background/35 to-transparent md:hidden"
                 aria-hidden="true"
               />
               {children}
