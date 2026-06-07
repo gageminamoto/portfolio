@@ -13,6 +13,7 @@ import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
+const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION === "true"
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',
@@ -72,7 +73,7 @@ export default function RootLayout({
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
-        {process.env.NODE_ENV === "development" && (
+        {process.env.NODE_ENV === "development" && enableAgentation && (
           <Agentation endpoint="http://localhost:4747" />
         )}
         {process.env.NODE_ENV === "development" && <DialRoot />}
