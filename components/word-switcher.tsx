@@ -6,17 +6,39 @@ import { useGradientWord } from "@/components/gradient-word-context"
 import { useTouchDevice } from "@/hooks/use-mobile"
 import { useClickSound } from "@/hooks/use-click-sound"
 
+const WORD_THEME_ALIASES: Record<string, string> = {
+  "Interaction designer": "tools",
+  "Software designer": "software",
+  "Experience designer": "brands",
+  "an interaction designer": "tools",
+  "a software designer": "software",
+  "an experience designer": "brands",
+}
+
 interface WordSwitcherProps {
   options: string[]
   onWordChange?: (word: string) => void
   onUserClick?: (word: string) => void
 }
 
+function getThemeKey(word: string) {
+  return WORD_THEME_ALIASES[word] ?? word
+}
+
+function getActiveIndex(options: string[], activeWord: string) {
+  const activeThemeKey = getThemeKey(activeWord)
+  return options.findIndex((option) => getThemeKey(option) === activeThemeKey)
+}
+
 export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitcherProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const selected = options[selectedIndex]
   const prefersReducedMotion = useReducedMotion()
-  const { shaderEnabled } = useGradientWord()
+  const { activeWord, shaderEnabled } = useGradientWord()
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    const activeIndex = getActiveIndex(options, activeWord)
+    return activeIndex >= 0 ? activeIndex : 0
+  })
+  const selectedIndexRef = useRef(selectedIndex)
+  const selected = options[selectedIndex]
   const isTouchDevice = useTouchDevice()
   const effectsDisabled = prefersReducedMotion || !shaderEnabled
 
@@ -51,6 +73,14 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
   onWordChangeRef.current = onWordChange
 
   useEffect(() => {
+    const activeIndex = getActiveIndex(options, activeWord)
+    if (activeIndex >= 0) {
+      selectedIndexRef.current = activeIndex
+      setSelectedIndex(activeIndex)
+    }
+  }, [activeWord, options])
+
+  useEffect(() => {
     if (effectsDisabled) {
       setShowUnderline(true)
       return
@@ -64,7 +94,8 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
       cycleTimers.push(
         setTimeout(() => {
           if (!hasInteracted.current) {
-            const nextIndex = (i + 1) % options.length
+            const nextIndex = (selectedIndexRef.current + 1) % options.length
+            selectedIndexRef.current = nextIndex
             setSelectedIndex(nextIndex)
             onWordChangeRef.current?.(options[nextIndex])
           }
@@ -83,7 +114,8 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
   const handleToggle = () => {
     hasInteracted.current = true
     playClick()
-    const nextIndex = (selectedIndex + 1) % options.length
+    const nextIndex = (selectedIndexRef.current + 1) % options.length
+    selectedIndexRef.current = nextIndex
     setSelectedIndex(nextIndex)
     onWordChange?.(options[nextIndex])
     onUserClick?.(options[nextIndex])

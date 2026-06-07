@@ -8,6 +8,12 @@ const THEME_HUES: Record<string, { hue: number; chroma: number }> = {
   software: { hue: 250, chroma: 0.14 },
   brands:   { hue: 330, chroma: 0.15 },
   tools:    { hue: 145, chroma: 0.17 },
+  "Interaction designer": { hue: 145, chroma: 0.17 },
+  "Software designer": { hue: 250, chroma: 0.14 },
+  "Experience designer": { hue: 330, chroma: 0.15 },
+  "an interaction designer": { hue: 145, chroma: 0.17 },
+  "a software designer": { hue: 250, chroma: 0.14 },
+  "an experience designer": { hue: 330, chroma: 0.15 },
 }
 
 const GradientWordContext = createContext<{
