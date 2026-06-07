@@ -12,9 +12,6 @@ const GRADIENT_CONFIG = {
   "Interaction designer": { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
   "Software designer": { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
   "Experience designer": { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  "an interaction designer": { hue: 145, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  "a software designer": { hue: 250, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
-  "an experience designer": { hue: 330, lightL: 0.95, lightS: 0.05, darkL: 0.35, darkS: 0.15 },
 } as const
 
 

@@ -15,9 +15,6 @@ const HUE_MAP: Record<string, number> = {
   "Interaction designer": 145,
   "Software designer": 250,
   "Experience designer": 330,
-  "an interaction designer": 145,
-  "a software designer": 250,
-  "an experience designer": 330,
 }
 
 interface Point {

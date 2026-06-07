@@ -10,9 +10,6 @@ const WORD_THEME_ALIASES: Record<string, string> = {
   "Interaction designer": "tools",
   "Software designer": "software",
   "Experience designer": "brands",
-  "an interaction designer": "tools",
-  "a software designer": "software",
-  "an experience designer": "brands",
 }
 
 interface WordSwitcherProps {
