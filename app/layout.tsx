@@ -13,7 +13,7 @@ import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
-const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION === "true"
+const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION !== "false"
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',
