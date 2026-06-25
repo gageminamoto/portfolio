@@ -22,6 +22,8 @@ const workItems: WorkItem[] = [
   { name: "Servco", url: "https://www.servco.com/", image: "/images/servco-hover.gif", type: "Brand" },
 ]
 
+const WORK_EDGE_BLEED_PX = 16
+
 function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -122,17 +124,23 @@ export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onCha
 
 function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey: string }) {
   const shouldReduceMotion = useReducedMotion()
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
   const [bleedMetrics, setBleedMetrics] = useState({ left: 0, right: 0, width: 0 })
   const railStyle = {
     "--work-start-inset": `${bleedMetrics.left}px`,
     "--work-end-inset": `${bleedMetrics.right}px`,
+    "--work-edge-bleed": `${WORK_EDGE_BLEED_PX}px`,
     "--work-viewport-width": bleedMetrics.width ? `${bleedMetrics.width}px` : "100%",
+    marginLeft: `-${bleedMetrics.left + WORK_EDGE_BLEED_PX}px`,
+    width: bleedMetrics.width
+      ? `${bleedMetrics.width + WORK_EDGE_BLEED_PX * 2}px`
+      : `calc(100% + ${WORK_EDGE_BLEED_PX * 2}px)`,
   } as CSSProperties
 
   useLayoutEffect(() => {
-    const rail = railRef.current
-    const parent = rail?.parentElement
+    const wrapper = wrapperRef.current
+    const parent = wrapper?.parentElement
     if (!parent) return
 
     const updateInset = () => {
@@ -168,14 +176,16 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
 
   return (
     <div
-      className="-ml-[var(--work-start-inset)] w-[var(--work-viewport-width)] max-w-[100vw] overflow-x-clip overflow-y-visible"
+      ref={wrapperRef}
+      className="overflow-x-visible overflow-y-visible"
       style={railStyle}
     >
       <AnimatePresence mode="wait">
         <motion.div
           ref={railRef}
           key={filterKey}
-          className="-mt-2 flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-pl-[var(--work-start-inset)] scroll-pr-[var(--work-end-inset)] pb-1 pl-[var(--work-start-inset)] pr-[var(--work-end-inset)] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          data-work-carousel-rail="true"
+          className="-mt-2 flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-pl-[calc(var(--work-start-inset)+var(--work-edge-bleed))] scroll-pr-[calc(var(--work-end-inset)+var(--work-edge-bleed))] pb-1 pl-[calc(var(--work-start-inset)+var(--work-edge-bleed))] pr-[calc(var(--work-end-inset)+var(--work-edge-bleed))] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
