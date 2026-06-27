@@ -166,9 +166,9 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
               <nav className="flex items-center justify-between">
                 <Link
                   href={backHref}
-                  className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+                  className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
                 >
-                  <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                  <ChevronLeft className="h-3.5 w-3.5 transition-transform duration-150 ease-out group-hover:-translate-x-0.5" aria-hidden="true" />
                   {backLabel}
                 </Link>
                 <div className="flex items-center gap-1" aria-label="Article actions">
