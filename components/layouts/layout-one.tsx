@@ -86,7 +86,7 @@ export function LayoutOne() {
     <WorkHoverProvider>
     <motion.main
       id="main-content"
-      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-8 px-6 py-16 md:py-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-12 px-6 py-16 md:gap-14 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -156,26 +156,20 @@ export function LayoutOne() {
         )}
       </motion.section>
 
-      {/* About */}
-      <motion.div variants={item}>
+      {/* Details */}
+      <motion.div variants={item} className="flex flex-col gap-8">
         <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
           <p className="text-sm text-muted-foreground">
             More about me.
           </p>
         </Section>
-      </motion.div>
 
-      {/* Tools */}
-      <motion.div variants={item}>
         <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
           <p className="text-sm text-muted-foreground">
             Everything I build with.
           </p>
         </Section>
-      </motion.div>
 
-      {/* Writing — Notion CMS */}
-      <motion.div variants={item}>
         <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
           <WritingSection variant="default" />
         </Section>
