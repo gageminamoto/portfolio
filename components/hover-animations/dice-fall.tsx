@@ -3,6 +3,7 @@
 import { useRef, useMemo, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useReducedMotion } from "framer-motion"
+import type { Group } from "three"
 import { Dice3D } from "./dice-3d"
 
 function pseudoRandom(seed: number) {
@@ -19,7 +20,7 @@ function FallingDie({
   delay: number
   seed: number
 }) {
-  const meshRef = useRef<THREE.Group>(null)
+  const meshRef = useRef<Group>(null)
   const [started, setStarted] = useState(false)
   const startedRef = useRef(false)
   const landedRef = useRef(false)
