@@ -1,6 +1,6 @@
 "use client"
 
-import { type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { type CSSProperties, type ReactNode, type TouchEvent, type WheelEvent, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { ArrowDown, ArrowUp, ExternalLink, X } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -257,6 +257,9 @@ function ProjectDetailDrawer({
   hasPrevious: boolean
   hasNext: boolean
 }) {
+  const wheelOverscrollDistanceRef = useRef(0)
+  const touchStartYRef = useRef<number | null>(null)
+
   useEffect(() => {
     if (!open) return
 
@@ -287,6 +290,50 @@ function ProjectDetailDrawer({
     }
   }, [hasNext, hasPrevious, onNext, onPrevious, open])
 
+  useEffect(() => {
+    if (!open) {
+      wheelOverscrollDistanceRef.current = 0
+      touchStartYRef.current = null
+    }
+  }, [open])
+
+  const closeFromTopOverscroll = () => {
+    wheelOverscrollDistanceRef.current = 0
+    touchStartYRef.current = null
+    onOpenChange(false)
+  }
+
+  const handleScrollContainerWheel = (event: WheelEvent<HTMLDivElement>) => {
+    const isAtTop = event.currentTarget.scrollTop <= 0
+
+    if (!isAtTop || event.deltaY >= 0) {
+      wheelOverscrollDistanceRef.current = 0
+      return
+    }
+
+    wheelOverscrollDistanceRef.current += Math.abs(event.deltaY)
+
+    if (wheelOverscrollDistanceRef.current >= 48) {
+      event.preventDefault()
+      closeFromTopOverscroll()
+    }
+  }
+
+  const handleScrollContainerTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    touchStartYRef.current = event.touches[0]?.clientY ?? null
+  }
+
+  const handleScrollContainerTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    const touchStartY = touchStartYRef.current
+    const currentY = event.touches[0]?.clientY
+
+    if (touchStartY === null || currentY === undefined || event.currentTarget.scrollTop > 0) return
+
+    if (currentY - touchStartY >= 64) {
+      closeFromTopOverscroll()
+    }
+  }
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="overflow-hidden border-border bg-card p-0 shadow-2xl [&>div:first-child]:hidden data-[vaul-drawer-direction=bottom]:inset-x-2 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mx-auto data-[vaul-drawer-direction=bottom]:max-h-[86dvh] data-[vaul-drawer-direction=bottom]:max-w-7xl data-[vaul-drawer-direction=bottom]:rounded-b-none data-[vaul-drawer-direction=bottom]:rounded-t-3xl sm:data-[vaul-drawer-direction=bottom]:inset-x-6 sm:data-[vaul-drawer-direction=bottom]:max-h-[calc(100dvh-1.5rem)]">
@@ -316,7 +363,10 @@ function ProjectDetailDrawer({
         </DrawerClose>
         <div
           key={item.name}
-          className="grid max-h-[86dvh] gap-8 overflow-y-auto p-5 sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10"
+          className="grid max-h-[86dvh] gap-8 overflow-y-auto p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10 [&::-webkit-scrollbar]:hidden"
+          onTouchMove={handleScrollContainerTouchMove}
+          onTouchStart={handleScrollContainerTouchStart}
+          onWheel={handleScrollContainerWheel}
         >
           <div className="order-2 space-y-5 lg:order-1">
             {item.caseStudyImages?.length
