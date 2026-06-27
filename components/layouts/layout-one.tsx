@@ -2,82 +2,23 @@
 
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { HamburgerMenu, Layers, Pen, Pin, Suitcase, UserCircle, Widget2 } from "@solar-icons/react"
+import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
-import { ProjectCard, ProjectStatusBadge } from "@/components/project-card"
+import { ProjectCard } from "@/components/project-card"
 import { WorkSection, WorkFilterTabs, type WorkFilter } from "@/components/work-section"
 import { WorkHoverProvider } from "@/components/work-hover-context"
 import { useGradientWord } from "@/components/gradient-word-context"
-import { GitHubIcon } from "@/components/social-icons"
 import { CursorTrail } from "@/components/cursor-trail"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
-import type { ProjectItem } from "@/lib/portfolio-data"
-
-function ProjectListItem({ project }: { project: ProjectItem }) {
-  const isGuandan = project.name === "Guandan Rules"
-  const isInteractive = Boolean(project.url)
-
-  return (
-    <div
-      className={`group relative flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-[transform,background-color,border-color,box-shadow] duration-150 [transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)]${
-        isInteractive ? " hover:-translate-y-px hover:bg-accent/50 hover:shadow-sm" : ""
-      }`}
-    >
-      {project.url && (
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute inset-0 z-0 rounded-xl"
-          aria-label={project.name}
-          tabIndex={0}
-        />
-      )}
-        <ProjectStatusBadge status={project.status} />
-        {isGuandan ? (
-          <div className="flex size-8 shrink-0 items-center justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/projects/guandian-rules-logo.svg"
-              alt=""
-              className="h-4 w-auto"
-            />
-          </div>
-        ) : (
-          project.favicon && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={project.favicon} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
-          )
-        )}
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="text-sm font-medium text-foreground">{project.name}</span>
-          <span className="truncate text-xs text-muted-foreground">{project.description}</span>
-        </div>
-        {project.githubUrl && (
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="relative z-10 shrink-0 rounded-md p-1.5 text-muted-foreground/50 transition-colors hover:text-foreground"
-            aria-label={`${project.name} on GitHub`}
-          >
-            <GitHubIcon className="size-4" />
-          </a>
-        )}
-    </div>
-  )
-}
 
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
-  const [projectView, setProjectView] = useState<"list" | "card">("card")
   const [workFilter, setWorkFilter] = useState<WorkFilter>(null)
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
@@ -123,37 +64,18 @@ export function LayoutOne() {
             <Pin size={14} weight="Bold" />
             Projects
           </h2>
-          <button
-            onClick={() => setProjectView(projectView === "list" ? "card" : "list")}
-            className="rounded-md p-1 text-muted-foreground/50 transition-[color,transform] hover:text-muted-foreground active:scale-[0.97]"
-            aria-label={projectView === "list" ? "Switch to card view" : "Switch to list view"}
-          >
-            {projectView === "list" ? (
-              <Widget2 size={14} weight="Bold" />
-            ) : (
-              <HamburgerMenu size={14} weight="Bold" />
-            )}
-          </button>
         </div>
 
-        {projectView === "list" ? (
-          <div className="flex flex-col gap-2">
-            {projects.map((project) => (
-              <ProjectListItem key={project.name} project={project} />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {projects.map((project, index) => (
-              <ProjectCard
-                key={project.name}
-                project={project}
-                index={index}
-                guandanVariant="cards"
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {projects.map((project, index) => (
+            <ProjectCard
+              key={project.name}
+              project={project}
+              index={index}
+              guandanVariant="cards"
+            />
+          ))}
+        </div>
       </motion.section>
 
       {/* Details */}
