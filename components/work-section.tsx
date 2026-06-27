@@ -4,6 +4,7 @@ import { type CSSProperties, type ReactNode, type TouchEvent, type WheelEvent, u
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { ArrowDown, ArrowUp, ExternalLink, X } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -12,6 +13,7 @@ import {
   DrawerDescription,
   DrawerTitle,
 } from "@/components/ui/drawer"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 
 interface WorkItem {
@@ -21,9 +23,15 @@ interface WorkItem {
   type: string
   description: string
   outcome: string
-  credits: string
+  contributors: Contributor[]
   techStack: string
   caseStudyImages?: string[]
+}
+
+interface Contributor {
+  name: string
+  avatarUrl?: string
+  url?: string
 }
 
 const workItems: WorkItem[] = [
@@ -34,7 +42,14 @@ const workItems: WorkItem[] = [
     type: "Product",
     description: "A recipe tool for saving online recipes, organizing what to cook, and making phone-based cooking feel clearer and less cluttered.",
     outcome: "Defined the core product experience, interaction model, and visual direction for a simpler cooking workflow.",
-    credits: "Gage Minamoto, Michelle Tran, Mizen contributors",
+    contributors: [
+      { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", url: "https://linkedin.com/in/gageminamoto" },
+      { name: "Michelle Tran", avatarUrl: "/avatars/michelle.png", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
+      { name: "Michele Tang", avatarUrl: "/avatars/michele-tang.jpg", url: "https://www.linkedin.com/in/michele-tang/" },
+      { name: "Zelda Cole", avatarUrl: "/avatars/zelda.jpg", url: "https://www.linkedin.com/in/zeldacole" },
+      { name: "William Liang", avatarUrl: "/avatars/william.jpg", url: "https://www.linkedin.com/in/william-liang808/" },
+      { name: "Rahul Jain", avatarUrl: "/avatars/rahul.jpg", url: "https://www.linkedin.com/in/rahulj24/" },
+    ],
     techStack: "Next.js, React, TypeScript, recipe parsing",
     caseStudyImages: [
       "/images/mizen/1477.webp",
@@ -53,7 +68,7 @@ const workItems: WorkItem[] = [
     type: "Product",
     description: "A financial wellness platform for employees, with product surfaces for planning, budgeting, investing, retirement guidance, and money education.",
     outcome: "Designed product surfaces, clarified information hierarchy, and supported a more polished web presence.",
-    credits: "Negi Studio",
+    contributors: [{ name: "Negi Studio" }],
     techStack: "Product design, web design, design systems",
     caseStudyImages: [
       "/images/aura/01.webp",
@@ -70,7 +85,7 @@ const workItems: WorkItem[] = [
     type: "Brand",
     description: "A Honolulu work club brand for people building in Hawaiʻi, shaped around focus, hospitality, community, and a more intentional workday.",
     outcome: "Created a flexible identity direction that can extend across digital, print, and physical touchpoints.",
-    credits: "Negi Studio",
+    contributors: [{ name: "Negi Studio" }],
     techStack: "Brand identity, art direction, web",
     caseStudyImages: [
       "/images/piiku/01.webp",
@@ -88,7 +103,7 @@ const workItems: WorkItem[] = [
     type: "Product",
     description: "A language learning app that teaches vocabulary, listening, and reading through short TV and movie clips from native speakers.",
     outcome: "Explored the UX and UI for bite-sized learning, daily goals, audio practice, and learner feedback.",
-    credits: "Negi Studio",
+    contributors: [{ name: "Negi Studio" }],
     techStack: "Product design, mobile UX, prototyping",
     caseStudyImages: [
       "/images/umi/01.webp",
@@ -105,7 +120,10 @@ const workItems: WorkItem[] = [
     type: "Brand",
     description: "A Hawaiʻi nonprofit helping local talent build tech careers through paid internships, workforce programs, speaker series, and community infrastructure.",
     outcome: "Built a public identity and web presence that supports community growth and recurring programming.",
-    credits: "Piʻiku team, Gage Minamoto",
+    contributors: [
+      { name: "Piʻiku team" },
+      { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", url: "https://linkedin.com/in/gageminamoto" },
+    ],
     techStack: "Brand, community, web",
     caseStudyImages: [
       "/images/kilo/01.webp",
@@ -122,7 +140,7 @@ const workItems: WorkItem[] = [
     type: "Web",
     description: "A website for a boutique venture firm backing purpose-led founders using technology to pursue healthy, sustainable, and fulfilling futures.",
     outcome: "Shaped a web experience with clearer narrative flow, portfolio presentation, and structured content.",
-    credits: "Negi Studio",
+    contributors: [{ name: "Negi Studio" }],
     techStack: "Web design, content structure, frontend",
     caseStudyImages: [
       "/images/spero/01.webp",
@@ -137,7 +155,7 @@ const workItems: WorkItem[] = [
     type: "Brand",
     description: "Brand and marketing support for a membership software platform that helps creators and digital businesses sell memberships, courses, communities, and gated content from their own websites.",
     outcome: "Supported visual direction and marketing surfaces with a warmer, clearer product presentation.",
-    credits: "Negi Studio",
+    contributors: [{ name: "Negi Studio" }],
     techStack: "Brand, marketing design, SaaS",
     caseStudyImages: [
       "/images/memberspace/01.webp",
@@ -153,7 +171,10 @@ const workItems: WorkItem[] = [
     type: "Brand",
     description: "Brand and digital work for Hawaiʻi's largest private company, spanning automotive products and services, musical instruments, commercial products, and community-facing initiatives.",
     outcome: "Produced design assets and digital surfaces that aligned with existing brand standards and campaign needs.",
-    credits: "Servco, Gage Minamoto",
+    contributors: [
+      { name: "Servco", avatarUrl: "/icons/servco.png", url: "https://www.servco.com/" },
+      { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", url: "https://linkedin.com/in/gageminamoto" },
+    ],
     techStack: "Brand systems, campaign design, web",
     caseStudyImages: [
       "/images/servco/01.webp",
@@ -231,12 +252,77 @@ function DrawerCaseStudyMedia({ src, item, index }: { src: string; item: WorkIte
 
 function ProjectDetailBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <AccordionItem value={title} className="rounded-lg border-0 bg-muted/70 px-4 text-sm">
-      <AccordionTrigger className="cursor-pointer py-3 text-xs font-medium tracking-normal text-foreground/70 hover:no-underline">
+    <AccordionItem
+      value={title}
+      className="rounded-lg border-0 bg-muted/70 px-4 text-sm transition-colors duration-150 ease hover:bg-muted"
+    >
+      <AccordionTrigger className="cursor-pointer py-3 text-xs font-medium tracking-normal text-black hover:no-underline">
         {title}
       </AccordionTrigger>
       <AccordionContent className="pb-3 leading-6 text-muted-foreground">{children}</AccordionContent>
     </AccordionItem>
+  )
+}
+
+function contributorInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("")
+}
+
+function ContributorAvatar({ contributor, className }: { contributor: Contributor; className?: string }) {
+  return (
+    <Avatar className={`size-8 border-2 border-card bg-muted ${className ?? ""}`}>
+      {contributor.avatarUrl ? (
+        <AvatarImage src={contributor.avatarUrl} alt={contributor.name} className="object-cover" />
+      ) : null}
+      <AvatarFallback className="text-[10px] font-medium text-muted-foreground">
+        {contributorInitials(contributor.name)}
+      </AvatarFallback>
+    </Avatar>
+  )
+}
+
+function ContributorCredit({ contributors }: { contributors: Contributor[] }) {
+  const visibleContributors = contributors.slice(0, 4)
+  const remainingCount = contributors.length - visibleContributors.length
+  const contributorNames = contributors.map((contributor) => contributor.name).join(", ")
+  const remainingNames = contributors.slice(visibleContributors.length).map((contributor) => contributor.name).join(", ")
+
+  return (
+    <div className="flex shrink-0 -space-x-2" aria-label={`Contributors: ${contributorNames}`}>
+      {visibleContributors.map((contributor) => (
+        <Tooltip key={contributor.name}>
+          <TooltipTrigger asChild>
+            {contributor.url ? (
+              <a href={contributor.url} target="_blank" rel="noopener noreferrer" aria-label={contributor.name}>
+                <ContributorAvatar contributor={contributor} />
+              </a>
+            ) : (
+              <span className="inline-flex" tabIndex={0} aria-label={contributor.name}>
+                <ContributorAvatar contributor={contributor} />
+              </span>
+            )}
+          </TooltipTrigger>
+          <TooltipContent sideOffset={6}>{contributor.name}</TooltipContent>
+        </Tooltip>
+      ))}
+      {remainingCount > 0 ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-flex" tabIndex={0} aria-label={remainingNames}>
+              <Avatar className="size-8 border-2 border-card bg-muted">
+                <AvatarFallback className="text-[10px] font-medium text-muted-foreground">+{remainingCount}</AvatarFallback>
+              </Avatar>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent sideOffset={6}>{remainingNames}</TooltipContent>
+        </Tooltip>
+      ) : null}
+    </div>
   )
 }
 
@@ -380,15 +466,22 @@ function ProjectDetailDrawer({
           <aside className="order-1 lg:sticky lg:top-8 lg:order-2 lg:h-fit">
             <div className="space-y-7 pb-3 lg:pb-0 lg:pr-2">
               <div className="space-y-3 pr-10 lg:pr-0">
-                <DrawerTitle className="text-2xl font-semibold tracking-normal text-foreground">{item.name}</DrawerTitle>
-                <DrawerDescription className="text-base leading-7 text-foreground/85">{item.description}</DrawerDescription>
+                <div className="space-y-1">
+                  <DrawerTitle className="text-2xl font-semibold tracking-normal text-foreground">{item.name}</DrawerTitle>
+                  <h3 className="text-2xl font-normal tracking-normal text-muted-foreground">{item.type}</h3>
+                </div>
+                <DrawerDescription className="text-base leading-7 text-muted-foreground">{item.description}</DrawerDescription>
               </div>
+              <ContributorCredit contributors={item.contributors} />
               <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
                 <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
-                <ProjectDetailBlock title="Credits">{item.credits}</ProjectDetailBlock>
                 <ProjectDetailBlock title="Tech stack">{item.techStack}</ProjectDetailBlock>
               </Accordion>
-              <Button asChild variant="secondary">
+              <Button
+                asChild
+                variant="secondary"
+                className="bg-muted/70 transition-colors duration-150 ease hover:bg-muted"
+              >
                 <a href={item.url} target="_blank" rel="noopener noreferrer">
                   Visit project
                   <ExternalLink className="size-3.5" aria-hidden="true" />
