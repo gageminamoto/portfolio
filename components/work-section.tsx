@@ -155,7 +155,7 @@ const workItems: WorkItem[] = [
     outcome: "Implemented the brand into a production-ready web experience that presents Spero’s purpose-led investment thesis and portfolio with clarity and polish.",
     contributors: [
       { name: "Hana Nanako", avatarUrl: "/avatars/hana-nanako.png" },
-      { name: "Goodside Studio", url: "https://www.goodside.studio/" },
+      { name: "Goodside Studio", avatarUrl: "/avatars/goodside-studio.png", url: "https://www.goodside.studio/" },
       { name: "Evan Nagle", avatarUrl: "/avatars/evan-nagle.png", url: "https://wordpress.stackexchange.com/users/14032/evan-nagle" },
     ],
     techStack: "Web design, content structure, frontend",
