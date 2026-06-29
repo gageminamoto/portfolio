@@ -12,6 +12,9 @@ const WORD_THEME_ALIASES: Record<string, string> = {
   "Experience designer": "brands",
 }
 
+const UNDERLINE_REVEAL_DELAY = 2000
+const SWITCH_INTERVAL = 5000
+
 interface WordSwitcherProps {
   options: string[]
   onWordChange?: (word: string) => void
@@ -65,6 +68,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
   }, [options])
 
   const [showUnderline, setShowUnderline] = useState(!!effectsDisabled)
+  const [progressKey, setProgressKey] = useState(0)
   const hasInteracted = useRef(false)
   const onWordChangeRef = useRef(onWordChange)
   onWordChangeRef.current = onWordChange
@@ -82,26 +86,27 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
       setShowUnderline(true)
       return
     }
-    const underlineTimer = setTimeout(() => setShowUnderline(true), 2000)
+    const underlineTimer = setTimeout(() => {
+      setProgressKey((key) => key + 1)
+      setShowUnderline(true)
+    }, UNDERLINE_REVEAL_DELAY)
     if (isTouchDevice) return () => clearTimeout(underlineTimer)
-    const cycleTimers: ReturnType<typeof setTimeout>[] = []
-    const startDelay = 3500
-    const interval = 5000
-    for (let i = 0; i < options.length; i++) {
-      cycleTimers.push(
-        setTimeout(() => {
-          if (!hasInteracted.current) {
-            const nextIndex = (selectedIndexRef.current + 1) % options.length
-            selectedIndexRef.current = nextIndex
-            setSelectedIndex(nextIndex)
-            onWordChangeRef.current?.(options[nextIndex])
-          }
-        }, startDelay + i * interval)
-      )
+    let cycleTimer: ReturnType<typeof setTimeout>
+    const advanceWord = () => {
+      if (hasInteracted.current) return
+
+      const nextIndex = (selectedIndexRef.current + 1) % options.length
+      selectedIndexRef.current = nextIndex
+      setSelectedIndex(nextIndex)
+      onWordChangeRef.current?.(options[nextIndex])
+      setProgressKey((key) => key + 1)
+      cycleTimer = setTimeout(advanceWord, SWITCH_INTERVAL)
     }
+
+    cycleTimer = setTimeout(advanceWord, UNDERLINE_REVEAL_DELAY + SWITCH_INTERVAL)
     return () => {
       clearTimeout(underlineTimer)
-      cycleTimers.forEach(clearTimeout)
+      clearTimeout(cycleTimer)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectsDisabled, isTouchDevice])
@@ -114,6 +119,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
     const nextIndex = (selectedIndexRef.current + 1) % options.length
     selectedIndexRef.current = nextIndex
     setSelectedIndex(nextIndex)
+    setProgressKey((key) => key + 1)
     onWordChange?.(options[nextIndex])
     onUserClick?.(options[nextIndex])
   }
@@ -135,7 +141,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
 
       <button
         onClick={handleToggle}
-        className={`inline-flex items-center rounded-md px-1 -mx-1 text-foreground underline decoration-dashed underline-offset-[3px] cursor-pointer transition-[text-decoration-color] duration-700 ease-out ${showUnderline ? "decoration-muted-foreground/50 hover:decoration-primary" : "decoration-transparent"}`}
+        className="group relative inline-flex items-center rounded-md px-1 -mx-1 text-foreground cursor-pointer"
       >
         <motion.span
           className="inline-flex overflow-hidden"
@@ -159,6 +165,19 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
             </motion.span>
           </AnimatePresence>
         </motion.span>
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute inset-x-1 bottom-[1px] h-0.5 overflow-hidden rounded-full transition-opacity duration-700 ease-out ${showUnderline ? "opacity-100" : "opacity-0"}`}
+        >
+          <span className="absolute inset-0 rounded-full bg-muted-foreground/25 transition-colors duration-150 group-hover:bg-primary/25" />
+          <motion.span
+            key={progressKey}
+            className="absolute inset-y-0 left-0 w-full origin-left rounded-full bg-muted-foreground/75 transition-colors duration-150 group-hover:bg-primary"
+            initial={{ scaleX: effectsDisabled || hasInteracted.current ? 1 : 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: effectsDisabled || hasInteracted.current ? 0 : SWITCH_INTERVAL / 1000, ease: "linear" }}
+          />
+        </span>
       </button>
     </>
   )
