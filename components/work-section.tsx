@@ -69,7 +69,7 @@ const workItems: WorkItem[] = [
     description: "Aura is an employee financial wellness platform that helps people plan, budget, invest, prepare for retirement, and build healthier money habits through education and coaching.",
     outcome: "Designed onboarding, daily check-ins, and a new design system focused on clarity, trust, scalability, and a calmer financial experience.",
     contributors: [
-      { name: "Carlo Liquido", url: "https://www.linkedin.com/in/carloliquido" },
+      { name: "Carlo Liquido", avatarUrl: "/avatars/carlo-liquido.jpg", url: "https://www.linkedin.com/in/carloliquido" },
       { name: "Courtney Cardin", avatarUrl: "/avatars/courtney-cardin.png", url: "https://aurafinance.io/about" },
       { name: "Lizzie" },
     ],
@@ -113,7 +113,7 @@ const workItems: WorkItem[] = [
     contributors: [
       { name: "Michelle Tran", avatarUrl: "/avatars/michelle.png", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
       { name: "Mele Hamasaki", avatarUrl: "/avatars/mele-hamasaki.jpg", url: "https://www.framer.com/@melehamasaki/" },
-      { name: "Jason" },
+      { name: "Jason", avatarUrl: "/avatars/jason.png" },
       { name: "Stan" },
       { name: "Laurie" },
     ],
@@ -155,7 +155,7 @@ const workItems: WorkItem[] = [
     outcome: "Implemented the brand into a production-ready web experience that presents Spero’s purpose-led investment thesis and portfolio with clarity and polish.",
     contributors: [
       { name: "Hana Nanako", avatarUrl: "/avatars/hana-nanako.png" },
-      { name: "Brand Studio" },
+      { name: "Goodside Studio", url: "https://www.goodside.studio/" },
       { name: "Evan Nagle", avatarUrl: "/avatars/evan-nagle.png", url: "https://wordpress.stackexchange.com/users/14032/evan-nagle" },
     ],
     techStack: "Web design, content structure, frontend",
