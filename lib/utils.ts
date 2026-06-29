@@ -14,3 +14,7 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "")
     || "untitled"
 }
+
+export function caseStudySlug(text: string): string {
+  return slugify(text.replace(/[ʻ‘’']/g, ""))
+}

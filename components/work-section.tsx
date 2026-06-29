@@ -1,8 +1,8 @@
 "use client"
 
-import { type CSSProperties, type ReactNode, type TouchEvent, type WheelEvent, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { type CSSProperties, type MouseEvent, type ReactNode, type TouchEvent, type WheelEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { ArrowDown, ArrowUp, ExternalLink, X } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpRight, X } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/drawer"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
+import { caseStudySlug } from "@/lib/utils"
 
 interface WorkItem {
   name: string
@@ -25,13 +26,25 @@ interface WorkItem {
   outcome: string
   contributors: Contributor[]
   techStack: string
-  caseStudyImages?: string[]
+  caseStudyImages?: CaseStudyMedia[]
 }
 
 interface Contributor {
   name: string
   avatarUrl?: string
   url?: string
+}
+
+type CaseStudyImageAspectRatio = "video" | "square"
+
+type CaseStudyImage = string | {
+  src: string
+  aspectRatio?: CaseStudyImageAspectRatio
+}
+
+type CaseStudyMedia = CaseStudyImage | {
+  layout: "two-up"
+  images: [CaseStudyImage, CaseStudyImage]
 }
 
 const workItems: WorkItem[] = [
@@ -122,8 +135,13 @@ const workItems: WorkItem[] = [
       "/images/umi/01.webp",
       "/images/umi/02.webp",
       "/images/umi/03.webp",
-      "/images/umi/04.webp",
-      "/images/umi/05.webp",
+      {
+        layout: "two-up",
+        images: [
+          { src: "/images/umi/04.webp", aspectRatio: "square" },
+          { src: "/images/umi/05.webp", aspectRatio: "square" },
+        ],
+      },
     ],
   },
   {
@@ -205,6 +223,50 @@ const workItems: WorkItem[] = [
 ]
 
 const WORK_EDGE_BLEED_PX = 16
+const CASE_STUDY_HASH_PREFIX = "#work/"
+const caseStudyMediaAspectRatioClasses: Record<CaseStudyImageAspectRatio, string> = {
+  video: "aspect-video",
+  square: "aspect-square",
+}
+
+function caseStudyHref(item: WorkItem) {
+  return `/#work/${caseStudySlug(item.name)}`
+}
+
+function caseStudySlugFromHash(hash: string) {
+  if (!hash.startsWith(CASE_STUDY_HASH_PREFIX)) return null
+
+  const rawSlug = hash.slice(CASE_STUDY_HASH_PREFIX.length)
+  if (!rawSlug) return null
+
+  try {
+    return decodeURIComponent(rawSlug)
+  } catch {
+    return rawSlug
+  }
+}
+
+function pushCaseStudyHash(slug: string) {
+  const url = new URL(window.location.href)
+  url.hash = `work/${slug}`
+  window.history.pushState(null, "", `${url.pathname}${url.search}${url.hash}`)
+}
+
+function removeCaseStudyHash() {
+  if (!caseStudySlugFromHash(window.location.hash)) return
+
+  const url = new URL(window.location.href)
+  url.hash = ""
+  window.history.pushState(null, "", `${url.pathname}${url.search}`)
+}
+
+function projectUrlLabel(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "")
+  } catch {
+    return url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "")
+  }
+}
 
 function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -252,7 +314,32 @@ function DrawerPlaceholderMedia({ item, index }: { item: WorkItem; index: number
   )
 }
 
-function DrawerCaseStudyMedia({ src, item, index }: { src: string; item: WorkItem; index: number }) {
+function getCaseStudyImageSrc(image: CaseStudyImage) {
+  return typeof image === "string" ? image : image.src
+}
+
+function getCaseStudyImageAspectRatio(image: CaseStudyImage): CaseStudyImageAspectRatio {
+  return typeof image === "string" ? "video" : image.aspectRatio ?? "video"
+}
+
+function isCaseStudyMediaRow(media: CaseStudyMedia): media is Extract<CaseStudyMedia, { layout: "two-up" }> {
+  return typeof media === "object" && "layout" in media
+}
+
+function getCaseStudyMediaKey(media: CaseStudyMedia) {
+  return isCaseStudyMediaRow(media)
+    ? media.images.map(getCaseStudyImageSrc).join("|")
+    : getCaseStudyImageSrc(media)
+}
+
+function getCaseStudyMediaImageCount(media: CaseStudyMedia) {
+  return isCaseStudyMediaRow(media) ? media.images.length : 1
+}
+
+function DrawerCaseStudyMedia({ image, item, index }: { image: CaseStudyImage; item: WorkItem; index: number }) {
+  const src = getCaseStudyImageSrc(image)
+  const aspectRatio = getCaseStudyImageAspectRatio(image)
+
   return (
     <figure className="overflow-hidden rounded-3xl border border-border/60 bg-muted">
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -261,10 +348,29 @@ function DrawerCaseStudyMedia({ src, item, index }: { src: string; item: WorkIte
         alt={`${item.name} case study image ${index + 1}`}
         loading={index < 2 ? "eager" : "lazy"}
         decoding="async"
-        className="aspect-video h-auto w-full object-cover object-center"
+        className={`${caseStudyMediaAspectRatioClasses[aspectRatio]} h-auto w-full object-cover object-center`}
       />
     </figure>
   )
+}
+
+function DrawerCaseStudyMediaGroup({ media, item, index }: { media: CaseStudyMedia; item: WorkItem; index: number }) {
+  if (isCaseStudyMediaRow(media)) {
+    return (
+      <div className="grid gap-5 sm:grid-cols-2">
+        {media.images.map((image, imageIndex) => (
+          <DrawerCaseStudyMedia
+            key={getCaseStudyImageSrc(image)}
+            image={image}
+            item={item}
+            index={index + imageIndex}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  return <DrawerCaseStudyMedia image={media} item={item} index={index} />
 }
 
 function ProjectDetailBlock({ title, children }: { title: string; children: ReactNode }) {
@@ -273,11 +379,39 @@ function ProjectDetailBlock({ title, children }: { title: string; children: Reac
       value={title}
       className="rounded-lg border-0 bg-muted/70 px-4 text-sm transition-colors duration-150 ease hover:bg-muted"
     >
-      <AccordionTrigger className="cursor-pointer py-3 text-xs font-medium tracking-normal text-black hover:no-underline">
+      <AccordionTrigger className="cursor-pointer py-3 text-sm font-semibold tracking-normal text-foreground hover:no-underline">
         {title}
       </AccordionTrigger>
       <AccordionContent className="pb-3 leading-6 text-muted-foreground">{children}</AccordionContent>
     </AccordionItem>
+  )
+}
+
+function TechStackList({ techStack }: { techStack: string }) {
+  const toSentenceCase = (item: string) => {
+    const [firstWord, ...restWords] = item.split(" ")
+    const sentenceStart = firstWord.charAt(0).toUpperCase() + firstWord.slice(1)
+    const rest = restWords.map((word) => {
+      const hasBrandCasing = /[A-Z]/.test(word.slice(1)) || /[./]/.test(word)
+
+      return hasBrandCasing ? word : word.toLowerCase()
+    })
+
+    return [sentenceStart, ...rest].join(" ")
+  }
+
+  const items = techStack
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map(toSentenceCase)
+
+  return (
+    <ul className="list-disc space-y-1 pl-4">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
   )
 }
 
@@ -437,6 +571,8 @@ function ProjectDetailDrawer({
     }
   }
 
+  let caseStudyImageIndex = 0
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="overflow-hidden border-border bg-card p-0 shadow-2xl [&>div:first-child]:hidden data-[vaul-drawer-direction=bottom]:inset-x-2 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mx-auto data-[vaul-drawer-direction=bottom]:max-h-[86dvh] data-[vaul-drawer-direction=bottom]:max-w-7xl data-[vaul-drawer-direction=bottom]:rounded-b-none data-[vaul-drawer-direction=bottom]:rounded-t-3xl sm:data-[vaul-drawer-direction=bottom]:inset-x-6 sm:data-[vaul-drawer-direction=bottom]:max-h-[calc(100dvh-1.5rem)]">
@@ -466,16 +602,26 @@ function ProjectDetailDrawer({
         </DrawerClose>
         <div
           key={item.name}
-          className="grid max-h-[86dvh] gap-8 overflow-y-auto p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10 [&::-webkit-scrollbar]:hidden"
+          className="grid max-h-[86dvh] gap-8 overflow-y-auto scroll-fade-y scroll-fade-12 p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10 [&::-webkit-scrollbar]:hidden"
           onTouchMove={handleScrollContainerTouchMove}
           onTouchStart={handleScrollContainerTouchStart}
           onWheel={handleScrollContainerWheel}
         >
           <div className="order-2 space-y-5 lg:order-1">
             {item.caseStudyImages?.length
-              ? item.caseStudyImages.map((src, index) => (
-                  <DrawerCaseStudyMedia key={src} src={src} item={item} index={index} />
-                ))
+              ? item.caseStudyImages.map((media) => {
+                  const index = caseStudyImageIndex
+                  caseStudyImageIndex += getCaseStudyMediaImageCount(media)
+
+                  return (
+                    <DrawerCaseStudyMediaGroup
+                      key={getCaseStudyMediaKey(media)}
+                      media={media}
+                      item={item}
+                      index={index}
+                    />
+                  )
+                })
               : [0, 1, 2].map((index) => (
                   <DrawerPlaceholderMedia key={index} item={item} index={index} />
                 ))}
@@ -492,16 +638,17 @@ function ProjectDetailDrawer({
               <ContributorCredit contributors={item.contributors} />
               <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
                 <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
-                <ProjectDetailBlock title="Tech stack">{item.techStack}</ProjectDetailBlock>
+                <ProjectDetailBlock title="Stack">
+                  <TechStackList techStack={item.techStack} />
+                </ProjectDetailBlock>
               </Accordion>
               <Button
                 asChild
-                variant="secondary"
-                className="bg-muted/70 transition-colors duration-150 ease hover:bg-muted"
+                className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
               >
                 <a href={item.url} target="_blank" rel="noopener noreferrer">
-                  Visit project
-                  <ExternalLink className="size-3.5" aria-hidden="true" />
+                  {projectUrlLabel(item.url)}
+                  <ArrowUpRight className="size-3.5" aria-hidden="true" />
                 </a>
               </Button>
             </div>
@@ -518,12 +665,20 @@ function WorkItemCard({ item, onOpen }: { item: WorkItem; onOpen: () => void }) 
 
   const remoteHover = hoveredWorkId === item.name
   const active = localHover || remoteHover
+  const href = caseStudyHref(item)
+
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+
+    event.preventDefault()
+    onOpen()
+  }
 
   return (
-    <button
+    <a
       id={workItemElementId(item.name)}
-      type="button"
-      onClick={onOpen}
+      href={href}
+      onClick={handleClick}
       onMouseEnter={() => setLocalHover(true)}
       onMouseLeave={() => setLocalHover(false)}
       onFocus={() => setLocalHover(true)}
@@ -544,7 +699,7 @@ function WorkItemCard({ item, onOpen }: { item: WorkItem; onOpen: () => void }) 
         <span className="text-muted-foreground">{item.name}</span>
         <span className="text-muted-foreground/40">{item.type}</span>
       </div>
-    </button>
+    </a>
   )
 }
 
@@ -575,6 +730,7 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
   const shouldReduceMotion = useReducedMotion()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
+  const itemSlugs = useMemo(() => items.map((item) => caseStudySlug(item.name)), [items])
   const [bleedMetrics, setBleedMetrics] = useState({ left: 0, right: 0, width: 0 })
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -628,23 +784,64 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
     })
   }, [filterKey])
 
+  useEffect(() => {
+    const syncDrawerWithHash = () => {
+      const slug = caseStudySlugFromHash(window.location.hash)
+
+      if (!slug) {
+        setIsDrawerOpen(false)
+        return
+      }
+
+      const nextIndex = itemSlugs.indexOf(slug)
+
+      if (nextIndex === -1) {
+        setIsDrawerOpen(false)
+        return
+      }
+
+      setActiveIndex(nextIndex)
+      setIsDrawerOpen(true)
+    }
+
+    syncDrawerWithHash()
+    window.addEventListener("hashchange", syncDrawerWithHash)
+    window.addEventListener("popstate", syncDrawerWithHash)
+
+    return () => {
+      window.removeEventListener("hashchange", syncDrawerWithHash)
+      window.removeEventListener("popstate", syncDrawerWithHash)
+    }
+  }, [itemSlugs])
+
   const navigatePrevious = () => {
-    setActiveIndex((current) => {
-      if (current === null) return current
-      return Math.max(0, current - 1)
-    })
+    if (activeIndex === null) return
+
+    const nextIndex = Math.max(0, activeIndex - 1)
+    setActiveIndex(nextIndex)
+    pushCaseStudyHash(itemSlugs[nextIndex])
   }
 
   const navigateNext = () => {
-    setActiveIndex((current) => {
-      if (current === null) return current
-      return Math.min(items.length - 1, current + 1)
-    })
+    if (activeIndex === null) return
+
+    const nextIndex = Math.min(items.length - 1, activeIndex + 1)
+    setActiveIndex(nextIndex)
+    pushCaseStudyHash(itemSlugs[nextIndex])
   }
 
   const openCaseStudy = (index: number) => {
     setActiveIndex(index)
     setIsDrawerOpen(true)
+    pushCaseStudyHash(itemSlugs[index])
+  }
+
+  const handleDrawerOpenChange = (open: boolean) => {
+    setIsDrawerOpen(open)
+
+    if (!open) {
+      removeCaseStudyHash()
+    }
   }
 
   return (
@@ -681,7 +878,7 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
         <ProjectDetailDrawer
           item={activeItem}
           open={isDrawerOpen}
-          onOpenChange={setIsDrawerOpen}
+          onOpenChange={handleDrawerOpenChange}
           onPrevious={navigatePrevious}
           onNext={navigateNext}
           hasPrevious={hasPrevious}
