@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, type ReactNode } from "react"
+import { caseStudySlug } from "@/lib/utils"
 
 type WorkHoverContextValue = {
   hoveredWorkId: string | null
@@ -24,5 +25,5 @@ export function useWorkHover() {
 }
 
 export function workItemElementId(name: string) {
-  return `work-${name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-")}`
+  return `work-${caseStudySlug(name)}`
 }
