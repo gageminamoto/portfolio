@@ -86,20 +86,20 @@ export function SocialIcons({
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <button
-              className="flex cursor-pointer items-center gap-1.5 text-muted-foreground transition-[color,transform] duration-150 ease hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+              className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap text-muted-foreground transition-[color,transform] duration-150 ease hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
               aria-label="Email options"
               title={email}
               suppressHydrationWarning
             >
               <CopyFeedbackIcon
                 copied={copied}
-                className="h-5 w-5"
+                className="h-5 w-5 flex-none"
                 idleIcon={<Icon icon="solar:plain-bold" className={sizeClass} aria-hidden="true" />}
                 copiedIcon={<Icon icon="solar:letter-opened-bold" className={sizeClass} aria-hidden="true" />}
               />
               {copied && (
                 <span
-                  className="text-sm animate-in fade-in slide-in-from-left-1 duration-200"
+                  className="whitespace-nowrap text-sm animate-in fade-in slide-in-from-left-1 duration-200"
                   aria-live="polite"
                 >
                   Email Copied!
