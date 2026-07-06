@@ -595,7 +595,7 @@ function ProjectDetailDrawer({
             <ArrowUp className="size-3.5" aria-hidden="true" />
           </button>
         </div>
-        <DrawerClose className="absolute right-4 top-4 z-20 inline-flex size-9 items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm backdrop-blur transition-colors duration-150 ease hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <DrawerClose className="absolute right-4 top-4 z-20 inline-flex size-9 cursor-pointer items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm backdrop-blur transition-colors duration-150 ease hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <X className="size-4" aria-hidden="true" />
           <span className="sr-only">Close</span>
         </DrawerClose>
