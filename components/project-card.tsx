@@ -9,6 +9,7 @@ import { useGradientWord } from "@/components/gradient-word-context"
 import { DiceFallAnimation } from "@/components/hover-animations/dice-fall"
 import { PotLidRattleAnimation } from "@/components/hover-animations/pot-lid-rattle"
 import { GuandanCards } from "@/components/guandan-cards"
+import { OptimizedImage } from "@/components/optimized-image"
 
 const shapes = [
   // Rounded square
@@ -135,12 +136,24 @@ export function ProjectCard({
         ) : project.favicon ? (
           showAnimations && project.name === "Mizen" ? (
             <PotLidRattleAnimation isHovered={isHovered}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={project.favicon} alt="" width={48} height={48} className="size-12 rounded-lg" />
+              <OptimizedImage
+                src={project.favicon}
+                alt=""
+                width={48}
+                height={48}
+                className="size-12 rounded-lg bg-transparent"
+                imageClassName="size-full rounded-lg object-contain"
+              />
             </PotLidRattleAnimation>
           ) : (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={project.favicon} alt="" width={40} height={40} className="size-10 rounded-lg" />
+            <OptimizedImage
+              src={project.favicon}
+              alt=""
+              width={40}
+              height={40}
+              className="size-10 rounded-lg bg-transparent"
+              imageClassName="size-full rounded-lg object-contain"
+            />
           )
         ) : (
           shape(colors[0])
