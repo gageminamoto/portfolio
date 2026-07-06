@@ -2,12 +2,13 @@
 
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
+import { Gamepad, Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
 import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
+import { ExperimentsSection } from "@/components/experiments-section"
 import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
 import { WorkSection, WorkFilterTabs, type WorkFilter } from "@/components/work-section"
@@ -77,6 +78,13 @@ export function LayoutOne() {
           ))}
         </div>
       </motion.section>
+
+      {/* Play */}
+      <motion.div variants={item}>
+        <Section title="Play" href="/play" icon={<Gamepad size={14} weight="Bold" />}>
+          <ExperimentsSection limit={2} />
+        </Section>
+      </motion.div>
 
       {/* Details */}
       <motion.div variants={item} className="flex flex-col gap-8">

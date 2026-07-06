@@ -9,6 +9,7 @@ import {
   Check,
   ExternalLink,
   FolderOpen,
+  Gamepad2,
   Home,
   MessageSquare,
   Monitor,
@@ -110,6 +111,15 @@ const staticItems: PaletteItem[] = [
     keywords: 'writing posts articles blog essays',
     group: 'Navigation',
     icon: WritingIcon,
+  },
+  {
+    id: 'play',
+    title: 'Play',
+    description: 'Open experiments archive',
+    href: '/play',
+    keywords: 'play experiments prototypes games archive gunny',
+    group: 'Navigation',
+    icon: Gamepad2,
   },
 ]
 
