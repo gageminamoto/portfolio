@@ -26,6 +26,7 @@ import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
 import { HOVER_EASE_IN_OUT } from "@/lib/hover-constants"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
+import { OptimizedImage } from "@/components/optimized-image"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -66,11 +67,13 @@ function ToolIcon({ name, url }: { name: string; url: string | null }) {
   if (hostname && !failed) {
     return (
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <OptimizedImage
           src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
           alt=""
-          className="size-5 rounded-sm"
+          width={20}
+          height={20}
+          className="size-5 rounded-sm bg-transparent"
+          imageClassName="size-full rounded-sm object-contain"
           onError={() => setFailed(true)}
         />
       </div>

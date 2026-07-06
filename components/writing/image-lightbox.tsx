@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { X } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface ImageLightboxProps {
   src: string
@@ -170,10 +171,9 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
         <X className="h-5 w-5" />
       </button>
 
-      {/* Loading spinner */}
       {!loaded && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
+        <div className="absolute inset-4 flex items-center justify-center">
+          <Skeleton className="h-[min(85vh,56vw)] max-h-[85vh] w-[min(95vw,56rem)] rounded-lg bg-white/10" />
         </div>
       )}
 

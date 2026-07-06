@@ -15,6 +15,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { OptimizedImage, preloadOptimizedImageSrc } from "@/components/optimized-image"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 import { caseStudySlug } from "@/lib/utils"
 
@@ -226,6 +227,7 @@ const caseStudyMediaAspectRatioClasses: Record<CaseStudyImageAspectRatio, string
   video: "aspect-video",
   square: "aspect-square",
 }
+const preloadedCaseStudyImageSrcs = new Set<string>()
 
 function caseStudyHref(item: WorkItem) {
   return `/#work/${caseStudySlug(item.name)}`
@@ -291,15 +293,18 @@ function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active
           active ? "opacity-0" : "opacity-100"
         }`}
       />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <OptimizedImage
         src={src}
         alt={alt}
+        fill
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         draggable={false}
         loading="eager"
         decoding="async"
+        fallbackToImg
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full bg-muted"
+        imageClassName="object-cover object-center"
       />
     </div>
   )
@@ -335,19 +340,41 @@ function getCaseStudyMediaImageCount(media: CaseStudyMedia) {
   return isCaseStudyMediaRow(media) ? media.images.length : 1
 }
 
+function getCaseStudyImageSources(item: WorkItem) {
+  return item.caseStudyImages?.flatMap((media) =>
+    isCaseStudyMediaRow(media)
+      ? media.images.map(getCaseStudyImageSrc)
+      : [getCaseStudyImageSrc(media)]
+  ) ?? []
+}
+
+function preloadImageSrc(src: string) {
+  if (preloadedCaseStudyImageSrcs.has(src)) return
+
+  preloadedCaseStudyImageSrcs.add(src)
+  preloadOptimizedImageSrc(src)
+}
+
+function preloadCaseStudyImages(item: WorkItem) {
+  getCaseStudyImageSources(item).forEach(preloadImageSrc)
+}
+
 function DrawerCaseStudyMedia({ image, item, index }: { image: CaseStudyImage; item: WorkItem; index: number }) {
   const src = getCaseStudyImageSrc(image)
   const aspectRatio = getCaseStudyImageAspectRatio(image)
 
   return (
     <figure className="overflow-hidden rounded-3xl border border-border/60 bg-muted">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <OptimizedImage
         src={src}
         alt={`${item.name} case study image ${index + 1}`}
+        width={1600}
+        height={aspectRatio === "square" ? 1600 : 900}
+        sizes="(min-width: 1024px) calc((100vw - 26rem) * 0.5), 100vw"
         loading={index < 2 ? "eager" : "lazy"}
         decoding="async"
-        className={`${caseStudyMediaAspectRatioClasses[aspectRatio]} h-auto w-full object-cover object-center`}
+        className={`w-full ${caseStudyMediaAspectRatioClasses[aspectRatio]}`}
+        imageClassName="h-full w-full object-cover object-center"
       />
     </figure>
   )
@@ -680,6 +707,7 @@ function WorkItemCard({
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
 
     event.preventDefault()
+    preloadCaseStudyImages(item)
     onOpen()
   }
 
@@ -689,9 +717,15 @@ function WorkItemCard({
       href={href}
       draggable={false}
       onClick={handleClick}
-      onMouseEnter={() => setLocalHover(true)}
+      onMouseEnter={() => {
+        setLocalHover(true)
+        preloadCaseStudyImages(item)
+      }}
       onMouseLeave={() => setLocalHover(false)}
-      onFocus={() => setLocalHover(true)}
+      onFocus={() => {
+        setLocalHover(true)
+        preloadCaseStudyImages(item)
+      }}
       onBlur={() => setLocalHover(false)}
       className="group block w-full scroll-mt-8 cursor-pointer text-left focus-visible:outline-none"
       aria-label={`Open ${item.name} details`}
@@ -953,6 +987,10 @@ function WorkBrowser({
   }
 
   const openCaseStudy = (index: number) => {
+    const item = items[index]
+    if (!item) return
+
+    preloadCaseStudyImages(item)
     setActiveIndex(index)
     setIsDrawerOpen(true)
     pushCaseStudyHash(itemSlugs[index])
@@ -1089,8 +1127,14 @@ function WorkBrowser({
                 <button
                   key={item.name}
                   type="button"
-                  onMouseEnter={() => setFeaturedIndex(index)}
-                  onFocus={() => setFeaturedIndex(index)}
+                  onMouseEnter={() => {
+                    setFeaturedIndex(index)
+                    preloadCaseStudyImages(item)
+                  }}
+                  onFocus={() => {
+                    setFeaturedIndex(index)
+                    preloadCaseStudyImages(item)
+                  }}
                   onClick={() => openCaseStudy(index)}
                   className={`flex cursor-pointer items-center justify-between gap-3 border-b border-border/60 py-3 text-left text-sm transition-colors duration-150 ease last:border-b-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"

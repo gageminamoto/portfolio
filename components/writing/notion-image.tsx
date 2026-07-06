@@ -4,7 +4,7 @@ import { useState } from "react"
 import { AnimatePresence } from "framer-motion"
 import type { NotionBlock } from "@/lib/notion"
 import { getOptimizedImageUrl } from "@/lib/image-url"
-import { Skeleton } from "@/components/ui/skeleton"
+import { OptimizedImage } from "@/components/optimized-image"
 import { ImageLightbox } from "./image-lightbox"
 
 type ImageBlock = Extract<NotionBlock, { type: "image" }>
@@ -15,7 +15,6 @@ interface NotionImageProps {
 
 export function NotionImage({ block }: NotionImageProps) {
   const [open, setOpen] = useState(false)
-  const [loaded, setLoaded] = useState(false)
   const image = block.image
 
   const src =
@@ -37,20 +36,16 @@ export function NotionImage({ block }: NotionImageProps) {
           onClick={() => setOpen(true)}
           className="relative w-full cursor-zoom-in rounded-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          {!loaded && (
-            <Skeleton className="aspect-video w-full rounded-lg" />
-          )}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <OptimizedImage
             src={inlineSrc}
             alt={alt}
             width={1200}
-            height={675}
+            sizes="(min-width: 768px) 672px, 100vw"
+            quality={80}
             loading="lazy"
-            onLoad={() => setLoaded(true)}
-            className={`w-full rounded-lg transition-opacity duration-300 ease-out hover:opacity-90 ${
-              loaded ? "opacity-100" : "absolute inset-0 opacity-0"
-            }`}
+            fallbackToImg
+            className="w-full rounded-lg bg-transparent"
+            imageClassName="h-auto w-full rounded-lg object-contain hover:opacity-90"
           />
         </button>
         {caption && (
