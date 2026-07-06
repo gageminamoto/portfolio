@@ -476,6 +476,29 @@ function ContributorCredit({ contributors }: { contributors: Contributor[] }) {
   )
 }
 
+function ProjectDetails({ item }: { item: WorkItem }) {
+  return (
+    <div className="space-y-7">
+      {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
+      <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
+        <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
+        <ProjectDetailBlock title="Stack">
+          <TechStackList techStack={item.techStack} />
+        </ProjectDetailBlock>
+      </Accordion>
+      <Button
+        asChild
+        className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
+      >
+        <a href={item.url} target="_blank" rel="noopener noreferrer">
+          {projectUrlLabel(item.url)}
+          <ArrowUpRight className="size-3.5" aria-hidden="true" />
+        </a>
+      </Button>
+    </div>
+  )
+}
+
 function ProjectDetailDrawer({
   item,
   open,
@@ -624,23 +647,8 @@ function ProjectDetailDrawer({
               : [0, 1, 2].map((index) => (
                   <DrawerPlaceholderMedia key={index} item={item} index={index} />
                 ))}
-            <div className="space-y-7 pt-2 lg:hidden">
-              {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
-              <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
-                <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
-                <ProjectDetailBlock title="Stack">
-                  <TechStackList techStack={item.techStack} />
-                </ProjectDetailBlock>
-              </Accordion>
-              <Button
-                asChild
-                className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
-              >
-                <a href={item.url} target="_blank" rel="noopener noreferrer">
-                  {projectUrlLabel(item.url)}
-                  <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                </a>
-              </Button>
+            <div className="pt-2 lg:hidden">
+              <ProjectDetails item={item} />
             </div>
           </div>
           <aside className="order-1 lg:sticky lg:top-8 lg:order-2 lg:h-fit">
@@ -652,23 +660,8 @@ function ProjectDetailDrawer({
                 </div>
                 <DrawerDescription className="text-base leading-7 text-muted-foreground">{item.description}</DrawerDescription>
               </div>
-              <div className="hidden space-y-7 lg:block">
-                {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
-                <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
-                  <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
-                  <ProjectDetailBlock title="Stack">
-                    <TechStackList techStack={item.techStack} />
-                  </ProjectDetailBlock>
-                </Accordion>
-                <Button
-                  asChild
-                  className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
-                >
-                  <a href={item.url} target="_blank" rel="noopener noreferrer">
-                    {projectUrlLabel(item.url)}
-                    <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                  </a>
-                </Button>
+              <div className="hidden lg:block">
+                <ProjectDetails item={item} />
               </div>
             </div>
           </aside>
