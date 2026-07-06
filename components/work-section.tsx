@@ -1,8 +1,9 @@
 "use client"
 
-import { type CSSProperties, type MouseEvent, type ReactNode, type TouchEvent, type WheelEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { type CSSProperties, type MouseEvent, type ReactNode, type TouchEvent, type UIEvent, type WheelEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { ArrowDown, ArrowUp, ArrowUpRight, X } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { useDialKit } from "dialkit"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -54,7 +55,7 @@ const workItems: WorkItem[] = [
     image: "/images/mizen-hover.gif",
     type: "Product",
     description: "Mizen is a calm recipe workspace for saving recipes from the web, organizing what to cook, and making home cooking feel clearer and less hectic.",
-    outcome: "Defined the core product experience, interaction model, and visual direction for a simpler recipe-saving and cooking workflow.",
+    outcome: "This side project was entirely my own, from front-end to back-end, marketing, and roadmap definition. I managed design and engineering, set the visual branding direction, and mapped out features.",
     contributors: [
       { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", url: "https://linkedin.com/in/gageminamoto" },
       { name: "Michelle Tran", avatarUrl: "/avatars/michelle.png", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
@@ -63,7 +64,7 @@ const workItems: WorkItem[] = [
       { name: "Michele Tang", avatarUrl: "/avatars/michele-tang.jpg", url: "https://www.linkedin.com/in/michele-tang/" },
       { name: "Rahul Jain", avatarUrl: "/avatars/rahul.jpg", url: "https://www.linkedin.com/in/rahulj24/" },
     ],
-    techStack: "React, Next.js, TypeScript, Tailwind CSS, shadcn/ui, Radix UI, Framer Motion, Supabase, Groq",
+    techStack: "React 19, Next.js 16, TypeScript, Tailwind CSS, ESLint 9, Prettier, Vercel",
     caseStudyImages: [
       "/images/mizen/1477.webp",
       "/images/mizen/1476.webp",
@@ -101,7 +102,7 @@ const workItems: WorkItem[] = [
     image: "/images/kilo-hover.jpg",
     type: "Brand",
     description: "Kilo is a Honolulu work club brand for people building in Hawaiʻi, shaped around focus, hospitality, community, and a more intentional workday.",
-    outcome: "Created a flexible identity direction that extends across digital, print, and physical touchpoints.",
+    outcome: "Built on an existing brand identity and expanded it in anticipation of Kilo's grand opening. I explored digital and physical expressions across web and brand touchpoints.",
     contributors: [
       { name: "Tremaine Tucker", url: "https://www.linkedin.com/in/tremainet" },
       { name: "Desmond Centro", url: "https://www.linkedin.com/in/desmondcentro" },
@@ -151,10 +152,7 @@ const workItems: WorkItem[] = [
     type: "Brand",
     description: "Piʻikū is a Hawaiʻi nonprofit helping local talent build tech careers through paid internships, workforce programs, speaker series, and community infrastructure.",
     outcome: "Expanded the brand across merch and program materials to support Piʻikū’s cross-functional, work-based internship model.",
-    contributors: [
-      { name: "May Sermonia", avatarUrl: "/avatars/may-sermonia.webp", url: "https://maysermonia.me/" },
-      { name: "Hana Nanako", avatarUrl: "/avatars/hana-nanako.png" },
-    ],
+    contributors: [],
     techStack: "Brand, community, web",
     caseStudyImages: [
       "/images/kilo/01.webp",
@@ -189,7 +187,7 @@ const workItems: WorkItem[] = [
     image: "/images/memberspace-hover.gif",
     type: "Brand",
     description: "MemberSpace is membership software that helps creators and digital businesses sell memberships, courses, communities, and gated content from their own websites.",
-    outcome: "Supported the team’s visual direction across brand and marketing surfaces, creating a warmer and clearer product presentation.",
+    outcome: "Collaborated with Mei on an early visual brand refresh while focusing on MemberSpace's brand voice, brand heart, messaging pillars, and value proposition. The work helped guide the brand into its next era while respecting its foundation and giving it a clearer position in a crowded space.",
     contributors: [
       { name: "May Sermonia", avatarUrl: "/avatars/may-sermonia.webp", url: "https://maysermonia.me/" },
       { name: "Marvin Russell", avatarUrl: "/avatars/marvin-russell.png", url: "https://www.memberspace.com/blog/author/marvinmemberspace-com/" },
@@ -297,6 +295,7 @@ function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active
       <img
         src={src}
         alt={alt}
+        draggable={false}
         loading="eager"
         decoding="async"
         aria-hidden="true"
@@ -635,7 +634,7 @@ function ProjectDetailDrawer({
                 </div>
                 <DrawerDescription className="text-base leading-7 text-muted-foreground">{item.description}</DrawerDescription>
               </div>
-              <ContributorCredit contributors={item.contributors} />
+              {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
               <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
                 <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
                 <ProjectDetailBlock title="Stack">
@@ -659,7 +658,17 @@ function ProjectDetailDrawer({
   )
 }
 
-function WorkItemCard({ item, onOpen }: { item: WorkItem; onOpen: () => void }) {
+function WorkItemCard({
+  item,
+  onOpen,
+  featured = false,
+  showDescription = false,
+}: {
+  item: WorkItem
+  onOpen: () => void
+  featured?: boolean
+  showDescription?: boolean
+}) {
   const [localHover, setLocalHover] = useState(false)
   const { hoveredWorkId } = useWorkHover()
 
@@ -678,6 +687,7 @@ function WorkItemCard({ item, onOpen }: { item: WorkItem; onOpen: () => void }) 
     <a
       id={workItemElementId(item.name)}
       href={href}
+      draggable={false}
       onClick={handleClick}
       onMouseEnter={() => setLocalHover(true)}
       onMouseLeave={() => setLocalHover(false)}
@@ -687,18 +697,29 @@ function WorkItemCard({ item, onOpen }: { item: WorkItem; onOpen: () => void }) 
       aria-label={`Open ${item.name} details`}
     >
       <div
-        className={`overflow-hidden rounded-xl border bg-card transition-[transform,border-color,box-shadow] duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring ${
+        className={`relative overflow-hidden rounded-xl border bg-card transition-[transform,border-color,box-shadow] duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring ${
           active
             ? "-translate-y-px border-border shadow-sm"
             : "border-border/50"
         }`}
       >
         <HoverPlayMedia src={item.image} alt={item.name} active={active} />
+        <span
+          className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-background/85 text-foreground opacity-80 shadow-sm backdrop-blur transition-[opacity,transform] duration-150 ease-out group-hover:scale-105 group-hover:opacity-100 group-focus-visible:scale-105 group-focus-visible:opacity-100"
+          aria-hidden="true"
+        >
+          <ArrowUpRight className="size-3.5" />
+        </span>
       </div>
-      <div className="mt-2 flex items-baseline gap-1.5 text-sm">
+      <div className={`mt-2 flex items-baseline gap-1.5 text-sm ${featured ? "sm:text-base" : ""}`}>
         <span className="text-muted-foreground">{item.name}</span>
         <span className="text-muted-foreground/40">{item.type}</span>
       </div>
+      {showDescription ? (
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+          {item.description}
+        </p>
+      ) : null}
     </a>
   )
 }
@@ -726,17 +747,109 @@ export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onCha
   )
 }
 
-function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey: string }) {
+type WorkLayoutMode = "arrows" | "grid" | "hybrid" | "wheel" | "featured"
+
+const WORK_LAYOUT_MODES = ["arrows", "grid", "hybrid", "wheel", "featured"] as const
+
+function isWorkLayoutMode(value: string): value is WorkLayoutMode {
+  return WORK_LAYOUT_MODES.includes(value as WorkLayoutMode)
+}
+
+function CarouselArrowButton({
+  direction,
+  disabled,
+  onClick,
+}: {
+  direction: "previous" | "next"
+  disabled: boolean
+  onClick: () => void
+}) {
+  const Icon = direction === "previous" ? ChevronLeft : ChevronRight
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-colors duration-150 ease hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground"
+      aria-label={direction === "previous" ? "Previous work item" : "Next work item"}
+    >
+      <Icon className="size-4" strokeWidth={2.25} aria-hidden="true" />
+    </button>
+  )
+}
+
+function WorkCarouselControls({
+  index,
+  count,
+  onPrevious,
+  onNext,
+  onSelect,
+}: {
+  index: number
+  count: number
+  onPrevious: () => void
+  onNext: () => void
+  onSelect: (index: number) => void
+}) {
+  return (
+    <div className="mt-3 flex w-full items-center justify-start gap-3">
+      <CarouselArrowButton direction="previous" disabled={index <= 0} onClick={onPrevious} />
+      <div className="flex items-center gap-3" aria-label="Work carousel position">
+        {Array.from({ length: count }).map((_, dotIndex) => (
+          <button
+            key={dotIndex}
+            type="button"
+            onClick={() => onSelect(dotIndex)}
+            className={`size-2 cursor-pointer rounded-full transition-colors duration-150 ease focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+              dotIndex === index ? "bg-foreground" : "bg-muted-foreground/18 hover:bg-muted-foreground/35"
+            }`}
+            aria-label={`Show work item ${dotIndex + 1}`}
+            aria-current={dotIndex === index ? "true" : undefined}
+          />
+        ))}
+      </div>
+      <CarouselArrowButton direction="next" disabled={index >= count - 1} onClick={onNext} />
+    </div>
+  )
+}
+
+function WorkProgress({ index, count }: { index: number; count: number }) {
+  const progress = count > 0 ? ((index + 1) / count) * 100 : 0
+
+  return (
+    <div className="mt-3 flex w-full items-center justify-start gap-3">
+      <div className="h-px w-28 overflow-hidden bg-border/70" aria-hidden="true">
+        <div className="h-full bg-foreground transition-[width] duration-200 ease-out" style={{ width: `${progress}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function WorkBrowser({
+  items,
+  filterKey,
+  mode,
+}: {
+  items: WorkItem[]
+  filterKey: string
+  mode: WorkLayoutMode
+}) {
   const shouldReduceMotion = useReducedMotion()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
+  const scrollUpdateFrameRef = useRef<number | null>(null)
   const itemSlugs = useMemo(() => items.map((item) => caseStudySlug(item.name)), [items])
   const [bleedMetrics, setBleedMetrics] = useState({ left: 0, right: 0, width: 0 })
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const [featuredIndex, setFeaturedIndex] = useState(0)
   const activeItem = activeIndex === null ? null : items[activeIndex]
   const hasPrevious = activeIndex !== null && activeIndex > 0
   const hasNext = activeIndex !== null && activeIndex < items.length - 1
+  const featuredSafeIndex = Math.min(featuredIndex, Math.max(0, items.length - 1))
+  const featuredItem = items[featuredSafeIndex]
   const railStyle = {
     "--work-start-inset": `${bleedMetrics.left}px`,
     "--work-end-inset": `${bleedMetrics.right}px`,
@@ -781,8 +894,17 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
     if (!rail) return
     requestAnimationFrame(() => {
       rail.scrollLeft = 0
+      setCarouselIndex(0)
     })
-  }, [filterKey])
+  }, [filterKey, mode])
+
+  useEffect(() => {
+    return () => {
+      if (scrollUpdateFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollUpdateFrameRef.current)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const syncDrawerWithHash = () => {
@@ -844,6 +966,152 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
     }
   }
 
+  const getNearestCarouselIndex = (rail: HTMLDivElement) => {
+    const children = Array.from(rail.children) as HTMLElement[]
+    const firstOffset = children[0]?.offsetLeft ?? 0
+    const maxScrollLeft = rail.scrollWidth - rail.clientWidth
+    let nearestIndex = 0
+    let nearestDistance = Number.POSITIVE_INFINITY
+
+    children.forEach((child, index) => {
+      const snapPosition = index === children.length - 1
+        ? maxScrollLeft
+        : child.offsetLeft - firstOffset
+      const distance = Math.abs(rail.scrollLeft - snapPosition)
+
+      if (distance < nearestDistance) {
+        nearestDistance = distance
+        nearestIndex = index
+      }
+    })
+
+    return nearestIndex
+  }
+
+  const updateCarouselIndex = (rail: HTMLDivElement) => {
+    if (scrollUpdateFrameRef.current !== null) {
+      window.cancelAnimationFrame(scrollUpdateFrameRef.current)
+    }
+
+    scrollUpdateFrameRef.current = window.requestAnimationFrame(() => {
+      setCarouselIndex(getNearestCarouselIndex(rail))
+      scrollUpdateFrameRef.current = null
+    })
+  }
+
+  const scrollToCarouselIndex = (nextIndex: number) => {
+    const rail = railRef.current
+    if (!rail) return
+
+    const clampedIndex = Math.min(Math.max(nextIndex, 0), items.length - 1)
+    const firstChild = rail.children[0] as HTMLElement | undefined
+    const child = rail.children[clampedIndex] as HTMLElement | undefined
+    if (!firstChild || !child) return
+
+    const maxScrollLeft = rail.scrollWidth - rail.clientWidth
+    const left = clampedIndex === items.length - 1
+      ? maxScrollLeft
+      : child.offsetLeft - firstChild.offsetLeft
+
+    rail.scrollTo({
+      left,
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+    })
+    setCarouselIndex(clampedIndex)
+  }
+
+  const handleRailScroll = (event: UIEvent<HTMLDivElement>) => {
+    updateCarouselIndex(event.currentTarget)
+  }
+
+  const handleRailWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (mode !== "wheel" || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
+
+    event.preventDefault()
+    event.currentTarget.scrollLeft += event.deltaY
+    updateCarouselIndex(event.currentTarget)
+  }
+
+  const carouselControls = mode === "wheel"
+    ? <WorkProgress index={carouselIndex} count={items.length} />
+    : (
+        <WorkCarouselControls
+          index={carouselIndex}
+          count={items.length}
+          onPrevious={() => scrollToCarouselIndex(carouselIndex - 1)}
+          onNext={() => scrollToCarouselIndex(carouselIndex + 1)}
+          onSelect={scrollToCarouselIndex}
+        />
+      )
+
+  const drawer = activeItem ? (
+    <ProjectDetailDrawer
+      item={activeItem}
+      open={isDrawerOpen}
+      onOpenChange={handleDrawerOpenChange}
+      onPrevious={navigatePrevious}
+      onNext={navigateNext}
+      hasPrevious={hasPrevious}
+      hasNext={hasNext}
+    />
+  ) : null
+
+  if (mode === "grid") {
+    return (
+      <>
+        <div className="-mt-2 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 pt-2 [scrollbar-width:none] md:grid md:grid-cols-2 md:overflow-visible [&::-webkit-scrollbar]:hidden">
+          {items.map((item, index) => (
+            <div key={item.name} className="w-[82vw] shrink-0 snap-start md:w-auto">
+              <WorkItemCard item={item} onOpen={() => openCaseStudy(index)} />
+            </div>
+          ))}
+        </div>
+        {drawer}
+      </>
+    )
+  }
+
+  if (mode === "featured" && featuredItem) {
+    return (
+      <>
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+          <WorkItemCard
+            item={featuredItem}
+            onOpen={() => openCaseStudy(featuredSafeIndex)}
+            featured
+            showDescription
+          />
+          <div className="flex flex-col border-y border-border/60 lg:border-y-0 lg:border-l lg:pl-4">
+            {items.map((item, index) => {
+              const selected = index === featuredIndex
+
+              return (
+                <button
+                  key={item.name}
+                  type="button"
+                  onMouseEnter={() => setFeaturedIndex(index)}
+                  onFocus={() => setFeaturedIndex(index)}
+                  onClick={() => openCaseStudy(index)}
+                  className={`flex cursor-pointer items-center justify-between gap-3 border-b border-border/60 py-3 text-left text-sm transition-colors duration-150 ease last:border-b-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  aria-label={`Open ${item.name} details`}
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate">{item.name}</span>
+                    <span className="block text-xs text-muted-foreground/45">{item.type}</span>
+                  </span>
+                  <ArrowUpRight className={`size-3.5 shrink-0 transition-opacity duration-150 ${selected ? "opacity-100" : "opacity-35"}`} aria-hidden="true" />
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        {drawer}
+      </>
+    )
+  }
+
   return (
     <>
       <div
@@ -857,6 +1125,8 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
             key={filterKey}
             data-work-carousel-rail="true"
             className="-mt-2 flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-pl-[calc(var(--work-start-inset)+var(--work-edge-bleed))] scroll-pr-[calc(var(--work-end-inset)+var(--work-edge-bleed))] pb-1 pl-[calc(var(--work-start-inset)+var(--work-edge-bleed))] pr-[calc(var(--work-end-inset)+var(--work-edge-bleed))] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            onScroll={handleRailScroll}
+            onWheel={handleRailWheel}
             initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
@@ -874,27 +1144,35 @@ function WorkBleedCarousel({ items, filterKey }: { items: WorkItem[]; filterKey:
           </motion.div>
         </AnimatePresence>
       </div>
-      {activeItem ? (
-        <ProjectDetailDrawer
-          item={activeItem}
-          open={isDrawerOpen}
-          onOpenChange={handleDrawerOpenChange}
-          onPrevious={navigatePrevious}
-          onNext={navigateNext}
-          hasPrevious={hasPrevious}
-          hasNext={hasNext}
-        />
-      ) : null}
+      {carouselControls}
+      {drawer}
     </>
   )
 }
 
 export function WorkSection({ filter }: { filter: WorkFilter }) {
+  const layoutDial = useDialKit("Work layout", {
+    mode: {
+      type: "select",
+      default: "arrows",
+      options: [
+        { value: "arrows", label: "Arrows" },
+        { value: "grid", label: "Grid" },
+        { value: "hybrid", label: "Hybrid" },
+        { value: "wheel", label: "Wheel" },
+        { value: "featured", label: "Featured" },
+      ],
+    },
+  }, {
+    id: "work-layout",
+    persist: true,
+  })
   const filtered = filter === null
     ? workItems
     : workItems.filter((item) => item.type === filter)
 
   const filterKey = filter ?? "all"
+  const mode = isWorkLayoutMode(layoutDial.mode) ? layoutDial.mode : "arrows"
 
-  return <WorkBleedCarousel key={filterKey} filterKey={filterKey} items={filtered} />
+  return <WorkBrowser key={`${filterKey}-${mode}`} filterKey={filterKey} items={filtered} mode={mode} />
 }
