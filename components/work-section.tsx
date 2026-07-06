@@ -601,7 +601,7 @@ function ProjectDetailDrawer({
         </DrawerClose>
         <div
           key={item.name}
-          className="grid max-h-[86dvh] gap-8 overflow-y-auto scroll-fade-y scroll-fade-12 p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10 [&::-webkit-scrollbar]:hidden"
+          className="grid max-h-[86dvh] gap-5 overflow-y-auto scroll-fade-y scroll-fade-12 p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10 [&::-webkit-scrollbar]:hidden"
           onTouchMove={handleScrollContainerTouchMove}
           onTouchStart={handleScrollContainerTouchStart}
           onWheel={handleScrollContainerWheel}
@@ -624,16 +624,7 @@ function ProjectDetailDrawer({
               : [0, 1, 2].map((index) => (
                   <DrawerPlaceholderMedia key={index} item={item} index={index} />
                 ))}
-          </div>
-          <aside className="order-1 lg:sticky lg:top-8 lg:order-2 lg:h-fit">
-            <div className="space-y-7 pb-3 lg:pb-0 lg:pr-2">
-              <div className="space-y-3 pr-10 lg:pr-0">
-                <div className="space-y-1">
-                  <DrawerTitle className="text-2xl font-semibold tracking-normal text-foreground">{item.name}</DrawerTitle>
-                  <h3 className="text-2xl font-normal tracking-normal text-muted-foreground">{item.type}</h3>
-                </div>
-                <DrawerDescription className="text-base leading-7 text-muted-foreground">{item.description}</DrawerDescription>
-              </div>
+            <div className="space-y-7 pt-2 lg:hidden">
               {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
               <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
                 <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
@@ -650,6 +641,35 @@ function ProjectDetailDrawer({
                   <ArrowUpRight className="size-3.5" aria-hidden="true" />
                 </a>
               </Button>
+            </div>
+          </div>
+          <aside className="order-1 lg:sticky lg:top-8 lg:order-2 lg:h-fit">
+            <div className="space-y-7 lg:pr-2">
+              <div className="space-y-3 pr-10 lg:pr-0">
+                <div className="space-y-1">
+                  <DrawerTitle className="text-2xl font-semibold tracking-normal text-foreground">{item.name}</DrawerTitle>
+                  <h3 className="text-2xl font-normal tracking-normal text-muted-foreground">{item.type}</h3>
+                </div>
+                <DrawerDescription className="text-base leading-7 text-muted-foreground">{item.description}</DrawerDescription>
+              </div>
+              <div className="hidden space-y-7 lg:block">
+                {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
+                <Accordion type="multiple" defaultValue={["Outcome"]} className="space-y-3">
+                  <ProjectDetailBlock title="Outcome">{item.outcome}</ProjectDetailBlock>
+                  <ProjectDetailBlock title="Stack">
+                    <TechStackList techStack={item.techStack} />
+                  </ProjectDetailBlock>
+                </Accordion>
+                <Button
+                  asChild
+                  className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
+                >
+                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                    {projectUrlLabel(item.url)}
+                    <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                  </a>
+                </Button>
+              </div>
             </div>
           </aside>
         </div>
