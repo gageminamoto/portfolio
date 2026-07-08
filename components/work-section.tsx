@@ -751,12 +751,6 @@ function WorkItemCard({
         }`}
       >
         <HoverPlayMedia src={item.image} alt={item.name} active={active} />
-        <span
-          className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-background/85 text-foreground opacity-80 shadow-sm backdrop-blur transition-[opacity,transform] duration-150 ease-out group-hover:scale-105 group-hover:opacity-100 group-focus-visible:scale-105 group-focus-visible:opacity-100"
-          aria-hidden="true"
-        >
-          <ArrowUpRight className="size-3.5" />
-        </span>
       </div>
       <div className={`mt-2 flex items-baseline gap-1.5 text-sm ${featured ? "sm:text-base" : ""}`}>
         <span className="text-muted-foreground">{item.name}</span>
@@ -768,29 +762,6 @@ function WorkItemCard({
         </p>
       ) : null}
     </a>
-  )
-}
-
-export const WORK_FILTERS = ["Product", "Brand", "Web"] as const
-export type WorkFilter = (typeof WORK_FILTERS)[number] | null
-
-export function WorkFilterTabs({ active, onChange }: { active: WorkFilter; onChange: (f: WorkFilter) => void }) {
-  return (
-    <div className="flex flex-wrap justify-end gap-x-3 gap-y-1">
-      {WORK_FILTERS.map((f) => (
-        <button
-          key={f}
-          onClick={() => onChange(active === f ? null : f)}
-          className={`cursor-pointer text-xs transition-colors duration-150 ease sm:text-sm ${
-            active === f
-              ? "text-foreground"
-              : "text-muted-foreground/40 hover:text-muted-foreground"
-          }`}
-        >
-          {f}
-        </button>
-      ))}
-    </div>
   )
 }
 
@@ -875,11 +846,9 @@ function WorkProgress({ index, count }: { index: number; count: number }) {
 
 function WorkBrowser({
   items,
-  filterKey,
   mode,
 }: {
   items: WorkItem[]
-  filterKey: string
   mode: WorkLayoutMode
 }) {
   const shouldReduceMotion = useReducedMotion()
@@ -943,7 +912,7 @@ function WorkBrowser({
       rail.scrollLeft = 0
       setCarouselIndex(0)
     })
-  }, [filterKey, mode])
+  }, [mode])
 
   useEffect(() => {
     return () => {
@@ -1179,7 +1148,7 @@ function WorkBrowser({
         <AnimatePresence mode="wait">
           <motion.div
             ref={railRef}
-            key={filterKey}
+            key={mode}
             data-work-carousel-rail="true"
             className="-mt-2 flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-pl-[calc(var(--work-start-inset)+var(--work-edge-bleed))] scroll-pr-[calc(var(--work-end-inset)+var(--work-edge-bleed))] pb-1 pl-[calc(var(--work-start-inset)+var(--work-edge-bleed))] pr-[calc(var(--work-end-inset)+var(--work-edge-bleed))] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             onScroll={handleRailScroll}
@@ -1207,7 +1176,7 @@ function WorkBrowser({
   )
 }
 
-export function WorkSection({ filter }: { filter: WorkFilter }) {
+export function WorkSection() {
   const layoutDial = useDialKit("Work layout", {
     mode: {
       type: "select",
@@ -1224,12 +1193,7 @@ export function WorkSection({ filter }: { filter: WorkFilter }) {
     id: "work-layout",
     persist: true,
   })
-  const filtered = filter === null
-    ? workItems
-    : workItems.filter((item) => item.type === filter)
-
-  const filterKey = filter ?? "all"
   const mode = isWorkLayoutMode(layoutDial.mode) ? layoutDial.mode : "arrows"
 
-  return <WorkBrowser key={`${filterKey}-${mode}`} filterKey={filterKey} items={filtered} mode={mode} />
+  return <WorkBrowser key={mode} items={workItems} mode={mode} />
 }

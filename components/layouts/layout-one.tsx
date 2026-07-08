@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
 import { portfolioData } from "@/lib/portfolio-data"
@@ -10,7 +9,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { WritingSection } from "@/components/writing-section"
 import { Section } from "@/components/section"
 import { ProjectCard } from "@/components/project-card"
-import { WorkSection, WorkFilterTabs, type WorkFilter } from "@/components/work-section"
+import { WorkSection } from "@/components/work-section"
 import { WorkHoverProvider } from "@/components/work-hover-context"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { CursorTrail } from "@/components/cursor-trail"
@@ -19,7 +18,6 @@ import { fadeUp, noMotion, stagger } from "@/lib/animations"
 export function LayoutOne() {
   const { name, bio, socials, email, projects } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
-  const [workFilter, setWorkFilter] = useState<WorkFilter>(null)
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
 
@@ -50,10 +48,9 @@ export function LayoutOne() {
             <Suitcase size={14} weight="Bold" />
             Work
           </h2>
-          <WorkFilterTabs active={workFilter} onChange={setWorkFilter} />
         </div>
         <div className="min-w-0 max-w-full">
-          <WorkSection filter={workFilter} />
+          <WorkSection />
         </div>
       </motion.section>
 
