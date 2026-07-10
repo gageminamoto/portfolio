@@ -208,7 +208,7 @@ export type NotionBlock = BlockObjectResponse & {
 
 // ─── Tools ───────────────────────────────────────────────────────────
 
-export type ToolCategory = "Build" | "Productivity" | "Skills"
+export type ToolCategory = string
 
 export interface NotionToolItem {
   id: string
@@ -240,8 +240,9 @@ function getDescription(page: PageObjectResponse): string {
 
 function getCategory(page: PageObjectResponse): ToolCategory {
   const catProp = page.properties["Category"]
-  if (catProp?.type === "select" && catProp.select?.name) {
-    return catProp.select.name as ToolCategory
+  if (catProp?.type === "select") {
+    const category = catProp.select?.name?.trim()
+    if (category) return category
   }
   return "Build"
 }

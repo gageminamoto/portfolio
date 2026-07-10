@@ -2,7 +2,6 @@
 
 import {
   useState,
-  useEffect,
   type CSSProperties,
   type FocusEvent,
 } from "react"
@@ -41,6 +40,22 @@ async function fetcher(url: string) {
 }
 
 type FilterCategory = "All" | ToolCategory
+
+const PREFERRED_CATEGORIES: ToolCategory[] = ["Build", "Productivity", "Skills"]
+
+function sortCategories(categories: ToolCategory[]): ToolCategory[] {
+  return [...categories].sort((a, b) => {
+    const aIndex = PREFERRED_CATEGORIES.indexOf(a)
+    const bIndex = PREFERRED_CATEGORIES.indexOf(b)
+    const aKnown = aIndex !== -1
+    const bKnown = bIndex !== -1
+
+    if (aKnown && bKnown) return aIndex - bIndex
+    if (aKnown) return -1
+    if (bKnown) return 1
+    return a.localeCompare(b, undefined, { sensitivity: "base" })
+  })
+}
 
 function formatLastUpdated(dateStr: string | null): string {
   if (!dateStr) return ""
@@ -182,11 +197,13 @@ export default function ToolsPage() {
     return matchesCategory && matchesSearch
   })
 
+  const toolCategories = Array.from(new Set(tools.map((tool) => tool.category)))
   const categories: { value: FilterCategory; label: string }[] = [
     { value: "All", label: "All" },
-    { value: "Build", label: "Build" },
-    { value: "Productivity", label: "Productivity" },
-    { value: "Skills", label: "Skills" },
+    ...sortCategories(toolCategories).map((category) => ({
+      value: category,
+      label: category,
+    })),
   ]
 
   return (
