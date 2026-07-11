@@ -46,26 +46,20 @@ export function NotionBlockComponent({ block }: NotionBlockComponentProps) {
 
     case "bulleted_list_item":
       return (
-        <li className="text-base leading-7 text-foreground/90">
+        <li>
           <NotionRichText items={block.bulleted_list_item.rich_text} />
         </li>
       )
 
     case "numbered_list_item":
       return (
-        <li className="text-base leading-7 text-foreground/90">
+        <li>
           <NotionRichText items={block.numbered_list_item.rich_text} />
         </li>
       )
 
     case "divider":
-      return (
-        <div className="my-8 flex justify-center gap-1.5" role="separator">
-          <span className="block h-1 w-1 rounded-full bg-muted-foreground/30" />
-          <span className="block h-1 w-1 rounded-full bg-muted-foreground/30" />
-          <span className="block h-1 w-1 rounded-full bg-muted-foreground/30" />
-        </div>
-      )
+      return <hr />
 
     default:
       return null

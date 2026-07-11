@@ -46,7 +46,6 @@ export function NotionBlocksRenderer({ blocks }: NotionBlocksRendererProps) {
           return (
             <ul
               key={i}
-              className="my-5 flex flex-col gap-1.5 pl-6 list-disc marker:text-muted-foreground/50"
             >
               {group.blocks.map((block) => (
                 <NotionBlockComponent key={block.id} block={block} />
@@ -59,7 +58,6 @@ export function NotionBlocksRenderer({ blocks }: NotionBlocksRendererProps) {
           return (
             <ol
               key={i}
-              className="my-5 flex flex-col gap-1.5 pl-6 list-decimal marker:text-muted-foreground/50"
             >
               {group.blocks.map((block) => (
                 <NotionBlockComponent key={block.id} block={block} />

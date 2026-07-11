@@ -247,7 +247,7 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
               )}
 
               {(isSeed || (!isLoading && !error)) && blocks.length > 0 && (
-                <article>
+                <article className="typeset typeset-docs max-w-[37em]">
                   <NotionBlocksRenderer blocks={blocks} />
                 </article>
               )}

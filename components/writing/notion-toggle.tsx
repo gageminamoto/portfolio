@@ -17,7 +17,7 @@ export function NotionToggle({ block }: NotionToggleProps) {
   const toggle = block.toggle
 
   return (
-    <div className="my-4 rounded-lg border border-border">
+    <div className="mt-[var(--typeset-flow)] rounded-lg border border-border">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -29,7 +29,7 @@ export function NotionToggle({ block }: NotionToggleProps) {
             open ? "rotate-90" : ""
           }`}
         />
-        <span className="font-medium text-foreground">
+        <span>
           <NotionRichText items={toggle.rich_text} />
         </span>
       </button>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Agentation } from 'agentation'
@@ -11,8 +11,14 @@ import { GradientOverlay } from '@/components/gradient-overlay'
 import { CommandKProvider } from '@/contexts/CommandKContext'
 import './globals.css'
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+})
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+})
 const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION !== "false"
 
 export const metadata: Metadata = {
@@ -46,8 +52,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning style={{ colorScheme: "light dark" }}>
-      <body className={`${inter.variable} ${jetbrainsMono.variable} relative font-sans antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      style={{ colorScheme: "light dark" }}
+      className={`${inter.variable} ${geistMono.variable}`}
+    >
+      <body className="relative font-sans antialiased">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:text-background focus:outline-none"
