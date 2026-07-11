@@ -11,8 +11,8 @@ export function NotionQuote({ block }: NotionQuoteProps) {
   const quote = block.quote
 
   return (
-    <blockquote>
-      <p>
+    <blockquote className="my-6 border-l-2 border-foreground/20 pl-5 italic text-foreground/80">
+      <p className="text-base leading-7">
         <NotionRichText items={quote.rich_text} />
       </p>
     </blockquote>

@@ -29,7 +29,7 @@ export function NotionImage({ block }: NotionImageProps) {
 
   return (
     <>
-      <figure className="not-typeset my-8 w-full">
+      <figure className="my-8 w-full">
         <button
           type="button"
           aria-label="Expand image"

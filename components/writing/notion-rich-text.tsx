@@ -1,4 +1,5 @@
 import type { RichTextItemResponse } from "@notionhq/client/build/src/api-endpoints"
+import { HoverLink } from "@/components/hover-link"
 
 interface NotionRichTextProps {
   items: RichTextItemResponse[]
@@ -41,7 +42,7 @@ export function NotionRichText({ items }: NotionRichTextProps) {
           content = <span className={textColorClass}>{content}</span>
         }
         if (item.annotations.bold) {
-          content = <strong>{content}</strong>
+          content = <strong className="font-medium">{content}</strong>
         }
         if (item.annotations.italic) {
           content = <em>{content}</em>
@@ -53,7 +54,11 @@ export function NotionRichText({ items }: NotionRichTextProps) {
           content = <u>{content}</u>
         }
         if (item.annotations.code) {
-          content = <code>{content}</code>
+          content = (
+            <code className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[0.875em]">
+              {content}
+            </code>
+          )
         }
         if (highlightColorClass) {
           content = (
@@ -65,9 +70,9 @@ export function NotionRichText({ items }: NotionRichTextProps) {
 
         if (item.href) {
           return (
-            <a key={i} href={item.href} target="_blank" rel="noopener noreferrer">
+            <HoverLink key={i} href={item.href}>
               {content}
-            </a>
+            </HoverLink>
           )
         }
 
