@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { X } from "lucide-react"
 
@@ -13,6 +13,7 @@ interface ImageLightboxProps {
 const MIN_SCALE = 1
 const MAX_SCALE = 4
 const ZOOM_STEP = 0.5
+const loadedLightboxImageSrcs = new Set<string>()
 
 export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
   const shouldReduceMotion = useReducedMotion()
@@ -20,7 +21,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
   const imgRef = useRef<HTMLImageElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(() => loadedLightboxImageSrcs.has(src))
   const [scale, setScale] = useState(1)
   const [translate, setTranslate] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -55,6 +56,22 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
     setScale(1)
     setTranslate({ x: 0, y: 0 })
   }, [])
+
+  const handleImageLoad = useCallback(() => {
+    loadedLightboxImageSrcs.add(src)
+    setLoaded(true)
+  }, [src])
+
+  useEffect(() => {
+    setLoaded(loadedLightboxImageSrcs.has(src))
+  }, [src])
+
+  useLayoutEffect(() => {
+    const image = imgRef.current
+    if (image?.complete && image.naturalWidth > 0) {
+      handleImageLoad()
+    }
+  }, [handleImageLoad])
 
   useEffect(() => {
     closeRef.current?.focus()
@@ -226,7 +243,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
             alt={alt}
             width={2400}
             height={1350}
-            onLoad={() => setLoaded(true)}
+            onLoad={handleImageLoad}
             className="max-h-[85vh] max-w-[95vw] rounded-lg object-contain md:max-w-4xl"
             style={{
               userSelect: "none",
