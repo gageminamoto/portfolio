@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 import { X } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
 
 interface ImageLightboxProps {
   src: string
@@ -14,13 +13,15 @@ interface ImageLightboxProps {
 const MIN_SCALE = 1
 const MAX_SCALE = 4
 const ZOOM_STEP = 0.5
+const loadedLightboxImageSrcs = new Set<string>()
 
 export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
+  const shouldReduceMotion = useReducedMotion()
   const closeRef = useRef<HTMLButtonElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(() => loadedLightboxImageSrcs.has(src))
   const [scale, setScale] = useState(1)
   const [translate, setTranslate] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -55,6 +56,22 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
     setScale(1)
     setTranslate({ x: 0, y: 0 })
   }, [])
+
+  const handleImageLoad = useCallback(() => {
+    loadedLightboxImageSrcs.add(src)
+    setLoaded(true)
+  }, [src])
+
+  useEffect(() => {
+    setLoaded(loadedLightboxImageSrcs.has(src))
+  }, [src])
+
+  useLayoutEffect(() => {
+    const image = imgRef.current
+    if (image?.complete && image.naturalWidth > 0) {
+      handleImageLoad()
+    }
+  }, [handleImageLoad])
 
   useEffect(() => {
     closeRef.current?.focus()
@@ -172,8 +189,31 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
       </button>
 
       {!loaded && (
-        <div className="absolute inset-4 flex items-center justify-center">
-          <Skeleton className="h-[min(85vh,56vw)] max-h-[85vh] w-[min(95vw,56rem)] rounded-lg bg-white/10" />
+        <div
+          className="pointer-events-none absolute inset-4 flex items-center justify-center"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <div className="flex items-center gap-1.5" role="status" aria-label="Loading image">
+            {[0, 1, 2].map((dot) => (
+              <motion.span
+                key={dot}
+                className="h-2 w-2 rounded-full bg-white/80 will-change-transform"
+                animate={shouldReduceMotion ? { opacity: 0.8 } : { y: [0, -5, 0], opacity: [0.45, 1, 0.45] }}
+                transition={
+                  shouldReduceMotion
+                    ? { duration: 0 }
+                    : {
+                        duration: 0.6,
+                        delay: dot * 0.12,
+                        ease: [0.45, 0.03, 0.52, 0.96],
+                        repeat: Infinity,
+                        repeatDelay: 0.12,
+                      }
+                }
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -186,6 +226,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
         onClick={handleImageClick}
         style={{
           cursor: isZoomed ? "grab" : "zoom-in",
+          pointerEvents: loaded ? "auto" : "none",
         }}
       >
         {/* Inner div handles zoom/pan transforms without Framer Motion conflict */}
@@ -202,7 +243,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
             alt={alt}
             width={2400}
             height={1350}
-            onLoad={() => setLoaded(true)}
+            onLoad={handleImageLoad}
             className="max-h-[85vh] max-w-[95vw] rounded-lg object-contain md:max-w-4xl"
             style={{
               userSelect: "none",

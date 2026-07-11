@@ -1,7 +1,7 @@
 import { cache } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { fetchPostBySlug } from "@/lib/notion"
+import { fetchAllPosts, fetchPostBlocks, fetchPostBySlug } from "@/lib/notion"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ArticleContent } from "./article-content"
 
@@ -53,5 +53,10 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
     notFound()
   }
 
-  return <ArticleContent slug={slug} from={from} initialPost={post ?? undefined} />
+  const [blocks, allPosts] = await Promise.all([
+    fetchPostBlocks(post.id),
+    fetchAllPosts(),
+  ])
+
+  return <ArticleContent slug={slug} from={from} initialData={{ post, blocks, allPosts }} />
 }

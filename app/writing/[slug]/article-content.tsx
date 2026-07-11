@@ -79,10 +79,16 @@ function useMediaQuery(query: string) {
 interface ArticleContentProps {
   slug: string
   from?: string
-  initialPost?: NotionWritingPost
+  initialData?: ArticleData
 }
 
-export function ArticleContent({ slug, from, initialPost }: ArticleContentProps) {
+interface ArticleData {
+  post: NotionWritingPost
+  blocks: NotionBlock[]
+  allPosts: NotionWritingPost[]
+}
+
+export function ArticleContent({ slug, from, initialData }: ArticleContentProps) {
   const [copied, setCopied] = useState(false)
   const shouldReduceMotion = useReducedMotion()
   const isMobileTocVisible = useMediaQuery("(max-width: 47.999rem)")
@@ -116,18 +122,16 @@ export function ArticleContent({ slug, from, initialPost }: ArticleContentProps)
 
   const isSeed = slug.startsWith("seed-")
 
-  const { data, error, isLoading } = useSWR<{
-    post: NotionWritingPost
-    blocks: NotionBlock[]
-    allPosts: NotionWritingPost[]
-  }>(isSeed ? null : `/api/writing/${slug}`, fetcher, {
+  const { data, error, isLoading } = useSWR<ArticleData>(isSeed ? null : `/api/writing/${slug}`, fetcher, {
     revalidateOnFocus: false,
+    revalidateOnMount: false,
+    fallbackData: initialData,
   })
 
   const seedPost = isSeed ? getSeedPost(slug) : null
   const seedBlocks = isSeed ? generateSeedBlocks() : []
 
-  const post = seedPost ?? data?.post ?? initialPost
+  const post = seedPost ?? data?.post
   const blocks = isSeed ? seedBlocks : (data?.blocks ?? [])
   const realPosts = data?.allPosts ?? []
   const allPosts = dial.enabled || isSeed
