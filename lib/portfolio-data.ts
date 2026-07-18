@@ -120,6 +120,10 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
+    { name: "TTRPGs", description: "Rolling dice and telling stories" },
+    { name: "Batman", description: "Gotham's moodiest detective" },
+    { name: "Analog photography", description: "Slow photos on film" },
+    { name: "Making games", description: "Tiny worlds, one mechanic at a time" },
     { name: "NewJeans", url: "https://www.youtube.com/watch?v=iXlH5AhHLZY&t=407s", description: "#njz" },
     { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
