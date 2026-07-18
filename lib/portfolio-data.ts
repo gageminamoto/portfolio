@@ -120,10 +120,10 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
-    { name: "NewJeans", url: "https://www.youtube.com/watch?v=iXlH5AhHLZY&t=407s", description: "#njz" },
+    { name: "TTRPGs", description: "Rolling dice and telling stories" },
+    { name: "Analog photography", description: "Slow photos on film" },
     { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
-    { name: "Notion", url: "https://www.linkedin.com/in/gageminamoto/details/certifications/", description: "Notion certified" },
   ],
   projects: [
     {
