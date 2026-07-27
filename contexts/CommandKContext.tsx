@@ -1,8 +1,12 @@
 'use client'
 
 import * as React from 'react'
+import dynamic from 'next/dynamic'
 
-import { SearchCommandModal } from '@/components/search/SearchCommandModal'
+const SearchCommandModal = dynamic(
+  () => import('@/components/search/SearchCommandModal').then((module) => module.SearchCommandModal),
+  { ssr: false },
+)
 
 type CommandKContextType = {
   isOpen: boolean
@@ -41,7 +45,7 @@ export function CommandKProvider({ children }: { children: React.ReactNode }) {
   return (
     <CommandKContext.Provider value={value}>
       {children}
-      <SearchCommandModal open={isOpen} onOpenChange={setIsOpen} />
+      {isOpen && <SearchCommandModal open={isOpen} onOpenChange={setIsOpen} />}
     </CommandKContext.Provider>
   )
 }

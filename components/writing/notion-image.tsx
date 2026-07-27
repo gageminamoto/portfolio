@@ -1,11 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { AnimatePresence } from "framer-motion"
+import dynamic from "next/dynamic"
 import type { NotionBlock } from "@/lib/notion"
 import { getOptimizedImageUrl } from "@/lib/image-url"
 import { OptimizedImage } from "@/components/optimized-image"
-import { ImageLightbox } from "./image-lightbox"
+
+const ImageLightbox = dynamic(
+  () => import("./image-lightbox").then((module) => module.ImageLightbox),
+  { ssr: false }
+)
 
 type ImageBlock = Extract<NotionBlock, { type: "image" }>
 
@@ -55,15 +59,7 @@ export function NotionImage({ block }: NotionImageProps) {
         )}
       </figure>
 
-      <AnimatePresence>
-        {open && (
-          <ImageLightbox
-            src={lightboxSrc}
-            alt={alt}
-            onClose={() => setOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {open && <ImageLightbox src={lightboxSrc} alt={alt} onClose={() => setOpen(false)} />}
     </>
   )
 }

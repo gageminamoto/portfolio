@@ -9,7 +9,10 @@ export async function GET() {
     const posts = await fetchLatestPosts(10)
     return NextResponse.json({ posts })
   } catch (error) {
-    console.error("[writing/route] Failed to fetch from Notion:", error)
+    console.error(
+      "[writing/route] Failed to fetch from Notion:",
+      error instanceof Error ? error.message : "Unknown error"
+    )
     return NextResponse.json(
       { posts: [], error: "Failed to fetch writing posts" },
       { status: 500 }
