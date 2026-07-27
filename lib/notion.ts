@@ -1,14 +1,34 @@
 import { Client } from "@notionhq/client"
+import { unstable_cache } from "next/cache"
 import type {
   BlockObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints"
 import { slugify } from "./utils"
 
-export const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-  notionVersion: "2025-09-03",
-})
+let notionClient: Client | null = null
+
+function getNotionClient(): Client {
+  if (!notionClient) {
+    notionClient = new Client({
+      auth: process.env.NOTION_API_KEY,
+      notionVersion: "2025-09-03",
+      // Avoid holding a route's loading UI forever when Notion is unavailable.
+      timeoutMs: 8_000,
+    })
+  }
+
+  return notionClient
+}
+
+function logNotionError(operation: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error)
+  console.error(`[notion] ${operation} failed: ${message}`)
+}
+
+export function isWritingConfigured(): boolean {
+  return Boolean(process.env.NOTION_API_KEY && process.env.NOTION_BLOG_DATABASE_ID)
+}
 
 const dataSourceCache = new Map<string, string>()
 
@@ -16,7 +36,7 @@ async function resolveDataSourceId(databaseId: string): Promise<string> {
   const cached = dataSourceCache.get(databaseId)
   if (cached) return cached
 
-  const db = await notion.databases.retrieve({ database_id: databaseId })
+  const db = await getNotionClient().databases.retrieve({ database_id: databaseId })
   const dsId = "data_sources" in db ? db.data_sources[0]?.id : undefined
   if (!dsId) {
     throw new Error(`No data source found for database ${databaseId}`)
@@ -102,7 +122,7 @@ async function fetchAllWritingPostsForDatabase(
   let cursor: string | undefined = undefined
 
   do {
-    const response = await notion.dataSources.query({
+    const response = await getNotionClient().dataSources.query({
       data_source_id: dataSourceId,
       start_cursor: cursor,
       sorts: [
@@ -142,6 +162,16 @@ export async function fetchAllPosts(): Promise<NotionWritingPost[]> {
   return fetchAllWritingPostsForDatabase(databaseId)
 }
 
+const getCachedAllPosts = unstable_cache(
+  async () => fetchAllPosts(),
+  ["notion-writing-posts"],
+  { revalidate: 600, tags: ["notion-writing"] }
+)
+
+export async function fetchCachedAllPosts(): Promise<NotionWritingPost[]> {
+  return getCachedAllPosts()
+}
+
 export async function fetchPostBySlug(
   slug: string
 ): Promise<NotionWritingPost | null> {
@@ -155,7 +185,7 @@ export async function fetchPostBySlug(
   // Try filtering by Slug property first (only if the property exists in the DB)
   try {
     const dataSourceId = await resolveDataSourceId(databaseId)
-    const response = await notion.dataSources.query({
+    const response = await getNotionClient().dataSources.query({
       data_source_id: dataSourceId,
       filter: {
         property: "Slug",
@@ -176,8 +206,9 @@ export async function fetchPostBySlug(
         url: page.url,
       }
     }
-  } catch {
+  } catch (error) {
     // Slug property doesn't exist in this database — fall through to title-based matching
+    logNotionError("query post by slug", error)
   }
 
   // Try matching by computed slug (title-derived)
@@ -187,7 +218,7 @@ export async function fetchPostBySlug(
 
   // Fall back: try fetching by page ID directly (backward compat for old UUID URLs)
   try {
-    const page = (await notion.pages.retrieve({
+    const page = (await getNotionClient().pages.retrieve({
       page_id: slug,
     })) as PageObjectResponse
     return {
@@ -260,7 +291,7 @@ export async function fetchTools(): Promise<ToolsResponse> {
   let cursor: string | undefined = undefined
 
   do {
-    const response = await notion.dataSources.query({
+    const response = await getNotionClient().dataSources.query({
       data_source_id: dataSourceId,
       start_cursor: cursor,
       sorts: [
@@ -301,21 +332,22 @@ export async function fetchPostBlocks(
   let cursor: string | undefined = undefined
 
   do {
-    const response = await notion.blocks.children.list({
+    const response = await getNotionClient().blocks.children.list({
       block_id: pageId,
       start_cursor: cursor,
       page_size: 100,
     })
 
-    for (const block of response.results as BlockObjectResponse[]) {
-      const notionBlock: NotionBlock = { ...block }
-
-      if (block.has_children) {
-        notionBlock.children = await fetchPostBlocks(block.id)
-      }
-
-      blocks.push(notionBlock)
-    }
+    const pageBlocks = await Promise.all(
+      (response.results as BlockObjectResponse[]).map(async (block) => {
+        const notionBlock: NotionBlock = { ...block }
+        if (block.has_children) {
+          notionBlock.children = await fetchPostBlocks(block.id)
+        }
+        return notionBlock
+      })
+    )
+    blocks.push(...pageBlocks)
 
     cursor = response.has_more ? response.next_cursor ?? undefined : undefined
   } while (cursor)

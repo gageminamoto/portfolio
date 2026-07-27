@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import {
   fetchPostBySlug,
   fetchPostBlocks,
-  fetchAllPosts,
+  fetchCachedAllPosts,
 } from "@/lib/notion"
 
 export const revalidate = 600
@@ -13,7 +13,8 @@ export async function GET(
 ) {
   try {
     const { slug } = await params
-    const post = await fetchPostBySlug(slug)
+    const allPosts = await fetchCachedAllPosts()
+    const post = allPosts.find((item) => item.slug === slug) ?? await fetchPostBySlug(slug)
 
     if (!post) {
       return NextResponse.json(
@@ -22,14 +23,14 @@ export async function GET(
       )
     }
 
-    const [blocks, allPosts] = await Promise.all([
-      fetchPostBlocks(post.id),
-      fetchAllPosts(),
-    ])
+    const blocks = await fetchPostBlocks(post.id)
 
     return NextResponse.json({ post, blocks, allPosts })
   } catch (error) {
-    console.error("[writing/[slug]/route] Failed to fetch article:", error)
+    console.error(
+      "[writing/[slug]/route] Failed to fetch article:",
+      error instanceof Error ? error.message : "Unknown error"
+    )
     return NextResponse.json(
       { error: "Failed to fetch article" },
       { status: 500 }
