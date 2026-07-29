@@ -61,7 +61,7 @@ export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleCo
           <header className="mb-10 flex flex-col gap-6">
             <nav className="flex items-center justify-between">
               <Link href={backToHome ? "/" : "/writing"} className="group inline-flex items-center gap-1 rounded-sm text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-                <ChevronLeft className="h-3.5 w-3.5 transition-transform duration-150 ease-out group-hover:-translate-x-0.5" aria-hidden="true" />
+                <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground/50 transition-[color,transform] duration-150 ease-out group-hover:-translate-x-0.5 group-hover:text-foreground" aria-hidden="true" />
                 {backToHome ? "Home" : "Writing"}
               </Link>
               <ArticleActions />
