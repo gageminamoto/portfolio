@@ -31,7 +31,7 @@ export function LayoutOne() {
       animate="show"
     >
       {/* Header */}
-      <motion.header initial={false} variants={item} className="flex flex-col gap-6">
+      <motion.header variants={item} className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             {name}
