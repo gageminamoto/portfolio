@@ -4,18 +4,21 @@ export const stagger: Variants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.06,
+      // Let the first item establish the page before the remaining sections
+      // enter. The short stagger preserves the reading order without making
+      // below-the-fold content feel late.
+      delayChildren: 0.04,
+      staggerChildren: 0.075,
     },
   },
 }
 
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 8 },
+  hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.35,
+      duration: 0.4,
       ease: [0.23, 1, 0.32, 1],
     },
   },
