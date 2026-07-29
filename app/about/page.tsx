@@ -18,7 +18,12 @@ import dynamic from "next/dynamic"
 
 const Penflow = dynamic(
   () => import("penflow/react").then((m) => m.Penflow),
-  { ssr: false }
+  {
+    ssr: false,
+    // Penflow is client-only. Keep its final canvas footprint in the initial
+    // render so loading the module and font cannot move the content below it.
+    loading: () => <span aria-hidden="true" className="block h-[79px] w-[160px]" />,
+  }
 )
 
 const PokemonCards = dynamic(
@@ -65,7 +70,7 @@ export default function AboutPage() {
         />
         <button
           type="button"
-          className="mt-2 w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
+          className="mt-2 h-[79px] w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
           onClick={() => setPenflowKey((k) => k + 1)}
           aria-label="Replay signature animation"
         >
