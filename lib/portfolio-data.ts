@@ -94,8 +94,6 @@ export const portfolioData: PortfolioData = {
   bio: "Designer thriving in ambiguity, blurred lines, and curiosity to shape great everyday products. Currently, crafting simple {software|brands|tools} at Negi.\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
   extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
 
-I grew up in Hawai’i, surrounded by diverse cultures. That background taught me to value empathy, community, and restraint, qualities that still shape how I approach design.
-
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/). Those early roles taught me how to move fast, collaborate across teams, and communicate with clarity.
 
 Indie games have always inspired me. Small teams pour their craft into every detail with whatever they have. That same energy drives Negi, the design studio I co-founded with [Michelle](https://www.michellesunnyside.com/), where we design thoughtful software and brands in and for Hawai’i. Craft is still rare here, but deeply needed. Follow the journey [here](https://www.linkedin.com/company/negi-studio/).`,
