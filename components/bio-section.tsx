@@ -97,7 +97,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "Aura",
                   "Kilo",
                   "Umi",
-                  "Piʻiku",
+                  "Piʻikū",
                   "Spero",
                   "MemberSpace",
                   "Servco",
