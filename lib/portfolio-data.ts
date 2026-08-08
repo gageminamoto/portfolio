@@ -91,7 +91,7 @@ const faviconUrl = (url: string) =>
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Designer thriving in ambiguity, blurred lines, and curiosity to shape great everyday products. Currently, crafting simple {software|brands|tools} at Negi.\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.",
+  bio: "Designer thriving in ambiguity, blurred lines, and curiosity to shape great everyday products. Currently, crafting simple {software|brands|tools} at Negi.\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.\n\nI’ve worked with teams at [Aura](https://aurafinance.io), [Kilo](https://kilohnl.com/), [Umi](https://umiapp.co/), [Piʻikū](https://piiku.co/), [Spero](https://spero.vc/), [MemberSpace](https://www.memberspace.com/), and [Servco](https://www.servco.com/) across product, brand, and web design.",
   extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
 
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/). Those early roles taught me how to move fast, collaborate across teams, and communicate with clarity.
