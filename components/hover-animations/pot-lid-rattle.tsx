@@ -33,7 +33,7 @@ export function PotLidRattleAnimation({
         }
         transition={
           isHovered
-            ? { repeat: Infinity, duration: 0.5, ease: "easeInOut" }
+            ? { repeat: Infinity, duration: 0.5, ease: [0.645, 0.045, 0.355, 1] }
             : { type: "spring", stiffness: 300, damping: 20 }
         }
       >
@@ -57,7 +57,7 @@ export function PotLidRattleAnimation({
                 duration: 1.2,
                 repeat: Infinity,
                 delay: puff.delay,
-                ease: "easeOut",
+                ease: [0.23, 1, 0.32, 1],
               }}
             />
           ))}

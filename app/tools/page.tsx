@@ -17,9 +17,6 @@ import {
   noMotion,
   stagger,
   toolsPanelEnter,
-  toolsPanelChild,
-  toolListStagger,
-  toolListRow,
 } from "@/lib/animations"
 import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
@@ -155,9 +152,6 @@ export default function ToolsPage() {
   const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
   const item = shouldReduceMotion ? noMotion : fadeUp
   const toolsPanelParent = shouldReduceMotion ? noMotion : toolsPanelEnter
-  const toolsPanelPiece = shouldReduceMotion ? noMotion : toolsPanelChild
-  const toolRowStagger = shouldReduceMotion ? noMotion : toolListStagger
-  const toolRowItem = shouldReduceMotion ? noMotion : toolListRow
 
   const hoverSpeed = Math.max(0.25, hoverSpeedDial.speed)
   const hoverPadMs = Math.round(100 / hoverSpeed)
@@ -235,10 +229,10 @@ export default function ToolsPage() {
         </p>
       </motion.div>
 
-      {/* Search + Filters + Table — nested stagger (ease-out, transform + opacity only) */}
+      {/* Search, filters, and table enter as one coherent block. */}
       <motion.div variants={toolsPanelParent} className="flex flex-col gap-5">
         {/* Search */}
-        <motion.div variants={toolsPanelPiece} className="relative">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
           <input
             type="text"
@@ -247,13 +241,10 @@ export default function ToolsPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
           />
-        </motion.div>
+        </div>
 
         {/* Category pills + updated date */}
-        <motion.div
-          variants={toolsPanelPiece}
-          className="flex flex-wrap items-center justify-between gap-3"
-        >
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div
             className="flex flex-wrap items-center gap-2"
             role="group"
@@ -284,11 +275,10 @@ export default function ToolsPage() {
               Updated {formatLastUpdated(data.lastUpdated)}
             </span>
           )}
-        </motion.div>
+        </div>
 
         {/* Content — loading/error fade as one block; list/cards stagger rows */}
-        <motion.div
-          variants={isLoading || error ? toolsPanelPiece : toolRowStagger}
+        <div
           className={cn(
             !isLoading && !error && viewMode === "list" && "flex flex-col",
             !isLoading &&
@@ -404,7 +394,6 @@ export default function ToolsPage() {
                   return tool.url ? (
                     <motion.a
                       key={tool.id}
-                      variants={toolRowItem}
                       data-tool-row={tool.id}
                       href={tool.url}
                       target="_blank"
@@ -421,7 +410,6 @@ export default function ToolsPage() {
                   ) : (
                     <motion.div
                       key={tool.id}
-                      variants={toolRowItem}
                       data-tool-row={tool.id}
                       className={rowClass}
                       style={rowPadTransitionStyle}
@@ -461,7 +449,6 @@ export default function ToolsPage() {
                     icon={<ToolIcon name={tool.name} url={tool.url} />}
                     name={nameNode}
                     meta={tool.description}
-                    variants={toolRowItem}
                     style={rowPadTransitionStyle}
                     aria-label={`${displayName} — ${tool.description}`}
                   />
@@ -485,7 +472,6 @@ export default function ToolsPage() {
               return tool.url ? (
                 <motion.a
                   key={tool.id}
-                  variants={toolRowItem}
                   href={tool.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -502,7 +488,7 @@ export default function ToolsPage() {
                   <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
                 </motion.a>
               ) : (
-                <motion.div key={tool.id} variants={toolRowItem} className={cardClassName}>
+                <motion.div key={tool.id} className={cardClassName}>
                   <ToolIcon name={tool.name} url={tool.url} />
                   {isSkill ? (
                     <span className="w-fit rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
@@ -522,7 +508,7 @@ export default function ToolsPage() {
             )}
           </>
         )}
-        </motion.div>
+        </div>
       </motion.div>
 
       <motion.div variants={item}>

@@ -83,7 +83,7 @@ function groupPosts(
 function SkeletonRow() {
   return (
     <div className="flex items-center gap-3 px-0 py-3">
-      <div className="h-4 w-48 shrink-0 animate-pulse rounded bg-muted" />
+      <div className="h-5 w-48 shrink-0 animate-pulse rounded bg-muted motion-reduce:animate-none" />
       <div className="h-3 w-20 flex-1 animate-pulse rounded bg-muted" />
     </div>
   )

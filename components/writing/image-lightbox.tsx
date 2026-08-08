@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, useMotionValue, useReducedMotion } from "framer-motion"
 import { X } from "lucide-react"
 
 interface ImageLightboxProps {
   src: string
   alt: string
+  layoutId?: string
   onClose: () => void
 }
 
@@ -15,7 +16,7 @@ const MAX_SCALE = 4
 const ZOOM_STEP = 0.5
 const loadedLightboxImageSrcs = new Set<string>()
 
-export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
+export function ImageLightbox({ src, alt, layoutId, onClose }: ImageLightboxProps) {
   const shouldReduceMotion = useReducedMotion()
   const closeRef = useRef<HTMLButtonElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
@@ -23,8 +24,9 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
 
   const [loaded, setLoaded] = useState(() => loadedLightboxImageSrcs.has(src))
   const [scale, setScale] = useState(1)
-  const [translate, setTranslate] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
+  const translateX = useMotionValue(0)
+  const translateY = useMotionValue(0)
   const pointerDown = useRef(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const translateStart = useRef({ x: 0, y: 0 })
@@ -54,8 +56,9 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
 
   const resetZoom = useCallback(() => {
     setScale(1)
-    setTranslate({ x: 0, y: 0 })
-  }, [])
+    translateX.set(0)
+    translateY.set(0)
+  }, [translateX, translateY])
 
   const handleImageLoad = useCallback(() => {
     loadedLightboxImageSrcs.add(src)
@@ -63,13 +66,20 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
   }, [src])
 
   useEffect(() => {
-    setLoaded(loadedLightboxImageSrcs.has(src))
-  }, [src])
+    const frame = requestAnimationFrame(() => {
+      setLoaded(loadedLightboxImageSrcs.has(src))
+      setScale(1)
+      translateX.set(0)
+      translateY.set(0)
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [src, translateX, translateY])
 
   useLayoutEffect(() => {
     const image = imgRef.current
     if (image?.complete && image.naturalWidth > 0) {
-      handleImageLoad()
+      const frame = requestAnimationFrame(handleImageLoad)
+      return () => cancelAnimationFrame(frame)
     }
   }, [handleImageLoad])
 
@@ -99,14 +109,17 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
       const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP
       setScale((prev) => {
         const next = Math.max(MIN_SCALE, Math.min(MAX_SCALE, prev + delta))
-        if (next <= 1) setTranslate({ x: 0, y: 0 })
+        if (next <= 1) {
+          translateX.set(0)
+          translateY.set(0)
+        }
         return next
       })
     }
 
     container.addEventListener("wheel", handleWheel, { passive: false })
     return () => container.removeEventListener("wheel", handleWheel)
-  }, [])
+  }, [translateX, translateY])
 
   function handleImageClick(e: React.MouseEvent) {
     e.stopPropagation()
@@ -125,7 +138,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
     pointerDown.current = true
     setIsDragging(false)
     dragStart.current = { x: e.clientX, y: e.clientY }
-    translateStart.current = { ...translate }
+    translateStart.current = { x: translateX.get(), y: translateY.get() }
     ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
   }
 
@@ -144,7 +157,8 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
         translateStart.current.y + dy,
         scale
       )
-      setTranslate(newTranslate)
+      translateX.set(newTranslate.x)
+      translateY.set(newTranslate.y)
     }
   }
 
@@ -219,21 +233,26 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
 
       {/* Outer motion.div handles enter/exit animation only */}
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
+        layoutId={layoutId}
+        initial={{ scale: shouldReduceMotion ? 1 : 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: loaded ? 1 : 0 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        exit={{ scale: shouldReduceMotion ? 1 : 0.95, opacity: 0 }}
+        transition={{
+          ...(layoutId
+            ? { type: "tween", duration: 0.3, ease: [0.23, 1, 0.32, 1] }
+            : { duration: shouldReduceMotion ? 0.15 : 0.3, ease: [0.25, 0.46, 0.45, 0.94] }),
+        }}
         onClick={handleImageClick}
         style={{
           cursor: isZoomed ? "grab" : "zoom-in",
           pointerEvents: loaded ? "auto" : "none",
         }}
       >
-        {/* Inner div handles zoom/pan transforms without Framer Motion conflict */}
-        <div
-          style={{
-            transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`,
-            transition: isDragging ? "none" : "transform 0.2s ease-out",
+        <motion.div
+          style={{ x: translateX, y: translateY, scale }}
+          transition={{
+            duration: shouldReduceMotion || isDragging ? 0 : 0.2,
+            ease: [0.25, 0.46, 0.45, 0.94],
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -254,7 +273,7 @@ export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
           />
-        </div>
+        </motion.div>
       </motion.div>
     </motion.div>
   )
