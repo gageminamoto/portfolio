@@ -69,7 +69,6 @@ export function LayoutOne() {
               key={project.name}
               project={project}
               index={index}
-              guandanVariant="cards"
             />
           ))}
         </div>

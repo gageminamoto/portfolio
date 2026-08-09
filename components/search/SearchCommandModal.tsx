@@ -122,7 +122,7 @@ const projectItems: PaletteItem[] = portfolioData.projects.map((project) => ({
   group: 'Projects',
   external: Boolean(project.url),
   icon: project.favicon ? undefined : FolderOpen,
-  iconSrc: project.name === 'Guandan Rules' ? '/projects/guandian-rules-logo.svg' : project.favicon,
+  iconSrc: project.favicon,
 }))
 
 const writingItems: PaletteItem[] = portfolioData.writing.map((post) => ({

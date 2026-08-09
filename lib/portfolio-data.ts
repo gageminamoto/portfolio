@@ -155,24 +155,6 @@ Indie games have always inspired me. Small teams pour their craft into every det
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
     },
-    {
-      name: "Guandan Rules",
-      url: "https://guan-duan-rules.vercel.app/",
-      githubUrl: "https://github.com/gageminamoto/Guan-Duan-Rules",
-      description: "Quick guide to Guan Dan",
-      status: "new",
-      collaborators: [
-        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
-      ],
-    },
-    {
-      name: "More soon",
-      description: "Something new in the works",
-      status: "production",
-      collaborators: [
-        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
-      ],
-    },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/", description: "Course on how to create great animations." },

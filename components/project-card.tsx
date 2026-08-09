@@ -8,7 +8,6 @@ import { useTouchDevice } from "@/hooks/use-mobile"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { DiceFallAnimation } from "@/components/hover-animations/dice-fall"
 import { PotLidRattleAnimation } from "@/components/hover-animations/pot-lid-rattle"
-import { GuandanCards } from "@/components/guandan-cards"
 import { OptimizedImage } from "@/components/optimized-image"
 
 const shapes = [
@@ -84,18 +83,15 @@ export function ProjectStatusBadge({ status }: { status: ProjectItem["status"] }
 export function ProjectCard({
   project,
   index = 0,
-  guandanVariant = "logo",
 }: {
   project: ProjectItem
   index?: number
-  guandanVariant?: "logo" | "cards"
 }) {
   const [isHovered, setIsHovered] = useState(false)
   const isTouch = useTouchDevice()
 
   const shape = shapes[index % shapes.length]
   const showAnimations = !isTouch
-  const isGuandan = project.name === "Guandan Rules"
   const isInteractive = Boolean(project.url)
 
   return (
@@ -121,19 +117,7 @@ export function ProjectCard({
         <DiceFallAnimation isHovered={isHovered} />
       )}
       <div className="flex h-16 items-center justify-center text-muted-foreground/20">
-        {isGuandan ? (
-          guandanVariant === "cards" ? (
-            <GuandanCards isHovered={isHovered} />
-          ) : (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src="/projects/guandian-rules-logo.svg"
-              alt=""
-              className="h-9 w-auto"
-              style={{ color: "#EA3A4B" }}
-            />
-          )
-        ) : project.favicon ? (
+        {project.favicon ? (
           showAnimations && project.name === "Mizen" ? (
             <PotLidRattleAnimation isHovered={isHovered}>
               <OptimizedImage
