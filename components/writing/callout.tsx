@@ -1,13 +1,13 @@
 import type { NotionBlock } from "@/lib/notion"
-import { NotionRichText } from "./notion-rich-text"
+import { RichText } from "./rich-text"
 
 type CalloutBlock = Extract<NotionBlock, { type: "callout" }>
 
-interface NotionCalloutProps {
+interface ArticleCalloutProps {
   block: CalloutBlock
 }
 
-export function NotionCallout({ block }: NotionCalloutProps) {
+export function Callout({ block }: ArticleCalloutProps) {
   const callout = block.callout
   const icon =
     callout.icon?.type === "emoji" ? callout.icon.emoji : null
@@ -20,7 +20,7 @@ export function NotionCallout({ block }: NotionCalloutProps) {
         </span>
       )}
       <div className="min-w-0 text-base leading-7 text-foreground/90">
-        <NotionRichText items={callout.rich_text} />
+        <RichText items={callout.rich_text} />
       </div>
     </div>
   )

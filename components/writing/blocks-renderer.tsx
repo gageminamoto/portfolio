@@ -1,7 +1,7 @@
 import type { NotionBlock } from "@/lib/notion"
-import { NotionBlockComponent } from "./notion-block"
+import { Block } from "./block"
 
-interface NotionBlocksRendererProps {
+interface ArticleBlocksRendererProps {
   blocks: NotionBlock[]
 }
 
@@ -36,7 +36,7 @@ function groupBlocks(blocks: NotionBlock[]): BlockGroup[] {
   return groups
 }
 
-export function NotionBlocksRenderer({ blocks }: NotionBlocksRendererProps) {
+export function BlocksRenderer({ blocks }: ArticleBlocksRendererProps) {
   const groups = groupBlocks(blocks)
 
   return (
@@ -49,7 +49,7 @@ export function NotionBlocksRenderer({ blocks }: NotionBlocksRendererProps) {
               className="my-5 flex flex-col gap-1.5 pl-6 list-disc marker:text-muted-foreground/50"
             >
               {group.blocks.map((block) => (
-                <NotionBlockComponent key={block.id} block={block} />
+                <Block key={block.id} block={block} />
               ))}
             </ul>
           )
@@ -62,14 +62,14 @@ export function NotionBlocksRenderer({ blocks }: NotionBlocksRendererProps) {
               className="my-5 flex flex-col gap-1.5 pl-6 list-decimal marker:text-muted-foreground/50"
             >
               {group.blocks.map((block) => (
-                <NotionBlockComponent key={block.id} block={block} />
+                <Block key={block.id} block={block} />
               ))}
             </ol>
           )
         }
 
         const block = group.blocks[0]
-        return <NotionBlockComponent key={block.id} block={block} />
+        return <Block key={block.id} block={block} />
       })}
     </>
   )

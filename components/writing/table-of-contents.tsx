@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import type { NotionBlock } from "@/lib/notion"
-import { getHeadingId, type HeadingBlock } from "./notion-heading"
+import { getHeadingId, type HeadingBlock } from "./heading"
 
 export interface TocHeading {
   id: string

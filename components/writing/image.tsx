@@ -13,11 +13,11 @@ const ImageLightbox = dynamic(
 
 type ImageBlock = Extract<NotionBlock, { type: "image" }>
 
-interface NotionImageProps {
+interface ArticleImageProps {
   block: ImageBlock
 }
 
-export function NotionImage({ block }: NotionImageProps) {
+export function ImageBlock({ block }: ArticleImageProps) {
   const [open, setOpen] = useState(false)
   const image = block.image
 
