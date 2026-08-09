@@ -9,6 +9,7 @@ import {
   type SyntheticEvent,
 } from "react"
 import Image from "next/image"
+import { ImageIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type LoadingMode = "eager" | "lazy"
@@ -31,6 +32,7 @@ interface OptimizedImageProps {
   className?: string
   imageClassName?: string
   skeletonClassName?: string
+  placeholderAspectRatio?: string
   fallbackToImg?: boolean
   revealAfterDecode?: boolean
   onError?: ImgHTMLAttributes<HTMLImageElement>["onError"]
@@ -75,6 +77,7 @@ export function OptimizedImage({
   className,
   imageClassName,
   skeletonClassName,
+  placeholderAspectRatio,
   fallbackToImg,
   revealAfterDecode = false,
   onError,
@@ -122,8 +125,10 @@ export function OptimizedImage({
       {!loaded ? (
         <span
           aria-hidden="true"
-          className={cn("absolute inset-0 h-full w-full animate-pulse rounded-none bg-accent", skeletonClassName)}
-        />
+          className={cn("absolute inset-0 flex size-full items-center justify-center rounded-none bg-accent motion-safe:animate-pulse motion-reduce:animate-none", skeletonClassName)}
+        >
+          <ImageIcon className="size-8 text-muted-foreground/30" />
+        </span>
       ) : null}
       {useNativeImage ? (
         /* eslint-disable-next-line @next/next/no-img-element */
@@ -145,6 +150,7 @@ export function OptimizedImage({
             loaded ? "opacity-100" : "opacity-0",
             imageClassName,
           )}
+          style={!loaded && placeholderAspectRatio ? { aspectRatio: placeholderAspectRatio } : undefined}
         />
       ) : (
         <Image
@@ -166,6 +172,7 @@ export function OptimizedImage({
             loaded ? "opacity-100" : "opacity-0",
             imageClassName,
           )}
+          style={!loaded && placeholderAspectRatio ? { aspectRatio: placeholderAspectRatio } : undefined}
         />
       )}
     </span>

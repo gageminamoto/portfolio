@@ -62,6 +62,7 @@ export function ImageBlock({ block, darkBlock, captionOverride }: ArticleImagePr
               loading="lazy"
               fallbackToImg
               revealAfterDecode
+              placeholderAspectRatio="16 / 10"
               className="w-full rounded-lg bg-transparent"
               imageClassName="h-auto w-full rounded-lg object-contain hover:opacity-90"
             />
