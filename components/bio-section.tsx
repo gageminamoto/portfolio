@@ -108,6 +108,7 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                     key={index}
                     href={part.url}
                     previewImage={previewImages[part.text]}
+                    previewFallbackImage={part.text === "Mizen" ? "/projects/mizen.png" : undefined}
                     syncWorkId={syncWorkId}
                     className="no-underline decoration-transparent hover:decoration-primary"
                   >

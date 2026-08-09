@@ -111,7 +111,7 @@ export function ProjectCard({
           href={project.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute inset-0 z-0 rounded-xl"
+          className="absolute inset-0 z-0 rounded-xl active:scale-[0.97]"
           aria-label={project.name}
           tabIndex={0}
         />
