@@ -27,7 +27,12 @@ export function LayoutOne() {
       id="main-content"
       className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-12 px-6 py-16 md:gap-14 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
-      initial="hidden"
+      // The homepage's introductory copy is the LCP candidate. Rendering its
+      // children with the hidden variant leaves the server-rendered page at
+      // opacity: 0 until the full client bundle has hydrated on mobile.
+      // Preserve all interaction animations while making the initial content
+      // paintable immediately.
+      initial={false}
       animate="show"
     >
       {/* Header */}
