@@ -71,7 +71,7 @@ export function HoverLink({
         >
           {previewIsVideo && !prefersReducedMotion ? (
             <video
-              src={previewIsVideo ? previewFallbackImage ?? previewImage : previewImage}
+              src={previewImage}
               aria-hidden="true"
               className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
               autoPlay
@@ -82,7 +82,7 @@ export function HoverLink({
             />
           ) : (
             <Image
-              src={previewImage}
+              src={previewFallbackImage ?? previewImage}
               alt=""
               width={256}
               height={144}
