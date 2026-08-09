@@ -276,22 +276,44 @@ function projectUrlLabel(url: string) {
   }
 }
 
+function HoverAnimationMedia({ src }: { src: string }) {
+  const [hoverMediaLoaded, setHoverMediaLoaded] = useState(false)
+
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src={src}
+      alt=""
+      loading="eager"
+      decoding="async"
+      draggable={false}
+      onLoad={() => setHoverMediaLoaded(true)}
+      className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-300 ease-out ${
+        hoverMediaLoaded ? "opacity-100" : "opacity-0"
+      }`}
+      aria-hidden="true"
+    />
+  )
+}
+
 function HoverPlayMedia({ src, previewSrc, alt, active }: { src: string; previewSrc: string; alt: string; active: boolean }) {
   return (
     <div className="relative aspect-video w-full overflow-hidden">
       <OptimizedImage
-        src={active ? src : previewSrc}
+        src={previewSrc}
         alt={alt}
         fill
         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         draggable={false}
-        loading={active ? "eager" : "lazy"}
+        loading="lazy"
         decoding="async"
-        fallbackToImg
         aria-hidden="true"
         className="absolute inset-0 h-full w-full bg-muted"
         imageClassName="object-cover object-center"
       />
+      {active ? (
+        <HoverAnimationMedia key={src} src={src} />
+      ) : null}
     </div>
   )
 }
