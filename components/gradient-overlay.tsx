@@ -65,7 +65,7 @@ export function GradientOverlay() {
       {shaderEnabled && (
         <motion.div
           key="gradients"
-          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
+          className="pointer-events-none fixed inset-0 -z-10"
           aria-hidden="true"
           initial={{ opacity: 0 }}
           animate={{ opacity: p.opacity }}
