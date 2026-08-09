@@ -61,6 +61,7 @@ export function ImageBlock({ block, darkBlock, captionOverride }: ArticleImagePr
               quality={80}
               loading="lazy"
               fallbackToImg
+              revealAfterDecode
               className="w-full rounded-lg bg-transparent"
               imageClassName="h-auto w-full rounded-lg object-contain hover:opacity-90"
             />
