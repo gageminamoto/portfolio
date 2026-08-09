@@ -3,7 +3,6 @@
 import { type CSSProperties, type MouseEvent, type ReactNode, type TouchEvent, type UIEvent, type WheelEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { ArrowDown, ArrowUp, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
-import { useDialKit } from "dialkit"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -23,6 +22,7 @@ interface WorkItem {
   name: string
   url: string
   image: string
+  previewImage: string
   type: string
   description: string
   outcome: string
@@ -54,6 +54,7 @@ const workItems: WorkItem[] = [
     name: "Mizen",
     url: "https://www.mizen.recipes/",
     image: "/images/mizen-hover.gif",
+    previewImage: "/images/mizen-preview.webp",
     type: "Product",
     description: "Mizen is a calm recipe workspace for saving recipes from the web, organizing what to cook, and making home cooking feel clearer and less hectic.",
     outcome: "This side project was entirely my own, from front-end to back-end, marketing, and roadmap definition. I managed design and engineering, set the visual branding direction, and mapped out features.",
@@ -80,6 +81,7 @@ const workItems: WorkItem[] = [
     name: "Aura",
     url: "https://aurafinance.io",
     image: "/images/aura-hover.gif",
+    previewImage: "/images/aura-preview.webp",
     type: "Product",
     description: "Aura is an employee financial wellness platform that helps people plan, budget, invest, prepare for retirement, and build healthier money habits through education and coaching.",
     outcome: "Designed onboarding, daily check-ins, and a new design system focused on clarity, trust, scalability, and a calmer financial experience.",
@@ -101,6 +103,7 @@ const workItems: WorkItem[] = [
     name: "Kilo",
     url: "https://kilohnl.com/",
     image: "/images/kilo-hover.jpg",
+    previewImage: "/images/kilo-preview.webp",
     type: "Brand",
     description: "Kilo is a Honolulu work club brand for people building in Hawaiʻi, shaped around focus, hospitality, community, and a more intentional workday.",
     outcome: "Built on an existing brand identity and expanded it in anticipation of Kilo's grand opening. I explored digital and physical expressions across web and brand touchpoints.",
@@ -122,6 +125,7 @@ const workItems: WorkItem[] = [
     name: "Umi",
     url: "https://umiapp.co/",
     image: "/images/umi-hover.gif",
+    previewImage: "/images/umi-preview.webp",
     type: "Product",
     description: "Umi is a language learning app that teaches vocabulary, listening, speaking, and reading through short clips from native speakers.",
     outcome: "Reworked and shipped the core lesson experience, including video playback and vocabulary flows, with a clearer structure for learning through familiar media.",
@@ -150,6 +154,7 @@ const workItems: WorkItem[] = [
     name: "Piʻikū",
     url: "https://piiku.co/",
     image: "/images/piiku-hover.gif",
+    previewImage: "/images/piiku-preview.webp",
     type: "Brand",
     description: "Piʻikū is a Hawaiʻi nonprofit helping local talent build tech careers through paid internships, workforce programs, speaker series, and community infrastructure.",
     outcome: "Expanded the brand across merch and program materials to support Piʻikū’s cross-functional, work-based internship model.",
@@ -167,6 +172,7 @@ const workItems: WorkItem[] = [
     name: "Spero",
     url: "https://spero.vc/",
     image: "/images/spero-hover.gif",
+    previewImage: "/images/spero-preview.webp",
     type: "Web",
     description: "Spero is a boutique venture firm website for purpose-led founders using technology to build healthier, more sustainable, and more fulfilling futures.",
     outcome: "Implemented the brand into a production-ready web experience that presents Spero’s purpose-led investment thesis and portfolio with clarity and polish.",
@@ -186,6 +192,7 @@ const workItems: WorkItem[] = [
     name: "MemberSpace",
     url: "https://www.memberspace.com/",
     image: "/images/memberspace-hover.gif",
+    previewImage: "/images/memberspace-preview.webp",
     type: "Brand",
     description: "MemberSpace is membership software that helps creators and digital businesses sell memberships, courses, communities, and gated content from their own websites.",
     outcome: "Collaborated with Mei on an early visual brand refresh while focusing on MemberSpace's brand voice, brand heart, messaging pillars, and value proposition. The work helped guide the brand into its next era while respecting its foundation and giving it a clearer position in a crowded space.",
@@ -205,6 +212,7 @@ const workItems: WorkItem[] = [
     name: "Servco",
     url: "https://www.servco.com/",
     image: "/images/servco-hover.gif",
+    previewImage: "/images/servco-preview.webp",
     type: "Brand",
     description: "Servco is a locally rooted, family-owned Hawaiʻi company with work spanning automotive retail and distribution, mobility, music, investment, and community initiatives.",
     outcome: "Produced design assets and digital surfaces aligned with existing brand standards, campaign needs, and Servco’s broader business ecosystem.",
@@ -268,38 +276,16 @@ function projectUrlLabel(url: string) {
   }
 }
 
-function HoverPlayMedia({ src, alt, active }: { src: string; alt: string; active: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const img = new Image()
-    img.onload = () => {
-      const canvas = canvasRef.current
-      if (!canvas) return
-      canvas.width = img.naturalWidth
-      canvas.height = img.naturalHeight
-      const ctx = canvas.getContext("2d")
-      ctx?.drawImage(img, 0, 0)
-    }
-    img.src = src
-  }, [src])
-
+function HoverPlayMedia({ src, previewSrc, alt, active }: { src: string; previewSrc: string; alt: string; active: boolean }) {
   return (
     <div className="relative aspect-video w-full overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        className={`absolute inset-0 z-10 h-full w-full object-cover object-center transition-opacity duration-150 ${
-          active ? "opacity-0" : "opacity-100"
-        }`}
-      />
       <OptimizedImage
-        src={src}
+        src={active ? src : previewSrc}
         alt={alt}
         fill
         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         draggable={false}
-        loading="eager"
+        loading={active ? "eager" : "lazy"}
         decoding="async"
         fallbackToImg
         aria-hidden="true"
@@ -750,7 +736,7 @@ function WorkItemCard({
             : "border-border/50"
         }`}
       >
-        <HoverPlayMedia src={item.image} alt={item.name} active={active} />
+        <HoverPlayMedia src={item.image} previewSrc={item.previewImage} alt={item.name} active={active} />
       </div>
       <div className={`mt-2 flex items-baseline gap-1.5 text-sm ${featured ? "sm:text-base" : ""}`}>
         <span className="text-muted-foreground">{item.name}</span>
@@ -766,12 +752,6 @@ function WorkItemCard({
 }
 
 type WorkLayoutMode = "arrows" | "grid" | "hybrid" | "wheel" | "featured"
-
-const WORK_LAYOUT_MODES = ["arrows", "grid", "hybrid", "wheel", "featured"] as const
-
-function isWorkLayoutMode(value: string): value is WorkLayoutMode {
-  return WORK_LAYOUT_MODES.includes(value as WorkLayoutMode)
-}
 
 function CarouselArrowButton({
   direction,
@@ -1177,23 +1157,5 @@ function WorkBrowser({
 }
 
 export function WorkSection() {
-  const layoutDial = useDialKit("Work layout", {
-    mode: {
-      type: "select",
-      default: "arrows",
-      options: [
-        { value: "arrows", label: "Arrows" },
-        { value: "grid", label: "Grid" },
-        { value: "hybrid", label: "Hybrid" },
-        { value: "wheel", label: "Wheel" },
-        { value: "featured", label: "Featured" },
-      ],
-    },
-  }, {
-    id: "work-layout",
-    persist: true,
-  })
-  const mode = isWorkLayoutMode(layoutDial.mode) ? layoutDial.mode : "arrows"
-
-  return <WorkBrowser key={mode} items={workItems} mode={mode} />
+  return <WorkBrowser items={workItems} mode="arrows" />
 }
