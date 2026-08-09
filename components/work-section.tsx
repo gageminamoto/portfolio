@@ -740,7 +740,7 @@ function WorkItemCard({
         preloadCaseStudyImages(item)
       }}
       onBlur={() => setLocalHover(false)}
-      className="group block w-full scroll-mt-8 cursor-pointer text-left focus-visible:outline-none"
+      className="group block w-full scroll-mt-8 cursor-pointer text-left transition-transform duration-150 ease active:scale-[0.97] focus-visible:outline-none"
       aria-label={`Open ${item.name} details`}
     >
       <div
@@ -789,7 +789,7 @@ function CarouselArrowButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-colors duration-150 ease hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground"
+      className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground"
       aria-label={direction === "previous" ? "Previous work item" : "Next work item"}
     >
       <Icon className="size-4" strokeWidth={2.25} aria-hidden="true" />
@@ -819,7 +819,7 @@ function WorkCarouselControls({
             key={dotIndex}
             type="button"
             onClick={() => onSelect(dotIndex)}
-            className={`size-2 cursor-pointer rounded-full transition-colors duration-150 ease focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+            className={`size-2 cursor-pointer rounded-full transition-[color,background-color,transform] duration-150 ease active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
               dotIndex === index ? "bg-foreground" : "bg-muted-foreground/18 hover:bg-muted-foreground/35"
             }`}
             aria-label={`Show work item ${dotIndex + 1}`}

@@ -224,7 +224,7 @@
   }
 }
 
-/* Accessibility: disable animations for users who prefer reduced motion */
+/* Accessibility: disable animations for users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
