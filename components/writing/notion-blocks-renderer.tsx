@@ -1,19 +1,64 @@
 import type { NotionBlock } from "@/lib/notion"
 import { NotionBlockComponent } from "./notion-block"
+import { NotionImage, type ImageBlock } from "./notion-image"
 
 interface NotionBlocksRendererProps {
   blocks: NotionBlock[]
 }
 
 interface BlockGroup {
-  type: "bulleted_list" | "numbered_list" | "single"
+  type: "bulleted_list" | "numbered_list" | "single" | "themed_image"
   blocks: NotionBlock[]
+  lightBlock?: ImageBlock
+  darkBlock?: ImageBlock
+  caption?: string
+}
+
+const themeMarkerPattern = /^\[theme:(light|dark)\]\s*/i
+
+function getImageCaption(block: ImageBlock): string {
+  return block.image.caption.map((item) => item.plain_text).join("")
+}
+
+function getImageTheme(block: NotionBlock): "light" | "dark" | null {
+  if (block.type !== "image") return null
+  const match = getImageCaption(block).match(themeMarkerPattern)
+  return match?.[1]?.toLowerCase() as "light" | "dark" | undefined ?? null
+}
+
+function stripThemeMarker(caption: string): string {
+  return caption.replace(themeMarkerPattern, "").trim()
 }
 
 function groupBlocks(blocks: NotionBlock[]): BlockGroup[] {
   const groups: BlockGroup[] = []
 
-  for (const block of blocks) {
+  for (let index = 0; index < blocks.length; index += 1) {
+    const block = blocks[index]
+    const nextBlock = blocks[index + 1]
+    const theme = getImageTheme(block)
+    const nextTheme = nextBlock ? getImageTheme(nextBlock) : null
+
+    if (
+      block.type === "image" &&
+      nextBlock?.type === "image" &&
+      theme &&
+      nextTheme &&
+      theme !== nextTheme
+    ) {
+      const lightBlock = theme === "light" ? block : nextBlock
+      const darkBlock = theme === "dark" ? block : nextBlock
+      groups.push({
+        type: "themed_image",
+        blocks: [],
+        lightBlock,
+        darkBlock,
+        caption: stripThemeMarker(getImageCaption(lightBlock)),
+      })
+      index += 1
+      continue
+    }
+
     const lastGroup = groups[groups.length - 1]
 
     if (block.type === "bulleted_list_item") {
@@ -65,6 +110,17 @@ export function NotionBlocksRenderer({ blocks }: NotionBlocksRendererProps) {
                 <NotionBlockComponent key={block.id} block={block} />
               ))}
             </ol>
+          )
+        }
+
+        if (group.type === "themed_image" && group.lightBlock && group.darkBlock) {
+          return (
+            <NotionImage
+              key={group.lightBlock.id}
+              block={group.lightBlock}
+              darkBlock={group.darkBlock}
+              captionOverride={group.caption}
+            />
           )
         }
 

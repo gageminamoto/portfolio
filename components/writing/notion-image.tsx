@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import dynamic from "next/dynamic"
+import { useTheme } from "next-themes"
 import type { NotionBlock } from "@/lib/notion"
 import { getOptimizedImageUrl } from "@/lib/image-url"
 import { OptimizedImage } from "@/components/optimized-image"
@@ -12,20 +13,24 @@ const ImageLightbox = dynamic(
   { ssr: false }
 )
 
-type ImageBlock = Extract<NotionBlock, { type: "image" }>
+export type ImageBlock = Extract<NotionBlock, { type: "image" }>
 
 interface NotionImageProps {
   block: ImageBlock
+  darkBlock?: ImageBlock
+  captionOverride?: string
 }
 
-export function NotionImage({ block }: NotionImageProps) {
+export function NotionImage({ block, darkBlock, captionOverride }: NotionImageProps) {
   const [open, setOpen] = useState(false)
   const shouldReduceMotion = useReducedMotion()
-  const image = block.image
+  const { resolvedTheme } = useTheme()
+  const activeBlock = darkBlock && resolvedTheme === "dark" ? darkBlock : block
+  const image = activeBlock.image
 
   const src =
     image.type === "external" ? image.external.url : image.file.url
-  const caption = image.caption
+  const caption = captionOverride ?? image.caption
     ?.map((t: { plain_text: string }) => t.plain_text)
     .join("")
   const alt = caption || ""
