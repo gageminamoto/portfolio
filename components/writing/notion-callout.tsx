@@ -13,7 +13,7 @@ export function NotionCallout({ block }: NotionCalloutProps) {
     callout.icon?.type === "emoji" ? callout.icon.emoji : null
 
   return (
-    <div className="[font-synthesis:none] my-6 flex gap-3 rounded-[10px] bg-muted p-4 text-xs/4 antialiased">
+    <div className="my-6 flex gap-3 rounded-[10px] bg-muted p-4 text-xs/4 antialiased">
       {icon && (
         <span className="mt-0.5 shrink-0 text-lg" aria-hidden="true">
           {icon}
