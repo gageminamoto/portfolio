@@ -9,7 +9,6 @@ import {
   type SyntheticEvent,
 } from "react"
 import Image from "next/image"
-import { ImageIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type LoadingMode = "eager" | "lazy"
@@ -125,10 +124,8 @@ export function OptimizedImage({
       {!loaded ? (
         <span
           aria-hidden="true"
-          className={cn("absolute inset-0 flex size-full items-center justify-center rounded-none bg-accent motion-safe:animate-pulse motion-reduce:animate-none", skeletonClassName)}
-        >
-          <ImageIcon className="size-8 text-muted-foreground/30" />
-        </span>
+          className={cn("absolute inset-0 size-full rounded-none bg-accent motion-safe:animate-pulse motion-reduce:animate-none", skeletonClassName)}
+        />
       ) : null}
       {useNativeImage ? (
         /* eslint-disable-next-line @next/next/no-img-element */
