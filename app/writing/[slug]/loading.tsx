@@ -15,13 +15,13 @@ export default function LoadingArticle() {
             </Link>
             <ArticleActions />
           </nav>
-          <div className="h-[30px] w-4/5 animate-pulse rounded bg-muted motion-reduce:animate-none" />
-          <div className="h-5 w-24 animate-pulse rounded bg-muted motion-reduce:animate-none" />
+          <div className="h-[30px] w-4/5 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
+          <div className="h-5 w-24 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
         </header>
         <div className="space-y-5" aria-busy="true" aria-label="Loading article">
-          <div className="h-7 w-full animate-pulse rounded bg-muted motion-reduce:animate-none" />
-          <div className="h-7 w-5/6 animate-pulse rounded bg-muted motion-reduce:animate-none" />
-          <div className="h-7 w-4/5 animate-pulse rounded bg-muted motion-reduce:animate-none" />
+          <div className="h-7 w-full animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
+          <div className="h-7 w-5/6 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
+          <div className="h-7 w-4/5 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
         </div>
       </main>
       <div className="hidden xl:block" aria-hidden="true" />
