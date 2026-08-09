@@ -79,9 +79,9 @@ function CommitLink({ commit }: { commit: typeof fallbackCommit }) {
     <>
       <span>{commit.hash}</span>
       {" "}
-      <span className="text-green-500/60">+{commit.additions.toLocaleString()}</span>
+      <span className="text-green-700 dark:text-green-400">+{commit.additions.toLocaleString()}</span>
       {" "}
-      <span className="text-red-500/60">-{commit.deletions.toLocaleString()}</span>
+      <span className="text-red-700 dark:text-red-400">-{commit.deletions.toLocaleString()}</span>
       {" "}
       <span>{commit.relativeTime}</span>
     </>
@@ -118,7 +118,7 @@ export function SiteFooter() {
   const commit = data?.commit ?? fallbackCommit
 
   return (
-    <footer className="flex items-center justify-between pt-6 pb-10 font-sans text-[11px] text-muted-foreground/40">
+    <footer className="flex items-center justify-between pt-6 pb-10 font-sans text-[11px] text-muted-foreground">
       <div className="flex items-center gap-2">
         {commit.prNumber != null && (
           <a
@@ -129,9 +129,9 @@ export function SiteFooter() {
             aria-label={`Pull request #${commit.prNumber}`}
           >
             {commit.prMerged ? (
-              <GitMerge className="h-3 w-3 text-purple-500/60" aria-hidden="true" />
+              <GitMerge className="h-3 w-3 text-purple-700 dark:text-purple-400" aria-hidden="true" />
             ) : (
-              <GitPullRequest className="h-3 w-3 text-green-500/60" aria-hidden="true" />
+              <GitPullRequest className="h-3 w-3 text-green-700 dark:text-green-400" aria-hidden="true" />
             )}
             <span>#{commit.prNumber}</span>
           </a>
