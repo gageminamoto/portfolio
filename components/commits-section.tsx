@@ -50,14 +50,14 @@ function SkeletonRows() {
     <div className="flex flex-col gap-6" aria-busy="true" aria-label="Loading commits">
       {[0, 1, 2].map((g) => (
         <div key={g} className="flex flex-col gap-2">
-          <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-24 animate-pulse rounded-sm bg-muted" />
           {[0, 1, 2].map((r) => (
             <div key={r} className="flex items-center gap-3 py-2">
-              <div className="h-4 w-4 animate-pulse rounded bg-muted" />
-              <div className="h-3 w-20 animate-pulse rounded bg-muted" />
-              <div className="h-3 w-3 animate-pulse rounded bg-muted" />
-              <div className="h-3 flex-1 animate-pulse rounded bg-muted" />
-              <div className="h-3 w-12 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-4 animate-pulse rounded-sm bg-muted" />
+              <div className="h-3 w-20 animate-pulse rounded-sm bg-muted" />
+              <div className="h-3 w-3 animate-pulse rounded-sm bg-muted" />
+              <div className="h-3 flex-1 animate-pulse rounded-sm bg-muted" />
+              <div className="h-3 w-12 animate-pulse rounded-sm bg-muted" />
             </div>
           ))}
         </div>

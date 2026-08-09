@@ -3,6 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
+import { useReducedMotion } from "framer-motion"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 
 interface HoverLinkProps {
@@ -11,6 +12,7 @@ interface HoverLinkProps {
   external?: boolean
   showArrow?: boolean
   previewImage?: string
+  previewFallbackImage?: string
   syncWorkId?: string
   className?: string
 }
@@ -21,10 +23,12 @@ export function HoverLink({
   external = true,
   showArrow = false,
   previewImage,
+  previewFallbackImage,
   syncWorkId,
   className = "",
 }: HoverLinkProps) {
   const { setHoveredWorkId } = useWorkHover()
+  const prefersReducedMotion = useReducedMotion()
   const linkClassName = `group inline-flex items-center gap-1 text-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
   const previewIsVideo = previewImage?.endsWith(".mp4")
 
@@ -65,7 +69,7 @@ export function HoverLink({
           className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 scale-95 opacity-0 transition-[transform,opacity] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] origin-bottom group-hover/preview:scale-100 group-hover/preview:opacity-100 sm:block"
           style={{ width: 256, height: 144 }}
         >
-          {previewIsVideo ? (
+          {previewIsVideo && !prefersReducedMotion ? (
             <video
               src={previewImage}
               aria-hidden="true"
@@ -78,7 +82,7 @@ export function HoverLink({
             />
           ) : (
             <Image
-              src={previewImage}
+              src={previewFallbackImage ?? previewImage}
               alt=""
               width={256}
               height={144}

@@ -26,6 +26,7 @@ export function CursorTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointsRef = useRef<Point[]>([])
   const rafRef = useRef<number>(0)
+  const drawingRef = useRef(false)
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
   const fadeRef = useRef(1)
   const fadingRef = useRef(false)
@@ -54,6 +55,17 @@ export function CursorTrail() {
 
     fadeRef.current = 1
     fadingRef.current = false
+    function stopDrawing() {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+      drawingRef.current = false
+    }
+
+    function startDrawing() {
+      if (drawingRef.current) return
+      drawingRef.current = true
+      rafRef.current = requestAnimationFrame(draw)
+    }
 
     function draw() {
       const ctx = canvasElement.getContext("2d")
@@ -79,16 +91,22 @@ export function CursorTrail() {
         ctx.fill()
       }
 
-      rafRef.current = requestAnimationFrame(draw)
+      if (fadeRef.current > 0) {
+        rafRef.current = requestAnimationFrame(draw)
+      } else {
+        stopDrawing()
+      }
     }
 
-    rafRef.current = requestAnimationFrame(draw)
+    startDrawing()
 
     function onPointerMove(e: PointerEvent) {
       pointsRef.current.unshift({ x: e.clientX, y: e.clientY })
       if (pointsRef.current.length > TRAIL_LENGTH) pointsRef.current.pop()
 
+      fadeRef.current = 1
       fadingRef.current = false
+      startDrawing()
 
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
       fadeTimerRef.current = setTimeout(() => {
@@ -102,7 +120,7 @@ export function CursorTrail() {
       window.removeEventListener("resize", resize)
       window.removeEventListener("pointermove", onPointerMove)
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
-      cancelAnimationFrame(rafRef.current)
+      stopDrawing()
     }
   }, [effectiveActive, prefersReducedMotion, isTouchDevice, hue])
 
