@@ -3,16 +3,16 @@
 import { useState } from "react"
 import { ChevronRight } from "lucide-react"
 import type { NotionBlock } from "@/lib/notion"
-import { NotionRichText } from "./notion-rich-text"
-import { NotionBlocksRenderer } from "./notion-blocks-renderer"
+import { RichText } from "./rich-text"
+import { BlocksRenderer } from "./blocks-renderer"
 
 type ToggleBlock = Extract<NotionBlock, { type: "toggle" }>
 
-interface NotionToggleProps {
+interface ArticleToggleProps {
   block: ToggleBlock
 }
 
-export function NotionToggle({ block }: NotionToggleProps) {
+export function Toggle({ block }: ArticleToggleProps) {
   const [open, setOpen] = useState(false)
   const toggle = block.toggle
 
@@ -30,12 +30,12 @@ export function NotionToggle({ block }: NotionToggleProps) {
           }`}
         />
         <span className="font-medium text-foreground">
-          <NotionRichText items={toggle.rich_text} />
+          <RichText items={toggle.rich_text} />
         </span>
       </button>
       {open && block.children && (
         <div className="px-3 pb-3 pl-9">
-          <NotionBlocksRenderer blocks={block.children} />
+          <BlocksRenderer blocks={block.children} />
         </div>
       )}
     </div>

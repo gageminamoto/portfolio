@@ -15,13 +15,13 @@ const ImageLightbox = dynamic(
 
 export type ImageBlock = Extract<NotionBlock, { type: "image" }>
 
-interface NotionImageProps {
+interface ArticleImageProps {
   block: ImageBlock
   darkBlock?: ImageBlock
   captionOverride?: string
 }
 
-export function NotionImage({ block, darkBlock, captionOverride }: NotionImageProps) {
+export function ImageBlock({ block, darkBlock, captionOverride }: ArticleImageProps) {
   const [open, setOpen] = useState(false)
   const shouldReduceMotion = useReducedMotion()
   const { resolvedTheme } = useTheme()

@@ -1,7 +1,7 @@
 import type { RichTextItemResponse } from "@notionhq/client/build/src/api-endpoints"
 import { HoverLink } from "@/components/hover-link"
 
-interface NotionRichTextProps {
+interface ArticleRichTextProps {
   items: RichTextItemResponse[]
 }
 
@@ -29,7 +29,7 @@ const highlightColorClasses: Partial<Record<RichTextItemResponse["annotations"][
   red_background: "bg-red-200/70 text-red-950 dark:bg-red-300/20 dark:text-red-100",
 }
 
-export function NotionRichText({ items }: NotionRichTextProps) {
+export function RichText({ items }: ArticleRichTextProps) {
   return (
     <>
       {items.map((item, i) => {

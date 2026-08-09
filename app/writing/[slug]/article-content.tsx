@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { NotionBlocksRenderer } from "@/components/writing/notion-blocks-renderer"
+import { BlocksRenderer } from "@/components/writing/blocks-renderer"
 import { TableOfContents } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
 import { generateSeedPosts, getSeedPost, generateSeedBlocks } from "@/lib/seed-posts"
@@ -71,7 +71,7 @@ export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleCo
           </header>
 
           {headings.length > 0 && <div className="xl:hidden"><TableOfContents headings={headings} variant="collapsible" /></div>}
-          {articleBlocks.length > 0 ? <article><NotionBlocksRenderer blocks={articleBlocks} /></article> : <p className="text-sm text-muted-foreground">This article does not have any published content yet.</p>}
+          {articleBlocks.length > 0 ? <article><BlocksRenderer blocks={articleBlocks} /></article> : <p className="text-sm text-muted-foreground">This article does not have any published content yet.</p>}
         </main>
         <aside className="hidden xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:self-start xl:overflow-y-auto xl:pl-10 xl:block">
           {headings.length > 0 && <TableOfContents headings={headings} variant="list" />}
