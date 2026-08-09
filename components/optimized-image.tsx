@@ -1,6 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState, type ImgHTMLAttributes } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ImgHTMLAttributes,
+  type SyntheticEvent,
+} from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
@@ -25,6 +32,7 @@ interface OptimizedImageProps {
   imageClassName?: string
   skeletonClassName?: string
   fallbackToImg?: boolean
+  revealAfterDecode?: boolean
   onError?: ImgHTMLAttributes<HTMLImageElement>["onError"]
   "aria-hidden"?: boolean | "true" | "false"
 }
@@ -68,16 +76,33 @@ export function OptimizedImage({
   imageClassName,
   skeletonClassName,
   fallbackToImg,
+  revealAfterDecode = false,
   onError,
   "aria-hidden": ariaHidden,
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(() => loadedImageSrcs.has(src))
   const imgRef = useRef<HTMLImageElement>(null)
   const useNativeImage = shouldUseNativeImage(src, fallbackToImg)
-  const handleLoad = useCallback(() => {
-    loadedImageSrcs.add(src)
-    setLoaded(true)
-  }, [src])
+  const handleLoad = useCallback(async (event?: SyntheticEvent<HTMLImageElement>) => {
+    const image = event?.currentTarget ?? imgRef.current
+    const imageSource = image?.currentSrc || image?.src
+
+    // Keep the skeleton visible until the browser has decoded the image, avoiding
+    // a partially rendered frame on slower devices.
+    if (image && revealAfterDecode) {
+      try {
+        await image.decode()
+      } catch {
+        // `decode()` can reject for already-renderable images. The load event is
+        // still sufficient to reveal those images.
+      }
+    }
+
+    if (!image || (image.currentSrc || image.src) === imageSource) {
+      loadedImageSrcs.add(src)
+      setLoaded(true)
+    }
+  }, [revealAfterDecode, src])
 
   useEffect(() => {
     setLoaded(loadedImageSrcs.has(src))
@@ -97,7 +122,7 @@ export function OptimizedImage({
       {!loaded ? (
         <span
           aria-hidden="true"
-          className={cn("absolute inset-0 h-full w-full animate-pulse rounded-none bg-accent", skeletonClassName)}
+          className={cn("absolute inset-0 size-full rounded-none bg-accent motion-safe:animate-pulse motion-reduce:animate-none", skeletonClassName)}
         />
       ) : null}
       {useNativeImage ? (
