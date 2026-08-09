@@ -31,7 +31,6 @@ interface OptimizedImageProps {
   className?: string
   imageClassName?: string
   skeletonClassName?: string
-  placeholderAspectRatio?: string
   fallbackToImg?: boolean
   revealAfterDecode?: boolean
   onError?: ImgHTMLAttributes<HTMLImageElement>["onError"]
@@ -76,7 +75,6 @@ export function OptimizedImage({
   className,
   imageClassName,
   skeletonClassName,
-  placeholderAspectRatio,
   fallbackToImg,
   revealAfterDecode = false,
   onError,
@@ -147,7 +145,6 @@ export function OptimizedImage({
             loaded ? "opacity-100" : "opacity-0",
             imageClassName,
           )}
-          style={!loaded && placeholderAspectRatio ? { aspectRatio: placeholderAspectRatio } : undefined}
         />
       ) : (
         <Image
@@ -169,7 +166,6 @@ export function OptimizedImage({
             loaded ? "opacity-100" : "opacity-0",
             imageClassName,
           )}
-          style={!loaded && placeholderAspectRatio ? { aspectRatio: placeholderAspectRatio } : undefined}
         />
       )}
     </span>
