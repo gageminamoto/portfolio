@@ -155,6 +155,13 @@ Indie games have always inspired me. Small teams pour their craft into every det
         { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Designer", url: "https://linkedin.com/in/gageminamoto" },
       ],
     },
+    {
+      name: "Gunnar's Trash Trade",
+      url: "https://x.com/gageminamoto/status/2080367429163855903?s=20",
+      description: "A Pico-8 game made in a day",
+      status: "new",
+      image: "/projects/gunnars-trash-trade.jpg",
+    },
   ],
   learning: [
     { name: "Animations.dev", url: "https://animations.dev/", description: "Course on how to create great animations." },

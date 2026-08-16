@@ -63,13 +63,11 @@ export function LayoutOne() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={project.name}
-              project={project}
-              index={index}
-            />
+        <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {projects.map((project) => (
+            <div key={project.name} className="w-[min(82vw,22rem)] shrink-0 snap-start">
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
       </motion.section>
