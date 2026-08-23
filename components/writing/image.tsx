@@ -38,6 +38,8 @@ export function ImageBlock({ block, darkBlock, captionOverride }: ArticleImagePr
   const inlineSrc = getOptimizedImageUrl(src, { width: 1200, quality: 80 })
   const lightboxSrc = getOptimizedImageUrl(src, { width: 2400, quality: 90 })
   const layoutId = shouldReduceMotion ? undefined : `lightbox-image-${src}`
+  const imageWidth = activeBlock.imageDimensions?.width ?? 1200
+  const imageHeight = activeBlock.imageDimensions?.height
 
   return (
     <>
@@ -56,7 +58,8 @@ export function ImageBlock({ block, darkBlock, captionOverride }: ArticleImagePr
             <OptimizedImage
               src={inlineSrc}
               alt={alt}
-              width={1200}
+              width={imageWidth}
+              height={imageHeight}
               sizes="(min-width: 768px) 672px, 100vw"
               quality={80}
               loading="lazy"

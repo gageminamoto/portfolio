@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import sharp from "sharp"
-
-const ALLOWED_HOSTS = [
-  "prod-files-secure.s3.us-west-2.amazonaws.com",
-  "www.notion.so",
-  "images.unsplash.com",
-  "s3.us-west-2.amazonaws.com",
-]
+import { isAllowedImageUrl } from "@/lib/image-url"
 
 const MAX_WIDTH = 2400
 const DEFAULT_WIDTH = 1200
@@ -27,7 +21,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid url" }, { status: 400 })
   }
 
-  if (!ALLOWED_HOSTS.includes(parsed.hostname)) {
+  if (!isAllowedImageUrl(parsed)) {
     return NextResponse.json({ error: "Host not allowed" }, { status: 403 })
   }
 
