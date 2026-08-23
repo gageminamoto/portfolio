@@ -14,8 +14,13 @@ import { WorkHoverProvider } from "@/components/work-hover-context"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { CursorTrail } from "@/components/cursor-trail"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
+import type { NotionWritingPost } from "@/lib/notion"
 
-export function LayoutOne() {
+interface LayoutOneProps {
+  initialPosts?: NotionWritingPost[]
+}
+
+export function LayoutOne({ initialPosts }: LayoutOneProps) {
   const { name, bio, socials, email, projects } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const shouldReduceMotion = useReducedMotion()
@@ -95,7 +100,7 @@ export function LayoutOne() {
         </Section>
 
         <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
-          <WritingSection variant="default" />
+          <WritingSection variant="default" initialPosts={initialPosts} />
         </Section>
       </motion.div>
 

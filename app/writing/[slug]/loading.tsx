@@ -4,7 +4,7 @@ import { ArticleActions } from "./article-actions"
 
 export default function LoadingArticle() {
   return (
-    <div className="mx-auto w-full px-6 py-16 md:py-24 xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center">
+    <div data-no-markdown className="mx-auto w-full px-6 py-16 md:py-24 xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center">
       <div className="hidden xl:block" aria-hidden="true" />
       <main id="main-content" className="mx-auto w-full min-w-0 max-w-xl xl:max-w-none">
         <header className="mb-10 flex flex-col gap-6">
