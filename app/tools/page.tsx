@@ -175,6 +175,8 @@ export default function ToolsPage() {
     tools: NotionToolItem[]
     lastUpdated: string | null
   }>("/api/tools", fetcher, { revalidateOnFocus: false })
+  const isPending = isLoading && !data
+  const hasError = Boolean(error && !data)
 
   const realTools = data?.tools ?? []
   const tools = seedDial.enabled
@@ -280,21 +282,21 @@ export default function ToolsPage() {
         {/* Content — loading/error fade as one block; list/cards stagger rows */}
         <div
           className={cn(
-            !isLoading && !error && viewMode === "list" && "flex flex-col",
-            !isLoading &&
-              !error &&
+            !isPending && !hasError && viewMode === "list" && "flex flex-col",
+            !isPending &&
+              !hasError &&
               viewMode === "card" &&
               "grid grid-cols-2 gap-3",
           )}
           onMouseLeave={
-            !isLoading && !error && viewMode === "list" && useFluidListHover
+            !isPending && !hasError && viewMode === "list" && useFluidListHover
               ? () => setHoveredToolId(null)
               : undefined
           }
         >
-        {isLoading ? (
+        {isPending ? (
           viewMode === "list" ? <SkeletonRows /> : <SkeletonCards />
-        ) : error ? (
+        ) : hasError ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
             Could not load tools.
           </p>

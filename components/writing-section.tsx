@@ -34,6 +34,7 @@ export type WritingVariant = "default" | "card"
 
 interface WritingSectionProps {
   variant?: WritingVariant
+  initialPosts?: NotionWritingPost[]
 }
 
 function SkeletonRow() {
@@ -55,7 +56,10 @@ function PostRow({ post }: { post: NotionWritingPost }) {
   )
 }
 
-export function WritingSection({ variant = "default" }: WritingSectionProps) {
+export function WritingSection({
+  variant = "default",
+  initialPosts,
+}: WritingSectionProps) {
   const [expanded, setExpanded] = useState(false)
   const seedDial = useDialKit("Seed writing", {
     enabled: false,
@@ -64,10 +68,13 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
     fetcher,
-    { revalidateOnFocus: false }
+    {
+      revalidateOnFocus: false,
+      fallbackData: initialPosts ? { posts: initialPosts } : undefined,
+    }
   )
 
-  if (error) {
+  if (error && !data) {
     return (
       <p className="text-sm text-muted-foreground">
         Could not load writing posts.
@@ -75,7 +82,7 @@ export function WritingSection({ variant = "default" }: WritingSectionProps) {
     )
   }
 
-  if (isLoading || !data) {
+  if (isLoading && !data) {
     return (
       <div className="flex flex-col" aria-busy="true" aria-label="Loading writing posts">
         {[0, 1, 2].map((i) => (

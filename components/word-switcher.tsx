@@ -131,6 +131,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
       <span
         ref={measureRef}
         aria-hidden
+        data-no-markdown
         className="pointer-events-none"
         style={{ position: "fixed", visibility: "hidden", whiteSpace: "nowrap", top: 0, left: 0 }}
       >
@@ -167,6 +168,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
         </motion.span>
         <span
           aria-hidden
+          data-no-markdown
           className={`pointer-events-none absolute inset-x-1 bottom-[1px] h-0.5 overflow-hidden rounded-full transition-opacity duration-700 ease-out ${showUnderline ? "opacity-100" : "opacity-0"}`}
         >
           <span className="absolute inset-0 rounded-full bg-muted-foreground/25 transition-colors duration-150 group-hover:bg-primary/25" />

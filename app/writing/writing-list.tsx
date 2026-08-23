@@ -123,6 +123,8 @@ export function WritingList({ initialPosts }: WritingListProps) {
       fallbackData: initialPosts ? { posts: initialPosts } : undefined,
     }
   )
+  const isPending = isLoading && !data
+  const hasError = Boolean(error && !data)
   const realPosts = data?.posts ?? []
   const posts = dial.enabled
     ? [...realPosts, ...generateSeedPosts(dial.count)]
@@ -157,7 +159,7 @@ export function WritingList({ initialPosts }: WritingListProps) {
 
       {/* Posts list */}
       <motion.div variants={item} className="flex flex-col gap-10">
-        {isLoading && (
+        {isPending && (
           <div
             className="flex flex-col gap-3"
             aria-busy="true"
@@ -169,18 +171,18 @@ export function WritingList({ initialPosts }: WritingListProps) {
           </div>
         )}
 
-        {error && (
+        {hasError && (
           <p className="text-sm text-muted-foreground">
             Could not load writing posts.
           </p>
         )}
 
-        {!isLoading && !error && posts.length === 0 && (
+        {!isPending && !hasError && posts.length === 0 && (
           <p className="text-sm text-muted-foreground">No articles yet.</p>
         )}
 
-        {!isLoading &&
-          !error &&
+        {!isPending &&
+          !hasError &&
           groups.map((group) => (
             <section key={group.label} className="flex flex-col gap-4">
               <h2 className="text-sm text-muted-foreground">{group.label}</h2>

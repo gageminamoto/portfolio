@@ -8,6 +8,7 @@ export default function LoadingWriting() {
   return (
     <main
       id="main-content"
+      data-no-markdown
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
     >
       <header>

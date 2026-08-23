@@ -66,6 +66,7 @@ export function HoverLink({
       <span className="group/preview relative inline-block">
         {link}
         <span
+          data-no-markdown
           className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 scale-95 opacity-0 transition-[transform,opacity] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] origin-bottom group-hover/preview:scale-100 group-hover/preview:opacity-100 sm:block"
           style={{ width: 256, height: 144 }}
         >
