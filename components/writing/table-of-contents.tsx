@@ -138,7 +138,13 @@ export function TableOfContents({
   if (headings.length === 0) return null
 
   const tocItems = (
-    <div className="flex flex-col gap-1">
+    <div
+      className={`flex flex-col gap-1 ${
+        variant === "list"
+          ? "fixed top-24 max-h-[calc(100vh-7.5rem)] w-[clamp(14rem,16vw,18rem)] overflow-y-auto"
+          : ""
+      }`}
+    >
       {headings.map((heading) => (
         <button
           key={heading.id}
@@ -212,11 +218,6 @@ export function TableOfContents({
   }
 
   return (
-    <nav aria-label="Table of contents" className="space-y-2">
-      <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        On this page
-      </span>
-      {tocItems}
-    </nav>
+    <nav aria-label="Table of contents">{tocItems}</nav>
   )
 }
