@@ -49,7 +49,7 @@ export function ThemeToggle({
   const ThemeIcon = theme === "system" ? Monitor : isDark ? Sun : Moon
 
   const triggerClass = compact
-    ? "inline-flex h-3.5 w-3.5 cursor-pointer items-center justify-center rounded-sm text-muted-foreground/40 transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    ? "inline-flex h-3.5 w-3.5 cursor-pointer items-center justify-center rounded-sm text-muted-foreground transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     : "inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-[color,transform] duration-150 ease-out hover:text-foreground active:scale-[0.97]"
 
   const iconClass = compact ? "h-3.5 w-3.5" : "h-4 w-4"

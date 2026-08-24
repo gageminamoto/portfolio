@@ -1,13 +1,13 @@
 import type { NotionBlock } from "@/lib/notion"
-import { NotionRichText } from "./notion-rich-text"
+import { RichText } from "./rich-text"
 
 type ParagraphBlock = Extract<NotionBlock, { type: "paragraph" }>
 
-interface NotionParagraphProps {
+interface ArticleParagraphProps {
   block: ParagraphBlock
 }
 
-export function NotionParagraph({ block }: NotionParagraphProps) {
+export function Paragraph({ block }: ArticleParagraphProps) {
   const paragraph = block.paragraph
   if (!paragraph?.rich_text?.length) {
     return <div className="h-5" aria-hidden="true" />
@@ -15,7 +15,7 @@ export function NotionParagraph({ block }: NotionParagraphProps) {
 
   return (
     <p className="mb-5 text-base leading-7 text-foreground/90">
-      <NotionRichText items={paragraph.rich_text} />
+      <RichText items={paragraph.rich_text} />
     </p>
   )
 }

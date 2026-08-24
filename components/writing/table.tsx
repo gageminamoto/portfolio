@@ -1,10 +1,10 @@
 import type { NotionBlock } from "@/lib/notion"
-import { NotionRichText } from "./notion-rich-text"
+import { RichText } from "./rich-text"
 
 type TableBlock = Extract<NotionBlock, { type: "table" }>
 type TableRowBlock = Extract<NotionBlock, { type: "table_row" }>
 
-interface NotionTableProps {
+interface ArticleTableProps {
   block: TableBlock
 }
 
@@ -12,7 +12,7 @@ function isTableRowBlock(block: NotionBlock): block is TableRowBlock {
   return block.type === "table_row"
 }
 
-export function NotionTable({ block }: NotionTableProps) {
+export function Table({ block }: ArticleTableProps) {
   const rows = (block.children ?? []).filter(isTableRowBlock)
 
   if (rows.length === 0) {
@@ -30,7 +30,7 @@ export function NotionTable({ block }: NotionTableProps) {
             <tr className="bg-muted/40">
               {headerRow.table_row.cells.map((cell, index) => (
                 <th key={index} className="border-b border-r border-border px-3 py-2 font-medium text-foreground last:border-r-0">
-                  <NotionRichText items={cell} />
+                  <RichText items={cell} />
                 </th>
               ))}
             </tr>
@@ -47,7 +47,7 @@ export function NotionTable({ block }: NotionTableProps) {
                     key={index}
                     className={`border-r border-b border-border px-3 py-2 text-foreground/90 first:whitespace-nowrap last:border-r-0 ${isLastBodyRow ? "border-b-0" : ""}`}
                   >
-                    <NotionRichText items={cell} />
+                    <RichText items={cell} />
                   </CellTag>
                 )
               })}

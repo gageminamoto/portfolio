@@ -44,7 +44,7 @@ export function ProjectCard({
           href={project.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="peer absolute inset-0 z-10 rounded-xl"
+          className="peer absolute inset-0 z-10 rounded-xl active:scale-[0.97]"
           aria-label={project.name}
         />
       )}

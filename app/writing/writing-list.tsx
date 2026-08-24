@@ -83,8 +83,8 @@ function groupPosts(
 function SkeletonRow() {
   return (
     <div className="flex items-center gap-3 px-0 py-3">
-      <div className="h-4 w-48 shrink-0 animate-pulse rounded bg-muted" />
-      <div className="h-3 w-20 flex-1 animate-pulse rounded bg-muted" />
+      <div className="h-5 w-48 shrink-0 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
+      <div className="h-3 w-20 flex-1 animate-pulse rounded-sm bg-muted" />
     </div>
   )
 }
@@ -123,6 +123,8 @@ export function WritingList({ initialPosts }: WritingListProps) {
       fallbackData: initialPosts ? { posts: initialPosts } : undefined,
     }
   )
+  const isPending = isLoading && !data
+  const hasError = Boolean(error && !data)
   const realPosts = data?.posts ?? []
   const posts = dial.enabled
     ? [...realPosts, ...generateSeedPosts(dial.count)]
@@ -157,7 +159,7 @@ export function WritingList({ initialPosts }: WritingListProps) {
 
       {/* Posts list */}
       <motion.div variants={item} className="flex flex-col gap-10">
-        {isLoading && (
+        {isPending && (
           <div
             className="flex flex-col gap-3"
             aria-busy="true"
@@ -169,18 +171,18 @@ export function WritingList({ initialPosts }: WritingListProps) {
           </div>
         )}
 
-        {error && (
+        {hasError && (
           <p className="text-sm text-muted-foreground">
             Could not load writing posts.
           </p>
         )}
 
-        {!isLoading && !error && posts.length === 0 && (
+        {!isPending && !hasError && posts.length === 0 && (
           <p className="text-sm text-muted-foreground">No articles yet.</p>
         )}
 
-        {!isLoading &&
-          !error &&
+        {!isPending &&
+          !hasError &&
           groups.map((group) => (
             <section key={group.label} className="flex flex-col gap-4">
               <h2 className="text-sm text-muted-foreground">{group.label}</h2>

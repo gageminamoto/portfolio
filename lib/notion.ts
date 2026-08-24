@@ -4,6 +4,7 @@ import type {
   BlockObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints"
+import { getImageDimensions, type ImageDimensions } from "./image-metadata"
 import { slugify } from "./utils"
 
 let notionClient: Client | null = null
@@ -235,6 +236,7 @@ export async function fetchPostBySlug(
 
 export type NotionBlock = BlockObjectResponse & {
   children?: NotionBlock[]
+  imageDimensions?: ImageDimensions
 }
 
 // ─── Tools ───────────────────────────────────────────────────────────
@@ -341,6 +343,12 @@ export async function fetchPostBlocks(
     const pageBlocks = await Promise.all(
       (response.results as BlockObjectResponse[]).map(async (block) => {
         const notionBlock: NotionBlock = { ...block }
+        if (block.type === "image") {
+          const src = block.image.type === "external"
+            ? block.image.external.url
+            : block.image.file.url
+          notionBlock.imageDimensions = await getImageDimensions(src)
+        }
         if (block.has_children) {
           notionBlock.children = await fetchPostBlocks(block.id)
         }

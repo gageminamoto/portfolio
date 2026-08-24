@@ -5,6 +5,7 @@ import {
   motion,
   AnimatePresence,
   useMotionValue,
+  useReducedMotion,
   useSpring,
   useTransform,
 } from "framer-motion"
@@ -226,10 +227,12 @@ function Card3DModal({
   card,
   onClose,
   isTouchDevice,
+  shouldReduceMotion,
 }: {
   card: PokemonCard
   onClose: () => void
   isTouchDevice: boolean
+  shouldReduceMotion: boolean
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
@@ -338,7 +341,7 @@ function Card3DModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
+      transition={{ duration: shouldReduceMotion ? 0.15 : 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       {/* Backdrop */}
       <motion.div
@@ -359,52 +362,69 @@ function Card3DModal({
       </button>
 
       {/* Hint text */}
-      <motion.p
-        className="pointer-events-none absolute bottom-8 left-1/2 z-[60] -translate-x-1/2 whitespace-nowrap text-sm text-foreground/40 select-none"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.4 }}
-      >
-        {isTouchDevice
-          ? "Drag to move \u00B7 Touch to tilt \u00B7 Tap to flip"
-          : "Drag to move \u00B7 Hover to tilt \u00B7 Click to flip"}
-      </motion.p>
+      {!shouldReduceMotion && (
+        <motion.p
+          className="pointer-events-none absolute bottom-8 left-1/2 z-[60] -translate-x-1/2 whitespace-nowrap text-sm text-foreground/40 select-none"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
+        >
+          {isTouchDevice
+            ? "Drag to move \u00B7 Touch to tilt \u00B7 Tap to flip"
+            : "Drag to move \u00B7 Hover to tilt \u00B7 Click to flip"}
+        </motion.p>
+      )}
 
       {/* 3D Card with flip + holo shader */}
       <motion.div
         ref={containerRef}
-        className="relative z-[55] cursor-grab select-none active:cursor-grabbing"
+        layoutId={shouldReduceMotion ? undefined : `pokemon-card-${card.id}`}
+        className={`relative z-[55] select-none${shouldReduceMotion ? "" : " cursor-grab active:cursor-grabbing"}`}
         style={{
-          x: springX,
-          y: springY,
-          rotateX: springRotateX,
-          rotateY: springRotateY,
-          perspective: 1200,
-          transformStyle: "preserve-3d",
+          ...(shouldReduceMotion
+            ? {}
+            : {
+                x: springX,
+                y: springY,
+                rotateX: springRotateX,
+                rotateY: springRotateY,
+                perspective: 1200,
+                transformStyle: "preserve-3d",
+              }),
           width: "min(370px, 80vw)",
           aspectRatio: `${CARD_RATIO}`,
         }}
-        initial={{ scale: 0.3, opacity: 0 }}
+        initial={shouldReduceMotion ? { opacity: 0 } : { scale: 0.3, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.3, opacity: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 200,
-          damping: 22,
-          mass: 1,
-        }}
-        onPointerMove={handlePointerMove}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerLeave}
+        exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.3, opacity: 0 }}
+        transition={shouldReduceMotion
+          ? { duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }
+          : { type: "spring", stiffness: 200, damping: 22, mass: 1 }}
+        onPointerMove={shouldReduceMotion ? undefined : handlePointerMove}
+        onPointerDown={shouldReduceMotion ? undefined : handlePointerDown}
+        onPointerUp={shouldReduceMotion ? undefined : handlePointerUp}
+        onPointerLeave={shouldReduceMotion ? undefined : handlePointerLeave}
       >
-        {/* Inner wrapper that flips */}
-        <motion.div
-          className="relative h-full w-full"
-          style={{ transformStyle: "preserve-3d" }}
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        >
+        {shouldReduceMotion ? (
+          <div className="relative h-full w-full overflow-hidden rounded-xl shadow-2xl shadow-black/50">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={card.image}
+              alt={`${card.name} Pokemon card`}
+              width={719}
+              height={1000}
+              className="h-full w-full rounded-xl object-contain"
+              draggable={false}
+            />
+            <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-white/20" />
+          </div>
+        ) : (
+          <motion.div
+            className="relative h-full w-full"
+            style={{ transformStyle: "preserve-3d" }}
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
           {/* Front face */}
           <div
             className="absolute inset-0 overflow-hidden rounded-xl shadow-2xl shadow-black/50"
@@ -448,7 +468,8 @@ function Card3DModal({
             />
             <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-white/20" />
           </div>
-        </motion.div>
+          </motion.div>
+        )}
       </motion.div>
     </motion.div>
   )
@@ -461,6 +482,7 @@ function Card3DModal({
 export function PokemonCards() {
   const [isFanned, setIsFanned] = useState(false)
   const [selectedCard, setSelectedCard] = useState<PokemonCard | null>(null)
+  const shouldReduceMotion = Boolean(useReducedMotion())
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const preloadedRef = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -577,7 +599,14 @@ export function PokemonCards() {
                     marginLeft: -(FAN_CARD_W / 2),
                     transformOrigin: "50% 100%",
                   }}
-                  initial={{
+                  layoutId={shouldReduceMotion ? undefined : `pokemon-card-${card.id}`}
+                  initial={shouldReduceMotion ? {
+                    rotate: FAN_CONFIGS[index].rotate,
+                    x: FAN_CONFIGS[index].x,
+                    y: FAN_CONFIGS[index].y,
+                    opacity: 1,
+                    scale: 1,
+                  } : {
                     rotate: 0,
                     x: 0,
                     y: 30,
@@ -591,21 +620,23 @@ export function PokemonCards() {
                     opacity: 1,
                     scale: 1,
                   }}
-                  exit={{
+                  exit={shouldReduceMotion ? { opacity: 0 } : {
                     rotate: 0,
                     x: 0,
                     y: 30,
                     opacity: 0,
                     scale: 0.5,
                   }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 320,
-                    damping: 26,
-                    mass: 0.7,
-                    delay: index * 0.05,
-                  }}
-                  whileHover={{
+                  transition={shouldReduceMotion
+                    ? { duration: 0 }
+                    : {
+                        type: "spring",
+                        stiffness: 320,
+                        damping: 26,
+                        mass: 0.7,
+                        delay: index * 0.05,
+                      }}
+                  whileHover={shouldReduceMotion ? undefined : {
                     scale: 1.12,
                     y: FAN_CONFIGS[index].y - 14,
                     transition: {
@@ -614,7 +645,7 @@ export function PokemonCards() {
                       damping: 20,
                     },
                   }}
-                  whileTap={{ scale: 1.08 }}
+                  whileTap={shouldReduceMotion ? undefined : { scale: 1.08 }}
                   onClick={(e) => handleCardClick(card, e)}
                 >
                   <div className="relative h-full w-full overflow-hidden rounded-lg shadow-lg shadow-black/40 ring-1 ring-white/10 transition-shadow duration-200 hover:shadow-xl hover:shadow-black/50">
@@ -640,7 +671,12 @@ export function PokemonCards() {
       {/* Full-screen 3D modal */}
       <AnimatePresence>
         {selectedCard && (
-          <Card3DModal card={selectedCard} onClose={handleCloseModal} isTouchDevice={isTouchDevice} />
+          <Card3DModal
+            card={selectedCard}
+            onClose={handleCloseModal}
+            isTouchDevice={isTouchDevice}
+            shouldReduceMotion={shouldReduceMotion}
+          />
         )}
       </AnimatePresence>
     </>

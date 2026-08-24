@@ -1,5 +1,5 @@
 import type { NotionBlock } from "@/lib/notion"
-import { NotionRichText } from "./notion-rich-text"
+import { RichText } from "./rich-text"
 
 type HeadingType = "heading_1" | "heading_2" | "heading_3"
 export type HeadingBlock = Extract<NotionBlock, { type: HeadingType }>
@@ -15,7 +15,7 @@ function slugifyHeading(text: string): string {
     .replace(/(^-|-$)/g, "")
 }
 
-interface NotionHeadingProps {
+interface ArticleHeadingProps {
   block: HeadingBlock
 }
 
@@ -37,7 +37,7 @@ export function getHeadingId(block: HeadingBlock): string {
   return `${slug}-${blockId}`
 }
 
-export function NotionHeading({ block }: NotionHeadingProps) {
+export function Heading({ block }: ArticleHeadingProps) {
   const type = block.type
   const heading = getHeadingRichText(block)
   const id = getHeadingId(block)
@@ -48,7 +48,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
         id={id}
         className="mt-10 mb-4 scroll-mt-24 text-xl font-semibold text-foreground [text-wrap:pretty]"
       >
-        <NotionRichText items={heading} />
+        <RichText items={heading} />
       </h2>
     )
   }
@@ -59,7 +59,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
         id={id}
         className="mt-8 mb-3 scroll-mt-24 text-xl font-medium text-foreground [text-wrap:pretty]"
       >
-        <NotionRichText items={heading} />
+        <RichText items={heading} />
       </h3>
     )
   }
@@ -69,7 +69,7 @@ export function NotionHeading({ block }: NotionHeadingProps) {
       id={id}
       className="mt-6 mb-2 scroll-mt-24 text-base font-medium text-foreground [text-wrap:pretty]"
     >
-      <NotionRichText items={heading} />
+      <RichText items={heading} />
     </h4>
   )
 }
