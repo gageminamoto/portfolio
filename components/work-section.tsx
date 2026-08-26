@@ -523,7 +523,7 @@ function ProjectDetails({ item }: { item: WorkItem }) {
       </Accordion>
       <Button
         asChild
-        className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
+        variant="solid"
       >
         <a href={item.url} target="_blank" rel="noopener noreferrer">
           {projectUrlLabel(item.url)}
