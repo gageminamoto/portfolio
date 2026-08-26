@@ -236,15 +236,6 @@ Indie games have always inspired me. Small teams pour their craft into every det
       description: "Helping Hawaiʻi businesses, local builders, and growing teams make websites, brands, and product ideas feel more considered. It’s been a practical way to learn how to scope work, communicate clearly, and ship within real constraints.",
     },
     {
-      company: "Becoming Impossible to Ignore",
-      role: "UXHI Speaker",
-      period: "2025",
-      url: "https://uxhiconference.com/conferences/2025/",
-      icon: "/icons/uxhi.png",
-      hoverImage: "/images/uxhi-hover.jpg",
-      description: "A talk Michelle and I gave about creating more opportunities through side projects, community, and sharing work publicly. It reflects a lot of how I think about growth: start small, stay visible, and keep making things.",
-    },
-    {
       company: "NVIDIA",
       role: "Generative AI Analyst",
       period: "2024 – 2025",
