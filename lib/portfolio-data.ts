@@ -119,7 +119,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
     { name: "TTRPGs", description: "Rolling dice and telling stories" },
-    { name: "Developing PICO-8 games", description: "Making small games with big constraints" },
+    { name: "Developing PICO-8 games", url: "https://www.lexaloffle.com/pico-8.php", description: "Making small games with big constraints" },
     { name: "Analog photography", description: "Slow photos on film" },
     { name: "Design books", description: "Mostly aspirational, occasionally read" },
     { name: "Camping", description: "Eating outdoors is peak" },
