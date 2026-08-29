@@ -39,7 +39,7 @@ export function ProjectCard({
   project: ProjectItem
 }) {
   return (
-    <div className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-muted shadow-sm">
+    <div className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-zinc-800 shadow-sm">
       {project.image ? (
         <Image
           src={project.image}
@@ -63,7 +63,7 @@ export function ProjectCard({
           <source src={project.video} type="video/mp4" />
         </video>
       ) : null}
-      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background/90 via-background/45 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950/95 via-zinc-950/50 to-transparent" aria-hidden="true" />
       {project.url && (
         <a
           href={project.url}
@@ -75,10 +75,10 @@ export function ProjectCard({
       )}
       <ProjectStatusBadge status={project.status} />
       <div className="absolute inset-x-0 bottom-0 z-0 flex flex-col gap-1 p-4">
-        <h3 className="text-base font-medium text-foreground">
+        <h3 className="text-base font-medium text-zinc-50">
           {project.name}
         </h3>
-        <p className="line-clamp-2 text-sm text-muted-foreground [text-wrap:balance]">
+        <p className="line-clamp-2 text-sm text-zinc-300 [text-wrap:balance]">
           {project.description}
         </p>
       </div>
