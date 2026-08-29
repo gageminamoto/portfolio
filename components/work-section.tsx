@@ -29,6 +29,21 @@ interface WorkItem {
   contributors: Contributor[]
   techStack: string
   caseStudyImages?: CaseStudyMedia[]
+  longFormCaseStudy?: LongFormCaseStudy
+}
+
+interface LongFormCaseStudy {
+  eyebrow: string
+  headline: string
+  introduction: string
+  details: { label: string; value: string }[]
+  sections: {
+    title: string
+    paragraphs: string[]
+    image?: CaseStudyImage
+    imageCaption?: string
+  }[]
+  closing: string
 }
 
 interface Contributor {
@@ -137,6 +152,54 @@ const workItems: WorkItem[] = [
       { name: "Laurie" },
     ],
     techStack: "Product design, mobile UX, prototyping",
+    longFormCaseStudy: {
+      eyebrow: "Making language practice feel more like watching",
+      headline: "Learning a language through the stories you already love",
+      introduction: "Umi teaches language through short clips from film, television, and everyday media. I joined the team to rethink the heart of the product: a lesson experience that could turn a moment of watching into something learners could understand, repeat, and remember.",
+      details: [
+        { label: "Role", value: "Product designer" },
+        { label: "Focus", value: "Core lesson experience" },
+        { label: "Team", value: "Umi product & engineering" },
+      ],
+      sections: [
+        {
+          title: "The lesson was doing too much at once",
+          paragraphs: [
+            "Umi’s content was its superpower, but the learning experience around it made each clip feel heavier than it needed to. Watching, reading, translating, and reviewing vocabulary all competed for attention on a small screen.",
+            "The challenge was not to add another teaching mechanic. It was to create a clearer rhythm—watch first, focus on one useful idea, then return to the clip with a little more understanding.",
+          ],
+          image: "/images/umi/01.webp",
+          imageCaption: "Exploring a calmer hierarchy for video, subtitles, and lesson controls.",
+        },
+        {
+          title: "A repeatable rhythm for every clip",
+          paragraphs: [
+            "We reorganized the lesson around a simple loop: encounter a phrase in context, inspect the words that matter, hear it again, and practice it. Keeping the video present made vocabulary feel connected to a speaker, a scene, and an emotion instead of an isolated flashcard.",
+            "I worked through the interaction details that keep that loop moving—when playback pauses, how a learner reveals meaning, where progress appears, and how the interface gets out of the way when it is time to listen.",
+          ],
+          image: "/images/umi/02.webp",
+          imageCaption: "The lesson flow keeps the original scene close while progressively revealing support.",
+        },
+        {
+          title: "Designing for momentum, not perfection",
+          paragraphs: [
+            "Language learning can make people feel exposed. The product needed to invite another attempt without turning every interaction into a test. Feedback became quieter and more immediate, with clear next steps and fewer moments that stopped the learner cold.",
+            "Prototypes helped us tune the transition between watching and practicing. Small decisions—larger tap targets, predictable controls, and less copy between clips—made a session feel continuous rather than like a stack of exercises.",
+          ],
+          image: "/images/umi/03.webp",
+          imageCaption: "Practice states designed to support quick attempts and easy repetition.",
+        },
+        {
+          title: "A foundation the team could keep building on",
+          paragraphs: [
+            "The shipped work gave Umi a clearer structure for its core lesson while leaving room for new languages, exercise types, and content. More importantly, the experience now puts the reason people opened the app—the clip and the language inside it—back at the center.",
+          ],
+          image: "/images/umi/04.webp",
+          imageCaption: "A focused system that can stretch across content and learning modes.",
+        },
+      ],
+      closing: "The best learning tools do not need to feel like school. For Umi, the opportunity was to make progress feel as natural as replaying a favorite scene—one phrase, one detail, and one small win at a time.",
+    },
     caseStudyImages: [
       "/images/umi/01.webp",
       "/images/umi/02.webp",
@@ -511,6 +574,73 @@ function ProjectDetails({ item }: { item: WorkItem }) {
   )
 }
 
+function LongFormCaseStudy({ item, caseStudy }: { item: WorkItem; caseStudy: LongFormCaseStudy }) {
+  return (
+    <article className="mx-auto w-full max-w-3xl pb-12 pt-10 sm:pb-20 sm:pt-16">
+      <header className="border-b border-border pb-10 sm:pb-14">
+        <p className="mb-5 text-sm font-medium text-muted-foreground">{caseStudy.eyebrow}</p>
+        <DrawerTitle className="max-w-[19ch] text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-foreground sm:text-6xl">
+          {caseStudy.headline}
+        </DrawerTitle>
+        <DrawerDescription className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl sm:leading-9">
+          {caseStudy.introduction}
+        </DrawerDescription>
+        <dl className="mt-10 grid gap-6 border-t border-border pt-6 sm:grid-cols-3">
+          {caseStudy.details.map((detail) => (
+            <div key={detail.label}>
+              <dt className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{detail.label}</dt>
+              <dd className="mt-2 text-sm leading-6 text-foreground">{detail.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </header>
+
+      <div className="space-y-16 py-12 sm:space-y-24 sm:py-20">
+        {caseStudy.sections.map((section, sectionIndex) => {
+          const currentImageIndex = caseStudy.sections
+            .slice(0, sectionIndex)
+            .filter((previousSection) => previousSection.image).length
+
+          return (
+            <section key={section.title} aria-labelledby={`case-study-section-${sectionIndex}`}>
+              <div className="grid gap-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-8">
+                <p className="pt-1 font-mono text-xs text-muted-foreground">0{sectionIndex + 1}</p>
+                <div>
+                  <h2 id={`case-study-section-${sectionIndex}`} className="text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
+                    {section.title}
+                  </h2>
+                  <div className="mt-6 space-y-5 text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">
+                    {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  </div>
+                </div>
+              </div>
+              {section.image ? (
+                <div className="mt-9 sm:mt-12">
+                  <DrawerCaseStudyMedia image={section.image} item={item} index={currentImageIndex} />
+                  {section.imageCaption ? <p className="mt-3 text-xs leading-5 text-muted-foreground">{section.imageCaption}</p> : null}
+                </div>
+              ) : null}
+            </section>
+          )
+        })}
+      </div>
+
+      <footer className="border-t border-border pt-10 sm:pt-14">
+        <p className="text-2xl font-medium leading-9 tracking-[-0.02em] text-foreground sm:text-3xl sm:leading-10">{caseStudy.closing}</p>
+        <div className="mt-10 flex flex-wrap items-center gap-5">
+          <Button asChild className="bg-foreground text-background hover:bg-foreground/90 hover:text-background">
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              Visit {projectUrlLabel(item.url)}
+              <ArrowUpRight className="size-3.5" aria-hidden="true" />
+            </a>
+          </Button>
+          {item.contributors.length > 0 ? <ContributorCredit contributors={item.contributors} /> : null}
+        </div>
+      </footer>
+    </article>
+  )
+}
+
 function ProjectDetailDrawer({
   item,
   open,
@@ -636,11 +766,14 @@ function ProjectDetailDrawer({
         </DrawerClose>
         <div
           key={item.name}
-          className="grid max-h-[86dvh] gap-5 overflow-y-auto scroll-fade-y scroll-fade-12 p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10 [&::-webkit-scrollbar]:hidden"
+          className={`max-h-[86dvh] overflow-y-auto scroll-fade-y scroll-fade-12 p-5 [scrollbar-width:none] sm:max-h-[calc(100dvh-1.5rem)] sm:p-8 [&::-webkit-scrollbar]:hidden ${item.longFormCaseStudy ? "" : "grid gap-5 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10"}`}
           onTouchMove={handleScrollContainerTouchMove}
           onTouchStart={handleScrollContainerTouchStart}
           onWheel={handleScrollContainerWheel}
         >
+          {item.longFormCaseStudy ? (
+            <LongFormCaseStudy item={item} caseStudy={item.longFormCaseStudy} />
+          ) : <>
           <div className="order-2 space-y-5 lg:order-1">
             {item.caseStudyImages?.length
               ? item.caseStudyImages.map((media) => {
@@ -677,6 +810,7 @@ function ProjectDetailDrawer({
               </div>
             </div>
           </aside>
+          </>}
         </div>
       </DrawerContent>
     </Drawer>
