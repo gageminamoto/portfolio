@@ -128,15 +128,15 @@ function ProjectCarousel({ projects }: { projects: typeof portfolioData.projects
         </div>
       </div>
       <div className="mt-3 flex items-center gap-3">
-        <button type="button" onClick={() => scrollToIndex(activeIndex - 1)} disabled={activeIndex === 0} className="inline-flex size-8 items-center justify-center rounded-full bg-muted/55 text-muted-foreground disabled:cursor-not-allowed disabled:opacity-40" aria-label="Previous project">
+        <button type="button" onClick={() => scrollToIndex(activeIndex - 1)} disabled={activeIndex === 0} className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground" aria-label="Previous project">
           <ChevronLeft className="size-4" strokeWidth={2.25} aria-hidden="true" />
         </button>
         <div className="flex items-center gap-3" aria-label="Project carousel position">
           {projects.map((project, index) => (
-            <button key={project.name} type="button" onClick={() => scrollToIndex(index)} className={`size-2 rounded-full ${index === activeIndex ? "bg-foreground" : "bg-muted-foreground/18"}`} aria-label={`Show ${project.name}`} aria-current={index === activeIndex ? "true" : undefined} />
+            <button key={project.name} type="button" onClick={() => scrollToIndex(index)} className={`size-2 cursor-pointer rounded-full transition-[color,background-color,transform] duration-150 ease active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${index === activeIndex ? "bg-foreground" : "bg-muted-foreground/18 hover:bg-muted-foreground/35"}`} aria-label={`Show ${project.name}`} aria-current={index === activeIndex ? "true" : undefined} />
           ))}
         </div>
-        <button type="button" onClick={() => scrollToIndex(activeIndex + 1)} disabled={activeIndex === projects.length - 1} className="inline-flex size-8 items-center justify-center rounded-full bg-muted/55 text-muted-foreground disabled:cursor-not-allowed disabled:opacity-40" aria-label="Next project">
+        <button type="button" onClick={() => scrollToIndex(activeIndex + 1)} disabled={activeIndex === projects.length - 1} className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground" aria-label="Next project">
           <ChevronRight className="size-4" strokeWidth={2.25} aria-hidden="true" />
         </button>
       </div>
