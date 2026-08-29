@@ -49,6 +49,7 @@ export interface ProjectItem {
   description: string
   status: "production" | "building" | "new"
   image?: string
+  video?: string
   hoverImage?: string
   favicon?: string
   collaborators?: Collaborator[]
@@ -125,22 +126,11 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   projects: [
     {
-      name: "Mizen",
-      url: "https://www.mizen.recipes/",
-      githubUrl: "https://github.com/parse-n-plate/mizen",
-      description: "Calm online cooking",
+      name: "Gulp Shooters",
+      description: "A Pico-8 roguelike twin-stick shooter built around alien interactions and run upgrades.",
       status: "building",
-      image: "/projects/mizen.png",
-      hoverImage: "/projects/mizen-hover.svg",
-      favicon: faviconUrl("https://www.mizen.recipes/"),
-      collaborators: [
-        { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", role: "Design Eng", url: "https://linkedin.com/in/gageminamoto" },
-        { name: "Michelle Tran", avatarUrl: "/avatars/michelle.png", role: "PM", url: "https://www.linkedin.com/in/michelle-tran-a48a14203/" },
-        { name: "Michele Tang", avatarUrl: "/avatars/michele-tang.jpg", role: "Contributor", url: "https://www.linkedin.com/in/michele-tang/" },
-        { name: "Zelda Cole", avatarUrl: "/avatars/zelda.jpg", role: "Contributor", url: "https://www.linkedin.com/in/zeldacole" },
-        { name: "William Liang", avatarUrl: "/avatars/william.jpg", role: "Contributor", url: "https://www.linkedin.com/in/william-liang808/" },
-        { name: "Rahul Jain", avatarUrl: "/avatars/rahul.jpg", role: "Contributor", url: "https://www.linkedin.com/in/rahulj24/" },
-      ],
+      image: "/projects/gulp-shooters.png",
+      video: "/projects/gulp-shooters-preview.mp4",
     },
     {
       name: "Yahtzee Scorecard",
@@ -149,6 +139,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       description: "Scorecard on the go",
       status: "production",
       image: "/projects/yahtzee.png",
+      video: "/projects/yahtzee-preview.mp4",
       hoverImage: "/projects/yahtzee-hover.svg",
       favicon: "/projects/yahtzee-favicon.png",
       collaborators: [
@@ -161,6 +152,14 @@ Indie games have always inspired me. Small teams pour their craft into every det
       description: "A Pico-8 game made in a day",
       status: "new",
       image: "/projects/gunnars-trash-trade.jpg",
+      video: "/projects/gunnars-trash-trade-preview.mp4",
+    },
+    {
+      name: "UH Esports Branding",
+      url: "https://www.figma.com/deck/5LuGBEAhIF5lbzO5RgrFvc/2025-UHE-Brand-Guides",
+      description: "Visual identity and match graphics for collegiate esports",
+      status: "production",
+      image: "/uh-preview.jpg",
     },
   ],
   learning: [
@@ -245,7 +244,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       company: "University of Hawai'i Esports",
       role: "Creative Director",
       period: "2023 – 2025",
-      url: "https://www.instagram.com/uhesports/",
+      url: "https://www.figma.com/deck/5LuGBEAhIF5lbzO5RgrFvc/2025-UHE-Brand-Guides",
       hoverImage: "/uh-preview.jpg",
       description: "I helped shape the visual identity of collegiate esports at UH through brand systems, match graphics, event assets, and team direction. It was an early turning point for me in learning how to lead design work, not just contribute to it.",
     },

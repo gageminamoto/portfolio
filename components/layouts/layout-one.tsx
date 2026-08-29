@@ -1,7 +1,9 @@
 "use client"
 
+import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
@@ -18,6 +20,128 @@ import type { NotionWritingPost } from "@/lib/notion"
 
 interface LayoutOneProps {
   initialPosts?: NotionWritingPost[]
+}
+
+const PROJECT_EDGE_BLEED_PX = 16
+
+function ProjectCarousel({ projects }: { projects: typeof portfolioData.projects }) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const railRef = useRef<HTMLDivElement>(null)
+  const [bleedMetrics, setBleedMetrics] = useState({ left: 0, right: 0, width: 0 })
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  useLayoutEffect(() => {
+    const parent = wrapperRef.current?.parentElement
+    if (!parent) return
+
+    const updateInset = () => {
+      const rect = parent.getBoundingClientRect()
+      const viewportWidth = window.visualViewport?.width ?? window.innerWidth
+
+      setBleedMetrics({
+        left: Math.max(0, Math.round(rect.left)),
+        right: Math.max(0, Math.round(viewportWidth - rect.right)),
+        width: Math.round(viewportWidth),
+      })
+    }
+
+    updateInset()
+    window.addEventListener("resize", updateInset)
+    window.visualViewport?.addEventListener("resize", updateInset)
+    window.visualViewport?.addEventListener("scroll", updateInset)
+
+    return () => {
+      window.removeEventListener("resize", updateInset)
+      window.visualViewport?.removeEventListener("resize", updateInset)
+      window.visualViewport?.removeEventListener("scroll", updateInset)
+    }
+  }, [])
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      railRef.current?.scrollTo({ left: 0, behavior: "auto" })
+      setActiveIndex(0)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [])
+
+  const railStyle = {
+    "--projects-start-inset": `${bleedMetrics.left}px`,
+    "--projects-end-inset": `${bleedMetrics.right}px`,
+    "--projects-edge-bleed": `${PROJECT_EDGE_BLEED_PX}px`,
+    marginLeft: `-${bleedMetrics.left + PROJECT_EDGE_BLEED_PX}px`,
+    width: bleedMetrics.width
+      ? `${bleedMetrics.width + PROJECT_EDGE_BLEED_PX * 2}px`
+      : `calc(100% + ${PROJECT_EDGE_BLEED_PX * 2}px)`,
+  } as CSSProperties
+
+  const updateActiveIndex = () => {
+    const rail = railRef.current
+    if (!rail) return
+
+    const items = Array.from(rail.children) as HTMLElement[]
+    const firstOffset = items[0]?.offsetLeft ?? 0
+    const maxScrollLeft = rail.scrollWidth - rail.clientWidth
+    const closestIndex = items.reduce((closest, item, index) => {
+      const snapPosition = index === items.length - 1 ? maxScrollLeft : item.offsetLeft - firstOffset
+      return Math.abs(rail.scrollLeft - snapPosition) < Math.abs(rail.scrollLeft - closest.position)
+        ? { index, position: snapPosition }
+        : closest
+    }, { index: 0, position: 0 })
+
+    setActiveIndex(closestIndex.index)
+  }
+
+  const scrollToIndex = (index: number) => {
+    const rail = railRef.current
+    if (!rail) return
+
+    const items = Array.from(rail.children) as HTMLElement[]
+    const nextIndex = Math.min(Math.max(index, 0), items.length - 1)
+    const firstOffset = items[0]?.offsetLeft ?? 0
+    const item = items[nextIndex]
+    if (!item) return
+
+    rail.scrollTo({
+      left: nextIndex === items.length - 1
+        ? rail.scrollWidth - rail.clientWidth
+        : item.offsetLeft - firstOffset,
+      behavior: "smooth",
+    })
+    setActiveIndex(nextIndex)
+  }
+
+  return (
+    <>
+      <div ref={wrapperRef} className="overflow-visible" style={railStyle}>
+        <div
+          ref={railRef}
+          className="-mt-2 flex w-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-pl-[calc(var(--projects-start-inset)+var(--projects-edge-bleed))] scroll-pr-[calc(var(--projects-end-inset)+var(--projects-edge-bleed))] pb-1 pl-[calc(var(--projects-start-inset)+var(--projects-edge-bleed))] pr-[calc(var(--projects-end-inset)+var(--projects-edge-bleed))] pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onScroll={updateActiveIndex}
+        >
+          {projects.map((project, index) => (
+            <div key={project.name} className={`w-[min(82vw,22rem)] shrink-0 ${index === projects.length - 1 ? "snap-end" : "snap-start"}`}>
+              <ProjectCard project={project} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <button type="button" onClick={() => scrollToIndex(activeIndex - 1)} disabled={activeIndex === 0} className="inline-flex size-8 items-center justify-center rounded-full bg-muted/55 text-muted-foreground disabled:cursor-not-allowed disabled:opacity-40" aria-label="Previous project">
+          <ChevronLeft className="size-4" strokeWidth={2.25} aria-hidden="true" />
+        </button>
+        <div className="flex items-center gap-3" aria-label="Project carousel position">
+          {projects.map((project, index) => (
+            <button key={project.name} type="button" onClick={() => scrollToIndex(index)} className={`size-2 rounded-full ${index === activeIndex ? "bg-foreground" : "bg-muted-foreground/18"}`} aria-label={`Show ${project.name}`} aria-current={index === activeIndex ? "true" : undefined} />
+          ))}
+        </div>
+        <button type="button" onClick={() => scrollToIndex(activeIndex + 1)} disabled={activeIndex === projects.length - 1} className="inline-flex size-8 items-center justify-center rounded-full bg-muted/55 text-muted-foreground disabled:cursor-not-allowed disabled:opacity-40" aria-label="Next project">
+          <ChevronRight className="size-4" strokeWidth={2.25} aria-hidden="true" />
+        </button>
+      </div>
+    </>
+  )
 }
 
 export function LayoutOne({ initialPosts }: LayoutOneProps) {
@@ -73,12 +197,8 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
           </h2>
         </div>
 
-        <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {projects.map((project) => (
-            <div key={project.name} className="w-[min(82vw,22rem)] shrink-0 snap-start">
-              <ProjectCard project={project} />
-            </div>
-          ))}
+        <div className="min-w-0 max-w-full">
+          <ProjectCarousel projects={projects} />
         </div>
       </motion.section>
 

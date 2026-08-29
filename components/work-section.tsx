@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/drawer"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { OptimizedImage, preloadOptimizedImageSrc } from "@/components/optimized-image"
-import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
+import { workItemElementId } from "@/components/work-hover-context"
 import { caseStudySlug } from "@/lib/utils"
 
 interface WorkItem {
@@ -276,31 +276,11 @@ function projectUrlLabel(url: string) {
   }
 }
 
-function HoverAnimationMedia({ src }: { src: string }) {
-  const [hoverMediaLoaded, setHoverMediaLoaded] = useState(false)
-
-  return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img
-      src={src}
-      alt=""
-      loading="eager"
-      decoding="async"
-      draggable={false}
-      onLoad={() => setHoverMediaLoaded(true)}
-      className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-300 ease-out ${
-        hoverMediaLoaded ? "opacity-100" : "opacity-0"
-      }`}
-      aria-hidden="true"
-    />
-  )
-}
-
-function HoverPlayMedia({ src, previewSrc, alt, active }: { src: string; previewSrc: string; alt: string; active: boolean }) {
+function WorkCardMedia({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="relative aspect-video w-full overflow-hidden">
       <OptimizedImage
-        src={previewSrc}
+        src={src}
         alt={alt}
         fill
         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -311,9 +291,6 @@ function HoverPlayMedia({ src, previewSrc, alt, active }: { src: string; preview
         className="absolute inset-0 h-full w-full bg-muted"
         imageClassName="object-cover object-center"
       />
-      {active ? (
-        <HoverAnimationMedia key={src} src={src} />
-      ) : null}
     </div>
   )
 }
@@ -717,11 +694,6 @@ function WorkItemCard({
   featured?: boolean
   showDescription?: boolean
 }) {
-  const [localHover, setLocalHover] = useState(false)
-  const { hoveredWorkId } = useWorkHover()
-
-  const remoteHover = hoveredWorkId === item.name
-  const active = localHover || remoteHover
   const href = caseStudyHref(item)
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -738,27 +710,11 @@ function WorkItemCard({
       href={href}
       draggable={false}
       onClick={handleClick}
-      onMouseEnter={() => {
-        setLocalHover(true)
-        preloadCaseStudyImages(item)
-      }}
-      onMouseLeave={() => setLocalHover(false)}
-      onFocus={() => {
-        setLocalHover(true)
-        preloadCaseStudyImages(item)
-      }}
-      onBlur={() => setLocalHover(false)}
-      className="group block w-full scroll-mt-8 cursor-pointer text-left transition-transform duration-150 ease active:scale-[0.97] focus-visible:outline-none"
+      className="group block w-full scroll-mt-8 cursor-pointer text-left focus-visible:outline-none"
       aria-label={`Open ${item.name} details`}
     >
-      <div
-        className={`relative overflow-hidden rounded-xl border bg-card transition-[transform,border-color,box-shadow] duration-150 ease-out group-focus-visible:ring-2 group-focus-visible:ring-ring ${
-          active
-            ? "-translate-y-px border-border shadow-sm"
-            : "border-border/50"
-        }`}
-      >
-        <HoverPlayMedia src={item.image} previewSrc={item.previewImage} alt={item.name} active={active} />
+      <div className="relative overflow-hidden rounded-xl bg-card group-focus-visible:ring-2 group-focus-visible:ring-ring">
+        <WorkCardMedia src={item.previewImage} alt={item.name} />
       </div>
       <div className={`mt-2 flex items-baseline gap-1.5 text-sm ${featured ? "sm:text-base" : ""}`}>
         <span className="text-muted-foreground">{item.name}</span>

@@ -1,4 +1,5 @@
 import { Sledgehammer, Star } from "@solar-icons/react"
+import Image from "next/image"
 import type { ProjectItem } from "@/lib/portfolio-data"
 import { useGradientWord } from "@/components/gradient-word-context"
 
@@ -38,7 +39,31 @@ export function ProjectCard({
   project: ProjectItem
 }) {
   return (
-    <div className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border/60 bg-muted shadow-sm">
+    <div className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-muted shadow-sm">
+      {project.image ? (
+        <Image
+          src={project.image}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 82vw, 22rem"
+          className="object-cover object-left-top"
+        />
+      ) : null}
+      {project.video ? (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={project.image}
+          preload="metadata"
+          aria-hidden="true"
+          className="absolute inset-0 size-full object-cover object-center"
+        >
+          <source src={project.video} type="video/mp4" />
+        </video>
+      ) : null}
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background/90 via-background/45 to-transparent" aria-hidden="true" />
       {project.url && (
         <a
           href={project.url}
