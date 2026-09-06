@@ -169,7 +169,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   speaking: [
     {
-      name: "Piʻikū Co. Event",
+      name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
       description: "Sep 1, 2026",
       url: "https://luma.com/piiku-co?period=past&e=evt-JsjycW9PzjpPRFP",
     },
