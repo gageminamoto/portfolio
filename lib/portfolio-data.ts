@@ -171,7 +171,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
     {
       name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
       description: "Sep 1, 2026",
-      url: "https://luma.com/piiku-co?period=past&e=evt-JsjycW9PzjpPRFP",
+      url: "https://luma.com/dkxxm2tz?tk=gAV0PB",
     },
     {
       name: "Cutting Through the AI Noise as a Designer",
