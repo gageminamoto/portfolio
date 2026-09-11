@@ -17,7 +17,7 @@ const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION !== "false"
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',
-  description: 'Designer building everyday products. Growing Hawai\'i\'s local design community. Building Mizen.',
+  description: 'Designer building everyday products. Building Mizen.',
   icons: {
     icon: [
       { url: '/favicon-light.svg?v=3', media: '(prefers-color-scheme: light)', type: 'image/svg+xml' },
