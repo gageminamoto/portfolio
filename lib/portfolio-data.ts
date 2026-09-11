@@ -92,8 +92,8 @@ const faviconUrl = (url: string) =>
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "Designer thriving in ambiguity, blurred lines, and curiosity to shape great everyday products. Currently, crafting simple {software|brands|tools} at Negi.\n\nGrowing Hawai’i’s [local design community](https://piiku.co/) and building [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.\n\nI’ve worked with teams at [Aura](https://aurafinance.io), [Kilo](https://kilohnl.com/), [Umi](https://umiapp.co/), [Piʻikū](https://piiku.co/), [Spero](https://spero.vc/), [MemberSpace](https://www.memberspace.com/), and [Servco](https://www.servco.com/) across product, brand, and web design.",
-  extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
+  bio: "Designer thriving in ambiguity, blurred lines, and curiosity to shape great everyday products. Currently, crafting simple {software|brands|tools} at Negi.\n\nBuilding [Mizen](https://www.mizen.recipes/), a calm and simple way to cook online recipes.\n\nI’ve worked with teams at [Aura](https://aurafinance.io), [Kilo](https://kilohnl.com/), [Umi](https://umiapp.co/), and [Servco](https://www.servco.com/) across product, brand, and web design.",
+  extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) in Hawai’i.
 
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/). Those early roles taught me how to move fast, collaborate across teams, and communicate with clarity.
 
@@ -168,16 +168,6 @@ Indie games have always inspired me. Small teams pour their craft into every det
     { name: "日本語", description: "Learning nihongo" },
   ],
   speaking: [
-    {
-      name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
-      description: "Sep 1, 2026",
-      url: "https://luma.com/dkxxm2tz?tk=gAV0PB",
-    },
-    {
-      name: "Cutting Through the AI Noise as a Designer",
-      description: "Apr 2026",
-      url: "https://www.linkedin.com/posts/piiku-co_hot-take-ai-tools-activity-7449913912835338240-4tUX",
-    },
     { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
     { name: "UX 101 for University of Hawaiʻi at Mānoa Students", description: "Sep 2025" },
     { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
@@ -193,15 +183,6 @@ Indie games have always inspired me. Small teams pour their craft into every det
       icon: faviconUrl("https://www.mizen.recipes/"),
       hoverImage: "/images/mizen-hover.gif",
       description: "A side project to make online recipes easier to cook from. I’m exploring recipe parsing, grocery lists, clipping, and the small interaction details that make cooking from a phone feel smoother.",
-    },
-    {
-      company: "Piʻiku",
-      role: "Local design community",
-      period: "Ongoing",
-      url: "https://piiku.co/",
-      icon: faviconUrl("https://piiku.co/"),
-      hoverImage: "/piiku-preview.jpg",
-      description: "A community project where I actively volunteer to support and grow Hawaiʻi’s local design scene. It’s a way for me to help bring designers together, contribute to the community, and invest in the next generation of people making things here.",
     },
     {
       company: "Negi",
