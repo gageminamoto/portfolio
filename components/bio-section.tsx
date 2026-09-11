@@ -97,10 +97,6 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "Aura",
                   "Kilo",
                   "Umi",
-                  "Piʻikū",
-                  "Spero",
-                  "MemberSpace",
-                  "Servco",
                 ])
                 const syncWorkId = workSyncIds.has(part.text) ? part.text : undefined
                 return (
