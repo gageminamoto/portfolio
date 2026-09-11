@@ -64,7 +64,10 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const floaterRef = useRef<HTMLDivElement>(null)
   const shouldReduceMotion = useReducedMotion()
-  const prefersFinePointer = useFinePointerHover()
+  // Some mobile browsers report a fine, hover-capable pointer when a trackpad
+  // is connected. Keep the preview layer off narrow layouts so its WebGL
+  // canvas cannot escape the fixed preview bounds and cover timeline rows.
+  const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
   const useFluidHover = Boolean(!shouldReduceMotion && prefersFinePointer)
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
