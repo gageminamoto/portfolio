@@ -90,16 +90,12 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                   "Mizen": "/images/mizen-hover.mp4",
                   "University of Hawaiʻi Esports": "/uh-preview.jpg",
                   "UH Esports": "/uh-preview.jpg",
-                  "local design community": "/piiku-preview.jpg",
                   "Michelle": "/michelle-preview.jpg",
                 }
                 const workSyncIds = new Set([
                   "Aura",
                   "Kilo",
                   "Umi",
-                  "Piʻikū",
-                  "Spero",
-                  "MemberSpace",
                   "Servco",
                 ])
                 const syncWorkId = workSyncIds.has(part.text) ? part.text : undefined
