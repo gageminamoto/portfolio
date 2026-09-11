@@ -17,6 +17,6 @@ export function useFinePointerHover({ minWidth }: { minWidth?: number } = {}) {
     update()
     mq.addEventListener("change", update)
     return () => mq.removeEventListener("change", update)
-  }, [])
+  }, [minWidth])
   return fine
 }
