@@ -69,6 +69,7 @@ export default function RootLayout({
                 aria-hidden="true"
               />
               {children}
+              <script src="https://inflight.co/widget.js" data-org="yykr0g17" async></script>
             </CommandKProvider>
           </GradientWordProvider>
         </ThemeProvider>
