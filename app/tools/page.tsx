@@ -18,7 +18,7 @@ import {
   stagger,
   toolsPanelEnter,
 } from "@/lib/animations"
-import { faviconHostname } from "@/lib/affiliate-links"
+import { faviconHostname, toolLinkRel } from "@/lib/affiliate-links"
 import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
 import { HOVER_EASE_IN_OUT } from "@/lib/hover-constants"
@@ -62,6 +62,23 @@ function formatLastUpdated(dateStr: string | null): string {
     day: "numeric",
     year: "numeric",
   })
+}
+
+function AffiliateLabel() {
+  return (
+    <span className="shrink-0 text-[10px] font-medium tracking-wide text-muted-foreground/50">
+      Affiliate
+    </span>
+  )
+}
+
+function toolAriaLabel(
+  displayName: string,
+  description: string,
+  affiliate: boolean,
+): string {
+  const base = `${displayName} — ${description}`
+  return affiliate ? `${base} (affiliate)` : base
 }
 
 function ToolIcon({ name, url }: { name: string; url: string | null }) {
@@ -333,7 +350,7 @@ export default function ToolsPage() {
                       />
                       <div className="relative z-10 flex min-w-0 flex-1 items-center gap-3">
                         <ToolIcon name={tool.name} url={tool.url} />
-                        <div className="flex min-w-0 shrink-0">
+                        <div className="flex min-w-0 shrink-0 items-center gap-1.5">
                           {isSkill ? (
                             <div className="flex items-center gap-1.5">
                               <span
@@ -375,6 +392,7 @@ export default function ToolsPage() {
                               {displayName}
                             </span>
                           )}
+                          {tool.affiliate ? <AffiliateLabel /> : null}
                         </div>
                         <span
                           className={cn(
@@ -397,13 +415,17 @@ export default function ToolsPage() {
                       data-tool-row={tool.id}
                       href={tool.url}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={toolLinkRel(tool.affiliate)}
                       className={rowClass}
                       style={rowPadTransitionStyle}
                       onMouseEnter={() => setHoveredToolId(tool.id)}
                       onFocus={() => setHoveredToolId(tool.id)}
                       onBlur={clearRowHover}
-                      aria-label={`${displayName} — ${tool.description}`}
+                      aria-label={toolAriaLabel(
+                        displayName,
+                        tool.description,
+                        tool.affiliate,
+                      )}
                     >
                       {rowBody}
                     </motion.a>
@@ -425,20 +447,25 @@ export default function ToolsPage() {
                 const isSkill = tool.category === "Skills"
                 const displayName = isSkill ? `/${tool.name}` : tool.name
 
-                const nameNode = isSkill ? (
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors",
-                      tool.url && "group-hover:bg-accent",
+                const nameNode = (
+                  <span className="inline-flex items-center gap-1.5">
+                    {isSkill ? (
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground transition-colors",
+                          tool.url && "group-hover:bg-accent",
+                        )}
+                      >
+                        {displayName}
+                        {tool.url ? (
+                          <ArrowUpRight size={10} className="shrink-0 text-muted-foreground" aria-hidden />
+                        ) : null}
+                      </span>
+                    ) : (
+                      displayName
                     )}
-                  >
-                    {displayName}
-                    {tool.url ? (
-                      <ArrowUpRight size={10} className="shrink-0 text-muted-foreground" aria-hidden />
-                    ) : null}
+                    {tool.affiliate ? <AffiliateLabel /> : null}
                   </span>
-                ) : (
-                  displayName
                 )
 
                 return (
@@ -446,11 +473,16 @@ export default function ToolsPage() {
                     key={tool.id}
                     href={tool.url}
                     external
+                    rel={toolLinkRel(Boolean(tool.url) && tool.affiliate)}
                     icon={<ToolIcon name={tool.name} url={tool.url} />}
                     name={nameNode}
                     meta={tool.description}
                     style={rowPadTransitionStyle}
-                    aria-label={`${displayName} — ${tool.description}`}
+                    aria-label={toolAriaLabel(
+                      displayName,
+                      tool.description,
+                      tool.affiliate,
+                    )}
                   />
                 )
               })
@@ -469,35 +501,41 @@ export default function ToolsPage() {
               const cardClassName =
                 "group flex flex-col gap-2 rounded-xl border border-border/50 p-5 transition-colors hover:bg-muted/50"
 
+              const cardBody = (
+                <>
+                  <ToolIcon name={tool.name} url={tool.url} />
+                  <div className="flex items-center gap-1.5">
+                    {isSkill ? (
+                      <span className="w-fit rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
+                        {displayName}
+                      </span>
+                    ) : (
+                      <h3 className="text-sm font-medium text-foreground">{displayName}</h3>
+                    )}
+                    {tool.affiliate ? <AffiliateLabel /> : null}
+                  </div>
+                  <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+                </>
+              )
+
               return tool.url ? (
                 <motion.a
                   key={tool.id}
                   href={tool.url}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={toolLinkRel(tool.affiliate)}
                   className={cardClassName}
-                >
-                  <ToolIcon name={tool.name} url={tool.url} />
-                  {isSkill ? (
-                    <span className="w-fit rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
-                      {displayName}
-                    </span>
-                  ) : (
-                    <h3 className="text-sm font-medium text-foreground">{displayName}</h3>
+                  aria-label={toolAriaLabel(
+                    displayName,
+                    tool.description,
+                    tool.affiliate,
                   )}
-                  <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+                >
+                  {cardBody}
                 </motion.a>
               ) : (
                 <motion.div key={tool.id} className={cardClassName}>
-                  <ToolIcon name={tool.name} url={tool.url} />
-                  {isSkill ? (
-                    <span className="w-fit rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
-                      {displayName}
-                    </span>
-                  ) : (
-                    <h3 className="text-sm font-medium text-foreground">{displayName}</h3>
-                  )}
-                  <p className="line-clamp-2 text-xs text-muted-foreground">{tool.description}</p>
+                  {cardBody}
                 </motion.div>
               )
             })}

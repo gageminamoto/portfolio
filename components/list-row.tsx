@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 interface ListRowProps {
   href?: string | null
   external?: boolean
+  rel?: string
   icon?: ReactNode
   name: ReactNode
   meta?: ReactNode
@@ -19,6 +20,7 @@ interface ListRowProps {
 export function ListRow({
   href,
   external,
+  rel,
   icon,
   name,
   meta,
@@ -52,7 +54,9 @@ export function ListRow({
       <motion.a
         variants={variants}
         href={href}
-        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...(external
+          ? { target: "_blank", rel: rel ?? "noopener noreferrer" }
+          : {})}
         className={rowClass}
         style={style}
         aria-label={ariaLabel}

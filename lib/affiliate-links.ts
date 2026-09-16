@@ -14,10 +14,15 @@ function isCleanShot(name: string, url: string | null): boolean {
   return host === "cleanshot.com" || host === "go.cleanshot.com"
 }
 
-/** Rewrite known affiliate destinations so Notion can keep the public product URL. */
-export function applyAffiliateUrl(name: string, url: string | null): string | null {
-  if (isCleanShot(name, url)) return CLEANSHOT_AFFILIATE_URL
-  return url
+export function resolveToolLink(
+  name: string,
+  url: string | null,
+  flagged = false,
+): { url: string | null; affiliate: boolean } {
+  if (isCleanShot(name, url)) {
+    return { url: CLEANSHOT_AFFILIATE_URL, affiliate: true }
+  }
+  return { url, affiliate: flagged }
 }
 
 /** Prefer the product domain for favicons when the href is an affiliate short link. */
@@ -26,4 +31,8 @@ export function faviconHostname(url: string): string | null {
   if (!host) return null
   if (host === "go.cleanshot.com") return "cleanshot.com"
   return host
+}
+
+export function toolLinkRel(affiliate: boolean): string {
+  return affiliate ? "noopener noreferrer sponsored" : "noopener noreferrer"
 }

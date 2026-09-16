@@ -1,3 +1,4 @@
+import { resolveToolLink } from "@/lib/affiliate-links"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
 type SeedDef = {
@@ -5,6 +6,7 @@ type SeedDef = {
   url: string | null
   description: string
   category: ToolCategory
+  affiliate?: boolean
 }
 
 /** Static list used when DialKit “Seed tools” is enabled (local preview data). */
@@ -19,6 +21,12 @@ const SEED_DEFS: SeedDef[] = [
     name: "Cursor",
     url: "https://cursor.com",
     description: "AI-native code editor",
+    category: "Productivity",
+  },
+  {
+    name: "CleanShot X",
+    url: "https://cleanshot.com/",
+    description: "A top 5 tool. Screen capture and annotation",
     category: "Productivity",
   },
   {
@@ -137,13 +145,19 @@ export function generateSeedTools(count: number): NotionToolItem[] {
 
   return Array.from({ length: n }, (_, i) => {
     const def = SEED_DEFS[i]
+    const { url, affiliate } = resolveToolLink(
+      def.name,
+      def.url,
+      def.affiliate ?? false,
+    )
     return {
       id: `seed-tool-${i}`,
       name: def.name,
-      url: def.url,
+      url,
       description: def.description,
       category: def.category,
       lastEdited: now,
+      affiliate,
     } satisfies NotionToolItem
   })
 }
