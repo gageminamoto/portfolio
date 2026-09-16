@@ -4,6 +4,7 @@ import type {
   BlockObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints"
+import { resolveToolLink } from "./affiliate-links"
 import { getImageDimensions, type ImageDimensions } from "./image-metadata"
 import { slugify } from "./utils"
 
@@ -250,6 +251,7 @@ export interface NotionToolItem {
   description: string
   category: ToolCategory
   lastEdited: string
+  affiliate: boolean
 }
 
 export interface ToolsResponse {
@@ -278,6 +280,12 @@ function getCategory(page: PageObjectResponse): ToolCategory {
     if (category) return category
   }
   return "Build"
+}
+
+function getAffiliateFlag(page: PageObjectResponse): boolean {
+  const prop = page.properties["Affiliate"]
+  if (prop?.type === "checkbox") return prop.checkbox
+  return false
 }
 
 export async function fetchTools(): Promise<ToolsResponse> {
@@ -312,13 +320,21 @@ export async function fetchTools(): Promise<ToolsResponse> {
       latestEdit = edited
     }
 
+    const name = getTitle(page)
+    const { url, affiliate } = resolveToolLink(
+      name,
+      getUrl(page),
+      getAffiliateFlag(page),
+    )
+
     return {
       id: page.id,
-      name: getTitle(page),
-      url: getUrl(page),
+      name,
+      url,
       description: getDescription(page),
       category: getCategory(page),
       lastEdited: edited,
+      affiliate,
     }
   })
 
