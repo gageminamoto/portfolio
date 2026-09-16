@@ -31,7 +31,7 @@ export default function LoadingTools() {
             Everything I build with, stay productive, and keep learning.
           </p>
           <p className="text-xs leading-relaxed text-muted-foreground">
-            Some of these links are affiliate. If you buy through them, I may earn a commission — no extra cost to you.
+            Some of these links are affiliate — I may earn a commission if you buy through them. I only affiliate tools I use daily, not paid placements.
           </p>
         </div>
       </div>
