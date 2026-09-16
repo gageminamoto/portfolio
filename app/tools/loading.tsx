@@ -26,9 +26,14 @@ export default function LoadingTools() {
 
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Tools</h1>
-        <p className="text-sm text-muted-foreground">
-          Everything I build with, stay productive, and keep learning.
-        </p>
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-muted-foreground">
+            Everything I build with, stay productive, and keep learning.
+          </p>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Some of these links are affiliate. If you buy through them, I may earn a commission — no extra cost to you.
+          </p>
+        </div>
       </div>
 
       <section className="flex flex-col gap-5" aria-busy="true" aria-label="Loading tools">

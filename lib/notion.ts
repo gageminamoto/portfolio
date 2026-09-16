@@ -4,6 +4,7 @@ import type {
   BlockObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints"
+import { applyAffiliateUrl } from "./affiliate-links"
 import { getImageDimensions, type ImageDimensions } from "./image-metadata"
 import { slugify } from "./utils"
 
@@ -312,10 +313,12 @@ export async function fetchTools(): Promise<ToolsResponse> {
       latestEdit = edited
     }
 
+    const name = getTitle(page)
+
     return {
       id: page.id,
-      name: getTitle(page),
-      url: getUrl(page),
+      name,
+      url: applyAffiliateUrl(name, getUrl(page)),
       description: getDescription(page),
       category: getCategory(page),
       lastEdited: edited,

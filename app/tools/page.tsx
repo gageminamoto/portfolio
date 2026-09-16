@@ -18,6 +18,7 @@ import {
   stagger,
   toolsPanelEnter,
 } from "@/lib/animations"
+import { faviconHostname } from "@/lib/affiliate-links"
 import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
 import { HOVER_EASE_IN_OUT } from "@/lib/hover-constants"
@@ -66,15 +67,7 @@ function formatLastUpdated(dateStr: string | null): string {
 function ToolIcon({ name, url }: { name: string; url: string | null }) {
   const initials = name.slice(0, 2)
   const [failed, setFailed] = useState(false)
-  let hostname: string | null = null
-
-  if (url) {
-    try {
-      hostname = new URL(url).hostname
-    } catch {
-      hostname = null
-    }
-  }
+  const hostname = url ? faviconHostname(url) : null
 
   if (hostname && !failed) {
     return (
@@ -226,9 +219,14 @@ export default function ToolsPage() {
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Tools
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Everything I build with, stay productive, and keep learning.
-        </p>
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-muted-foreground">
+            Everything I build with, stay productive, and keep learning.
+          </p>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Some of these links are affiliate. If you buy through them, I may earn a commission — no extra cost to you.
+          </p>
+        </div>
       </motion.div>
 
       {/* Search, filters, and table enter as one coherent block. */}
