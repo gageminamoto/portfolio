@@ -13,6 +13,8 @@ interface HoverLinkProps {
   showArrow?: boolean
   previewImage?: string
   previewFallbackImage?: string
+  previewWidth?: number
+  previewHeight?: number
   syncWorkId?: string
   className?: string
 }
@@ -24,6 +26,8 @@ export function HoverLink({
   showArrow = false,
   previewImage,
   previewFallbackImage,
+  previewWidth = 256,
+  previewHeight = 144,
   syncWorkId,
   className = "",
 }: HoverLinkProps) {
@@ -68,7 +72,7 @@ export function HoverLink({
         <span
           data-no-markdown
           className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 scale-95 opacity-0 transition-[transform,opacity] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] origin-bottom group-hover/preview:scale-100 group-hover/preview:opacity-100 sm:block"
-          style={{ width: 256, height: 144 }}
+          style={{ width: previewWidth, height: previewHeight }}
         >
           {previewIsVideo && !prefersReducedMotion ? (
             <video
@@ -85,8 +89,8 @@ export function HoverLink({
             <Image
               src={previewFallbackImage ?? previewImage}
               alt=""
-              width={256}
-              height={144}
+              width={previewWidth}
+              height={previewHeight}
               className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover object-center shadow-lg"
             />
           )}

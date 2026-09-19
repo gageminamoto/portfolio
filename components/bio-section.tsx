@@ -75,6 +75,8 @@ export function BioSection({ bio, className = "", onWordChange, onUserClick }: B
                       <HoverLink
                         href="https://negi.studio"
                         previewImage="/negi-studio-preview.png"
+                        previewWidth={256}
+                        previewHeight={134}
                         className="no-underline decoration-transparent hover:decoration-primary"
                       >
                         Negi
