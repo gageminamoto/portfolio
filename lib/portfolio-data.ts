@@ -209,7 +209,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
       period: "2025 – Present",
       url: "https://negi.studio/",
       icon: faviconUrl("https://negi.studio/"),
-      hoverImage: "/negi-studio-preview.jpg",
+      hoverImage: "/negi-studio-preview.png",
       description: "The small studio Michelle and I started to make thoughtful software, brands, and experiments in Hawaiʻi. We divide our time across client work, community, and play, with a focus on intentional design, giving back locally, and making space for experimentation.",
     },
     {
