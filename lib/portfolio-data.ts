@@ -169,8 +169,13 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   speaking: [
     {
+      name: "UXHI – Case Study Showcase",
+      description: "Oct 2026",
+      url: "https://uxhiconference.com",
+    },
+    {
       name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
-      description: "Sep 1, 2026",
+      description: "Sep 2026",
       url: "https://luma.com/dkxxm2tz?tk=gAV0PB",
     },
     {
