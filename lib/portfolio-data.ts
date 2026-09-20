@@ -169,9 +169,14 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   speaking: [
     {
-      name: "UXHI – Case Study Showcase",
+      name: "UXHICon 2026 Speaker – Case Study Showcase",
       description: "Oct 2026",
       url: "https://uxhiconference.com",
+    },
+    {
+      name: "Side Tracked: A Makers Showcase",
+      description: "Oct 2026",
+      url: "https://www.negi.studio/side-tracked",
     },
     {
       name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
