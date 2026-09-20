@@ -79,6 +79,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
   const hoveredItem = hoveredIndex !== null ? items[hoveredIndex] : null
   const hasHover = hoveredItem?.hoverImage || hoveredItem?.hoverComponent
   const HoverComp = hoveredItem?.hoverComponent ? hoverComponents[hoveredItem.hoverComponent] : null
+  const hoverHeight = hoveredItem?.hoverImage === "/negi-studio-preview.png" ? 134 : 144
 
   return (
     <div
@@ -90,7 +91,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
         <div
           ref={floaterRef}
           className="pointer-events-none fixed z-50"
-          style={{ width: 256, height: 144, transform: "translateX(-50%)" }}
+          style={{ width: 256, height: hoverHeight, transform: "translateX(-50%)" }}
         >
           {HoverComp ? (
             <HoverComp />
@@ -99,7 +100,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
               src={hoveredItem.hoverImage}
               alt=""
               width={256}
-              height={144}
+              height={hoverHeight}
               className="block h-full w-full rounded-lg border border-border/50 bg-muted object-cover shadow-lg"
             />
           ) : null}
