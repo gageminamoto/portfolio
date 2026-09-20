@@ -186,7 +186,11 @@ Indie games have always inspired me. Small teams pour their craft into every det
     { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
     { name: "UX 101 for University of Hawaiʻi at Mānoa Students", description: "Sep 2025" },
     { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
-    { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
+    {
+      name: "Reel Fluent (HNL Tech Week Speaker)",
+      description: "Sep 2024",
+      url: "https://lu.ma/aljkkoaw",
+    },
     { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
   ],
   timeline: [
