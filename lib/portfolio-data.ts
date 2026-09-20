@@ -169,8 +169,18 @@ Indie games have always inspired me. Small teams pour their craft into every det
   ],
   speaking: [
     {
+      name: "UXHICon 2026 Speaker – Case Study Showcase",
+      description: "Oct 2026",
+      url: "https://uxhiconference.com",
+    },
+    {
+      name: "Side Tracked: A Makers Showcase",
+      description: "Oct 2026",
+      url: "https://www.negi.studio/side-tracked",
+    },
+    {
       name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
-      description: "Sep 1, 2026",
+      description: "Sep 2026",
       url: "https://luma.com/dkxxm2tz?tk=gAV0PB",
     },
     {
@@ -181,7 +191,11 @@ Indie games have always inspired me. Small teams pour their craft into every det
     { name: "Becoming Impossible to Ignore", description: "Oct 2025" },
     { name: "UX 101 for University of Hawaiʻi at Mānoa Students", description: "Sep 2025" },
     { name: "Esports & Gaming Industry Resume Workshop", description: "Apr, Oct 2023" },
-    { name: "Reel Fluent (HNL Tech Week Speaker)", description: "Sep 2024" },
+    {
+      name: "Reel Fluent (HNL Tech Week Speaker)",
+      description: "Sep 2024",
+      url: "https://lu.ma/aljkkoaw",
+    },
     { name: "Designing a Path to Success in Esports", description: "2023 – 2024" },
   ],
   timeline: [
