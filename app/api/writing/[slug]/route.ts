@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server"
-import {
-  fetchPostBySlug,
-  fetchPostBlocks,
-  fetchCachedAllPosts,
-} from "@/lib/notion"
+import { fetchPostBlocks, resolveWritingPostBySlug } from "@/lib/notion"
 
 export const revalidate = 600
 
@@ -13,8 +9,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params
-    const allPosts = await fetchCachedAllPosts()
-    const post = allPosts.find((item) => item.slug === slug) ?? await fetchPostBySlug(slug)
+    const { post, allPosts } = await resolveWritingPostBySlug(slug)
 
     if (!post) {
       return NextResponse.json(

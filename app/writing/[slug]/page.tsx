@@ -1,11 +1,20 @@
 import type { Metadata } from "next"
+import { unstable_noStore as noStore } from "next/cache"
 import { notFound } from "next/navigation"
-import { fetchCachedAllPosts, fetchPostBlocks, isWritingConfigured } from "@/lib/notion"
+import { cache } from "react"
+import {
+  fetchCachedAllPosts,
+  fetchPostBlocks,
+  isWritingConfigured,
+  resolveWritingPostBySlug,
+} from "@/lib/notion"
 import { getSeedPost } from "@/lib/seed-posts"
 import { ArticleContent } from "./article-content"
 import { ArticleUnavailable } from "./article-unavailable"
 
 export const revalidate = 600
+
+const resolvePostForRequest = cache(resolveWritingPostBySlug)
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -14,8 +23,7 @@ interface ArticlePageProps {
 
 async function getArticle(slug: string) {
   try {
-    const posts = await fetchCachedAllPosts()
-    const post = posts.find((item) => item.slug === slug)
+    const { post, allPosts: posts } = await resolvePostForRequest(slug)
     if (!post) return { status: "not-found" as const, post: null, blocks: [], posts }
 
     const blocks = await fetchPostBlocks(post.id)
@@ -49,15 +57,25 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   if (slug.startsWith("seed-")) return { title: `${getSeedPost(slug)?.title ?? "Writing"} | Gage Minamoto` }
 
   try {
-    const posts = await fetchCachedAllPosts()
-    const post = posts.find((item) => item.slug === slug)
-    return post ? { title: `${post.title} | Gage Minamoto`, openGraph: { title: post.title, type: "article", publishedTime: post.date ?? undefined } } : { title: "Not Found" }
+    const { post } = await resolvePostForRequest(slug)
+    return post
+      ? {
+          title: `${post.title} | Gage Minamoto`,
+          openGraph: {
+            title: post.title,
+            type: "article",
+            publishedTime: post.date ?? undefined,
+          },
+        }
+      : { title: "Not Found" }
   } catch {
     return { title: "Writing | Gage Minamoto" }
   }
 }
 
 export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
+  // Avoid serving a stale Full Route Cache 404 after a new Notion post goes live.
+  noStore()
   const { slug } = await params
   const { from } = await searchParams
 

@@ -1,4 +1,5 @@
 import type { NotionBlock } from "@/lib/notion"
+import { getEmojiIcon } from "@/lib/notion-icon"
 import { RichText } from "./rich-text"
 
 type CalloutBlock = Extract<NotionBlock, { type: "callout" }>
@@ -9,8 +10,7 @@ interface ArticleCalloutProps {
 
 export function Callout({ block }: ArticleCalloutProps) {
   const callout = block.callout
-  const icon =
-    callout.icon?.type === "emoji" ? callout.icon.emoji : null
+  const icon = getEmojiIcon(callout.icon)
 
   return (
     <div className="my-6 flex gap-3 rounded-[10px] bg-muted p-4 text-xs/4 antialiased">
