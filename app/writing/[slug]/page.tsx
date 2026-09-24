@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { unstable_noStore as noStore } from "next/cache"
 import { notFound } from "next/navigation"
 import {
   fetchCachedAllPosts,
@@ -70,6 +71,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 }
 
 export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
+  // Avoid serving a stale Full Route Cache 404 after a new Notion post goes live.
+  noStore()
   const { slug } = await params
   const { from } = await searchParams
 

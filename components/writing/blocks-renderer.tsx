@@ -17,7 +17,7 @@ interface BlockGroup {
 const themeMarkerPattern = /^\[theme:(light|dark)\]\s*/i
 
 function getImageCaption(block: ImageBlock): string {
-  return block.image.caption.map((item) => item.plain_text).join("")
+  return block.image.caption?.map((item) => item.plain_text).join("") ?? ""
 }
 
 function getImageTheme(block: NotionBlock): "light" | "dark" | null {

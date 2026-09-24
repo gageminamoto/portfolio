@@ -6,6 +6,7 @@ import type {
 } from "@notionhq/client/build/src/api-endpoints"
 import { resolveToolLink } from "./affiliate-links"
 import { getImageDimensions, type ImageDimensions } from "./image-metadata"
+import { displayWritingTitle } from "./writing-display"
 import { slugify } from "./utils"
 
 let notionClient: Client | null = null
@@ -66,12 +67,16 @@ function warnMissingDatabaseId(): void {
   }
 }
 
-function getTitle(page: PageObjectResponse): string {
+function getRawTitle(page: PageObjectResponse): string {
   const titleProp = Object.values(page.properties).find(
     (p) => p.type === "title"
   )
   if (!titleProp || titleProp.type !== "title") return "Untitled"
   return titleProp.title.map((t) => t.plain_text).join("") || "Untitled"
+}
+
+function getTitle(page: PageObjectResponse): string {
+  return displayWritingTitle(getRawTitle(page))
 }
 
 function getSlug(page: PageObjectResponse): string {
@@ -80,7 +85,7 @@ function getSlug(page: PageObjectResponse): string {
     const explicit = slugProp.rich_text.map((t) => t.plain_text).join("")
     if (explicit) return explicit
   }
-  return slugify(getTitle(page))
+  return slugify(getRawTitle(page))
 }
 
 function deduplicateSlugs(posts: NotionWritingPost[]): NotionWritingPost[] {
@@ -369,20 +374,26 @@ export async function fetchPostBlocks(
 
     const pageBlocks = await Promise.all(
       (response.results as BlockObjectResponse[]).map(async (block) => {
-        const notionBlock: NotionBlock = { ...block }
-        if (block.type === "image") {
-          const src = block.image.type === "external"
-            ? block.image.external.url
-            : block.image.file.url
-          notionBlock.imageDimensions = await getImageDimensions(src)
+        try {
+          const notionBlock: NotionBlock = { ...block }
+          if (block.type === "image") {
+            const src =
+              block.image.type === "external"
+                ? block.image.external.url
+                : block.image.file.url
+            notionBlock.imageDimensions = await getImageDimensions(src)
+          }
+          if (block.has_children) {
+            notionBlock.children = await fetchPostBlocks(block.id)
+          }
+          return notionBlock
+        } catch (error) {
+          logNotionError(`process block ${block.id}`, error)
+          return null
         }
-        if (block.has_children) {
-          notionBlock.children = await fetchPostBlocks(block.id)
-        }
-        return notionBlock
       })
     )
-    blocks.push(...pageBlocks)
+    blocks.push(...pageBlocks.filter((block): block is NotionBlock => block !== null))
 
     cursor = response.has_more ? response.next_cursor ?? undefined : undefined
   } while (cursor)
