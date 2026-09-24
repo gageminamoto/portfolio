@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { fetchCachedAllPosts, fetchPostBlocks, isWritingConfigured } from "@/lib/notion"
+import {
+  fetchCachedAllPosts,
+  fetchPostBlocks,
+  isWritingConfigured,
+  resolveWritingPostBySlug,
+} from "@/lib/notion"
 import { getSeedPost } from "@/lib/seed-posts"
 import { ArticleContent } from "./article-content"
 import { ArticleUnavailable } from "./article-unavailable"
@@ -14,8 +19,7 @@ interface ArticlePageProps {
 
 async function getArticle(slug: string) {
   try {
-    const posts = await fetchCachedAllPosts()
-    const post = posts.find((item) => item.slug === slug)
+    const { post, allPosts: posts } = await resolveWritingPostBySlug(slug)
     if (!post) return { status: "not-found" as const, post: null, blocks: [], posts }
 
     const blocks = await fetchPostBlocks(post.id)
@@ -49,9 +53,17 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   if (slug.startsWith("seed-")) return { title: `${getSeedPost(slug)?.title ?? "Writing"} | Gage Minamoto` }
 
   try {
-    const posts = await fetchCachedAllPosts()
-    const post = posts.find((item) => item.slug === slug)
-    return post ? { title: `${post.title} | Gage Minamoto`, openGraph: { title: post.title, type: "article", publishedTime: post.date ?? undefined } } : { title: "Not Found" }
+    const { post } = await resolveWritingPostBySlug(slug)
+    return post
+      ? {
+          title: `${post.title} | Gage Minamoto`,
+          openGraph: {
+            title: post.title,
+            type: "article",
+            publishedTime: post.date ?? undefined,
+          },
+        }
+      : { title: "Not Found" }
   } catch {
     return { title: "Writing | Gage Minamoto" }
   }

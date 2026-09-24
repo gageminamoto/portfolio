@@ -235,6 +235,17 @@ export async function fetchPostBySlug(
   }
 }
 
+/** Resolve a writing post by slug, using the cached list first then a live Notion lookup. */
+export async function resolveWritingPostBySlug(slug: string): Promise<{
+  post: NotionWritingPost | null
+  allPosts: NotionWritingPost[]
+}> {
+  const allPosts = await fetchCachedAllPosts()
+  const post =
+    allPosts.find((item) => item.slug === slug) ?? (await fetchPostBySlug(slug))
+  return { post, allPosts }
+}
+
 export type NotionBlock = BlockObjectResponse & {
   children?: NotionBlock[]
   imageDimensions?: ImageDimensions
