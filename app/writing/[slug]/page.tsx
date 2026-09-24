@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { unstable_noStore as noStore } from "next/cache"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 import {
   fetchCachedAllPosts,
   fetchPostBlocks,
@@ -13,6 +14,8 @@ import { ArticleUnavailable } from "./article-unavailable"
 
 export const revalidate = 600
 
+const resolvePostForRequest = cache(resolveWritingPostBySlug)
+
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
   searchParams: Promise<{ from?: string }>
@@ -20,7 +23,7 @@ interface ArticlePageProps {
 
 async function getArticle(slug: string) {
   try {
-    const { post, allPosts: posts } = await resolveWritingPostBySlug(slug)
+    const { post, allPosts: posts } = await resolvePostForRequest(slug)
     if (!post) return { status: "not-found" as const, post: null, blocks: [], posts }
 
     const blocks = await fetchPostBlocks(post.id)
@@ -54,7 +57,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   if (slug.startsWith("seed-")) return { title: `${getSeedPost(slug)?.title ?? "Writing"} | Gage Minamoto` }
 
   try {
-    const { post } = await resolveWritingPostBySlug(slug)
+    const { post } = await resolvePostForRequest(slug)
     return post
       ? {
           title: `${post.title} | Gage Minamoto`,
