@@ -34,6 +34,25 @@ export const earlyDesignResources: EarlyDesignResource[] = [
   },
 ]
 
+export function getResourceHost(url: string): string {
+  return new URL(url).hostname.replace(/^www\./, "")
+}
+
+export function groupResourcesByLink(
+  resources: EarlyDesignResource[],
+): EarlyDesignResource[][] {
+  const groups: EarlyDesignResource[][] = []
+  for (const resource of resources) {
+    const last = groups[groups.length - 1]
+    if (last && Boolean(last[0].url) === Boolean(resource.url)) {
+      last.push(resource)
+    } else {
+      groups.push([resource])
+    }
+  }
+  return groups
+}
+
 export type EarlyDesignView = "a" | "b"
 
 export function parseEarlyDesignView(value: string | null): EarlyDesignView {
