@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
+import { BackLink } from "@/components/back-link"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const rows = Array.from({ length: 5 })
@@ -12,16 +11,7 @@ export default function LoadingWriting() {
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
     >
       <header>
-        <Link
-          href="/"
-          className="group inline-flex items-center gap-1 rounded-sm text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <ChevronLeft
-            className="h-3.5 w-3.5 text-muted-foreground/50"
-            aria-hidden="true"
-          />
-          Home
-        </Link>
+        <BackLink href="/">Home</BackLink>
       </header>
 
       <div>

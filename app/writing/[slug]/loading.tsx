@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
+import { BackLink } from "@/components/back-link"
 import { ArticleActions } from "./article-actions"
 
 export default function LoadingArticle() {
@@ -9,10 +8,7 @@ export default function LoadingArticle() {
       <main id="main-content" className="mx-auto w-full min-w-0 max-w-xl xl:max-w-none">
         <header className="mb-10 flex flex-col gap-6">
           <nav className="flex items-center justify-between">
-            <Link href="/writing" className="group relative inline-flex items-center rounded-sm text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-              <ChevronLeft className="absolute right-full mr-1 h-3.5 w-3.5 text-muted-foreground/50 transition-[color,transform] duration-150 ease-out group-hover:-translate-x-0.5 group-hover:text-foreground" aria-hidden="true" />
-              Writing
-            </Link>
+            <BackLink href="/writing">Writing</BackLink>
             <ArticleActions />
           </nav>
           <div className="h-[30px] w-4/5 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />

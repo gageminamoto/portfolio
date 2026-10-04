@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { ChevronLeft, Search } from "lucide-react"
+import { Search } from "lucide-react"
+import { BackLink } from "@/components/back-link"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const writingRows = Array.from({ length: 5 })
@@ -31,10 +31,7 @@ export default function SkeletonsPage() {
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24">
       <header className="flex flex-col gap-6">
-        <Link href="/" className="inline-flex items-center gap-1 self-start rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground">
-          <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground/50" aria-hidden="true" />
-          Home
-        </Link>
+        <BackLink href="/">Home</BackLink>
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Skeleton loaders</h1>
           <p className="text-sm text-muted-foreground">A temporary preview of every loading state used across the site.</p>
