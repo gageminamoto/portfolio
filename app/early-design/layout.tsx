@@ -3,12 +3,10 @@ import type { ReactNode } from "react"
 
 export const metadata: Metadata = {
   title: "Early design resources · Gage Minamoto",
-  description:
-    "A curated list for people new to design — essays and practices worth sitting with.",
+  description: "A short reading list for people new to design.",
   openGraph: {
     title: "Early design resources",
-    description:
-      "A curated list for people new to design — essays and practices worth sitting with.",
+    description: "A short reading list for people new to design.",
   },
 }
 

@@ -2,52 +2,16 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
+import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
 import { ViewSwitch } from "@/components/early-design/view-switch"
 import { earlyDesignResources } from "@/lib/early-design-resources"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
-import { cn } from "@/lib/utils"
 import type { EarlyDesignView } from "@/lib/early-design-resources"
 
 type DirectionPortfolioProps = {
   view: EarlyDesignView
   onViewChange: (view: EarlyDesignView) => void
-}
-
-function ResourceRow({
-  title,
-  url,
-  draftWhy,
-}: {
-  title: string
-  url?: string
-  draftWhy?: string
-}) {
-  const titleNode = url ? (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-sm font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-    >
-      {title}
-      <span className="sr-only"> (opens in new tab)</span>
-    </a>
-  ) : (
-    <span className="text-sm font-medium text-foreground">{title}</span>
-  )
-
-  return (
-    <article className="flex flex-col gap-1 border-b border-border/40 py-4 first:pt-0 last:border-b-0">
-      <div>{titleNode}</div>
-      {draftWhy ? (
-        <p className="text-xs leading-relaxed text-muted-foreground/80">
-          <span className="font-medium text-muted-foreground/60">Draft — </span>
-          {draftWhy.replace(/^Draft:\s*/i, "")}
-        </p>
-      ) : null}
-    </article>
-  )
 }
 
 export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioProps) {
@@ -57,7 +21,7 @@ export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioPro
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-10 px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -66,13 +30,10 @@ export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioPro
         <BackLink href="/">Home</BackLink>
       </motion.header>
 
-      <motion.div variants={item} className="flex flex-col gap-4">
+      <motion.div variants={item} className="flex flex-col gap-6">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Early design resources
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          A short list for people getting started — readings and practices I return to.
-        </p>
         <ViewSwitch view={view} onChange={onViewChange} />
       </motion.div>
 
@@ -83,19 +44,17 @@ export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioPro
         aria-labelledby={`early-design-tab-${view}`}
         className="flex flex-col"
       >
-        <p className="mb-2 text-xs text-muted-foreground/70">
-          Draft &ldquo;why&rdquo; lines below are placeholders for Gage to edit.
-        </p>
-        <div className={cn("flex flex-col")}>
-          {earlyDesignResources.map((resource) => (
-            <ResourceRow
-              key={resource.title}
-              title={resource.title}
-              url={resource.url}
-              draftWhy={resource.draftWhy}
-            />
-          ))}
-        </div>
+        {earlyDesignResources.map((resource) => (
+          <ListRow
+            key={resource.title}
+            href={resource.url ?? null}
+            external={Boolean(resource.url)}
+            name={resource.title}
+            aria-label={
+              resource.url ? `${resource.title} (opens in new tab)` : resource.title
+            }
+          />
+        ))}
       </motion.div>
 
       <motion.div variants={item}>

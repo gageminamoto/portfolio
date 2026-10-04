@@ -9,20 +9,18 @@ type ViewSwitchProps = {
   className?: string
 }
 
-const options: { value: EarlyDesignView; label: string; hint: string }[] = [
-  { value: "a", label: "Portfolio", hint: "Direction A — matches this site" },
-  { value: "b", label: "Editorial", hint: "Direction B — alternate layout" },
+const options: { value: EarlyDesignView; label: string }[] = [
+  { value: "a", label: "Portfolio" },
+  { value: "b", label: "Editorial" },
 ]
 
 export function ViewSwitch({ view, onChange, className }: ViewSwitchProps) {
   return (
     <div
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("inline-flex w-fit rounded-full border border-border/60 bg-background p-0.5", className)}
       role="tablist"
-      aria-label="Compare visual directions"
+      aria-label="Layout"
     >
-      <span className="text-xs text-muted-foreground">Compare layouts</span>
-      <div className="inline-flex w-fit rounded-full border border-border/60 bg-background p-0.5">
         {options.map((opt) => {
           const selected = view === opt.value
           return (
@@ -33,7 +31,6 @@ export function ViewSwitch({ view, onChange, className }: ViewSwitchProps) {
               id={`early-design-tab-${opt.value}`}
               aria-selected={selected}
               aria-controls={`early-design-panel-${opt.value}`}
-              title={opt.hint}
               onClick={() => onChange(opt.value)}
               className={cn(
                 "cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 ease motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -46,7 +43,6 @@ export function ViewSwitch({ view, onChange, className }: ViewSwitchProps) {
             </button>
           )
         })}
-      </div>
     </div>
   )
 }
