@@ -4,8 +4,11 @@ export type EarlyDesignResource = {
 }
 
 export const earlyDesignResources: EarlyDesignResource[] = [
-  { title: "Interface Craft" },
-  { title: "Design of Everyday Things" },
+  { title: "Interface Craft", url: "https://interfacecraft.dev/" },
+  {
+    title: "Design of Everyday Things",
+    url: "https://dn790006.ca.archive.org/0/items/pdfy-9Bb1XUCNFvb5HrMP/Design%20of%20Everyday%20Things_text.pdf",
+  },
   {
     title: "Linear Method – Practices for building",
     url: "https://linear.app/method",
