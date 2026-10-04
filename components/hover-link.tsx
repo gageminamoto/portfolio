@@ -16,6 +16,8 @@ interface HoverLinkProps {
   previewWidth?: number
   previewHeight?: number
   syncWorkId?: string
+  /** Truncate overflowing link text with an ellipsis (for flex row layouts). */
+  truncate?: boolean
   className?: string
 }
 
@@ -29,11 +31,13 @@ export function HoverLink({
   previewWidth = 256,
   previewHeight = 144,
   syncWorkId,
+  truncate = false,
   className = "",
 }: HoverLinkProps) {
   const { setHoveredWorkId } = useWorkHover()
   const prefersReducedMotion = useReducedMotion()
-  const linkClassName = `group inline-flex items-center gap-1 text-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
+  const layoutClass = truncate ? "flex min-w-0 max-w-full" : "inline-flex"
+  const linkClassName = `group ${layoutClass} items-center gap-1 text-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
   const previewIsVideo = previewImage?.endsWith(".mp4")
 
   const handleSyncClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -57,9 +61,9 @@ export function HoverLink({
 
   const inner = (
     <>
-      <span>{children}</span>
+      <span className={truncate ? "block min-w-0 truncate" : undefined}>{children}</span>
       {showArrow && (
-        <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        <ArrowUpRight className="h-3.5 w-3.5 shrink-0 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       )}
     </>
   )
