@@ -18,7 +18,13 @@ type DirectionEditorialProps = {
   onViewChange: (view: EarlyDesignView) => void
 }
 
-function EditorialCell({
+const rowClass =
+  "grid grid-cols-1 gap-x-8 gap-y-0.5 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline"
+const titleClass =
+  "text-[15px] font-medium leading-snug tracking-[-0.01em] text-foreground [text-wrap:pretty]"
+const hostClass = "text-[13px] leading-snug text-muted-foreground sm:text-right"
+
+function IndexRow({
   resource,
   variants,
 }: {
@@ -26,40 +32,39 @@ function EditorialCell({
   variants: Variants
 }) {
   const { title, url } = resource
-  const itemClass =
-    "flex border-b border-border last:border-b-0 md:odd:border-r md:[&:nth-last-child(2):nth-child(odd)]:border-b-0"
-  const cellClass =
-    "flex min-h-32 w-full flex-col justify-between gap-8 p-6 md:min-h-44 md:p-8"
-  const titleClass =
-    "text-2xl font-semibold leading-[1.05] tracking-[-0.03em] [text-wrap:balance] md:text-3xl"
 
   if (!url) {
     return (
-      <motion.li variants={variants} className={itemClass}>
-        <div className={cn(cellClass, "justify-end")}>
-          <p className={cn(titleClass, "text-foreground")}>{title}</p>
+      <motion.li variants={variants} className="border-b border-border">
+        <div className={rowClass}>
+          <span className={titleClass}>{title}</span>
         </div>
       </motion.li>
     )
   }
 
   return (
-    <motion.li variants={variants} className={itemClass}>
+    <motion.li variants={variants} className="border-b border-border">
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          cellClass,
-          "group text-foreground transition-colors duration-200 ease-out hover:bg-foreground hover:text-background focus-visible:bg-foreground focus-visible:text-background focus-visible:outline-none motion-reduce:transition-none",
+          rowClass,
+          "group transition-colors duration-150 ease-out hover:bg-muted/60 focus-visible:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring motion-reduce:transition-none",
         )}
       >
-        <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors duration-200 ease-out group-hover:text-background/60 group-focus-visible:text-background/60 motion-reduce:transition-none">
-          {getResourceHost(url)}
-        </span>
         <span className={titleClass}>
           {title}
           <span className="sr-only"> (opens in new tab)</span>
+        </span>
+        <span
+          className={cn(
+            hostClass,
+            "transition-colors duration-150 ease-out group-hover:text-foreground group-focus-visible:text-foreground motion-reduce:transition-none",
+          )}
+        >
+          {getResourceHost(url)}
         </span>
       </a>
     </motion.li>
@@ -73,21 +78,21 @@ export function DirectionEditorial({ view, onViewChange }: DirectionEditorialPro
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-5xl flex-col px-6 pt-8 md:px-10 md:pt-10"
+      className="flex min-h-screen flex-col px-6 py-10 md:py-14"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
     >
       <motion.header
         variants={item}
-        className="flex items-center justify-between gap-4 border-b border-foreground pb-4"
+        className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4"
       >
         <BackLink href="/">Home</BackLink>
         <ViewSwitch view={view} onChange={onViewChange} />
       </motion.header>
 
-      <motion.div variants={item} className="py-16 md:py-28">
-        <h1 className="max-w-4xl text-[clamp(3rem,11vw,7.5rem)] font-semibold leading-[0.9] tracking-[-0.05em] text-foreground [text-wrap:balance]">
+      <motion.div variants={item} className="mx-auto w-full max-w-5xl py-20 md:py-32">
+        <h1 className="text-center text-[clamp(2.75rem,9vw,6rem)] font-semibold uppercase leading-[0.88] tracking-[-0.045em] text-foreground [text-wrap:balance]">
           Early design resources
         </h1>
       </motion.div>
@@ -97,15 +102,16 @@ export function DirectionEditorial({ view, onViewChange }: DirectionEditorialPro
         role="tabpanel"
         id={`early-design-panel-${view}`}
         aria-labelledby={`early-design-tab-${view}`}
+        className="mx-auto w-full max-w-2xl"
       >
-        <ul className="grid grid-cols-1 border-y border-foreground md:grid-cols-2">
+        <ul className="-mx-3 border-t border-foreground">
           {earlyDesignResources.map((resource) => (
-            <EditorialCell key={resource.title} resource={resource} variants={item} />
+            <IndexRow key={resource.title} resource={resource} variants={item} />
           ))}
         </ul>
       </motion.div>
 
-      <motion.div variants={item} className="mt-16 md:mt-24">
+      <motion.div variants={item} className="mx-auto mt-20 w-full max-w-2xl md:mt-28">
         <SiteFooter />
       </motion.div>
     </motion.main>

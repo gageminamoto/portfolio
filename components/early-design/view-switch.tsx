@@ -11,7 +11,7 @@ type ViewSwitchProps = {
 
 const options: { value: EarlyDesignView; label: string }[] = [
   { value: "a", label: "Portfolio" },
-  { value: "b", label: "Editorial" },
+  { value: "b", label: "Index" },
 ]
 
 export function ViewSwitch({ view, onChange, className }: ViewSwitchProps) {
