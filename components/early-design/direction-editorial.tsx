@@ -1,6 +1,5 @@
 "use client"
 
-import { ArrowUpRight } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import { BackLink } from "@/components/back-link"
@@ -16,32 +15,23 @@ type DirectionEditorialProps = {
 }
 
 function EditorialCard({
-  index,
   title,
   url,
   draftWhy,
 }: {
-  index: number
   title: string
   url?: string
   draftWhy?: string
 }) {
   const inner = (
     <>
-      <span
-        className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/50"
-        aria-hidden
-      >
-        {String(index + 1).padStart(2, "0")}
-      </span>
       <div className="flex min-w-0 flex-1 flex-col gap-2 md:flex-row md:items-start md:justify-between md:gap-8">
         <h2 className="text-lg font-semibold leading-snug tracking-tight text-foreground md:text-xl [text-wrap:balance]">
           {title}
         </h2>
         {url ? (
-          <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium uppercase tracking-wide text-primary">
+          <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-primary">
             Read
-            <ArrowUpRight size={14} aria-hidden />
           </span>
         ) : (
           <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-muted-foreground/50">
@@ -50,7 +40,7 @@ function EditorialCard({
         )}
       </div>
       {draftWhy ? (
-        <p className="text-sm leading-relaxed text-muted-foreground md:col-span-2 md:pl-0">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="mr-1 rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
             Draft
           </span>
@@ -61,7 +51,7 @@ function EditorialCard({
   )
 
   const cardClass =
-    "group relative grid grid-cols-1 gap-3 border border-border/70 bg-card/40 p-5 transition-colors duration-200 hover:border-foreground/25 hover:bg-muted/30 focus-within:border-foreground/25 focus-within:bg-muted/30 md:grid-cols-[auto_1fr] md:gap-x-6 md:gap-y-3"
+    "group relative flex flex-col gap-3 border border-border/70 bg-card/40 p-5 transition-colors duration-200 hover:border-foreground/25 hover:bg-muted/30 focus-within:border-foreground/25 focus-within:bg-muted/30"
 
   if (url) {
     return (
@@ -124,10 +114,9 @@ export function DirectionEditorial({ view, onViewChange }: DirectionEditorialPro
         aria-labelledby={`early-design-tab-${view}`}
         className="relative flex flex-col gap-3"
       >
-        {earlyDesignResources.map((resource, index) => (
+        {earlyDesignResources.map((resource) => (
           <EditorialCard
             key={resource.title}
-            index={index}
             title={resource.title}
             url={resource.url}
             draftWhy={resource.draftWhy}

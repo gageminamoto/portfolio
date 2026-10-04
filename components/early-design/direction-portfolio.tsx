@@ -1,6 +1,5 @@
 "use client"
 
-import { ArrowUpRight } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { SiteFooter } from "@/components/site-footer"
@@ -16,31 +15,22 @@ type DirectionPortfolioProps = {
 }
 
 function ResourceRow({
-  index,
   title,
   url,
   draftWhy,
 }: {
-  index: number
   title: string
   url?: string
   draftWhy?: string
 }) {
-  const label = `${index + 1}. ${title}`
-
   const titleNode = url ? (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group inline-flex items-center gap-1 text-sm font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+      className="text-sm font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
     >
       {title}
-      <ArrowUpRight
-        size={12}
-        className="shrink-0 text-muted-foreground/60 transition-colors group-hover:text-muted-foreground"
-        aria-hidden
-      />
       <span className="sr-only"> (opens in new tab)</span>
     </a>
   ) : (
@@ -49,14 +39,9 @@ function ResourceRow({
 
   return (
     <article className="flex flex-col gap-1 border-b border-border/40 py-4 first:pt-0 last:border-b-0">
-      <div className="flex items-baseline gap-2">
-        <span className="w-6 shrink-0 font-mono text-xs tabular-nums text-muted-foreground/70">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        {titleNode}
-      </div>
+      <div>{titleNode}</div>
       {draftWhy ? (
-        <p className="pl-8 text-xs leading-relaxed text-muted-foreground/80">
+        <p className="text-xs leading-relaxed text-muted-foreground/80">
           <span className="font-medium text-muted-foreground/60">Draft — </span>
           {draftWhy.replace(/^Draft:\s*/i, "")}
         </p>
@@ -102,10 +87,9 @@ export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioPro
           Draft &ldquo;why&rdquo; lines below are placeholders for Gage to edit.
         </p>
         <div className={cn("flex flex-col")}>
-          {earlyDesignResources.map((resource, index) => (
+          {earlyDesignResources.map((resource) => (
             <ResourceRow
               key={resource.title}
-              index={index}
               title={resource.title}
               url={resource.url}
               draftWhy={resource.draftWhy}
