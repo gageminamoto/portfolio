@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
-import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
+import { BackLink } from "@/components/back-link"
 import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
 import { BioSection } from "@/components/bio-section"
@@ -49,13 +48,7 @@ export default function AboutPage() {
     >
       {/* Header */}
       <motion.header variants={item}>
-        <Link
-          href="/"
-          className="group relative inline-flex items-center text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-        >
-          <ChevronLeft className="absolute right-full mr-1 h-3.5 w-3.5 text-muted-foreground/50 transition-[color,transform] duration-150 ease-out group-hover:-translate-x-0.5 group-hover:text-foreground" aria-hidden="true" />
-          Home
-        </Link>
+        <BackLink href="/">Home</BackLink>
       </motion.header>
 
       {/* Title + Extended About */}
@@ -101,26 +94,20 @@ export default function AboutPage() {
             {hobbies.map((hobby) => {
               if (hobby.name === "Pokemon cards") {
                 return (
-                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                    <span className="shrink-0"><PokemonCards /></span>
-                    <span className="truncate text-sm text-muted-foreground">
-                      {hobby.description}
-                    </span>
+                  <div key={hobby.name}>
+                    <PokemonCards />
                   </div>
                 )
               }
               return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                <div key={hobby.name}>
                   {hobby.url ? (
-                    <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-primary">
+                    <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-primary">
                       {hobby.name}
                     </HoverLink>
                   ) : (
-                    <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                    <span className="font-medium text-foreground">{hobby.name}</span>
                   )}
-                  <span className="truncate text-sm text-muted-foreground">
-                    {hobby.description}
-                  </span>
                 </div>
               )
             })}

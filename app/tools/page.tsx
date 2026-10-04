@@ -7,7 +7,8 @@ import {
 } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
-import { ChevronLeft, Search, ArrowUpRight } from "lucide-react"
+import { Search, ArrowUpRight } from "lucide-react"
+import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
@@ -222,13 +223,7 @@ export default function ToolsPage() {
     >
       {/* Header */}
       <motion.header variants={item}>
-        <Link
-          href="/"
-          className="group relative inline-flex items-center rounded-sm text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <ChevronLeft className="absolute right-full mr-1 h-3.5 w-3.5 text-muted-foreground/50 transition-[color,transform] duration-150 ease-out group-hover:-translate-x-0.5 group-hover:text-foreground" aria-hidden="true" />
-          Home
-        </Link>
+        <BackLink href="/">Home</BackLink>
       </motion.header>
 
       {/* Title */}
