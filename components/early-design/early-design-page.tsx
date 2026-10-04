@@ -1,42 +1,54 @@
 "use client"
 
 import { Fragment } from "react"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
-import { ViewSwitch } from "@/components/early-design/view-switch"
 import {
   earlyDesignResources,
   getResourceHost,
   groupResourcesByLink,
 } from "@/lib/early-design-resources"
-import { fadeUp, noMotion, stagger } from "@/lib/animations"
-import type { EarlyDesignView } from "@/lib/early-design-resources"
-
-type DirectionPortfolioProps = {
-  view: EarlyDesignView
-  onViewChange: (view: EarlyDesignView) => void
-}
+import { noMotion } from "@/lib/animations"
 
 const resourceGroups = groupResourcesByLink(earlyDesignResources)
 
-export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioProps) {
+const earlyDesignStagger: Variants = {
+  hidden: {},
+  show: {
+    transition: {
+      delayChildren: 0.04,
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const earlyDesignItem: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      duration: 0.26,
+      ease: [0.23, 1, 0.32, 1],
+    },
+  },
+}
+
+export function EarlyDesignPage() {
   const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : fadeUp
-  const list = shouldReduceMotion ? undefined : stagger
+  const item = shouldReduceMotion ? noMotion : earlyDesignItem
 
   return (
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : stagger}
+      variants={shouldReduceMotion ? undefined : earlyDesignStagger}
       initial="hidden"
       animate="show"
     >
-      <motion.header variants={item} className="flex items-center justify-between gap-4">
+      <motion.header variants={item}>
         <BackLink href="/">Home</BackLink>
-        <ViewSwitch view={view} onChange={onViewChange} />
       </motion.header>
 
       <motion.div variants={item}>
@@ -45,36 +57,26 @@ export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioPro
         </h1>
       </motion.div>
 
-      <motion.div
-        variants={list}
-        role="tabpanel"
-        id={`early-design-panel-${view}`}
-        aria-labelledby={`early-design-tab-${view}`}
-        className="flex flex-col"
-      >
+      <motion.div variants={item} className="flex flex-col">
         {resourceGroups.map((group, groupIndex) => (
           <Fragment key={group[0].title}>
             {groupIndex > 0 && (
-              <motion.hr
-                variants={item}
-                className="mx-auto my-6 w-1/3 border-t border-dashed border-border/80"
-              />
+              <hr className="mx-auto my-6 w-1/3 border-t border-dashed border-border/80" />
             )}
             <ul className="flex flex-col">
               {group.map((resource) => (
                 <li key={resource.title}>
                   {resource.url ? (
                     <ListRow
-                      variants={item}
                       href={resource.url}
                       external
                       name={
-                        <span className="underline decoration-dashed decoration-2 decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-150 ease-out group-hover:decoration-muted-foreground/40 group-focus-visible:decoration-muted-foreground/40 motion-reduce:transition-none">
+                        <span className="underline decoration-transparent decoration-dashed decoration-2 underline-offset-4 transition-[text-decoration-color] duration-150 ease-out group-focus-visible:decoration-muted-foreground/40 pointer-fine:group-hover:decoration-muted-foreground/40 motion-reduce:transition-none">
                           {resource.title}
                         </span>
                       }
                       meta={
-                        <span className="transition-colors duration-150 ease-out group-hover:text-foreground group-focus-visible:text-foreground motion-reduce:transition-none">
+                        <span className="transition-colors duration-150 ease-out group-focus-visible:text-foreground pointer-fine:group-hover:text-foreground motion-reduce:transition-none">
                           {getResourceHost(resource.url)}
                         </span>
                       }
@@ -83,7 +85,6 @@ export function DirectionPortfolio({ view, onViewChange }: DirectionPortfolioPro
                     />
                   ) : (
                     <ListRow
-                      variants={item}
                       name={resource.title}
                       className="hover:bg-transparent hover:px-0"
                     />

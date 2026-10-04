@@ -52,9 +52,3 @@ export function groupResourcesByLink(
   }
   return groups
 }
-
-export type EarlyDesignView = "a" | "b"
-
-export function parseEarlyDesignView(value: string | null): EarlyDesignView {
-  return value === "b" ? "b" : "a"
-}
