@@ -56,11 +56,14 @@ interface BioSectionProps {
   onUserClick?: (word: string) => void
 }
 
+/** Shared body copy rhythm for bios and inline prose blocks (About hobbies, etc.). */
+export const bodyCopyClassName = "text-base leading-7 text-wrap"
+
 export function BioSection({ bio, className = "", onWordChange, onUserClick }: BioSectionProps) {
   const paragraphs = bio.split("\n\n")
 
   return (
-    <div className={`text-base leading-relaxed text-muted-foreground text-wrap ${className}`}>
+    <div className={`${bodyCopyClassName} text-muted-foreground ${className}`}>
       {paragraphs.map((paragraph, pIndex) => {
         const parts = parseBio(paragraph)
         return (

@@ -6,7 +6,7 @@ import { useTheme } from "next-themes"
 import { BackLink } from "@/components/back-link"
 import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
-import { BioSection } from "@/components/bio-section"
+import { BioSection, bodyCopyClassName } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { CursorTrail } from "@/components/cursor-trail"
 import { useGradientWord } from "@/components/gradient-word-context"
@@ -85,9 +85,11 @@ export default function AboutPage() {
         {/* Hobbies */}
         <div className="py-8">
         <Section title="Hobbies">
-          <p className="text-base leading-relaxed text-foreground">
-            Pokémon cards, TTRPGs, developing PICO-8 games, analog photography, design books, camping
-          </p>
+          <div className={`${bodyCopyClassName} text-foreground`}>
+            <p>
+              Pokémon cards, TTRPGs, developing PICO-8 games, analog photography, design books, camping
+            </p>
+          </div>
         </Section>
         </div>
 
