@@ -136,7 +136,11 @@ export default function AboutPage() {
             {speaking.map((item) => (
               <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
                 {item.url ? (
-                  <HoverLink href={item.url} className="min-w-0 flex-1 truncate font-medium no-underline decoration-transparent hover:decoration-primary">
+                  <HoverLink
+                    href={item.url}
+                    truncate
+                    className="min-w-0 flex-1 font-medium no-underline decoration-transparent hover:decoration-primary"
+                  >
                     {item.name}
                   </HoverLink>
                 ) : (
