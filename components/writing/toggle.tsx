@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight } from "@/components/icons"
 import type { NotionBlock } from "@/lib/notion"
 import { RichText } from "./rich-text"
 import { BlocksRenderer } from "./blocks-renderer"

@@ -1,5 +1,5 @@
 import { HoverLink } from "@/components/hover-link"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "@/components/icons"
 
 export function ToolRow({
   name,

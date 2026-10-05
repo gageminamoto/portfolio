@@ -25,7 +25,7 @@ export function Section({
           </h2>
           <AltArrowRight
             size={14}
-            weight="Linear"
+            weight="Bold"
             className="text-muted-foreground/50 transition-transform duration-150 ease-out group-hover:translate-x-0.5 group-hover:text-foreground"
           />
         </Link>

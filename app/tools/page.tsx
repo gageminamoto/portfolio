@@ -7,7 +7,7 @@ import {
 } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
-import { Search, ArrowUpRight } from "lucide-react"
+import { Search, ArrowUpRight } from "@/components/icons"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"

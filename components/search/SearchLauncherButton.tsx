@@ -1,6 +1,6 @@
 'use client'
 
-import { Search } from 'lucide-react'
+import { Search } from '@/components/icons'
 
 import { useCommandK } from '@/contexts/CommandKContext'
 import { cn } from '@/lib/utils'

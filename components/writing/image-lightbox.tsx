@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, useReducedMotion } from "framer-motion"
-import { X } from "lucide-react"
+import { X } from "@/components/icons"
 
 interface ImageLightboxProps {
   src: string

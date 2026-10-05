@@ -2,7 +2,7 @@
 
 import { type CSSProperties, type MouseEvent, type ReactNode, type TouchEvent, type UIEvent, type WheelEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { ArrowDown, ArrowUp, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpRight, ChevronLeft, ChevronRight, X } from "@/components/icons"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -673,7 +673,7 @@ function CarouselArrowButton({
       className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground"
       aria-label={direction === "previous" ? "Previous work item" : "Next work item"}
     >
-      <Icon className="size-4" strokeWidth={2.25} aria-hidden="true" />
+      <Icon className="size-4" aria-hidden="true" />
     </button>
   )
 }

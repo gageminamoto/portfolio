@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from "react"
 import Image from "next/image"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown } from "@/components/icons"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"

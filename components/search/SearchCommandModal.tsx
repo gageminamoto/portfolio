@@ -18,7 +18,7 @@ import {
   Volume2,
   VolumeX,
   X,
-} from 'lucide-react'
+} from '@/components/icons'
 
 import { useGradientWord } from '@/components/gradient-word-context'
 import { EmailIcon, socialIconMap } from '@/components/social-icons'

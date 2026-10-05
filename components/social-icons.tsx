@@ -1,7 +1,7 @@
 import type { SocialLink } from "@/lib/portfolio-data"
 import { CopyFeedbackIcon } from "@/components/copy-feedback-icon"
 import { Icon } from "@iconify/react"
-import { Copy, ExternalLink } from "lucide-react"
+import { Copy, ExternalLink } from "@/components/icons"
 import { useState } from "react"
 import {
   DropdownMenu,

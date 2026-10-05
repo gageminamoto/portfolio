@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
-import { Moon, Sun, Monitor, Sparkles, Volume2 } from "lucide-react"
+import { Moon, Sun, Monitor, Sparkles, Volume2 } from "@/components/icons"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
 

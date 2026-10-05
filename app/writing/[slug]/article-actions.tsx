@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { Check, Link as LinkIcon } from "lucide-react"
+import { Check, Link as LinkIcon } from "@/components/icons"
 import { CopyFeedbackIcon } from "@/components/copy-feedback-icon"
 import { ThemeToggle } from "@/components/theme-toggle"
 

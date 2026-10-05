@@ -1,6 +1,6 @@
 "use client"
 
-import { GitBranch, FileText } from "lucide-react"
+import { GitBranch, FileText } from "@/components/icons"
 import useSWR from "swr"
 import type { CommitHistoryItem } from "@/lib/github"
 

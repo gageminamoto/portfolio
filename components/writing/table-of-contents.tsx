@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown } from "@/components/icons"
 import type { NotionBlock } from "@/lib/notion"
 import { getHeadingId, type HeadingBlock } from "./heading"
 

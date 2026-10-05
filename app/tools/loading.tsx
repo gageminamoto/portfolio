@@ -1,4 +1,4 @@
-import { Search } from "lucide-react"
+import { Search } from "@/components/icons"
 import { BackLink } from "@/components/back-link"
 import { Skeleton } from "@/components/ui/skeleton"
 

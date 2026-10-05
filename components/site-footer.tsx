@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import Link from "next/link"
-import { Info, GitMerge, GitPullRequest } from "lucide-react"
+import { Info, GitMerge, GitPullRequest } from "@/components/icons"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 const CHARS = "!@#$%^&*()_+-=[]{}|;:,.<>?0123456789abcdef"

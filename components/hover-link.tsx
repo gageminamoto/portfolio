@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "@/components/icons"
 import { useReducedMotion } from "framer-motion"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 

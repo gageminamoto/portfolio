@@ -3,7 +3,7 @@
 import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "@/components/icons"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
@@ -129,7 +129,7 @@ function ProjectCarousel({ projects }: { projects: typeof portfolioData.projects
       </div>
       <div className="mt-3 flex items-center gap-3">
         <button type="button" onClick={() => scrollToIndex(activeIndex - 1)} disabled={activeIndex === 0} className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground" aria-label="Previous project">
-          <ChevronLeft className="size-4" strokeWidth={2.25} aria-hidden="true" />
+          <ChevronLeft className="size-4" aria-hidden="true" />
         </button>
         <div className="flex items-center gap-3" aria-label="Project carousel position">
           {projects.map((project, index) => (
@@ -137,7 +137,7 @@ function ProjectCarousel({ projects }: { projects: typeof portfolioData.projects
           ))}
         </div>
         <button type="button" onClick={() => scrollToIndex(activeIndex + 1)} disabled={activeIndex === projects.length - 1} className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground" aria-label="Next project">
-          <ChevronRight className="size-4" strokeWidth={2.25} aria-hidden="true" />
+          <ChevronRight className="size-4" aria-hidden="true" />
         </button>
       </div>
     </>

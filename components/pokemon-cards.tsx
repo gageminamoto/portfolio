@@ -9,7 +9,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion"
-import { X } from "lucide-react"
+import { X } from "@/components/icons"
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                              */

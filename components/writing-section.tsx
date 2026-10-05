@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown } from "@/components/icons"
 import { useDialKit } from "dialkit"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ListRow } from "@/components/list-row"
