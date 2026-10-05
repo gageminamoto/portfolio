@@ -125,6 +125,19 @@ const projectItems: PaletteItem[] = portfolioData.projects.map((project) => ({
   iconSrc: project.favicon,
 }))
 
+const writingResourceItems: PaletteItem[] = [
+  {
+    id: 'early-design-resources',
+    title: 'Early design resources',
+    description: 'Curated reading list for people new to design',
+    href: '/early-design',
+    keywords:
+      'early design resources reading list beginner starter craft interface',
+    group: 'Writing',
+    icon: WritingIcon,
+  },
+]
+
 const writingItems: PaletteItem[] = portfolioData.writing.map((post) => ({
   id: `writing-${post.slug}`,
   title: post.title,
@@ -161,6 +174,7 @@ const quickActionItems: PaletteItem[] = [
 const allItems = [
   ...staticItems,
   ...projectItems,
+  ...writingResourceItems,
   ...writingItems,
   ...quickActionItems,
 ]
