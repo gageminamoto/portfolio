@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react"
 import { motion, useMotionValue, useReducedMotion } from "framer-motion"
-import { X } from "lucide-react"
+import { IconClose } from "@/components/site-icons"
 
 interface ImageLightboxProps {
   src: string
@@ -199,7 +199,7 @@ export function ImageLightbox({ src, alt, layoutId, onClose }: ImageLightboxProp
         aria-label="Close"
         className="absolute right-4 top-4 z-10 rounded-md p-2 text-white/70 transition-colors duration-150 ease-out hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
       >
-        <X className="h-5 w-5" />
+        <IconClose className="h-5 w-5" />
       </button>
 
       {!loaded && (

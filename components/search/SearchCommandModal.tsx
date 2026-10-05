@@ -4,21 +4,23 @@ import * as React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { Layers, Pen, UserCircle } from '@solar-icons/react'
 import {
-  Check,
-  ExternalLink,
-  FolderOpen,
-  Home,
-  MessageSquare,
-  Monitor,
-  Moon,
-  Sparkles,
-  Sun,
-  Volume2,
-  VolumeX,
-  X,
-} from 'lucide-react'
+  IconCheck,
+  IconClose,
+  IconExternalLink,
+  IconFolderOpen,
+  IconHome,
+  IconLayers,
+  IconMessage,
+  IconPen,
+  IconSparkles,
+  IconThemeDark,
+  IconThemeLight,
+  IconThemeSystem,
+  IconUser,
+  IconVolumeOff,
+  IconVolumeOn,
+} from '@/components/site-icons'
 
 import { useGradientWord } from '@/components/gradient-word-context'
 import { EmailIcon, socialIconMap } from '@/components/social-icons'
@@ -62,17 +64,9 @@ type PaletteItem = {
   active?: boolean
 }
 
-function AboutIcon({ className }: { className?: string }) {
-  return <UserCircle size={16} weight="Bold" className={className} />
-}
-
-function ToolsIcon({ className }: { className?: string }) {
-  return <Layers size={16} weight="Bold" className={className} />
-}
-
-function WritingIcon({ className }: { className?: string }) {
-  return <Pen size={16} weight="Bold" className={className} />
-}
+const AboutIcon = IconUser
+const ToolsIcon = IconLayers
+const WritingIcon = IconPen
 
 const staticItems: PaletteItem[] = [
   {
@@ -82,7 +76,7 @@ const staticItems: PaletteItem[] = [
     href: '/',
     keywords: 'home portfolio gage minamoto',
     group: 'Navigation',
-    icon: Home,
+    icon: IconHome,
   },
   {
     id: 'about',
@@ -121,7 +115,7 @@ const projectItems: PaletteItem[] = portfolioData.projects.map((project) => ({
   keywords: `${project.name} ${project.description} ${project.status}`,
   group: 'Projects',
   external: Boolean(project.url),
-  icon: project.favicon ? undefined : FolderOpen,
+  icon: project.favicon ? undefined : IconFolderOpen,
   iconSrc: project.favicon,
 }))
 
@@ -167,7 +161,7 @@ const quickActionItems: PaletteItem[] = [
     keywords: `${social.platform} ${social.label} social profile contact`,
     group: 'Social' as const,
     external: true,
-    icon: socialIconMap[social.platform] ?? MessageSquare,
+    icon: socialIconMap[social.platform] ?? IconMessage,
   })),
 ]
 
@@ -210,9 +204,9 @@ function PaletteItemRow({ item, onSelect }: { item: PaletteItem; onSelect: () =>
         <span className="block truncate text-sm font-medium text-foreground">{item.title}</span>
       </span>
       {item.external ? (
-        <ExternalLink className="size-3.5 text-muted-foreground/60" />
+        <IconExternalLink className="size-3.5 text-muted-foreground/60" />
       ) : item.active ? (
-        <Check className="size-3.5 text-primary" />
+        <IconCheck className="size-3.5 text-primary" />
       ) : null}
     </CommandItem>
   )
@@ -231,7 +225,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Use the bright portfolio theme',
         keywords: 'theme light bright appearance display',
         group: 'Settings',
-        icon: Sun,
+        icon: IconThemeLight,
         action: () => setTheme('light'),
         active: theme === 'light',
       },
@@ -241,7 +235,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Use the dark portfolio theme',
         keywords: 'theme dark night appearance display',
         group: 'Settings',
-        icon: Moon,
+        icon: IconThemeDark,
         action: () => setTheme('dark'),
         active: theme === 'dark',
       },
@@ -251,7 +245,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Follow the device theme',
         keywords: 'theme system auto device appearance display',
         group: 'Settings',
-        icon: Monitor,
+        icon: IconThemeSystem,
         action: () => setTheme('system'),
         active: theme === 'system',
       },
@@ -261,7 +255,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Toggle gradient and cursor effects',
         keywords: 'effects shader gradient cursor animation motion toggle visual',
         group: 'Settings',
-        icon: Sparkles,
+        icon: IconSparkles,
         action: () => setShaderEnabled(!shaderEnabled),
         active: shaderEnabled,
       },
@@ -271,7 +265,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Toggle interface click sounds',
         keywords: 'sound audio clicks mute volume toggle',
         group: 'Settings',
-        icon: soundEnabled ? Volume2 : VolumeX,
+        icon: soundEnabled ? IconVolumeOn : IconVolumeOff,
         action: () => setSoundEnabled(!soundEnabled),
         active: soundEnabled,
       },
@@ -342,7 +336,7 @@ function SearchInputWithClear({ search, setSearch }: { search: string; setSearch
           onClick={() => setSearch('')}
           className="absolute right-3 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          <X className="size-3.5" />
+          <IconClose className="size-3.5" />
         </button>
       )}
     </div>
@@ -376,7 +370,7 @@ export function SearchCommandModal({ open, onOpenChange }: SearchCommandModalPro
                 aria-label="Close search"
                 className="flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                <X className="size-4" />
+                <IconClose className="size-4" />
               </button>
             </DrawerClose>
           </div>

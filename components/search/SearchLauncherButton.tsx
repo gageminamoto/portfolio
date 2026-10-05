@@ -1,6 +1,6 @@
 'use client'
 
-import { Search } from 'lucide-react'
+import { IconSearch } from '@/components/site-icons'
 
 import { useCommandK } from '@/contexts/CommandKContext'
 import { cn } from '@/lib/utils'
@@ -18,7 +18,7 @@ export function SearchLauncherButton({ className }: { className?: string }) {
       )}
       aria-label="Open search"
     >
-      <Search className="size-3.5" />
+      <IconSearch className="size-3.5" />
       <span>Search</span>
       <kbd className="hidden rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground sm:inline-block">
         ⌘K

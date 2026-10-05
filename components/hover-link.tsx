@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowUpRight } from "lucide-react"
+import { IconArrowUpRight } from "@/components/site-icons"
 import { useReducedMotion } from "framer-motion"
 import { useWorkHover, workItemElementId } from "@/components/work-hover-context"
 
@@ -63,7 +63,7 @@ export function HoverLink({
     <>
       <span className={truncate ? "block min-w-0 truncate" : undefined}>{children}</span>
       {showArrow && (
-        <ArrowUpRight className="h-3.5 w-3.5 shrink-0 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        <IconArrowUpRight className="h-3.5 w-3.5 shrink-0 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       )}
     </>
   )

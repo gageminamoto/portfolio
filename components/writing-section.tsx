@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import { ChevronDown } from "lucide-react"
+import { IconChevronDown } from "@/components/site-icons"
 import { useDialKit } from "dialkit"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ListRow } from "@/components/list-row"
@@ -140,7 +140,7 @@ export function WritingSection({
             aria-expanded={expanded}
             aria-label={expanded ? "Show fewer posts" : `Show ${posts.length - INITIAL_COUNT} more posts`}
           >
-            <ChevronDown
+            <IconChevronDown
               className={cn(
                 "size-4 text-muted-foreground/40 transition-transform duration-200 ease-out group-hover:text-muted-foreground",
                 expanded && "rotate-180"

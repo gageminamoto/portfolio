@@ -2,7 +2,13 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
-import { Moon, Sun, Monitor, Sparkles, Volume2 } from "lucide-react"
+import {
+  IconSparkles,
+  IconThemeDark,
+  IconThemeLight,
+  IconThemeSystem,
+  IconVolumeOn,
+} from "@/components/site-icons"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
 
@@ -48,7 +54,8 @@ export function ThemeToggle({
 
   const isDark = resolvedTheme === "dark"
 
-  const ThemeIcon = theme === "system" ? Monitor : isDark ? Sun : Moon
+  const ThemeIcon =
+    theme === "system" ? IconThemeSystem : isDark ? IconThemeLight : IconThemeDark
 
   const triggerClass = compact
     ? "inline-flex h-3.5 w-3.5 cursor-pointer items-center justify-center rounded-sm text-muted-foreground transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -86,21 +93,21 @@ export function ThemeToggle({
             onClick={() => setTheme("light")}
             className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "light" ? "text-foreground" : "text-muted-foreground"}`}
           >
-            <Sun className="h-3.5 w-3.5" aria-hidden="true" />
+            <IconThemeLight className="h-3.5 w-3.5" />
             <span>Light</span>
           </button>
           <button
             onClick={() => setTheme("dark")}
             className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "dark" ? "text-foreground" : "text-muted-foreground"}`}
           >
-            <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+            <IconThemeDark className="h-3.5 w-3.5" />
             <span>Dark</span>
           </button>
           <button
             onClick={() => setTheme("system")}
             className={`flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150 ease-out hover:bg-accent ${theme === "system" ? "text-foreground" : "text-muted-foreground"}`}
           >
-            <Monitor className="h-3.5 w-3.5" aria-hidden="true" />
+            <IconThemeSystem className="h-3.5 w-3.5" />
             <span>System</span>
           </button>
           <div className="mx-1 my-1 border-t border-border" />
@@ -109,7 +116,7 @@ export function ThemeToggle({
             className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors duration-150 ease-out hover:bg-accent"
             aria-pressed={shaderEnabled}
           >
-            <Sparkles className={`h-3.5 w-3.5 text-muted-foreground${shaderEnabled ? "" : " opacity-40"}`} aria-hidden="true" />
+            <IconSparkles className={`h-3.5 w-3.5 text-muted-foreground${shaderEnabled ? "" : " opacity-40"}`} />
             <span>Effects {shaderEnabled ? "on" : "off"}</span>
           </button>
           <button
@@ -117,7 +124,7 @@ export function ThemeToggle({
             className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors duration-150 ease-out hover:bg-accent"
             aria-pressed={soundEnabled}
           >
-            <Volume2 className={`h-3.5 w-3.5 text-muted-foreground${soundEnabled ? "" : " opacity-40"}`} aria-hidden="true" />
+            <IconVolumeOn className={`h-3.5 w-3.5 text-muted-foreground${soundEnabled ? "" : " opacity-40"}`} />
             <span>Sound {soundEnabled ? "on" : "off"}</span>
           </button>
         </div>

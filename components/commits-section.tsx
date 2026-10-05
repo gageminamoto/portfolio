@@ -1,6 +1,7 @@
 "use client"
 
-import { GitBranch, FileText } from "lucide-react"
+import { GitBranch } from "lucide-react"
+import { IconFileText } from "@/components/site-icons"
 import useSWR from "swr"
 import type { CommitHistoryItem } from "@/lib/github"
 
@@ -69,7 +70,7 @@ function SkeletonRows() {
 function CommitIcon({ isPush }: { isPush: boolean }) {
   return isPush
     ? <GitBranch className="h-3.5 w-3.5" />
-    : <FileText className="h-3.5 w-3.5" />
+    : <IconFileText className="h-3.5 w-3.5" />
 }
 
 function CommitRow({ commit }: { commit: CommitHistoryItem }) {

@@ -2,8 +2,15 @@
 
 import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconLayers,
+  IconPen,
+  IconPin,
+  IconSuitcase,
+  IconUser,
+} from "@/components/site-icons"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
 import { BioSection } from "@/components/bio-section"
@@ -129,7 +136,7 @@ function ProjectCarousel({ projects }: { projects: typeof portfolioData.projects
       </div>
       <div className="mt-3 flex items-center gap-3">
         <button type="button" onClick={() => scrollToIndex(activeIndex - 1)} disabled={activeIndex === 0} className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground" aria-label="Previous project">
-          <ChevronLeft className="size-4" strokeWidth={2.25} aria-hidden="true" />
+          <IconChevronLeft className="size-4" />
         </button>
         <div className="flex items-center gap-3" aria-label="Project carousel position">
           {projects.map((project, index) => (
@@ -137,7 +144,7 @@ function ProjectCarousel({ projects }: { projects: typeof portfolioData.projects
           ))}
         </div>
         <button type="button" onClick={() => scrollToIndex(activeIndex + 1)} disabled={activeIndex === projects.length - 1} className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground" aria-label="Next project">
-          <ChevronRight className="size-4" strokeWidth={2.25} aria-hidden="true" />
+          <IconChevronRight className="size-4" />
         </button>
       </div>
     </>
@@ -179,7 +186,7 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
       <motion.section variants={item} className="min-w-0 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Suitcase size={14} weight="Bold" />
+            <IconSuitcase className="h-3.5 w-3.5" />
             Work
           </h2>
         </div>
@@ -192,7 +199,7 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
       <motion.section variants={item} className="min-w-0 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Pin size={14} weight="Bold" />
+            <IconPin className="h-3.5 w-3.5" />
             Projects
           </h2>
         </div>
@@ -204,19 +211,19 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
 
       {/* Details */}
       <motion.div variants={item} className="flex flex-col gap-8">
-        <Section title="About" href="/about" icon={<UserCircle size={14} weight="Bold" />}>
+        <Section title="About" href="/about" icon={<IconUser className="h-3.5 w-3.5" />}>
           <p className="text-sm text-muted-foreground">
             More about me.
           </p>
         </Section>
 
-        <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
+        <Section title="Tools" href="/tools" icon={<IconLayers className="h-3.5 w-3.5" />}>
           <p className="text-sm text-muted-foreground">
             Everything I build with.
           </p>
         </Section>
 
-        <Section title="Writing" href="/writing" icon={<Pen size={14} weight="Bold" />}>
+        <Section title="Writing" href="/writing" icon={<IconPen className="h-3.5 w-3.5" />}>
           <WritingSection variant="default" initialPosts={initialPosts} />
         </Section>
       </motion.div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { FileText } from "lucide-react"
+import { IconFileText } from "@/components/site-icons"
 
 import type { NotionWritingPost } from "@/lib/notion"
 
@@ -79,9 +79,8 @@ export function ArticleFooter({ prevPost, nextPost }: ArticleFooterProps) {
                         active === "next" ? "opacity-100" : "opacity-0 absolute inset-x-8 top-6"
                       }`}
                     >
-                      <FileText
+                      <IconFileText
                         className="h-4 w-4 text-muted-foreground/50"
-                        strokeWidth={1.5}
                         aria-hidden="true"
                       />
                       <h3 className="text-base font-semibold text-foreground">
@@ -93,9 +92,8 @@ export function ArticleFooter({ prevPost, nextPost }: ArticleFooterProps) {
                         active === "prev" ? "opacity-100" : "opacity-0 absolute inset-x-8 top-6"
                       }`}
                     >
-                      <FileText
+                      <IconFileText
                         className="h-4 w-4 text-muted-foreground/50"
-                        strokeWidth={1.5}
                         aria-hidden="true"
                       />
                       <h3 className="text-base font-semibold text-foreground">
@@ -105,9 +103,8 @@ export function ArticleFooter({ prevPost, nextPost }: ArticleFooterProps) {
                   </>
                 ) : (
                   <div className="flex flex-col gap-3">
-                    <FileText
+                    <IconFileText
                       className="h-4 w-4 text-muted-foreground/50"
-                      strokeWidth={1.5}
                       aria-hidden="true"
                     />
                     <h3 className="text-base font-semibold text-foreground">

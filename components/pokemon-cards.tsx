@@ -9,7 +9,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion"
-import { X } from "lucide-react"
+import { IconClose } from "@/components/site-icons"
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                              */
@@ -358,7 +358,7 @@ function Card3DModal({
         className="absolute right-4 top-4 z-[60] rounded-full bg-foreground/10 p-2 text-foreground/70 transition-colors duration-200 hover:bg-foreground/20 hover:text-foreground"
         aria-label="Close card view"
       >
-        <X className="h-5 w-5" />
+        <IconClose className="h-5 w-5" />
       </button>
 
       {/* Hint text */}

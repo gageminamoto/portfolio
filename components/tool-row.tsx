@@ -1,5 +1,5 @@
 import { HoverLink } from "@/components/hover-link"
-import { ArrowUpRight } from "lucide-react"
+import { IconArrowUpRight } from "@/components/site-icons"
 
 export function ToolRow({
   name,
@@ -29,7 +29,7 @@ export function ToolRow({
           className={`${nameClass} inline-flex items-center gap-0.5 no-underline transition-colors duration-150 hover:bg-zinc-200 hover:text-black dark:hover:bg-zinc-700 dark:hover:text-white`}
         >
           {displayName}
-          <ArrowUpRight size={10} className="shrink-0" />
+          <IconArrowUpRight className="h-2.5 w-2.5 shrink-0" />
         </a>
       ) : url ? (
         <HoverLink
