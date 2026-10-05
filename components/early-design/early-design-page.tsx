@@ -70,18 +70,9 @@ export function EarlyDesignPage() {
                     <ListRow
                       href={resource.url}
                       external
-                      name={
-                        <span className="underline decoration-transparent decoration-dashed decoration-2 underline-offset-4 transition-[text-decoration-color] duration-150 ease-out group-focus-visible:decoration-muted-foreground/40 pointer-fine:group-hover:decoration-muted-foreground/40 motion-reduce:transition-none">
-                          {resource.title}
-                        </span>
-                      }
-                      meta={
-                        <span className="transition-colors duration-150 ease-out group-focus-visible:text-foreground pointer-fine:group-hover:text-foreground motion-reduce:transition-none">
-                          {getResourceHost(resource.url)}
-                        </span>
-                      }
+                      name={resource.title}
+                      meta={getResourceHost(resource.url)}
                       aria-label={`${resource.title} (opens in new tab)`}
-                      className="group"
                     />
                   ) : (
                     <ListRow
