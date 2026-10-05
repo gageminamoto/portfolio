@@ -1,7 +1,6 @@
 "use client"
 
 import { Fragment } from "react"
-import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { SiteFooter } from "@/components/site-footer"
 import {
@@ -9,7 +8,6 @@ import {
   getResourceHost,
   groupResourcesByLink,
 } from "@/lib/early-design-resources"
-import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { cn } from "@/lib/utils"
 
 const resourceGroups = groupResourcesByLink(earlyDesignResources)
@@ -57,28 +55,22 @@ function ResourceRow({
 }
 
 export function EarlyDesignPage() {
-  const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : fadeUp
-
   return (
-    <motion.main
+    <main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : stagger}
-      initial="hidden"
-      animate="show"
     >
-      <motion.header variants={item}>
+      <header>
         <BackLink href="/">Home</BackLink>
-      </motion.header>
+      </header>
 
-      <motion.div variants={item}>
+      <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Early design resources
         </h1>
-      </motion.div>
+      </div>
 
-      <motion.div variants={item} className="flex flex-col">
+      <div className="flex flex-col">
         {resourceGroups.map((group, groupIndex) => (
           <Fragment key={group[0].title}>
             {groupIndex > 0 && (
@@ -93,11 +85,11 @@ export function EarlyDesignPage() {
             </ul>
           </Fragment>
         ))}
-      </motion.div>
+      </div>
 
-      <motion.div variants={item}>
+      <div>
         <SiteFooter />
-      </motion.div>
-    </motion.main>
+      </div>
+    </main>
   )
 }
