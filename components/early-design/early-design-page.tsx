@@ -1,49 +1,70 @@
 "use client"
 
 import { Fragment } from "react"
-import { motion, useReducedMotion, type Variants } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
-import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
 import {
   earlyDesignResources,
   getResourceHost,
   groupResourcesByLink,
 } from "@/lib/early-design-resources"
-import { noMotion } from "@/lib/animations"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
+import { cn } from "@/lib/utils"
 
 const resourceGroups = groupResourcesByLink(earlyDesignResources)
 
-const earlyDesignStagger: Variants = {
-  hidden: {},
-  show: {
-    transition: {
-      delayChildren: 0.04,
-      staggerChildren: 0.05,
-    },
-  },
-}
+function ResourceRow({
+  title,
+  url,
+}: {
+  title: string
+  url?: string
+}) {
+  const rowClass = cn(
+    "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] motion-reduce:transition-none",
+    url
+      ? "hover:bg-muted hover:px-3 focus-within:bg-muted focus-within:px-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      : "hover:bg-muted hover:px-3",
+  )
 
-const earlyDesignItem: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      duration: 0.26,
-      ease: [0.23, 1, 0.32, 1],
-    },
-  },
+  const inner = (
+    <>
+      <span className="shrink-0 text-sm font-medium text-foreground">{title}</span>
+      {url ? (
+        <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
+          {getResourceHost(url)}
+        </span>
+      ) : null}
+    </>
+  )
+
+  if (url) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={rowClass}
+        aria-label={`${title} (opens in new tab)`}
+      >
+        {inner}
+      </a>
+    )
+  }
+
+  return <div className={rowClass}>{inner}</div>
 }
 
 export function EarlyDesignPage() {
   const shouldReduceMotion = useReducedMotion()
-  const item = shouldReduceMotion ? noMotion : earlyDesignItem
+  const item = shouldReduceMotion ? noMotion : fadeUp
 
   return (
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
-      variants={shouldReduceMotion ? undefined : earlyDesignStagger}
+      variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
     >
@@ -66,20 +87,7 @@ export function EarlyDesignPage() {
             <ul className="flex flex-col">
               {group.map((resource) => (
                 <li key={resource.title}>
-                  {resource.url ? (
-                    <ListRow
-                      href={resource.url}
-                      external
-                      name={resource.title}
-                      meta={getResourceHost(resource.url)}
-                      aria-label={`${resource.title} (opens in new tab)`}
-                    />
-                  ) : (
-                    <ListRow
-                      name={resource.title}
-                      className="hover:bg-transparent hover:px-0"
-                    />
-                  )}
+                  <ResourceRow title={resource.title} url={resource.url} />
                 </li>
               ))}
             </ul>
