@@ -152,6 +152,13 @@ export function WritingList({ initialPosts }: WritingListProps) {
 
       {/* Posts list */}
       <motion.div variants={item} className="flex flex-col gap-10">
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm text-muted-foreground">Resources</h2>
+          <div className="flex flex-col">
+            <ListRow href="/early-design" name="Early design resources" />
+          </div>
+        </section>
+
         {isPending && (
           <div
             className="flex flex-col gap-3"

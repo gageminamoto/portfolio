@@ -50,9 +50,25 @@ export function ListRow({
   )
 
   if (href) {
+    if (variants) {
+      return (
+        <motion.a
+          variants={variants}
+          href={href}
+          {...(external
+            ? { target: "_blank", rel: rel ?? "noopener noreferrer" }
+            : {})}
+          className={rowClass}
+          style={style}
+          aria-label={ariaLabel}
+        >
+          {inner}
+        </motion.a>
+      )
+    }
+
     return (
-      <motion.a
-        variants={variants}
+      <a
         href={href}
         {...(external
           ? { target: "_blank", rel: rel ?? "noopener noreferrer" }
@@ -62,13 +78,21 @@ export function ListRow({
         aria-label={ariaLabel}
       >
         {inner}
-      </motion.a>
+      </a>
+    )
+  }
+
+  if (variants) {
+    return (
+      <motion.div variants={variants} className={rowClass} style={style}>
+        {inner}
+      </motion.div>
     )
   }
 
   return (
-    <motion.div variants={variants} className={rowClass} style={style}>
+    <div className={rowClass} style={style}>
       {inner}
-    </motion.div>
+    </div>
   )
 }
