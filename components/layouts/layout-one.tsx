@@ -2,14 +2,7 @@
 
 import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import {
-  BookBookmark,
-  Layers,
-  Pen,
-  Pin,
-  Suitcase,
-  UserCircle,
-} from "@solar-icons/react"
+import { Layers, Pen, Pin, Suitcase, UserCircle } from "@solar-icons/react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { portfolioData } from "@/lib/portfolio-data"
 import { SocialIcons } from "@/components/social-icons"
@@ -220,16 +213,6 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
         <Section title="Tools" href="/tools" icon={<Layers size={14} weight="Bold" />}>
           <p className="text-sm text-muted-foreground">
             Everything I build with.
-          </p>
-        </Section>
-
-        <Section
-          title="Early design"
-          href="/early-design"
-          icon={<BookBookmark size={14} weight="Bold" />}
-        >
-          <p className="text-sm text-muted-foreground">
-            A reading list for people new to design.
           </p>
         </Section>
 
