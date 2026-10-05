@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
+import { CopyLinkButton } from "@/components/copy-link-button"
 import {
   earlyDesignResources,
   getResourceHost,
@@ -26,7 +27,10 @@ export function EarlyDesignPage() {
       animate="show"
     >
       <motion.header variants={item}>
-        <BackLink href="/">Home</BackLink>
+        <nav className="flex items-center justify-between">
+          <BackLink href="/">Home</BackLink>
+          <CopyLinkButton />
+        </nav>
       </motion.header>
 
       <motion.div variants={item}>
