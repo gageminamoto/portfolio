@@ -24,7 +24,7 @@ function ResourceRow({
   const rowClass = cn(
     "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] motion-reduce:transition-none",
     url
-      ? "hover:bg-muted hover:px-3 focus-within:bg-muted focus-within:px-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      ? "hover:bg-muted hover:px-3 focus-visible:bg-muted focus-visible:px-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       : "hover:bg-muted hover:px-3",
   )
 
