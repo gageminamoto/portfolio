@@ -4,7 +4,7 @@ import { useCallback, useState } from "react"
 import { Check, Link as LinkIcon } from "lucide-react"
 import { CopyFeedbackIcon } from "@/components/copy-feedback-icon"
 
-export function CopyLinkButton() {
+export function CopyLinkButton({ iconClassName }: { iconClassName?: string }) {
   const [copied, setCopied] = useState(false)
 
   const copyLink = useCallback(async () => {
@@ -33,6 +33,7 @@ export function CopyLinkButton() {
       >
         <CopyFeedbackIcon
           copied={copied}
+          className={iconClassName}
           idleIcon={<LinkIcon className="h-3.5 w-3.5" aria-hidden="true" />}
           copiedIcon={<Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />}
         />
