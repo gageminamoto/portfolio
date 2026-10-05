@@ -9,9 +9,11 @@ import { useMounted } from "@/hooks/use-mounted"
 export function ThemeToggle({
   placement = "bottom",
   compact = false,
+  iconClassName,
 }: {
   placement?: "bottom" | "top"
   compact?: boolean
+  iconClassName?: string
 } = {}) {
   const { theme, resolvedTheme, setTheme } = useTheme()
   const { shaderEnabled, setShaderEnabled, soundEnabled, setSoundEnabled } = useGradientWord()
@@ -67,7 +69,7 @@ export function ThemeToggle({
         aria-label="Display settings"
         aria-expanded={open}
       >
-        <ThemeIcon className={iconClass} aria-hidden="true" />
+        <ThemeIcon className={`${iconClass} ${iconClassName ?? ""}`} aria-hidden="true" />
       </button>
 
       {open && (
