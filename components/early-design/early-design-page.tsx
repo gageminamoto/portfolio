@@ -42,7 +42,7 @@ export function EarlyDesignPage() {
       <motion.div variants={item}>
         <ul className="flex flex-col">
           {earlyDesignResources.map((resource) => (
-            <li key={resource.title}>
+            <li key={resource.title} className="flex flex-col">
               <ListRow
                 href={resource.url}
                 external={Boolean(resource.url)}
@@ -57,6 +57,11 @@ export function EarlyDesignPage() {
                 }
                 className={resource.url ? linkRowClass : undefined}
               />
+              {resource.why ? (
+                <p className="pb-1 text-xs leading-relaxed text-muted-foreground">
+                  {resource.why}
+                </p>
+              ) : null}
             </li>
           ))}
         </ul>
