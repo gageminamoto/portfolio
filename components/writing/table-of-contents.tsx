@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { ChevronDown } from "lucide-react"
+import { IconChevronDown } from "@/components/site-icons"
 import type { NotionBlock } from "@/lib/notion"
 import { getHeadingId, type HeadingBlock } from "./heading"
 
@@ -185,7 +185,7 @@ export function TableOfContents({
           className="flex w-full cursor-pointer items-center justify-between rounded-lg p-3 text-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span>On this page</span>
-          <ChevronDown
+          <IconChevronDown
             className={`h-4 w-4 transition-transform duration-150 ease-out ${
               open ? "rotate-180" : ""
             }`}

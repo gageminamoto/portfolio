@@ -2,7 +2,14 @@
 
 import { type CSSProperties, type MouseEvent, type ReactNode, type TouchEvent, type UIEvent, type WheelEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { ArrowDown, ArrowUp, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
+import {
+  IconArrowUpRight,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronUp,
+  IconClose,
+} from "@/components/site-icons"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -427,7 +434,7 @@ function ProjectDetails({ item }: { item: WorkItem }) {
       >
         <a href={item.url} target="_blank" rel="noopener noreferrer">
           {projectUrlLabel(item.url)}
-          <ArrowUpRight className="size-3.5" aria-hidden="true" />
+          <IconArrowUpRight className="size-3.5" />
         </a>
       </Button>
     </div>
@@ -541,7 +548,7 @@ function ProjectDetailDrawer({
             className="inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 ease hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
             aria-label="Next case study"
           >
-            <ArrowDown className="size-3.5" aria-hidden="true" />
+            <IconChevronDown className="size-3.5" />
           </button>
           <button
             type="button"
@@ -550,11 +557,11 @@ function ProjectDetailDrawer({
             className="inline-flex size-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 ease hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
             aria-label="Previous case study"
           >
-            <ArrowUp className="size-3.5" aria-hidden="true" />
+            <IconChevronUp className="size-3.5" />
           </button>
         </div>
         <DrawerClose className="absolute right-4 top-4 z-20 inline-flex size-9 cursor-pointer items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm backdrop-blur transition-colors duration-150 ease hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          <X className="size-4" aria-hidden="true" />
+          <IconClose className="size-4" />
           <span className="sr-only">Close</span>
         </DrawerClose>
         <div
@@ -663,7 +670,7 @@ function CarouselArrowButton({
   disabled: boolean
   onClick: () => void
 }) {
-  const Icon = direction === "previous" ? ChevronLeft : ChevronRight
+  const Icon = direction === "previous" ? IconChevronLeft : IconChevronRight
 
   return (
     <button
@@ -673,7 +680,7 @@ function CarouselArrowButton({
       className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full bg-muted/55 text-muted-foreground transition-[color,background-color,transform] duration-150 ease hover:bg-muted hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-muted/55 disabled:hover:text-muted-foreground"
       aria-label={direction === "previous" ? "Previous work item" : "Next work item"}
     >
-      <Icon className="size-4" strokeWidth={2.25} aria-hidden="true" />
+      <Icon className="size-4" />
     </button>
   )
 }
@@ -1008,7 +1015,7 @@ function WorkBrowser({
                     <span className="block truncate">{item.name}</span>
                     <span className="block text-xs text-muted-foreground/45">{item.type}</span>
                   </span>
-                  <ArrowUpRight className={`size-3.5 shrink-0 transition-opacity duration-150 ${selected ? "opacity-100" : "opacity-35"}`} aria-hidden="true" />
+                  <IconArrowUpRight className={`size-3.5 shrink-0 transition-opacity duration-150 ${selected ? "opacity-100" : "opacity-35"}`} />
                 </button>
               )
             })}

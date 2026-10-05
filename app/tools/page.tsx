@@ -7,7 +7,7 @@ import {
 } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
-import { Search, ArrowUpRight } from "lucide-react"
+import { IconArrowUpRight, IconSearch } from "@/components/site-icons"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
@@ -240,7 +240,7 @@ export default function ToolsPage() {
       <motion.div variants={toolsPanelParent} className="flex flex-col gap-5">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
           <input
             type="text"
             placeholder="Search tools..."
@@ -355,16 +355,14 @@ export default function ToolsPage() {
                               >
                                 {displayName}
                                 {tool.url ? (
-                                  <ArrowUpRight
-                                    size={10}
+                                  <IconArrowUpRight
                                     className={cn(
-                                      "shrink-0 transition-colors",
+                                      "h-2.5 w-2.5 shrink-0 transition-colors",
                                       isActive
                                         ? "text-muted-foreground"
                                         : "text-muted-foreground/50",
                                     )}
                                     style={textColorTransitionStyle}
-                                    aria-hidden
                                   />
                                 ) : null}
                               </span>
@@ -448,7 +446,7 @@ export default function ToolsPage() {
                       >
                         {displayName}
                         {tool.url ? (
-                          <ArrowUpRight size={10} className="shrink-0 text-muted-foreground" aria-hidden />
+                          <IconArrowUpRight className="h-2.5 w-2.5 shrink-0 text-muted-foreground" />
                         ) : null}
                       </span>
                     ) : (

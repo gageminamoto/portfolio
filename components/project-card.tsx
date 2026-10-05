@@ -1,4 +1,4 @@
-import { Sledgehammer, Star } from "@solar-icons/react"
+import { IconBuildingBadge, IconStarBadge } from "@/components/site-icons"
 import Image from "next/image"
 import type { ProjectItem } from "@/lib/portfolio-data"
 import { useGradientWord } from "@/components/gradient-word-context"
@@ -16,7 +16,7 @@ export function ProjectStatusBadge({ status }: { status: ProjectItem["status"] }
     return null
   }
 
-  const Icon = status === "new" ? Star : Sledgehammer
+  const Icon = status === "new" ? IconStarBadge : IconBuildingBadge
   const label = status === "new" ? "New" : "Building"
 
   return (
@@ -27,7 +27,7 @@ export function ProjectStatusBadge({ status }: { status: ProjectItem["status"] }
         transform: `rotate(${status === "new" ? 3 : -3}deg)`,
       }}
     >
-      <Icon size={12} weight="Bold" aria-hidden="true" />
+      <Icon className="h-3 w-3" />
       {label}
     </span>
   )
