@@ -11,6 +11,7 @@ Use [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) as th
 - **Title:** Short and direct—state what changed.
 - **Length:** Keep the description proportional to the change. Small fixes may need only two or three sentences.
 - **Story:** Start with the specific problem or user need; explain what changed and the result in plain language.
+- **Plain language (required):** Write for a human reviewer who cares about the problem and outcome, not an implementation dump. Use everyday words; avoid engineering jargon when a simpler phrase works. Do not fill the PR body with CSS class names, prop names, file paths, internal APIs, scroll metrics, or other code-level detail unless a reviewer needs that detail to judge the change. Keep deep technical notes out of the main story; if needed, put them in a short “Implementation notes” subsection at the end.
 - **Context:** Customize to this PR. Do not paste the full issue or reuse a generic blurb.
 - **Linear:** Reference relevant Linear issues in the flow of the explanation. Use closing language (e.g. “Fixes …”) only when this PR actually completes the issue.
 - **Links and media:** Put useful links beside the statement they support.
