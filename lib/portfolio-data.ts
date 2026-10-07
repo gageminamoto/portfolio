@@ -112,11 +112,7 @@ Indie games have always inspired me. Small teams pour their craft into every det
     { platform: "github", url: "https://github.com/gageminamoto", label: "GitHub" },
     { platform: "linkedin", url: "https://linkedin.com/in/gageminamoto", label: "LinkedIn" }, // Fixed closing quotation mark
   ],
-  writing: [
-    { title: "Blog 1", slug: "blog-1" },
-    { title: "Blog 2", slug: "blog-2" },
-    { title: "Blog 3", slug: "blog-3" },
-  ],
+  writing: [],
   hobbies: [
     { name: "Pokemon cards", url: "https://www.pokemon.com/us/pokemon-tcg", description: "We're only collecting cute ones" },
     { name: "TTRPGs", description: "Rolling dice and telling stories" },

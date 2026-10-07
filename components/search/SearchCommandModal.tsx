@@ -25,7 +25,9 @@ import {
 import { useGradientWord } from '@/components/gradient-word-context'
 import { EmailIcon, socialIconMap } from '@/components/social-icons'
 import { useIsMobile } from '@/hooks/use-mobile'
+import type { NotionWritingPost } from '@/lib/notion'
 import { portfolioData } from '@/lib/portfolio-data'
+import useSWR from 'swr'
 import { cn } from '@/lib/utils'
 import {
   Command,
@@ -132,15 +134,30 @@ const writingResourceItems: PaletteItem[] = [
   },
 ]
 
-const writingItems: PaletteItem[] = portfolioData.writing.map((post) => ({
-  id: `writing-${post.slug}`,
-  title: post.title,
-  description: 'Writing post',
-  href: `/writing/${post.slug}`,
-  keywords: `${post.title} ${post.slug} writing post blog article`,
-  group: 'Writing',
-  icon: WritingIcon,
-}))
+async function fetchWritingPosts(url: string): Promise<{ posts: NotionWritingPost[] }> {
+  const response = await fetch(url)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? 'Failed to fetch writing posts')
+  }
+
+  return data
+}
+
+function buildWritingItems(posts: NotionWritingPost[]): PaletteItem[] {
+  if (!Array.isArray(posts)) return []
+
+  return posts.map((post) => ({
+    id: `writing-${post.slug}`,
+    title: post.title,
+    description: 'Writing post',
+    href: `/writing/${post.slug}`,
+    keywords: `${post.title} ${post.slug} writing post blog article`,
+    group: 'Writing',
+    icon: WritingIcon,
+  }))
+}
 
 const quickActionItems: PaletteItem[] = [
   {
@@ -169,15 +186,19 @@ const allItems = [
   ...staticItems,
   ...projectItems,
   ...writingResourceItems,
-  ...writingItems,
   ...quickActionItems,
 ]
 
 function openHref(item: PaletteItem, router: ReturnType<typeof useRouter>) {
   if (!item.href) return
 
-  if (item.href.startsWith('mailto:') || item.external) {
+  if (item.href.startsWith('mailto:')) {
     window.location.href = item.href
+    return
+  }
+
+  if (item.external) {
+    window.open(item.href, '_blank', 'noopener,noreferrer')
     return
   }
 
@@ -216,6 +237,15 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
   const router = useRouter()
   const { theme, setTheme } = useTheme()
   const { shaderEnabled, setShaderEnabled, soundEnabled, setSoundEnabled } = useGradientWord()
+  const { data } = useSWR<{ posts: NotionWritingPost[] }>(
+    '/api/writing',
+    fetchWritingPosts,
+    { revalidateOnFocus: false },
+  )
+  const writingItems = React.useMemo(
+    () => buildWritingItems(data?.posts ?? []),
+    [data?.posts],
+  )
 
   const settingsItems = React.useMemo<PaletteItem[]>(
     () => [
@@ -276,14 +306,21 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
   const visibleGroups = React.useMemo(() => {
     const groups = new Map<PaletteItem['group'], PaletteItem[]>()
 
-    for (const item of [...staticItems, ...projectItems, ...writingItems, ...settingsItems, ...quickActionItems]) {
+    for (const item of [
+      ...staticItems,
+      ...projectItems,
+      ...writingResourceItems,
+      ...writingItems,
+      ...settingsItems,
+      ...quickActionItems,
+    ]) {
       const current = groups.get(item.group) ?? []
       current.push(item)
       groups.set(item.group, current)
     }
 
     return groups
-  }, [settingsItems])
+  }, [settingsItems, writingItems])
 
   const handleSelect = React.useCallback(
     (item: PaletteItem) => {
@@ -320,14 +357,23 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
   )
 }
 
-function SearchInputWithClear({ search, setSearch }: { search: string; setSearch: (value: string) => void }) {
+function SearchInputWithClear({
+  search,
+  setSearch,
+  inputWrapperClassName,
+}: {
+  search: string
+  setSearch: (value: string) => void
+  inputWrapperClassName?: string
+}) {
   return (
-    <div className="relative">
+    <div className="relative w-full min-w-0 self-stretch">
       <CommandInput
         value={search}
         onValueChange={setSearch}
         placeholder="Find the good stuff"
-        className="pr-8"
+        wrapperClassName={inputWrapperClassName}
+        className="min-w-0 flex-1 pr-8"
       />
       {search.length > 0 && (
         <button
@@ -374,8 +420,14 @@ export function SearchCommandModal({ open, onOpenChange }: SearchCommandModalPro
               </button>
             </DrawerClose>
           </div>
-          <Command className="rounded-none border-t bg-background">
-            <SearchInputWithClear search={search} setSearch={setSearch} />
+          <Command className="flex w-full min-w-0 max-w-none flex-col items-stretch rounded-none border-t bg-background">
+            <div className="w-full shrink-0 border-b px-4">
+              <SearchInputWithClear
+                search={search}
+                setSearch={setSearch}
+                inputWrapperClassName="h-12 border-0 px-0"
+              />
+            </div>
             <CommandListContent search={search} close={close} />
           </Command>
         </DrawerContent>
