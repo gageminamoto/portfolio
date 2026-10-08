@@ -6,7 +6,7 @@ import { useTheme } from "next-themes"
 import { BackLink } from "@/components/back-link"
 import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
-import { BioSection } from "@/components/bio-section"
+import { BioSection, bodyCopyClassName } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { CursorTrail } from "@/components/cursor-trail"
 import { useGradientWord } from "@/components/gradient-word-context"
@@ -25,13 +25,8 @@ const Penflow = dynamic(
   }
 )
 
-const PokemonCards = dynamic(
-  () => import("@/components/pokemon-cards").then((m) => m.PokemonCards),
-  { ssr: false, loading: () => <span className="relative inline-flex font-medium text-foreground">Pokemon cards</span> }
-)
-
 export default function AboutPage() {
-  const { extendedBio, hobbies, speaking, timeline } = portfolioData
+  const { extendedBio, speaking, timeline } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const { resolvedTheme } = useTheme()
@@ -90,27 +85,10 @@ export default function AboutPage() {
         {/* Hobbies */}
         <div className="py-8">
         <Section title="Hobbies">
-          <div className="flex flex-col gap-3">
-            {hobbies.map((hobby) => {
-              if (hobby.name === "Pokemon cards") {
-                return (
-                  <div key={hobby.name}>
-                    <PokemonCards />
-                  </div>
-                )
-              }
-              return (
-                <div key={hobby.name}>
-                  {hobby.url ? (
-                    <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-primary">
-                      {hobby.name}
-                    </HoverLink>
-                  ) : (
-                    <span className="font-medium text-foreground">{hobby.name}</span>
-                  )}
-                </div>
-              )
-            })}
+          <div className={`${bodyCopyClassName} text-foreground`}>
+            <p>
+              Pokémon cards, TTRPGs, developing PICO-8 games, analog photography, design books, camping
+            </p>
           </div>
         </Section>
         </div>
