@@ -94,26 +94,20 @@ export default function AboutPage() {
             {hobbies.map((hobby) => {
               if (hobby.name === "Pokemon cards") {
                 return (
-                  <div key={hobby.name} className="flex items-baseline gap-2 min-w-0">
-                    <span className="shrink-0"><PokemonCards /></span>
-                    <span className="truncate text-sm text-muted-foreground">
-                      {hobby.description}
-                    </span>
+                  <div key={hobby.name}>
+                    <PokemonCards />
                   </div>
                 )
               }
               return (
-                <div key={hobby.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
+                <div key={hobby.name}>
                   {hobby.url ? (
-                    <HoverLink href={hobby.url} className="shrink-0 font-medium no-underline decoration-transparent hover:decoration-primary">
+                    <HoverLink href={hobby.url} className="font-medium no-underline decoration-transparent hover:decoration-primary">
                       {hobby.name}
                     </HoverLink>
                   ) : (
-                    <span className="shrink-0 font-medium text-foreground">{hobby.name}</span>
+                    <span className="font-medium text-foreground">{hobby.name}</span>
                   )}
-                  <span className="truncate text-sm text-muted-foreground">
-                    {hobby.description}
-                  </span>
                 </div>
               )
             })}
@@ -129,7 +123,11 @@ export default function AboutPage() {
             {speaking.map((item) => (
               <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
                 {item.url ? (
-                  <HoverLink href={item.url} className="min-w-0 flex-1 truncate font-medium no-underline decoration-transparent hover:decoration-primary">
+                  <HoverLink
+                    href={item.url}
+                    truncate
+                    className="min-w-0 flex-1 font-medium no-underline decoration-transparent hover:decoration-primary"
+                  >
                     {item.name}
                   </HoverLink>
                 ) : (

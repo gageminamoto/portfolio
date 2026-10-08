@@ -1,4 +1,4 @@
-import { Search } from "lucide-react"
+import { IconSearch } from "@/components/site-icons"
 import { BackLink } from "@/components/back-link"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -24,10 +24,7 @@ export default function LoadingTools() {
 
       <section className="flex flex-col gap-5" aria-busy="true" aria-label="Loading tools">
         <div className="relative">
-          <Search
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60"
-            aria-hidden="true"
-          />
+          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
           <div className="h-10 w-full rounded-lg border border-border bg-background" />
         </div>
 

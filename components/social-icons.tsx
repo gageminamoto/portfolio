@@ -1,7 +1,6 @@
 import type { SocialLink } from "@/lib/portfolio-data"
 import { CopyFeedbackIcon } from "@/components/copy-feedback-icon"
-import { Icon } from "@iconify/react"
-import { Copy, ExternalLink } from "lucide-react"
+import { IconCheck, IconCopy, IconEmail, IconExternalLink } from "@/components/site-icons"
 import { useState } from "react"
 import {
   DropdownMenu,
@@ -35,7 +34,7 @@ export function LinkedInIcon({ className }: { className?: string }) {
 }
 
 export function EmailIcon({ className }: { className?: string }) {
-  return <Icon icon="solar:plain-bold" className={className} aria-hidden="true" />
+  return <IconEmail className={className} />
 }
 
 export const socialIconMap: Record<string, React.FC<{ className?: string }>> = {
@@ -94,8 +93,8 @@ export function SocialIcons({
               <CopyFeedbackIcon
                 copied={copied}
                 className="h-5 w-5"
-                idleIcon={<Icon icon="solar:plain-bold" className={sizeClass} aria-hidden="true" />}
-                copiedIcon={<Icon icon="solar:letter-opened-bold" className={sizeClass} aria-hidden="true" />}
+                idleIcon={<IconEmail className={sizeClass} />}
+                copiedIcon={<IconCheck className={sizeClass} />}
               />
               {copied && (
                 <span
@@ -109,11 +108,11 @@ export function SocialIcons({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" sideOffset={8}>
             <DropdownMenuItem onSelect={handleCopyEmail}>
-              <Copy className="size-4" />
+              <IconCopy className="size-4" />
               Copy email
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => window.open(`mailto:${email}`, "_self")}>
-              <ExternalLink className="size-4" />
+              <IconExternalLink className="size-4" />
               Open in email client
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from "react"
 import Image from "next/image"
-import { ChevronDown } from "lucide-react"
+import { IconChevronDown } from "@/components/site-icons"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
@@ -178,7 +178,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                     >
                       {item.period}
                     </span>
-                    <ChevronDown
+                    <IconChevronDown
                       className={cn(
                         "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
                         isActive
@@ -216,7 +216,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                 >
                   <span className="min-w-0 truncate text-sm text-muted-foreground">{item.role}</span>
                   <span className="ml-auto shrink-0 text-sm text-muted-foreground">{item.period}</span>
-                  <ChevronDown
+                  <IconChevronDown
                     className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
                     style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }}
                     aria-hidden="true"

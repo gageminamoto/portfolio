@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { AltArrowRight } from "@solar-icons/react"
+import { IconSectionLink } from "@/components/site-icons"
 
 export function Section({
   title,
@@ -23,11 +23,7 @@ export function Section({
             {icon}
             {title}
           </h2>
-          <AltArrowRight
-            size={14}
-            weight="Linear"
-            className="text-muted-foreground/50 transition-transform duration-150 ease-out group-hover:translate-x-0.5 group-hover:text-foreground"
-          />
+          <IconSectionLink className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-150 ease-out group-hover:translate-x-0.5 group-hover:text-foreground" />
         </Link>
       ) : (
         <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">

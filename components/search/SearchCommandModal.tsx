@@ -4,26 +4,30 @@ import * as React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { Layers, Pen, UserCircle } from '@solar-icons/react'
 import {
-  Check,
-  ExternalLink,
-  FolderOpen,
-  Home,
-  MessageSquare,
-  Monitor,
-  Moon,
-  Sparkles,
-  Sun,
-  Volume2,
-  VolumeX,
-  X,
-} from 'lucide-react'
+  IconCheck,
+  IconClose,
+  IconExternalLink,
+  IconFolderOpen,
+  IconHome,
+  IconLayers,
+  IconMessage,
+  IconPen,
+  IconSparkles,
+  IconThemeDark,
+  IconThemeLight,
+  IconThemeSystem,
+  IconUser,
+  IconVolumeOff,
+  IconVolumeOn,
+} from '@/components/site-icons'
 
 import { useGradientWord } from '@/components/gradient-word-context'
 import { EmailIcon, socialIconMap } from '@/components/social-icons'
 import { useIsMobile } from '@/hooks/use-mobile'
+import type { NotionWritingPost } from '@/lib/notion'
 import { portfolioData } from '@/lib/portfolio-data'
+import useSWR from 'swr'
 import { cn } from '@/lib/utils'
 import {
   Command,
@@ -62,17 +66,9 @@ type PaletteItem = {
   active?: boolean
 }
 
-function AboutIcon({ className }: { className?: string }) {
-  return <UserCircle size={16} weight="Bold" className={className} />
-}
-
-function ToolsIcon({ className }: { className?: string }) {
-  return <Layers size={16} weight="Bold" className={className} />
-}
-
-function WritingIcon({ className }: { className?: string }) {
-  return <Pen size={16} weight="Bold" className={className} />
-}
+const AboutIcon = IconUser
+const ToolsIcon = IconLayers
+const WritingIcon = IconPen
 
 const staticItems: PaletteItem[] = [
   {
@@ -82,7 +78,7 @@ const staticItems: PaletteItem[] = [
     href: '/',
     keywords: 'home portfolio gage minamoto',
     group: 'Navigation',
-    icon: Home,
+    icon: IconHome,
   },
   {
     id: 'about',
@@ -121,19 +117,47 @@ const projectItems: PaletteItem[] = portfolioData.projects.map((project) => ({
   keywords: `${project.name} ${project.description} ${project.status}`,
   group: 'Projects',
   external: Boolean(project.url),
-  icon: project.favicon ? undefined : FolderOpen,
+  icon: project.favicon ? undefined : IconFolderOpen,
   iconSrc: project.favicon,
 }))
 
-const writingItems: PaletteItem[] = portfolioData.writing.map((post) => ({
-  id: `writing-${post.slug}`,
-  title: post.title,
-  description: 'Writing post',
-  href: `/writing/${post.slug}`,
-  keywords: `${post.title} ${post.slug} writing post blog article`,
-  group: 'Writing',
-  icon: WritingIcon,
-}))
+const writingResourceItems: PaletteItem[] = [
+  {
+    id: 'early-design-resources',
+    title: 'Early design resources',
+    description: 'Curated reading list for people new to design',
+    href: '/early-design',
+    keywords:
+      'early design resources reading list beginner starter craft interface',
+    group: 'Writing',
+    icon: WritingIcon,
+  },
+]
+
+async function fetchWritingPosts(url: string): Promise<{ posts: NotionWritingPost[] }> {
+  const response = await fetch(url)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? 'Failed to fetch writing posts')
+  }
+
+  return data
+}
+
+function buildWritingItems(posts: NotionWritingPost[]): PaletteItem[] {
+  if (!Array.isArray(posts)) return []
+
+  return posts.map((post) => ({
+    id: `writing-${post.slug}`,
+    title: post.title,
+    description: 'Writing post',
+    href: `/writing/${post.slug}`,
+    keywords: `${post.title} ${post.slug} writing post blog article`,
+    group: 'Writing',
+    icon: WritingIcon,
+  }))
+}
 
 const quickActionItems: PaletteItem[] = [
   {
@@ -154,22 +178,27 @@ const quickActionItems: PaletteItem[] = [
     keywords: `${social.platform} ${social.label} social profile contact`,
     group: 'Social' as const,
     external: true,
-    icon: socialIconMap[social.platform] ?? MessageSquare,
+    icon: socialIconMap[social.platform] ?? IconMessage,
   })),
 ]
 
 const allItems = [
   ...staticItems,
   ...projectItems,
-  ...writingItems,
+  ...writingResourceItems,
   ...quickActionItems,
 ]
 
 function openHref(item: PaletteItem, router: ReturnType<typeof useRouter>) {
   if (!item.href) return
 
-  if (item.href.startsWith('mailto:') || item.external) {
+  if (item.href.startsWith('mailto:')) {
     window.location.href = item.href
+    return
+  }
+
+  if (item.external) {
+    window.open(item.href, '_blank', 'noopener,noreferrer')
     return
   }
 
@@ -196,9 +225,9 @@ function PaletteItemRow({ item, onSelect }: { item: PaletteItem; onSelect: () =>
         <span className="block truncate text-sm font-medium text-foreground">{item.title}</span>
       </span>
       {item.external ? (
-        <ExternalLink className="size-3.5 text-muted-foreground/60" />
+        <IconExternalLink className="size-3.5 text-muted-foreground/60" />
       ) : item.active ? (
-        <Check className="size-3.5 text-primary" />
+        <IconCheck className="size-3.5 text-primary" />
       ) : null}
     </CommandItem>
   )
@@ -208,6 +237,15 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
   const router = useRouter()
   const { theme, setTheme } = useTheme()
   const { shaderEnabled, setShaderEnabled, soundEnabled, setSoundEnabled } = useGradientWord()
+  const { data } = useSWR<{ posts: NotionWritingPost[] }>(
+    '/api/writing',
+    fetchWritingPosts,
+    { revalidateOnFocus: false },
+  )
+  const writingItems = React.useMemo(
+    () => buildWritingItems(data?.posts ?? []),
+    [data?.posts],
+  )
 
   const settingsItems = React.useMemo<PaletteItem[]>(
     () => [
@@ -217,7 +255,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Use the bright portfolio theme',
         keywords: 'theme light bright appearance display',
         group: 'Settings',
-        icon: Sun,
+        icon: IconThemeLight,
         action: () => setTheme('light'),
         active: theme === 'light',
       },
@@ -227,7 +265,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Use the dark portfolio theme',
         keywords: 'theme dark night appearance display',
         group: 'Settings',
-        icon: Moon,
+        icon: IconThemeDark,
         action: () => setTheme('dark'),
         active: theme === 'dark',
       },
@@ -237,7 +275,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Follow the device theme',
         keywords: 'theme system auto device appearance display',
         group: 'Settings',
-        icon: Monitor,
+        icon: IconThemeSystem,
         action: () => setTheme('system'),
         active: theme === 'system',
       },
@@ -247,7 +285,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Toggle gradient and cursor effects',
         keywords: 'effects shader gradient cursor animation motion toggle visual',
         group: 'Settings',
-        icon: Sparkles,
+        icon: IconSparkles,
         action: () => setShaderEnabled(!shaderEnabled),
         active: shaderEnabled,
       },
@@ -257,7 +295,7 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
         description: 'Toggle interface click sounds',
         keywords: 'sound audio clicks mute volume toggle',
         group: 'Settings',
-        icon: soundEnabled ? Volume2 : VolumeX,
+        icon: soundEnabled ? IconVolumeOn : IconVolumeOff,
         action: () => setSoundEnabled(!soundEnabled),
         active: soundEnabled,
       },
@@ -268,14 +306,21 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
   const visibleGroups = React.useMemo(() => {
     const groups = new Map<PaletteItem['group'], PaletteItem[]>()
 
-    for (const item of [...staticItems, ...projectItems, ...writingItems, ...settingsItems, ...quickActionItems]) {
+    for (const item of [
+      ...staticItems,
+      ...projectItems,
+      ...writingResourceItems,
+      ...writingItems,
+      ...settingsItems,
+      ...quickActionItems,
+    ]) {
       const current = groups.get(item.group) ?? []
       current.push(item)
       groups.set(item.group, current)
     }
 
     return groups
-  }, [settingsItems])
+  }, [settingsItems, writingItems])
 
   const handleSelect = React.useCallback(
     (item: PaletteItem) => {
@@ -312,14 +357,23 @@ function CommandListContent({ search, close }: { search: string; close: () => vo
   )
 }
 
-function SearchInputWithClear({ search, setSearch }: { search: string; setSearch: (value: string) => void }) {
+function SearchInputWithClear({
+  search,
+  setSearch,
+  inputWrapperClassName,
+}: {
+  search: string
+  setSearch: (value: string) => void
+  inputWrapperClassName?: string
+}) {
   return (
-    <div className="relative">
+    <div className="relative w-full min-w-0 self-stretch">
       <CommandInput
         value={search}
         onValueChange={setSearch}
         placeholder="Find the good stuff"
-        className="pr-8"
+        wrapperClassName={inputWrapperClassName}
+        className="min-w-0 flex-1 pr-8"
       />
       {search.length > 0 && (
         <button
@@ -328,7 +382,7 @@ function SearchInputWithClear({ search, setSearch }: { search: string; setSearch
           onClick={() => setSearch('')}
           className="absolute right-3 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          <X className="size-3.5" />
+          <IconClose className="size-3.5" />
         </button>
       )}
     </div>
@@ -362,12 +416,18 @@ export function SearchCommandModal({ open, onOpenChange }: SearchCommandModalPro
                 aria-label="Close search"
                 className="flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                <X className="size-4" />
+                <IconClose className="size-4" />
               </button>
             </DrawerClose>
           </div>
-          <Command className="rounded-none border-t bg-background">
-            <SearchInputWithClear search={search} setSearch={setSearch} />
+          <Command className="flex w-full min-w-0 max-w-none flex-col items-stretch rounded-none border-t bg-background">
+            <div className="w-full shrink-0 border-b px-4">
+              <SearchInputWithClear
+                search={search}
+                setSearch={setSearch}
+                inputWrapperClassName="h-12 border-0 px-0"
+              />
+            </div>
             <CommandListContent search={search} close={close} />
           </Command>
         </DrawerContent>

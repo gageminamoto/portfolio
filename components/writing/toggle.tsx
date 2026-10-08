@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronRight } from "lucide-react"
+import { IconChevronRight } from "@/components/site-icons"
 import type { NotionBlock } from "@/lib/notion"
 import { RichText } from "./rich-text"
 import { BlocksRenderer } from "./blocks-renderer"
@@ -24,7 +24,7 @@ export function Toggle({ block }: ArticleToggleProps) {
         aria-expanded={open}
         className="flex w-full items-center gap-2 p-3 text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none rounded-lg"
       >
-        <ChevronRight
+        <IconChevronRight
           className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150 ease-out ${
             open ? "rotate-90" : ""
           }`}
