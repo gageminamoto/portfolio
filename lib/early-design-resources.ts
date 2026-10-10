@@ -35,6 +35,10 @@ export const earlyDesignResources: EarlyDesignResource[] = [
     title: "Emil Kowalski post",
     url: "https://x.com/emilkowalski/status/1765004718131068971",
   },
+  {
+    title: "Train Your Judgement",
+    url: "https://emilkowal.ski/ui/train-your-judgement",
+  },
 ]
 
 export function getResourceHost(url: string): string {
