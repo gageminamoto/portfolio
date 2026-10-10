@@ -36,7 +36,7 @@ export const earlyDesignResources: EarlyDesignResource[] = [
     url: "https://x.com/emilkowalski/status/1765004718131068971",
   },
   {
-    title: "Train your Judgement",
+    title: "Train Your Judgement",
     url: "https://emilkowal.ski/ui/train-your-judgement",
   },
 ]
