@@ -45,7 +45,9 @@ export function EarlyDesignPage() {
   const [desktopNoteEnabled, setDesktopNoteEnabled] = useState(false)
 
   useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)")
+    const mql = window.matchMedia(
+      "(min-width: 1024px) and (hover: hover) and (pointer: fine)",
+    )
     const update = () => setDesktopNoteEnabled(mql.matches)
     update()
     mql.addEventListener("change", update)
@@ -125,7 +127,7 @@ export function EarlyDesignPage() {
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24 lg:ml-[max(1.5rem,calc(50vw-18rem-var(--early-design-note-width)/2))] lg:mr-auto"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
       style={motionStyle}
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
@@ -188,7 +190,7 @@ export function EarlyDesignPage() {
                     className={resource.url ? linkRowClass : undefined}
                   />
                   {resource.note ? (
-                    <div className="lg:hidden">
+                    <div className="hover-note:hidden">
                       <button
                         type="button"
                         className="-mt-1 mb-2 flex w-full items-center gap-1.5 rounded-md py-1.5 pl-0 text-left text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"

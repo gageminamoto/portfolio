@@ -62,7 +62,7 @@ export function EarlyDesignHoverNote({
               y: { duration: enterDurationSec, ease },
             }
       }
-      className="pointer-events-none absolute left-full z-10 box-border hidden w-[var(--early-design-note-width)] pl-[var(--early-design-note-offset-x)] text-sm leading-relaxed text-muted-foreground lg:block"
+      className="pointer-events-none absolute left-full z-10 box-border hidden w-[min(var(--early-design-note-width),calc(50vw-18rem-1rem))] pl-[var(--early-design-note-offset-x)] text-sm leading-relaxed text-muted-foreground hover-note:block"
       style={{
         top: topPx,
         transition: shouldReduceMotion

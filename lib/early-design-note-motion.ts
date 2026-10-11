@@ -16,7 +16,7 @@ export const EARLY_DESIGN_NOTE_MOTION = {
   exitOffsetXRatio: 0.33,
   /** Extra vertical nudge from the row top (px). */
   offsetY: 0,
-  /** Width of the desktop note column (px); list + note share a wider page on lg. */
+  /** Max width of the note in the right margin (px). Actual width also fits the margin. */
   noteWidthPx: 400,
   /** Delay before hiding when the pointer leaves the list (ms). */
   hideGraceMs: 75,
