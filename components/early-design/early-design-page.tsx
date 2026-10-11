@@ -14,6 +14,7 @@ import {
 import {
   EARLY_DESIGN_NOTE_CSS_VARS,
   EARLY_DESIGN_NOTE_MOTION,
+  getEarlyDesignRowTransitionMs,
 } from "@/lib/early-design-note-motion"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 
@@ -28,7 +29,18 @@ export function EarlyDesignPage() {
   const listRef = useRef<HTMLUListElement>(null)
   const listAnchorRef = useRef<HTMLDivElement>(null)
   const rowRefs = useRef<(HTMLLIElement | null)[]>([])
-  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [hoverRows, setHoverRows] = useState<{
+    activeIndex: number | null
+    prevActiveIndex: number | null
+  }>({ activeIndex: null, prevActiveIndex: null })
+  const { activeIndex, prevActiveIndex } = hoverRows
+
+  const setActiveRow = (next: number | null) => {
+    setHoverRows(({ activeIndex: current }) => ({
+      prevActiveIndex: current,
+      activeIndex: next,
+    }))
+  }
   const [noteTopPx, setNoteTopPx] = useState(0)
   const [desktopNoteEnabled, setDesktopNoteEnabled] = useState(false)
 
@@ -76,14 +88,14 @@ export function EarlyDesignPage() {
 
   const clearActive = () => {
     cancelHideGrace()
-    setActiveIndex(null)
+    setActiveRow(null)
   }
 
   const scheduleClearActive = () => {
     cancelHideGrace()
     hideGraceTimerRef.current = setTimeout(() => {
       hideGraceTimerRef.current = null
-      setActiveIndex(null)
+      setActiveRow(null)
     }, EARLY_DESIGN_NOTE_MOTION.hideGraceMs)
   }
 
@@ -91,7 +103,7 @@ export function EarlyDesignPage() {
 
   const handleRowMouseEnter = (index: number) => {
     cancelHideGrace()
-    setActiveIndex(index)
+    setActiveRow(index)
   }
 
   const handleListMouseLeave = (event: React.MouseEvent<HTMLUListElement>) => {
@@ -158,6 +170,11 @@ export function EarlyDesignPage() {
                 activeIndex != null &&
                 !shouldReduceMotion
               const dimmed = spotlight && !isActive
+              const rowTransitionMs = getEarlyDesignRowTransitionMs(
+                index,
+                activeIndex,
+                prevActiveIndex,
+              )
 
               return (
                 <li
@@ -175,7 +192,7 @@ export function EarlyDesignPage() {
                     opacity: dimmed
                       ? EARLY_DESIGN_NOTE_MOTION.rowDimOpacity
                       : 1,
-                    transitionDuration: `${EARLY_DESIGN_NOTE_MOTION.enterDurationMs}ms`,
+                    transitionDuration: `${rowTransitionMs}ms`,
                     transitionTimingFunction: `cubic-bezier(${EARLY_DESIGN_NOTE_MOTION.ease.join(", ")})`,
                   }}
                 >
