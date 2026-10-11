@@ -10,6 +10,7 @@ interface ListRowProps {
   rel?: string
   icon?: ReactNode
   name: ReactNode
+  description?: ReactNode
   meta?: ReactNode
   variants?: Parameters<typeof motion.a>[0]["variants"]
   style?: CSSProperties
@@ -23,6 +24,7 @@ export function ListRow({
   rel,
   icon,
   name,
+  description,
   meta,
   variants,
   style,
@@ -37,12 +39,29 @@ export function ListRow({
     className,
   )
 
+  const nameBlock =
+    description != null && description !== "" ? (
+      <div className="min-w-0 flex-1 flex flex-col gap-0.5">
+        <span className="text-sm font-medium text-foreground">{name}</span>
+        <span className="text-xs leading-snug text-muted-foreground [text-wrap:pretty]">
+          {description}
+        </span>
+      </div>
+    ) : (
+      <span className="shrink-0 text-sm font-medium text-foreground">{name}</span>
+    )
+
   const inner = (
     <>
       {icon}
-      <span className="shrink-0 text-sm font-medium text-foreground">{name}</span>
+      {nameBlock}
       {meta != null && (
-        <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
+        <span
+          className={cn(
+            "min-w-0 shrink truncate text-right text-xs text-muted-foreground",
+            description != null && description !== "" ? "self-start" : "flex-1",
+          )}
+        >
           {meta}
         </span>
       )}
