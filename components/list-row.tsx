@@ -10,6 +10,8 @@ interface ListRowProps {
   rel?: string
   icon?: ReactNode
   name: ReactNode
+  /** Muted secondary line under the title (e.g. early-design resource notes). */
+  description?: ReactNode
   meta?: ReactNode
   variants?: Parameters<typeof motion.a>[0]["variants"]
   style?: CSSProperties
@@ -23,6 +25,7 @@ export function ListRow({
   rel,
   icon,
   name,
+  description,
   meta,
   variants,
   style,
@@ -30,7 +33,8 @@ export function ListRow({
   "aria-label": ariaLabel,
 }: ListRowProps) {
   const rowClass = cn(
-    "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] motion-reduce:transition-none",
+    "flex gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] motion-reduce:transition-none",
+    description != null ? "items-start" : "items-center",
     href
       ? "hover:bg-muted hover:px-3 focus-within:bg-muted focus-within:px-3 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       : "hover:bg-muted hover:px-3",
@@ -40,9 +44,27 @@ export function ListRow({
   const inner = (
     <>
       {icon}
-      <span className="shrink-0 text-sm font-medium text-foreground">{name}</span>
+      {description != null ? (
+        <div className="min-w-0 flex-1">
+          <span className="text-sm font-medium text-foreground">{name}</span>
+          <p className="mt-0.5 text-pretty text-xs leading-snug text-muted-foreground">
+            {description}
+          </p>
+        </div>
+      ) : (
+        <span className="shrink-0 text-sm font-medium text-foreground">
+          {name}
+        </span>
+      )}
       {meta != null && (
-        <span className="min-w-0 flex-1 truncate text-right text-xs text-muted-foreground">
+        <span
+          className={cn(
+            "min-w-0 truncate text-right text-xs text-muted-foreground",
+            description != null
+              ? "max-w-[42%] shrink-0 pt-0.5"
+              : "flex-1",
+          )}
+        >
           {meta}
         </span>
       )}
