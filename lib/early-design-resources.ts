@@ -32,12 +32,20 @@ export const earlyDesignResources: EarlyDesignResource[] = [
     url: "https://paulgraham.com/greatwork.html",
   },
   {
-    title: "Emil Kowalski post",
+    title: "Ira Glass on Taste",
     url: "https://x.com/emilkowalski/status/1765004718131068971",
   },
   {
     title: "Train Your Judgement",
     url: "https://emilkowal.ski/ui/train-your-judgement",
+  },
+  {
+    title: "Skills for Designers and Engineers",
+    url: "https://github.com/emilkowalski/skills",
+  },
+  {
+    title: "Why is quality so rare?",
+    url: "https://linear.app/now/why-is-quality-so-rare",
   },
 ]
 
