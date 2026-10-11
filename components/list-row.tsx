@@ -15,6 +15,7 @@ interface ListRowProps {
   style?: CSSProperties
   className?: string
   "aria-label"?: string
+  "aria-describedby"?: string
 }
 
 export function ListRow({
@@ -28,6 +29,7 @@ export function ListRow({
   style,
   className,
   "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedBy,
 }: ListRowProps) {
   const rowClass = cn(
     "flex items-center gap-3 rounded-lg px-0 py-3 transition-[padding,background-color] motion-reduce:transition-none",
@@ -61,6 +63,7 @@ export function ListRow({
           className={rowClass}
           style={style}
           aria-label={ariaLabel}
+          aria-describedby={ariaDescribedBy}
         >
           {inner}
         </motion.a>
@@ -76,6 +79,7 @@ export function ListRow({
         className={rowClass}
         style={style}
         aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
       >
         {inner}
       </a>
