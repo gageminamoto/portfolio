@@ -20,3 +20,11 @@ Use [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) as th
 - **Open questions:** Mention them only when reviewers need to decide something.
 
 Do not add extra checklist sections to the PR body unless the team asks for them.
+
+## Cursor Cloud specific instructions
+
+- Install dependencies with `npm ci`. `package-lock.json` matches `package.json`. `pnpm-lock.yaml` is older and should not be used for setup.
+- Start the site with `npm run dev`. Next.js 16 listens on `0.0.0.0:3000` by default.
+- Checks that exist: `npm run lint` and `npm run build`. There is no automated test script.
+- Writing and tools load from Notion. Without `NOTION_API_KEY`, `NOTION_BLOG_DATABASE_ID`, and `NOTION_TOOLS_DATABASE_ID`, those pages still render, with empty writing and tools lists. The homepage, about page, work case studies, and early design page do not need those keys. `GITHUB_TOKEN` is optional; the public GitHub API is enough for the commit footer.
+- In development, Agentation tries to reach `http://localhost:4747`. A connection error in the browser console is expected when that helper is not running.
