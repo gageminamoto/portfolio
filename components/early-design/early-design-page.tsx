@@ -227,7 +227,7 @@ export function EarlyDesignPage() {
             })}
           </ul>
 
-          <AnimatePresence initial={false}>
+          <AnimatePresence>
             {activeNote && activeIndex != null ? (
               <EarlyDesignHoverNote
                 key="desktop-hover-note"

@@ -21,6 +21,7 @@ export function EarlyDesignHoverNote({
     enterDurationSec,
     exitDurationSec,
     swapDurationSec,
+    swapDurationMs,
     ease,
     offsetX,
     offsetY,
@@ -30,6 +31,7 @@ export function EarlyDesignHoverNote({
 
   const enterOffset = offsetX * enterOffsetXRatio
   const exitOffset = offsetX * exitOffsetXRatio
+  const easeCss = `cubic-bezier(${ease.join(", ")})`
 
   return (
     <motion.p
@@ -39,9 +41,9 @@ export function EarlyDesignHoverNote({
       initial={
         shouldReduceMotion
           ? false
-          : { opacity: 0, x: enterOffset, y: offsetY, top: topPx }
+          : { opacity: 0, x: enterOffset, y: offsetY }
       }
-      animate={{ opacity: 1, x: 0, y: offsetY, top: topPx }}
+      animate={{ opacity: 1, x: 0, y: offsetY }}
       exit={
         shouldReduceMotion
           ? undefined
@@ -58,26 +60,33 @@ export function EarlyDesignHoverNote({
               opacity: { duration: enterDurationSec, ease },
               x: { duration: enterDurationSec, ease },
               y: { duration: enterDurationSec, ease },
-              top: { duration: swapDurationSec, ease },
             }
       }
       className="pointer-events-none absolute left-full z-10 hidden max-w-[var(--early-design-note-max-width)] text-pretty pl-[var(--early-design-note-offset-x)] text-sm leading-relaxed text-muted-foreground lg:block"
+      style={{
+        top: topPx,
+        transition: shouldReduceMotion
+          ? undefined
+          : `top ${swapDurationMs}ms ${easeCss}`,
+      }}
     >
-      <AnimatePresence mode="sync" initial={false}>
-        <motion.span
-          key={rowKey}
-          initial={shouldReduceMotion ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: shouldReduceMotion ? 0 : swapDurationSec,
-            ease,
-          }}
-          className="block"
-        >
-          {note}
-        </motion.span>
-      </AnimatePresence>
+      <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
+        <AnimatePresence mode="sync" initial={false}>
+          <motion.span
+            key={rowKey}
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: shouldReduceMotion ? 0 : swapDurationSec,
+              ease,
+            }}
+            className="block min-w-0"
+          >
+            {note}
+          </motion.span>
+        </AnimatePresence>
+      </span>
     </motion.p>
   )
 }
