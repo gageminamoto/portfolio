@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant hover-note (@media (min-width: 1024px) and (hover: hover) and (pointer: fine));
 
 @property --scroll-fade-t {
   syntax: "<length-percentage>";

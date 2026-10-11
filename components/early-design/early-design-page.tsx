@@ -45,7 +45,9 @@ export function EarlyDesignPage() {
   const [desktopNoteEnabled, setDesktopNoteEnabled] = useState(false)
 
   useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)")
+    const mql = window.matchMedia(
+      "(min-width: 1024px) and (hover: hover) and (pointer: fine)",
+    )
     const update = () => setDesktopNoteEnabled(mql.matches)
     update()
     mql.addEventListener("change", update)
@@ -75,12 +77,39 @@ export function EarlyDesignPage() {
     return () => window.removeEventListener("resize", onResize)
   }, [activeIndex])
 
-  const clearActive = () => setActiveIndex(null)
+  const hideGraceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const cancelHideGrace = () => {
+    if (hideGraceTimerRef.current != null) {
+      clearTimeout(hideGraceTimerRef.current)
+      hideGraceTimerRef.current = null
+    }
+  }
+
+  const clearActive = () => {
+    cancelHideGrace()
+    setActiveIndex(null)
+  }
+
+  const scheduleClearActive = () => {
+    cancelHideGrace()
+    hideGraceTimerRef.current = setTimeout(() => {
+      hideGraceTimerRef.current = null
+      setActiveIndex(null)
+    }, EARLY_DESIGN_NOTE_MOTION.hideGraceMs)
+  }
+
+  useEffect(() => () => cancelHideGrace(), [])
+
+  const handleRowMouseEnter = (index: number) => {
+    cancelHideGrace()
+    setActiveIndex(index)
+  }
 
   const handleListMouseLeave = (event: React.MouseEvent<HTMLUListElement>) => {
     const next = event.relatedTarget
     if (next instanceof Node && listRef.current?.contains(next)) return
-    clearActive()
+    scheduleClearActive()
   }
 
   const handleListFocusOut = (event: React.FocusEvent<HTMLUListElement>) => {
@@ -91,14 +120,15 @@ export function EarlyDesignPage() {
 
   const motionStyle = {
     [EARLY_DESIGN_NOTE_CSS_VARS.offsetX]: `${EARLY_DESIGN_NOTE_MOTION.offsetX}px`,
-    [EARLY_DESIGN_NOTE_CSS_VARS.duration]: `${EARLY_DESIGN_NOTE_MOTION.durationMs}ms`,
-    [EARLY_DESIGN_NOTE_CSS_VARS.maxWidth]: `${EARLY_DESIGN_NOTE_MOTION.maxWidthPx}px`,
+    [EARLY_DESIGN_NOTE_CSS_VARS.duration]: `${EARLY_DESIGN_NOTE_MOTION.enterDurationMs}ms`,
+    [EARLY_DESIGN_NOTE_CSS_VARS.width]: `${EARLY_DESIGN_NOTE_MOTION.noteWidthPx}px`,
   } as React.CSSProperties
 
   return (
     <motion.main
       id="main-content"
       className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      style={motionStyle}
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -117,14 +147,11 @@ export function EarlyDesignPage() {
       </motion.div>
 
       <motion.div variants={item}>
-        <div
-          ref={listAnchorRef}
-          className="relative"
-          style={motionStyle}
-        >
+        <div ref={listAnchorRef} className="relative w-full">
           <ul
             ref={listRef}
             className="flex flex-col"
+            onMouseEnter={cancelHideGrace}
             onMouseLeave={handleListMouseLeave}
             onFocusOut={handleListFocusOut}
           >
@@ -146,8 +173,8 @@ export function EarlyDesignPage() {
                   ref={(node) => {
                     rowRefs.current[index] = node
                   }}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onFocusCapture={() => setActiveIndex(index)}
+                  onMouseEnter={() => handleRowMouseEnter(index)}
+                  onFocusCapture={() => handleRowMouseEnter(index)}
                 >
                   <ListRow
                     href={resource.url}
@@ -163,7 +190,7 @@ export function EarlyDesignPage() {
                     className={resource.url ? linkRowClass : undefined}
                   />
                   {resource.note ? (
-                    <div className="lg:hidden">
+                    <div className="hover-note:hidden">
                       <button
                         type="button"
                         className="-mt-1 mb-2 flex w-full items-center gap-1.5 rounded-md py-1.5 pl-0 text-left text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -199,10 +226,11 @@ export function EarlyDesignPage() {
             })}
           </ul>
 
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {activeNote && activeIndex != null ? (
               <EarlyDesignHoverNote
-                key={activeIndex}
+                key="desktop-hover-note"
+                rowKey={activeIndex}
                 note={activeNote}
                 topPx={noteTopPx}
                 noteId={HOVER_NOTE_ID}
