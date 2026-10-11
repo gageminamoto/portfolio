@@ -47,6 +47,7 @@ export function EarlyDesignPage() {
                 href={resource.url}
                 external={Boolean(resource.url)}
                 name={resource.title}
+                description={resource.note}
                 meta={
                   resource.url ? getResourceHost(resource.url) : undefined
                 }
