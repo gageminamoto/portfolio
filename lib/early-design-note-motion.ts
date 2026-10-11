@@ -20,6 +20,10 @@ export const EARLY_DESIGN_NOTE_MOTION = {
   noteWidthPx: 400,
   /** Delay before hiding when the pointer leaves the list (ms). */
   hideGraceMs: 75,
+  /** Blur on rows that are not under the pointer (px). */
+  rowBlurPx: 1.5,
+  /** Opacity of rows that are not under the pointer. */
+  rowDimOpacity: 0.4,
 } as const
 
 export const EARLY_DESIGN_NOTE_CSS_VARS = {

@@ -167,6 +167,12 @@ export function EarlyDesignPage() {
                   ? HOVER_NOTE_ID
                   : undefined
 
+              const spotlight =
+                desktopNoteEnabled &&
+                activeIndex != null &&
+                !shouldReduceMotion
+              const dimmed = spotlight && !isActive
+
               return (
                 <li
                   key={resource.title}
@@ -175,6 +181,17 @@ export function EarlyDesignPage() {
                   }}
                   onMouseEnter={() => handleRowMouseEnter(index)}
                   onFocusCapture={() => handleRowMouseEnter(index)}
+                  className="transition-[filter,opacity] motion-reduce:transition-none"
+                  style={{
+                    filter: dimmed
+                      ? `blur(${EARLY_DESIGN_NOTE_MOTION.rowBlurPx}px)`
+                      : "none",
+                    opacity: dimmed
+                      ? EARLY_DESIGN_NOTE_MOTION.rowDimOpacity
+                      : 1,
+                    transitionDuration: `${EARLY_DESIGN_NOTE_MOTION.enterDurationMs}ms`,
+                    transitionTimingFunction: `cubic-bezier(${EARLY_DESIGN_NOTE_MOTION.ease.join(", ")})`,
+                  }}
                 >
                   <ListRow
                     href={resource.url}
