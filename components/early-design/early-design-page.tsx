@@ -125,7 +125,8 @@ export function EarlyDesignPage() {
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24 lg:max-w-5xl"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24 lg:ml-[max(1.5rem,calc(50vw-18rem-var(--early-design-note-width)/2))] lg:mr-auto"
+      style={motionStyle}
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -144,11 +145,7 @@ export function EarlyDesignPage() {
       </motion.div>
 
       <motion.div variants={item}>
-        <div
-          ref={listAnchorRef}
-          className="relative w-full max-w-xl"
-          style={motionStyle}
-        >
+        <div ref={listAnchorRef} className="relative w-full">
           <ul
             ref={listRef}
             className="flex flex-col"
