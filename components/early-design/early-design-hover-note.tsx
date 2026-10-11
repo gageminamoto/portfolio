@@ -62,7 +62,7 @@ export function EarlyDesignHoverNote({
               y: { duration: enterDurationSec, ease },
             }
       }
-      className="pointer-events-none absolute left-full z-10 hidden max-w-[var(--early-design-note-max-width)] text-pretty pl-[var(--early-design-note-offset-x)] text-sm leading-relaxed text-muted-foreground lg:block"
+      className="pointer-events-none absolute left-full z-10 box-border hidden w-[var(--early-design-note-width)] pl-[var(--early-design-note-offset-x)] text-sm leading-relaxed text-muted-foreground lg:block"
       style={{
         top: topPx,
         transition: shouldReduceMotion
@@ -70,7 +70,7 @@ export function EarlyDesignHoverNote({
           : `top ${swapDurationMs}ms ${easeCss}`,
       }}
     >
-      <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
+      <span className="grid w-full [&>*]:col-start-1 [&>*]:row-start-1">
         <AnimatePresence mode="sync" initial={false}>
           <motion.span
             key={rowKey}
@@ -81,7 +81,7 @@ export function EarlyDesignHoverNote({
               duration: shouldReduceMotion ? 0 : swapDurationSec,
               ease,
             }}
-            className="block min-w-0"
+            className="block w-full"
           >
             {note}
           </motion.span>

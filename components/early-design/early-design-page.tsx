@@ -119,13 +119,13 @@ export function EarlyDesignPage() {
   const motionStyle = {
     [EARLY_DESIGN_NOTE_CSS_VARS.offsetX]: `${EARLY_DESIGN_NOTE_MOTION.offsetX}px`,
     [EARLY_DESIGN_NOTE_CSS_VARS.duration]: `${EARLY_DESIGN_NOTE_MOTION.enterDurationMs}ms`,
-    [EARLY_DESIGN_NOTE_CSS_VARS.maxWidth]: `${EARLY_DESIGN_NOTE_MOTION.maxWidthPx}px`,
+    [EARLY_DESIGN_NOTE_CSS_VARS.width]: `${EARLY_DESIGN_NOTE_MOTION.noteWidthPx}px`,
   } as React.CSSProperties
 
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24 lg:max-w-5xl"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
@@ -146,7 +146,7 @@ export function EarlyDesignPage() {
       <motion.div variants={item}>
         <div
           ref={listAnchorRef}
-          className="relative"
+          className="relative w-full max-w-xl"
           style={motionStyle}
         >
           <ul
