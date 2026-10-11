@@ -17,7 +17,7 @@ export const EARLY_DESIGN_NOTE_MOTION = {
   /** Extra vertical nudge from the row top (px). */
   offsetY: 0,
   /** Max width of the note column (px). */
-  maxWidthPx: 256,
+  maxWidthPx: 420,
   /** Delay before hiding when the pointer leaves the list (ms). */
   hideGraceMs: 75,
 } as const
