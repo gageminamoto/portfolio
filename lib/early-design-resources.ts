@@ -8,34 +8,34 @@ export const earlyDesignResources: EarlyDesignResource[] = [
   {
     title: "Interface Craft",
     url: "https://interfacecraft.dev/",
-    note: "Interface craft is a must for early and experienced designers. There’s a level of craft all designers should strive for, and this course showcases practical lessons in how to do so.",
+    note: "Interface craft is a must for early and experienced designers. There’s a level of craft all designers should strive for, and this course shares practical lessons on how to get there.",
   },
   {
     title: "Design of Everyday Things",
     url: "https://dn790006.ca.archive.org/0/items/pdfy-9Bb1XUCNFvb5HrMP/Design%20of%20Everyday%20Things_text.pdf",
-    note: "Has been the go-to book for designers and a good overview of the field as a whole.",
+    note: "The go-to book for designers and a good overview of the field as a whole.",
   },
   {
     title: "Linear Method – Practices for building",
     url: "https://linear.app/method",
-    note: "I believe Linear has innovated on simple but hard to master approach for building amazing product.",
+    note: "I believe Linear has innovated on a simple but hard-to-master approach to building great products.",
   },
   {
     title: "Family Values",
     url: "https://benji.org/family-values",
-    note: "Family is regarded as an app that went above and beyond industry in terms of simplistic delight. Learns Benji and his team's design principle in creating such a wonderful experience.",
+    note: "Family is regarded as an app that went above and beyond the industry in simple delight. Learn Benji and his team's design principles for creating such a wonderful experience.",
   },
   { title: "Developing taste", url: "https://emilkowal.ski/ui/developing-taste" },
   {
     title: "Output isn't design",
     url: "https://linear.app/now/output-isn-t-design",
-    note: "For me this is something I revisit on regular basis. It's a reminder where the designer value lies and that especially important as designs reach sky rocket as output becomes more and more democratized.",
+    note: "This is something I revisit regularly. It's a reminder of where a designer's value lies, which matters even more as output becomes more and more democratized.",
   },
   { title: "Novelty", url: "https://rauno.me/craft/novelty" },
   {
     title: "Animating in public",
     url: "https://emilkowal.ski/ui/animating-in-public",
-    note: "Like we share in our talk, Impossible to Ignore, many of the opportunities I've gotten today have come from being curious and sharing that passion with others.",
+    note: "Like we shared in our talk, Impossible to Ignore, many of the opportunities I've gotten came from being curious and sharing that passion with others.",
   },
   {
     title: "How to Do Great Work",
