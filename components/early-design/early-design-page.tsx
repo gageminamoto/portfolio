@@ -165,16 +165,15 @@ export function EarlyDesignPage() {
                   ? HOVER_NOTE_ID
                   : undefined
 
-              const spotlight =
-                desktopNoteEnabled &&
-                activeIndex != null &&
-                !shouldReduceMotion
-              const dimmed = spotlight && !isActive
-              const rowTransitionMs = getEarlyDesignRowTransitionMs(
-                index,
-                activeIndex,
-                prevActiveIndex,
-              )
+              const dimmed =
+                desktopNoteEnabled && activeIndex != null && !isActive
+              const rowTransitionMs = shouldReduceMotion
+                ? 0
+                : getEarlyDesignRowTransitionMs(
+                    index,
+                    activeIndex,
+                    prevActiveIndex,
+                  )
 
               return (
                 <li
@@ -184,11 +183,8 @@ export function EarlyDesignPage() {
                   }}
                   onMouseEnter={() => handleRowMouseEnter(index)}
                   onFocusCapture={() => handleRowMouseEnter(index)}
-                  className="transition-[filter,opacity] motion-reduce:transition-none"
+                  className="transition-opacity motion-reduce:transition-none"
                   style={{
-                    filter: dimmed
-                      ? `blur(${EARLY_DESIGN_NOTE_MOTION.rowBlurPx}px)`
-                      : "none",
                     opacity: dimmed
                       ? EARLY_DESIGN_NOTE_MOTION.rowDimOpacity
                       : 1,
