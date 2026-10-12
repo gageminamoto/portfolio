@@ -4,8 +4,8 @@ export const EARLY_DESIGN_NOTE_MOTION = {
   enterDurationSec: 0.18,
   exitDurationMs: 120,
   exitDurationSec: 0.12,
-  swapDurationMs: 64,
-  swapDurationSec: 0.064,
+  swapDurationMs: 72,
+  swapDurationSec: 0.072,
   /** Strong ease-out (no ease-in). */
   ease: [0.23, 1, 0.32, 1] as [number, number, number, number],
   /** Distance from the list’s right edge (px). */
@@ -21,9 +21,13 @@ export const EARLY_DESIGN_NOTE_MOTION = {
   /** Delay before hiding when the pointer leaves the list (ms). */
   hideGraceMs: 75,
   /** Blur on rows that are not under the pointer (px). */
-  rowBlurPx: 1.5,
+  rowBlurPx: 1,
   /** Opacity of rows that are not under the pointer. */
-  rowDimOpacity: 0.4,
+  rowDimOpacity: 0.48,
+  /** Row spotlight timing — kept in sync with the note (ms). */
+  rowEnterDurationMs: 180,
+  rowExitDurationMs: 120,
+  rowSwapDurationMs: 72,
 } as const
 
 export const EARLY_DESIGN_NOTE_CSS_VARS = {
@@ -31,3 +35,36 @@ export const EARLY_DESIGN_NOTE_CSS_VARS = {
   duration: "--early-design-note-duration",
   width: "--early-design-note-width",
 } as const
+
+/** CSS transition duration for a list row’s blur/dim, matched to note enter / exit / swap. */
+export function getEarlyDesignRowTransitionMs(
+  rowIndex: number,
+  activeIndex: number | null,
+  prevActiveIndex: number | null,
+): number {
+  const {
+    rowEnterDurationMs,
+    rowExitDurationMs,
+    rowSwapDurationMs,
+  } = EARLY_DESIGN_NOTE_MOTION
+
+  if (activeIndex == null) {
+    return prevActiveIndex != null ? rowExitDurationMs : 0
+  }
+
+  if (
+    prevActiveIndex != null &&
+    activeIndex !== prevActiveIndex
+  ) {
+    if (rowIndex === activeIndex || rowIndex === prevActiveIndex) {
+      return rowSwapDurationMs
+    }
+    return 0
+  }
+
+  if (prevActiveIndex == null && rowIndex !== activeIndex) {
+    return rowEnterDurationMs
+  }
+
+  return rowIndex === activeIndex ? 0 : rowEnterDurationMs
+}

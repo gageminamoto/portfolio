@@ -1,18 +1,11 @@
 "use client"
 
-import {
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
 import { SiteFooter } from "@/components/site-footer"
 import { PageActions } from "@/components/page-actions"
-import { IconChevronDown } from "@/components/site-icons"
 import { EarlyDesignHoverNote } from "@/components/early-design/early-design-hover-note"
 import {
   earlyDesignResources,
@@ -21,9 +14,9 @@ import {
 import {
   EARLY_DESIGN_NOTE_CSS_VARS,
   EARLY_DESIGN_NOTE_MOTION,
+  getEarlyDesignRowTransitionMs,
 } from "@/lib/early-design-note-motion"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
-import { cn } from "@/lib/utils"
 
 const linkRowClass =
   "focus-within:bg-transparent focus-within:px-0 focus-visible:bg-muted focus-visible:px-3"
@@ -36,12 +29,19 @@ export function EarlyDesignPage() {
   const listRef = useRef<HTMLUListElement>(null)
   const listAnchorRef = useRef<HTMLDivElement>(null)
   const rowRefs = useRef<(HTMLLIElement | null)[]>([])
-  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [hoverRows, setHoverRows] = useState<{
+    activeIndex: number | null
+    prevActiveIndex: number | null
+  }>({ activeIndex: null, prevActiveIndex: null })
+  const { activeIndex, prevActiveIndex } = hoverRows
+
+  const setActiveRow = (next: number | null) => {
+    setHoverRows(({ activeIndex: current }) => ({
+      prevActiveIndex: current,
+      activeIndex: next,
+    }))
+  }
   const [noteTopPx, setNoteTopPx] = useState(0)
-  const [expandedMobileIndex, setExpandedMobileIndex] = useState<number | null>(
-    null,
-  )
-  const mobileNoteRegionId = useId()
   const [desktopNoteEnabled, setDesktopNoteEnabled] = useState(false)
 
   useEffect(() => {
@@ -88,14 +88,14 @@ export function EarlyDesignPage() {
 
   const clearActive = () => {
     cancelHideGrace()
-    setActiveIndex(null)
+    setActiveRow(null)
   }
 
   const scheduleClearActive = () => {
     cancelHideGrace()
     hideGraceTimerRef.current = setTimeout(() => {
       hideGraceTimerRef.current = null
-      setActiveIndex(null)
+      setActiveRow(null)
     }, EARLY_DESIGN_NOTE_MOTION.hideGraceMs)
   }
 
@@ -103,7 +103,7 @@ export function EarlyDesignPage() {
 
   const handleRowMouseEnter = (index: number) => {
     cancelHideGrace()
-    setActiveIndex(index)
+    setActiveRow(index)
   }
 
   const handleListMouseLeave = (event: React.MouseEvent<HTMLUListElement>) => {
@@ -160,8 +160,6 @@ export function EarlyDesignPage() {
                 ? getResourceHost(resource.url)
                 : undefined
               const isActive = index === activeIndex
-              const noteExpanded = expandedMobileIndex === index
-              const mobileNoteId = `${mobileNoteRegionId}-${index}`
               const hoverNoteDescribedBy =
                 desktopNoteEnabled && isActive && resource.note
                   ? HOVER_NOTE_ID
@@ -172,6 +170,11 @@ export function EarlyDesignPage() {
                 activeIndex != null &&
                 !shouldReduceMotion
               const dimmed = spotlight && !isActive
+              const rowTransitionMs = getEarlyDesignRowTransitionMs(
+                index,
+                activeIndex,
+                prevActiveIndex,
+              )
 
               return (
                 <li
@@ -189,7 +192,7 @@ export function EarlyDesignPage() {
                     opacity: dimmed
                       ? EARLY_DESIGN_NOTE_MOTION.rowDimOpacity
                       : 1,
-                    transitionDuration: `${EARLY_DESIGN_NOTE_MOTION.enterDurationMs}ms`,
+                    transitionDuration: `${rowTransitionMs}ms`,
                     transitionTimingFunction: `cubic-bezier(${EARLY_DESIGN_NOTE_MOTION.ease.join(", ")})`,
                   }}
                 >
@@ -206,38 +209,6 @@ export function EarlyDesignPage() {
                     aria-describedby={hoverNoteDescribedBy}
                     className={resource.url ? linkRowClass : undefined}
                   />
-                  {resource.note ? (
-                    <div className="hover-note:hidden">
-                      <button
-                        type="button"
-                        className="-mt-1 mb-2 flex w-full items-center gap-1.5 rounded-md py-1.5 pl-0 text-left text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                        aria-expanded={noteExpanded}
-                        aria-controls={mobileNoteId}
-                        onClick={() =>
-                          setExpandedMobileIndex((current) =>
-                            current === index ? null : index,
-                          )
-                        }
-                      >
-                        <IconChevronDown
-                          className={cn(
-                            "size-3.5 shrink-0 transition-transform duration-150 ease-out motion-reduce:transition-none",
-                            noteExpanded && "rotate-180",
-                          )}
-                          aria-hidden
-                        />
-                        {noteExpanded ? "Hide note" : "Show note"}
-                      </button>
-                      {noteExpanded ? (
-                        <p
-                          id={mobileNoteId}
-                          className="mb-3 text-pretty text-sm leading-relaxed text-muted-foreground"
-                        >
-                          {resource.note}
-                        </p>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </li>
               )
             })}
