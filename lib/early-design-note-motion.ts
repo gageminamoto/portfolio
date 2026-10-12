@@ -17,11 +17,9 @@ export const EARLY_DESIGN_NOTE_MOTION = {
   /** Extra vertical nudge from the row top (px). */
   offsetY: 0,
   /** Max width of the note in the right margin (px). Actual width also fits the margin. */
-  noteWidthPx: 400,
+  noteWidthPx: 320,
   /** Delay before hiding when the pointer leaves the list (ms). */
   hideGraceMs: 75,
-  /** Blur on rows that are not under the pointer (px). */
-  rowBlurPx: 1,
   /** Opacity of rows that are not under the pointer. */
   rowDimOpacity: 0.48,
   /** Row spotlight timing — kept in sync with the note (ms). */
@@ -36,7 +34,7 @@ export const EARLY_DESIGN_NOTE_CSS_VARS = {
   width: "--early-design-note-width",
 } as const
 
-/** CSS transition duration for a list row’s blur/dim, matched to note enter / exit / swap. */
+/** CSS transition duration for a list row’s dim, matched to note enter / exit / swap. */
 export function getEarlyDesignRowTransitionMs(
   rowIndex: number,
   activeIndex: number | null,
