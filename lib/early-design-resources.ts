@@ -1,4 +1,5 @@
 export type EarlyDesignResource = {
+  id?: string
   title: string
   url?: string
   note?: string
@@ -56,6 +57,11 @@ export const earlyDesignResources: EarlyDesignResource[] = [
   {
     title: "Why is quality so rare?",
     url: "https://linear.app/now/why-is-quality-so-rare",
+  },
+  {
+    // Title from YouTube oEmbed for https://www.youtube.com/watch?v=0pfidFgk7G8
+    title: "The types of portfolios that get designers hired",
+    url: "https://www.youtube.com/watch?v=0pfidFgk7G8",
   },
 ]
 

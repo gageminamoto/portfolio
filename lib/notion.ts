@@ -8,6 +8,10 @@ import { resolveToolLink } from "./affiliate-links"
 import { getImageDimensions, type ImageDimensions } from "./image-metadata"
 import { displayWritingTitle } from "./writing-display"
 import { slugify } from "./utils"
+import {
+  earlyDesignResources,
+  type EarlyDesignResource,
+} from "./early-design-resources"
 
 let notionClient: Client | null = null
 
@@ -355,6 +359,168 @@ export async function fetchTools(): Promise<ToolsResponse> {
   })
 
   return { tools, lastUpdated: latestEdit }
+}
+
+// ─── Early design resources ──────────────────────────────────────────
+// Expected Notion schema: Title (title), URL (url), Note (rich text),
+// Order (number), Published (checkbox).
+
+export interface NotionEarlyDesignResource {
+  id: string
+  title: string
+  url?: string
+  note?: string
+}
+
+export function isEarlyDesignConfigured(): boolean {
+  return Boolean(process.env.NOTION_API_KEY && process.env.NOTION_EARLY_DESIGN_DB_ID)
+}
+
+function getEarlyDesignTitle(page: PageObjectResponse): string {
+  const titleProp = Object.values(page.properties).find((p) => p.type === "title")
+  if (!titleProp || titleProp.type !== "title") return ""
+  return titleProp.title.map((t) => t.plain_text).join("").trim()
+}
+
+function getNote(page: PageObjectResponse): string | undefined {
+  const noteProp = page.properties["Note"]
+  if (noteProp?.type === "rich_text") {
+    const note = noteProp.rich_text.map((t) => t.plain_text).join("").trim()
+    if (note) return note
+  }
+  return undefined
+}
+
+function getOrder(page: PageObjectResponse): number | null {
+  const orderProp = page.properties["Order"]
+  if (orderProp?.type === "number" && typeof orderProp.number === "number") {
+    return orderProp.number
+  }
+  return null
+}
+
+function isPublishedResource(page: PageObjectResponse): boolean {
+  const prop = page.properties["Published"]
+  if (prop?.type === "checkbox") return prop.checkbox
+  return true
+}
+
+function mapEarlyDesignResource(
+  page: PageObjectResponse
+): (NotionEarlyDesignResource & { order: number | null }) | null {
+  const title = getEarlyDesignTitle(page)
+  if (!title) return null
+
+  const url = getUrl(page)?.trim() || undefined
+  const note = getNote(page)
+
+  return {
+    id: page.id,
+    title,
+    ...(url ? { url } : {}),
+    ...(note ? { note } : {}),
+    order: getOrder(page),
+  }
+}
+
+async function queryEarlyDesignPages(
+  dataSourceId: string,
+  options: { filterPublished: boolean; sortByOrder: boolean }
+): Promise<PageObjectResponse[]> {
+  const allPages: PageObjectResponse[] = []
+  let cursor: string | undefined = undefined
+
+  do {
+    const response = await getNotionClient().dataSources.query({
+      data_source_id: dataSourceId,
+      start_cursor: cursor,
+      ...(options.filterPublished
+        ? {
+            filter: {
+              property: "Published",
+              checkbox: { equals: true },
+            },
+          }
+        : {}),
+      sorts: options.sortByOrder
+        ? [{ property: "Order", direction: "ascending" as const }]
+        : [{ timestamp: "created_time", direction: "ascending" as const }],
+    })
+    allPages.push(...(response.results as PageObjectResponse[]))
+    cursor = response.has_more ? response.next_cursor ?? undefined : undefined
+  } while (cursor)
+
+  return allPages
+}
+
+export async function fetchEarlyDesignResources(): Promise<
+  NotionEarlyDesignResource[]
+> {
+  const databaseId = process.env.NOTION_EARLY_DESIGN_DB_ID
+
+  if (!databaseId) {
+    console.warn(
+      "[notion] NOTION_EARLY_DESIGN_DB_ID is not set — using fallback early design resources"
+    )
+    return []
+  }
+
+  const dataSourceId = await resolveDataSourceId(databaseId)
+
+  let pages: PageObjectResponse[]
+  try {
+    pages = await queryEarlyDesignPages(dataSourceId, {
+      filterPublished: true,
+      sortByOrder: true,
+    })
+  } catch (error) {
+    logNotionError("query early design with Published/Order", error)
+    pages = await queryEarlyDesignPages(dataSourceId, {
+      filterPublished: false,
+      sortByOrder: false,
+    })
+  }
+
+  const mapped = pages
+    .filter(isPublishedResource)
+    .map(mapEarlyDesignResource)
+    .filter((item): item is NotionEarlyDesignResource & { order: number | null } =>
+      item !== null
+    )
+    .sort((a, b) => {
+      if (a.order == null && b.order == null) return 0
+      if (a.order == null) return 1
+      if (b.order == null) return -1
+      return a.order - b.order
+    })
+
+  return mapped.map(({ order: _order, ...resource }) => resource)
+}
+
+const getCachedEarlyDesignResources = unstable_cache(
+  async () => fetchEarlyDesignResources(),
+  ["notion-early-design-resources"],
+  { revalidate: 600, tags: ["notion-early-design"] }
+)
+
+export async function fetchCachedEarlyDesignResources(): Promise<
+  NotionEarlyDesignResource[]
+> {
+  return getCachedEarlyDesignResources()
+}
+
+/** Notion list when configured; otherwise the hard-coded fallback. */
+export async function getEarlyDesignResources(): Promise<EarlyDesignResource[]> {
+  if (!isEarlyDesignConfigured()) {
+    return earlyDesignResources
+  }
+
+  try {
+    return await fetchCachedEarlyDesignResources()
+  } catch (error) {
+    logNotionError("fetch early design resources", error)
+    return earlyDesignResources
+  }
 }
 
 // ─── Post Blocks ─────────────────────────────────────────────────────

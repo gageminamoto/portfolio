@@ -8,8 +8,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { PageActions } from "@/components/page-actions"
 import { EarlyDesignHoverNote } from "@/components/early-design/early-design-hover-note"
 import {
-  earlyDesignResources,
   getResourceHost,
+  type EarlyDesignResource,
 } from "@/lib/early-design-resources"
 import {
   EARLY_DESIGN_NOTE_CSS_VARS,
@@ -23,7 +23,11 @@ const linkRowClass =
 
 const HOVER_NOTE_ID = "early-design-hover-note"
 
-export function EarlyDesignPage() {
+export function EarlyDesignPage({
+  resources,
+}: {
+  resources: EarlyDesignResource[]
+}) {
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
   const listRef = useRef<HTMLUListElement>(null)
@@ -55,7 +59,7 @@ export function EarlyDesignPage() {
   }, [])
 
   const activeResource =
-    activeIndex != null ? earlyDesignResources[activeIndex] : null
+    activeIndex != null ? resources[activeIndex] : null
   const activeNote = activeResource?.note
 
   const syncNotePosition = () => {
@@ -155,7 +159,7 @@ export function EarlyDesignPage() {
             onMouseLeave={handleListMouseLeave}
             onFocusOut={handleListFocusOut}
           >
-            {earlyDesignResources.map((resource, index) => {
+            {resources.map((resource, index) => {
               const host = resource.url
                 ? getResourceHost(resource.url)
                 : undefined
@@ -177,7 +181,7 @@ export function EarlyDesignPage() {
 
               return (
                 <li
-                  key={resource.title}
+                  key={resource.id ?? `${resource.title}-${index}`}
                   ref={(node) => {
                     rowRefs.current[index] = node
                   }}
