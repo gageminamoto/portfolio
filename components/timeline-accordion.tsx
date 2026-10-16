@@ -14,6 +14,7 @@ import {
 import { NvidiaHover } from "@/components/nvidia-hover"
 import type { TimelineItem } from "@/lib/portfolio-data"
 import { formatTimelinePeriodMobile } from "@/lib/timeline-period"
+import { getFluidListRowEmphasis } from "@/lib/fluid-list-hover"
 
 function TimelinePeriod({
   period,
@@ -130,10 +131,8 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
         </div>
       )}
       {items.map((item, i) => {
-        const listHasHover = hoveredIndex !== null
-        const isRowEmphasized =
-          !listHasHover || hoveredIndex === i || openIndex === i
-        const isHoveredOrOpen = hoveredIndex === i || openIndex === i
+        const { isEmphasized: isRowEmphasized, isHighlighted: isHoveredOrOpen } =
+          getFluidListRowEmphasis(hoveredIndex, i, openIndex)
 
         return (
           <div key={item.company} className="relative">
