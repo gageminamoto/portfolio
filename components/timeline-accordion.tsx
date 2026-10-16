@@ -43,17 +43,17 @@ const hoverComponents: Record<string, React.ComponentType> = {
 
 function TimelineTitle({
   item,
-  isActive,
+  isEmphasized,
   useFluidHover,
 }: {
   item: TimelineItem
-  isActive: boolean
+  isEmphasized: boolean
   useFluidHover: boolean
 }) {
   const className = cn(
     "min-w-0 truncate rounded-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     useFluidHover
-      ? isActive
+      ? isEmphasized
         ? "text-foreground"
         : "text-muted-foreground"
       : "text-foreground",
@@ -130,7 +130,10 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
         </div>
       )}
       {items.map((item, i) => {
-        const isActive = hoveredIndex === i || openIndex === i
+        const listHasHover = hoveredIndex !== null
+        const isRowEmphasized =
+          !listHasHover || hoveredIndex === i || openIndex === i
+        const isHoveredOrOpen = hoveredIndex === i || openIndex === i
 
         return (
           <div key={item.company} className="relative">
@@ -146,14 +149,14 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                 }}
                 className={cn(
                   "relative flex w-full items-center gap-3 overflow-hidden rounded-lg py-3 text-left transition-[padding] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  isActive ? "px-3" : "px-0",
+                  isHoveredOrOpen ? "px-3" : "px-0",
                 )}
                 style={fluidHoverPadStyle}
               >
                 <div
                   className="pointer-events-none absolute inset-0 rounded-lg bg-muted/40 transition-opacity motion-reduce:transition-none"
                   style={{
-                    opacity: isActive ? 1 : 0,
+                    opacity: isHoveredOrOpen ? 1 : 0,
                     ...fluidHoverHighlightStyle,
                   }}
                   aria-hidden
@@ -172,7 +175,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                       {item.company.charAt(0)}
                     </span>
                   )}
-                  <TimelineTitle item={item} isActive={isActive} useFluidHover />
+                  <TimelineTitle item={item} isEmphasized={isRowEmphasized} useFluidHover />
                   <button
                     type="button"
                     onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -182,7 +185,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                     <span
                       className={cn(
                         "hidden min-w-0 truncate text-sm transition-colors md:inline",
-                        isActive
+                        isRowEmphasized
                           ? "text-muted-foreground"
                           : "text-muted-foreground/55",
                       )}
@@ -194,7 +197,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                       period={item.period}
                       className={cn(
                         "ml-auto shrink-0 text-sm transition-colors",
-                        isActive
+                        isRowEmphasized
                           ? "text-muted-foreground"
                           : "text-muted-foreground/55",
                       )}
@@ -203,7 +206,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                     <IconChevronDown
                       className={cn(
                         "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
-                        isActive
+                        isRowEmphasized
                           ? "text-muted-foreground"
                           : "text-muted-foreground/55",
                         openIndex === i && "rotate-180",
@@ -229,7 +232,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                     {item.company.charAt(0)}
                   </span>
                 )}
-                <TimelineTitle item={item} isActive={isActive} useFluidHover={false} />
+                <TimelineTitle item={item} isEmphasized useFluidHover={false} />
                 <button
                   type="button"
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
