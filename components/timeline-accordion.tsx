@@ -181,7 +181,7 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                   >
                     <span
                       className={cn(
-                        "min-w-0 truncate text-sm transition-colors",
+                        "hidden min-w-0 truncate text-sm transition-colors md:inline",
                         isActive
                           ? "text-muted-foreground"
                           : "text-muted-foreground/55",
@@ -236,7 +236,9 @@ export function TimelineAccordion({ items }: { items: TimelineItem[] }) {
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   aria-expanded={openIndex === i}
                 >
-                  <span className="min-w-0 truncate text-sm text-muted-foreground">{item.role}</span>
+                  <span className="hidden min-w-0 truncate text-sm text-muted-foreground md:inline">
+                    {item.role}
+                  </span>
                   <TimelinePeriod
                     period={item.period}
                     className="ml-auto shrink-0 text-sm text-muted-foreground"
