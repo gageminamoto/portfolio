@@ -1,10 +1,10 @@
 const TIMELINE_STATUS_PERIODS = new Set(["Building", "Ongoing", "Shipped"])
 
 function abbrevYear(year: string): string {
-  return `${year.slice(-2)}'`
+  return `'${year.slice(-2)}`
 }
 
-/** Mobile-only display: 2024 – 2025 → 24'–25', status words unchanged. */
+/** Mobile-only display: 2024 – 2025 → '24–'25, status words unchanged. */
 export function formatTimelinePeriodMobile(period: string): string {
   if (TIMELINE_STATUS_PERIODS.has(period)) {
     return period
