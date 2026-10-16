@@ -24,6 +24,7 @@ import { generateSeedTools } from "@/lib/seed-tools"
 import { cn } from "@/lib/utils"
 import { HOVER_EASE_IN_OUT } from "@/lib/hover-constants"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
+import { getFluidListRowEmphasis } from "@/lib/fluid-list-hover"
 import { OptimizedImage } from "@/components/optimized-image"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
@@ -312,7 +313,10 @@ export default function ToolsPage() {
                 {filtered.map((tool) => {
                   const isSkill = tool.category === "Skills"
                   const displayName = isSkill ? `/${tool.name}` : tool.name
-                  const isActive = hoveredToolId === tool.id
+                  const { isEmphasized, isHighlighted } = getFluidListRowEmphasis(
+                    hoveredToolId,
+                    tool.id,
+                  )
 
                   const clearRowHover = (e: FocusEvent<HTMLElement>) => {
                     const next = e.relatedTarget
@@ -323,7 +327,7 @@ export default function ToolsPage() {
 
                   const rowClass = cn(
                     "relative flex items-center gap-3 overflow-hidden rounded-lg py-3 transition-[padding]",
-                    isActive ? "px-3" : "px-0",
+                    isHighlighted ? "px-3" : "px-0",
                     tool.url &&
                       "group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   )
@@ -333,7 +337,7 @@ export default function ToolsPage() {
                       <div
                         className="pointer-events-none absolute inset-0 rounded-lg bg-muted/40 transition-opacity motion-reduce:transition-none"
                         style={{
-                          opacity: isActive ? 1 : 0,
+                          opacity: isHighlighted ? 1 : 0,
                           ...rowHighlightFadeStyle,
                         }}
                         aria-hidden
@@ -347,7 +351,7 @@ export default function ToolsPage() {
                                 className={cn(
                                   "inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium transition-colors",
                                   tool.url && "group-hover:bg-accent",
-                                  isActive
+                                  isEmphasized
                                     ? "text-foreground"
                                     : "text-muted-foreground",
                                 )}
@@ -358,7 +362,7 @@ export default function ToolsPage() {
                                   <IconArrowUpRight
                                     className={cn(
                                       "h-2.5 w-2.5 shrink-0 transition-colors",
-                                      isActive
+                                      isEmphasized
                                         ? "text-muted-foreground"
                                         : "text-muted-foreground/50",
                                     )}
@@ -371,7 +375,7 @@ export default function ToolsPage() {
                             <span
                               className={cn(
                                 "truncate text-sm font-medium transition-colors",
-                                isActive
+                                isEmphasized
                                   ? "text-foreground"
                                   : "text-muted-foreground",
                               )}
@@ -385,7 +389,7 @@ export default function ToolsPage() {
                         <span
                           className={cn(
                             "min-w-0 flex-1 truncate text-right text-xs transition-colors",
-                            isActive
+                            isEmphasized
                               ? "text-muted-foreground"
                               : "text-muted-foreground/55",
                           )}
