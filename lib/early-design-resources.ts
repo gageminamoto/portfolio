@@ -65,6 +65,38 @@ export const earlyDesignResources: EarlyDesignResource[] = [
   },
 ]
 
+/** Notion URL fields may omit the scheme (e.g. gageminamoto.com). */
+export function normalizeExternalUrl(
+  url: string | undefined | null,
+): string | undefined {
+  if (!url) return undefined
+  const trimmed = url.trim()
+  if (!trimmed) return undefined
+
+  const withScheme = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`
+
+  try {
+    const parsed = new URL(withScheme)
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return undefined
+    }
+    return parsed.href
+  } catch {
+    return undefined
+  }
+}
+
 export function getResourceHost(url: string): string {
-  return new URL(url).hostname.replace(/^www\./, "")
+  try {
+    const normalized = normalizeExternalUrl(url) ?? url
+    return new URL(normalized).hostname.replace(/^www\./, "")
+  } catch {
+    return url
+      .replace(/^https?:\/\//, "")
+      .replace(/^www\./, "")
+      .replace(/\/$/, "")
+      .split("/")[0]
+  }
 }

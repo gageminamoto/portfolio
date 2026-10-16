@@ -10,6 +10,7 @@ import { displayWritingTitle } from "./writing-display"
 import { slugify } from "./utils"
 import {
   earlyDesignResources,
+  normalizeExternalUrl,
   type EarlyDesignResource,
 } from "./early-design-resources"
 
@@ -411,7 +412,7 @@ function mapEarlyDesignResource(
   const title = getEarlyDesignTitle(page)
   if (!title) return null
 
-  const url = getUrl(page)?.trim() || undefined
+  const url = normalizeExternalUrl(getUrl(page))
   const note = getNote(page)
 
   return {
