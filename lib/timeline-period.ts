@@ -27,3 +27,13 @@ export function formatTimelinePeriodMobile(period: string): string {
 
   return period
 }
+
+/** Mobile Features dates: year ranges like timeline, month labels keep month text. */
+export function formatFeatureDescriptionMobile(description: string): string {
+  const asPeriod = formatTimelinePeriodMobile(description)
+  if (asPeriod !== description) {
+    return asPeriod
+  }
+
+  return description.replace(/\b(20\d{2})\b/g, (year) => `'${year.slice(-2)}`)
+}
