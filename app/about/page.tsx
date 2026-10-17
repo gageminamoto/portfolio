@@ -9,7 +9,9 @@ import { Section } from "@/components/section"
 import { BioSection, bodyCopyClassName } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { CursorTrail } from "@/components/cursor-trail"
+import { ProjectCarousel } from "@/components/project-carousel"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { IconPin } from "@/components/site-icons"
 import { portfolioData } from "@/lib/portfolio-data"
 import { formatFeatureDescriptionMobile } from "@/lib/timeline-period"
 import { TimelineSection } from "@/components/timeline-section"
@@ -27,7 +29,7 @@ const Penflow = dynamic(
 )
 
 export default function AboutPage() {
-  const { extendedBio, speaking, timeline } = portfolioData
+  const { extendedBio, speaking, timeline, projects } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const { resolvedTheme } = useTheme()
@@ -82,6 +84,19 @@ export default function AboutPage() {
           <TimelineSection items={timeline} />
         </div>
 
+        {/* Side projects */}
+        <div className="py-8">
+          <div className={`${bodyCopyClassName} mb-6 text-muted-foreground`}>
+            <p>
+              I keep side projects going alongside the day job. Mizen, my cooking app for online recipes, is the main focus and it&apos;s in closed beta. I&apos;ve also shipped a Yahtzee scorecard, I&apos;m building Gulp Shooters on Pico-8, I made Gunnar&apos;s Trash Trade in a day, and I put together UH Esports branding during my time at UH.
+            </p>
+          </div>
+          <Section title="Projects" icon={<IconPin className="h-3.5 w-3.5" />}>
+            <div className="min-w-0 max-w-full">
+              <ProjectCarousel projects={projects} />
+            </div>
+          </Section>
+        </div>
 
         {/* Hobbies */}
         <div className="py-8">
