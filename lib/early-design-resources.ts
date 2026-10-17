@@ -1,4 +1,5 @@
 export type EarlyDesignResource = {
+  id?: string
   title: string
   url?: string
   note?: string
@@ -57,8 +58,45 @@ export const earlyDesignResources: EarlyDesignResource[] = [
     title: "Why is quality so rare?",
     url: "https://linear.app/now/why-is-quality-so-rare",
   },
+  {
+    // Title from YouTube oEmbed for https://www.youtube.com/watch?v=0pfidFgk7G8
+    title: "The types of portfolios that get designers hired",
+    url: "https://www.youtube.com/watch?v=0pfidFgk7G8",
+  },
 ]
 
+/** Notion URL fields may omit the scheme (e.g. gageminamoto.com). */
+export function normalizeExternalUrl(
+  url: string | undefined | null,
+): string | undefined {
+  if (!url) return undefined
+  const trimmed = url.trim()
+  if (!trimmed) return undefined
+
+  const withScheme = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`
+
+  try {
+    const parsed = new URL(withScheme)
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return undefined
+    }
+    return parsed.href
+  } catch {
+    return undefined
+  }
+}
+
 export function getResourceHost(url: string): string {
-  return new URL(url).hostname.replace(/^www\./, "")
+  try {
+    const normalized = normalizeExternalUrl(url) ?? url
+    return new URL(normalized).hostname.replace(/^www\./, "")
+  } catch {
+    return url
+      .replace(/^https?:\/\//, "")
+      .replace(/^www\./, "")
+      .replace(/\/$/, "")
+      .split("/")[0]
+  }
 }
