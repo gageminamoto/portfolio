@@ -1,14 +1,17 @@
 "use client"
 
+import { useState } from "react"
 import useSWR from "swr"
 import { useDialKit } from "dialkit"
 import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { SiteFooter } from "@/components/site-footer"
-import { ListRow } from "@/components/list-row"
+import { ListRow, type ListRowFluidHover } from "@/components/list-row"
 import { generateSeedPosts } from "@/lib/seed-posts"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
+import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
+import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
 
 async function fetcher(url: string) {
   const response = await fetch(url)
@@ -88,7 +91,13 @@ function SkeletonRow() {
   )
 }
 
-function PostRow({ post }: { post: NotionWritingPost }) {
+function PostRow({
+  post,
+  fluidHover,
+}: {
+  post: NotionWritingPost
+  fluidHover?: ListRowFluidHover
+}) {
   return (
     <ListRow
       href={`/writing/${post.slug}`}
@@ -98,6 +107,7 @@ function PostRow({ post }: { post: NotionWritingPost }) {
           <time dateTime={post.date}>{formatDate(post.date)}</time>
         ) : undefined
       }
+      fluidHover={fluidHover}
     />
   )
 }
@@ -111,8 +121,16 @@ export function WritingList({ initialPosts }: WritingListProps) {
     enabled: false,
     count: [5, 1, 20, 1],
   })
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
+  const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
+  const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
   const item = shouldReduceMotion ? noMotion : fadeUp
+
+  const rowFluidHover = (rowId: string) =>
+    useFluidListHover
+      ? buildListRowFluidHover(hoveredRowId, rowId, setHoveredRowId)
+      : undefined
 
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
@@ -151,11 +169,19 @@ export function WritingList({ initialPosts }: WritingListProps) {
       </motion.div>
 
       {/* Posts list */}
-      <motion.div variants={item} className="flex flex-col gap-10">
+      <motion.div
+        variants={item}
+        className="flex flex-col gap-10"
+        onMouseLeave={useFluidListHover ? () => setHoveredRowId(null) : undefined}
+      >
         <section className="flex flex-col gap-4">
           <h2 className="text-sm text-muted-foreground">Resources</h2>
           <div className="flex flex-col">
-            <ListRow href="/early-design" name="Early design resources" />
+            <ListRow
+              href="/early-design"
+              name="Early design resources"
+              fluidHover={rowFluidHover("early-design")}
+            />
           </div>
         </section>
 
@@ -188,7 +214,11 @@ export function WritingList({ initialPosts }: WritingListProps) {
               <h2 className="text-sm text-muted-foreground">{group.label}</h2>
               <div className="flex flex-col">
                 {group.posts.map((post) => (
-                  <PostRow key={post.id} post={post} />
+                  <PostRow
+                    key={post.id}
+                    post={post}
+                    fluidHover={rowFluidHover(post.id)}
+                  />
                 ))}
               </div>
             </section>

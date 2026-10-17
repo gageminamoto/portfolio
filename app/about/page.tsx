@@ -13,6 +13,7 @@ import { ProjectCarousel } from "@/components/project-carousel"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { IconPin } from "@/components/site-icons"
 import { portfolioData } from "@/lib/portfolio-data"
+import { formatFeatureDescriptionMobile } from "@/lib/timeline-period"
 import { TimelineSection } from "@/components/timeline-section"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import dynamic from "next/dynamic"
@@ -127,9 +128,14 @@ export default function AboutPage() {
                   <span className="min-w-0 flex-1 truncate font-medium text-foreground">{item.name}</span>
                 )}
                 {item.description && (
-                  <span className="shrink-0 text-sm text-muted-foreground">
-                    {item.description}
-                  </span>
+                  <>
+                    <span className="shrink-0 text-sm text-muted-foreground md:hidden">
+                      {formatFeatureDescriptionMobile(item.description)}
+                    </span>
+                    <span className="hidden shrink-0 text-sm text-muted-foreground md:inline">
+                      {item.description}
+                    </span>
+                  </>
                 )}
               </div>
             ))}

@@ -8,8 +8,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { PageActions } from "@/components/page-actions"
 import { EarlyDesignHoverNote } from "@/components/early-design/early-design-hover-note"
 import {
-  earlyDesignResources,
   getResourceHost,
+  type EarlyDesignResource,
 } from "@/lib/early-design-resources"
 import {
   EARLY_DESIGN_NOTE_CSS_VARS,
@@ -23,7 +23,11 @@ const linkRowClass =
 
 const HOVER_NOTE_ID = "early-design-hover-note"
 
-export function EarlyDesignPage() {
+export function EarlyDesignPage({
+  resources,
+}: {
+  resources: EarlyDesignResource[]
+}) {
   const shouldReduceMotion = useReducedMotion()
   const item = shouldReduceMotion ? noMotion : fadeUp
   const listRef = useRef<HTMLUListElement>(null)
@@ -55,7 +59,7 @@ export function EarlyDesignPage() {
   }, [])
 
   const activeResource =
-    activeIndex != null ? earlyDesignResources[activeIndex] : null
+    activeIndex != null ? resources[activeIndex] : null
   const activeNote = activeResource?.note
 
   const syncNotePosition = () => {
@@ -155,7 +159,7 @@ export function EarlyDesignPage() {
             onMouseLeave={handleListMouseLeave}
             onFocusOut={handleListFocusOut}
           >
-            {earlyDesignResources.map((resource, index) => {
+            {resources.map((resource, index) => {
               const host = resource.url
                 ? getResourceHost(resource.url)
                 : undefined
@@ -165,30 +169,26 @@ export function EarlyDesignPage() {
                   ? HOVER_NOTE_ID
                   : undefined
 
-              const spotlight =
-                desktopNoteEnabled &&
-                activeIndex != null &&
-                !shouldReduceMotion
-              const dimmed = spotlight && !isActive
-              const rowTransitionMs = getEarlyDesignRowTransitionMs(
-                index,
-                activeIndex,
-                prevActiveIndex,
-              )
+              const dimmed =
+                desktopNoteEnabled && activeIndex != null && !isActive
+              const rowTransitionMs = shouldReduceMotion
+                ? 0
+                : getEarlyDesignRowTransitionMs(
+                    index,
+                    activeIndex,
+                    prevActiveIndex,
+                  )
 
               return (
                 <li
-                  key={resource.title}
+                  key={resource.id ?? `${resource.title}-${index}`}
                   ref={(node) => {
                     rowRefs.current[index] = node
                   }}
                   onMouseEnter={() => handleRowMouseEnter(index)}
                   onFocusCapture={() => handleRowMouseEnter(index)}
-                  className="transition-[filter,opacity] motion-reduce:transition-none"
+                  className="transition-opacity motion-reduce:transition-none"
                   style={{
-                    filter: dimmed
-                      ? `blur(${EARLY_DESIGN_NOTE_MOTION.rowBlurPx}px)`
-                      : "none",
                     opacity: dimmed
                       ? EARLY_DESIGN_NOTE_MOTION.rowDimOpacity
                       : 1,

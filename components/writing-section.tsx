@@ -4,10 +4,13 @@ import { useState } from "react"
 import useSWR from "swr"
 import { IconChevronDown } from "@/components/site-icons"
 import { useDialKit } from "dialkit"
+import { useReducedMotion } from "framer-motion"
 import type { NotionWritingPost } from "@/lib/notion"
-import { ListRow } from "@/components/list-row"
+import { ListRow, type ListRowFluidHover } from "@/components/list-row"
 import { generateSeedPosts } from "@/lib/seed-writing"
 import { cn } from "@/lib/utils"
+import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
+import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
 
 async function fetcher(url: string) {
   const response = await fetch(url)
@@ -46,12 +49,19 @@ function SkeletonRow() {
   )
 }
 
-function PostRow({ post }: { post: NotionWritingPost }) {
+function PostRow({
+  post,
+  fluidHover,
+}: {
+  post: NotionWritingPost
+  fluidHover?: ListRowFluidHover
+}) {
   return (
     <ListRow
       href={`/writing/${post.slug}?from=home`}
       name={post.title}
       meta={post.date ? formatDate(post.date) : undefined}
+      fluidHover={fluidHover}
     />
   )
 }
@@ -61,6 +71,10 @@ export function WritingSection({
   initialPosts,
 }: WritingSectionProps) {
   const [expanded, setExpanded] = useState(false)
+  const [hoveredPostId, setHoveredPostId] = useState<string | null>(null)
+  const shouldReduceMotion = useReducedMotion()
+  const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
+  const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
   const seedDial = useDialKit("Seed writing", {
     enabled: false,
     count: [5, 1, 10, 1],
@@ -105,13 +119,19 @@ export function WritingSection({
 
   const hasMore = posts.length > INITIAL_COUNT
 
+  const rowFluidHover = (postId: string) =>
+    useFluidListHover
+      ? buildListRowFluidHover(hoveredPostId, postId, setHoveredPostId)
+      : undefined
+
   return (
     <div
       className="flex flex-col"
+      onMouseLeave={useFluidListHover ? () => setHoveredPostId(null) : undefined}
       style={!expanded && hasMore ? { maskImage: 'linear-gradient(to bottom, black calc(100% - 2rem), transparent)' } : undefined}
     >
       {posts.slice(0, INITIAL_COUNT).map((post) => (
-        <PostRow key={post.id} post={post} />
+        <PostRow key={post.id} post={post} fluidHover={rowFluidHover(post.id)} />
       ))}
 
       {hasMore && (
@@ -126,7 +146,11 @@ export function WritingSection({
               <div className="overflow-hidden">
                 <div className="flex flex-col">
                   {posts.slice(INITIAL_COUNT).map((post) => (
-                    <PostRow key={post.id} post={post} />
+                    <PostRow
+                      key={post.id}
+                      post={post}
+                      fluidHover={rowFluidHover(post.id)}
+                    />
                   ))}
                 </div>
               </div>
