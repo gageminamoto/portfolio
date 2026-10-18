@@ -88,7 +88,7 @@ export default function AboutPage() {
         <div className="py-8">
           <div className={`${bodyCopyClassName} mb-6 text-muted-foreground`}>
             <p>
-              I keep side projects going alongside the day job. Mizen, my cooking app for online recipes, is the main focus and it&apos;s in closed beta. I&apos;ve also shipped a Yahtzee scorecard, I&apos;m building Gulp Shooters on Pico-8, I made Gunnar&apos;s Trash Trade in a day, and I put together UH Esports branding during my time at UH.
+              More often than not, I&apos;ll be working on a side project, testing a tool, making something I need that doesn&apos;t exist, or just scratching a creative itch.
             </p>
           </div>
           <Section title="Projects" icon={<IconPin className="h-3.5 w-3.5" />}>
