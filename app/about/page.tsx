@@ -11,7 +11,7 @@ import { HoverLink } from "@/components/hover-link"
 import { CursorTrail } from "@/components/cursor-trail"
 import { ProjectCarousel } from "@/components/project-carousel"
 import { useGradientWord } from "@/components/gradient-word-context"
-import { IconMessage, IconPin, IconSparkles, IconSuitcase } from "@/components/site-icons"
+import { IconGlasses, IconMessage, IconPin, IconSuitcase } from "@/components/site-icons"
 import { portfolioData } from "@/lib/portfolio-data"
 import { formatFeatureDescriptionMobile } from "@/lib/timeline-period"
 import { TimelineSection } from "@/components/timeline-section"
@@ -103,7 +103,7 @@ export default function AboutPage() {
 
         {/* Hobbies */}
         <div className="py-8">
-        <Section title="Hobbies" icon={<IconSparkles className="h-3.5 w-3.5" />}>
+        <Section title="Hobbies" icon={<IconGlasses className="h-3.5 w-3.5" />}>
           <div className={`${bodyCopyClassName} text-foreground`}>
             <p>
               Pokémon cards, TTRPGs, developing PICO-8 games, analog photography, design books, camping
