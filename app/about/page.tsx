@@ -11,7 +11,7 @@ import { HoverLink } from "@/components/hover-link"
 import { CursorTrail } from "@/components/cursor-trail"
 import { ProjectCarousel } from "@/components/project-carousel"
 import { useGradientWord } from "@/components/gradient-word-context"
-import { IconPin } from "@/components/site-icons"
+import { IconMessage, IconPin, IconSparkles, IconSuitcase } from "@/components/site-icons"
 import { portfolioData } from "@/lib/portfolio-data"
 import { formatFeatureDescriptionMobile } from "@/lib/timeline-period"
 import { TimelineSection } from "@/components/timeline-section"
@@ -81,7 +81,10 @@ export default function AboutPage() {
       <motion.div variants={item} className="flex flex-col">
         {/* Timeline */}
         <div className="pb-8">
-          <TimelineSection items={timeline} />
+          <TimelineSection
+            items={timeline}
+            icon={<IconSuitcase className="h-3.5 w-3.5" />}
+          />
         </div>
 
         {/* Side projects */}
@@ -100,7 +103,7 @@ export default function AboutPage() {
 
         {/* Hobbies */}
         <div className="py-8">
-        <Section title="Hobbies">
+        <Section title="Hobbies" icon={<IconSparkles className="h-3.5 w-3.5" />}>
           <div className={`${bodyCopyClassName} text-foreground`}>
             <p>
               Pokémon cards, TTRPGs, developing PICO-8 games, analog photography, design books, camping
@@ -112,7 +115,7 @@ export default function AboutPage() {
 
         {/* Features */}
         <div className="py-8">
-        <Section title="Features">
+        <Section title="Features" icon={<IconMessage className="h-3.5 w-3.5" />}>
           <div className="flex flex-col gap-3">
             {speaking.map((item) => (
               <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
