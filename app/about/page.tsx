@@ -9,7 +9,9 @@ import { Section } from "@/components/section"
 import { BioSection, bodyCopyClassName } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
 import { CursorTrail } from "@/components/cursor-trail"
+import { ProjectCarousel } from "@/components/project-carousel"
 import { useGradientWord } from "@/components/gradient-word-context"
+import { IconGlasses, IconMessage, IconPin, IconSuitcase } from "@/components/site-icons"
 import { portfolioData } from "@/lib/portfolio-data"
 import { formatFeatureDescriptionMobile } from "@/lib/timeline-period"
 import { TimelineSection } from "@/components/timeline-section"
@@ -27,7 +29,7 @@ const Penflow = dynamic(
 )
 
 export default function AboutPage() {
-  const { extendedBio, speaking, timeline } = portfolioData
+  const { extendedBio, speaking, timeline, projects } = portfolioData
   const [penflowKey, setPenflowKey] = useState(0)
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const { resolvedTheme } = useTheme()
@@ -79,13 +81,29 @@ export default function AboutPage() {
       <motion.div variants={item} className="flex flex-col">
         {/* Timeline */}
         <div className="pb-8">
-          <TimelineSection items={timeline} />
+          <TimelineSection
+            items={timeline}
+            icon={<IconSuitcase className="h-3.5 w-3.5" />}
+          />
         </div>
 
+        {/* Side projects */}
+        <div className="py-8">
+          <Section title="Projects" icon={<IconPin className="h-3.5 w-3.5" />}>
+            <div className={`${bodyCopyClassName} text-muted-foreground`}>
+              <p>
+                More often than not, I&apos;ll be working on a side project, testing a tool, making something I need that doesn&apos;t exist, or just scratching a creative itch.
+              </p>
+            </div>
+            <div className="min-w-0 max-w-full">
+              <ProjectCarousel projects={projects} />
+            </div>
+          </Section>
+        </div>
 
         {/* Hobbies */}
         <div className="py-8">
-        <Section title="Hobbies">
+        <Section title="Hobbies" icon={<IconGlasses className="h-3.5 w-3.5" />}>
           <div className={`${bodyCopyClassName} text-foreground`}>
             <p>
               Pokémon cards, TTRPGs, developing PICO-8 games, analog photography, design books, camping
@@ -97,7 +115,7 @@ export default function AboutPage() {
 
         {/* Features */}
         <div className="py-8">
-        <Section title="Features">
+        <Section title="Features" icon={<IconMessage className="h-3.5 w-3.5" />}>
           <div className="flex flex-col gap-3">
             {speaking.map((item) => (
               <div key={item.name} className="flex items-baseline gap-2 min-w-0 overflow-hidden">
