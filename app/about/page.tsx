@@ -86,12 +86,12 @@ export default function AboutPage() {
 
         {/* Side projects */}
         <div className="py-8">
-          <div className={`${bodyCopyClassName} mb-6 text-muted-foreground`}>
-            <p>
-              More often than not, I&apos;ll be working on a side project, testing a tool, making something I need that doesn&apos;t exist, or just scratching a creative itch.
-            </p>
-          </div>
           <Section title="Projects" icon={<IconPin className="h-3.5 w-3.5" />}>
+            <div className={`${bodyCopyClassName} text-muted-foreground`}>
+              <p>
+                More often than not, I&apos;ll be working on a side project, testing a tool, making something I need that doesn&apos;t exist, or just scratching a creative itch.
+              </p>
+            </div>
             <div className="min-w-0 max-w-full">
               <ProjectCarousel projects={projects} />
             </div>
