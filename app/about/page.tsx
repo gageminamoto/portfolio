@@ -39,70 +39,59 @@ export default function AboutPage() {
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
     >
-      {/* Header */}
-      <motion.header variants={item}>
+      <motion.header variants={item} className="flex flex-col gap-6">
         <BackLink href="/">Home</BackLink>
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
+            About
+          </h1>
+          <BioSection
+            bio={extendedBio}
+            onWordChange={(word) => { setActiveWord(word) }}
+            onUserClick={() => { setCursorTrailActive(true) }}
+          />
+          <button
+            type="button"
+            className="mt-2 h-[79px] w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
+            onClick={() => setPenflowKey((k) => k + 1)}
+            aria-label="Replay signature animation"
+          >
+            <Penflow
+              text="gage"
+              fontUrl="/fonts/BrittanySignature.ttf"
+              color={penflowColor}
+              size={48}
+              lineHeight={1.6}
+              animate
+              playheadKey={penflowKey}
+            />
+          </button>
+        </div>
       </motion.header>
 
-      {/* Title + Extended About */}
-      <motion.div variants={item} className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
-          About
-        </h1>
-        <BioSection
-          bio={extendedBio}
-          onWordChange={(word) => { setActiveWord(word) }}
-          onUserClick={() => { setCursorTrailActive(true) }}
-        />
-        <button
-          type="button"
-          className="mt-2 h-[79px] w-fit cursor-pointer overflow-hidden [&_canvas]:!w-auto [&_canvas]:-mt-4"
-          onClick={() => setPenflowKey((k) => k + 1)}
-          aria-label="Replay signature animation"
-        >
-          <Penflow
-            text="gage"
-            fontUrl="/fonts/BrittanySignature.ttf"
-            color={penflowColor}
-            size={48}
-            lineHeight={1.6}
-            animate
-            playheadKey={penflowKey}
-          />
-        </button>
-      </motion.div>
-
       {/* Sections */}
-      <motion.div variants={item} className="flex flex-col">
-        {/* Timeline */}
-        <div className="pb-8">
-          <TimelineSection
-            items={timeline}
-            icon={<IconSuitcase className="h-3.5 w-3.5" />}
-          />
-        </div>
+      <motion.div variants={item} className="flex flex-col gap-(--page-section-gap)">
+        <TimelineSection
+          items={timeline}
+          icon={<IconSuitcase className="h-3.5 w-3.5" />}
+        />
 
-        {/* Side projects */}
-        <div className="py-8">
-          <Section title="Projects" icon={<IconPin className="h-3.5 w-3.5" />}>
-            <div className={`${bodyCopyClassName} text-muted-foreground`}>
-              <p>
-                More often than not, I&apos;ll be working on a side project, testing a tool, making something I need that doesn&apos;t exist, or just scratching a creative itch.
-              </p>
-            </div>
-            <div className="min-w-0 max-w-full">
-              <ProjectCarousel projects={projects} />
-            </div>
-          </Section>
-        </div>
+        <Section title="Projects" icon={<IconPin className="h-3.5 w-3.5" />}>
+          <div className={`${bodyCopyClassName} text-muted-foreground`}>
+            <p>
+              More often than not, I&apos;ll be working on a side project, testing a tool, making something I need that doesn&apos;t exist, or just scratching a creative itch.
+            </p>
+          </div>
+          <div className="min-w-0 max-w-full">
+            <ProjectCarousel projects={projects} />
+          </div>
+        </Section>
 
-        {/* Hobbies */}
-        <div className="py-8">
         <Section title="Hobbies" icon={<IconGlasses className="h-3.5 w-3.5" />}>
           <div className={`${bodyCopyClassName} text-foreground`}>
             <p>
@@ -110,11 +99,7 @@ export default function AboutPage() {
             </p>
           </div>
         </Section>
-        </div>
 
-
-        {/* Features */}
-        <div className="py-8">
         <Section title="Features" icon={<IconMessage className="h-3.5 w-3.5" />}>
           <div className="flex flex-col gap-3">
             {speaking.map((item) => (
@@ -144,8 +129,6 @@ export default function AboutPage() {
             ))}
           </div>
         </Section>
-        </div>
-
       </motion.div>
 
       <motion.div variants={item}>

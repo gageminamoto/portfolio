@@ -29,7 +29,7 @@ function WritingRows({ count = 5 }: { count?: number }) {
 
 export default function SkeletonsPage() {
   return (
-    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24">
+    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24">
       <header className="flex flex-col gap-6">
         <BackLink href="/">Home</BackLink>
         <div className="flex flex-col gap-2">

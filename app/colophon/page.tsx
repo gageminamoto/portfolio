@@ -12,95 +12,74 @@ export default function ColophonPage() {
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
     >
-      {/* Header */}
-      <motion.header variants={item}>
+      <motion.header variants={item} className="flex flex-col gap-6">
         <BackLink href="/">Home</BackLink>
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
+            Colophon
+          </h1>
+          <p className="text-base leading-relaxed text-muted-foreground">
+            A few notes on how this site was made.
+          </p>
+        </div>
       </motion.header>
 
-      {/* Title */}
-      <motion.div variants={item} className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
-          Colophon
-        </h1>
-        <p className="text-base leading-relaxed text-muted-foreground">
-          A few notes on how this site was made.
-        </p>
-      </motion.div>
-
       {/* Content */}
-      <motion.div variants={item} className="flex flex-col">
-        {/* Stack */}
-        <div className="pb-8">
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm text-muted-foreground">Stack</h2>
-            <div className="flex flex-col gap-3">
-              <Row label="Framework" value="Next.js" />
-              <Row label="Language" value="TypeScript" />
-              <Row label="Styling" value="Tailwind CSS" />
-              <Row label="Components" value="shadcn/ui" />
-              <Row label="Animation" value="Framer Motion" />
-              <Row label="Signature" value="Penflow" href="https://penflow.cretu.dev/" />
-              <Row label="CMS" value="Notion API" />
-              <Row label="Hosting" value="Vercel" />
-            </div>
-          </section>
-        </div>
+      <motion.div variants={item} className="flex flex-col gap-(--page-section-gap)">
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm text-muted-foreground">Stack</h2>
+          <div className="flex flex-col gap-3">
+            <Row label="Framework" value="Next.js" />
+            <Row label="Language" value="TypeScript" />
+            <Row label="Styling" value="Tailwind CSS" />
+            <Row label="Components" value="shadcn/ui" />
+            <Row label="Animation" value="Framer Motion" />
+            <Row label="Signature" value="Penflow" href="https://penflow.cretu.dev/" />
+            <Row label="CMS" value="Notion API" />
+            <Row label="Hosting" value="Vercel" />
+          </div>
+        </section>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm text-muted-foreground">Typography</h2>
+          <div className="flex flex-col gap-3">
+            <Row label="Sans" value="Inter" />
+            <Row label="Mono" value="JetBrains Mono" />
+          </div>
+        </section>
 
-        {/* Typography */}
-        <div className="py-8">
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm text-muted-foreground">Typography</h2>
-            <div className="flex flex-col gap-3">
-              <Row label="Sans" value="Inter" />
-              <Row label="Mono" value="JetBrains Mono" />
-            </div>
-          </section>
-        </div>
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm text-muted-foreground">Tools</h2>
+          <div className="flex flex-col gap-3">
+            <Row label="Design" value="Figma" />
+            <Row label="AI" value="v0, Claude, Conductor" />
+            <Row label="Browser tuning" value="Agentation, DialKit" />
+            <Row label="Editor" value="Cursor" />
+          </div>
+        </section>
 
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
-
-        {/* Tools */}
-        <div className="py-8">
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm text-muted-foreground">Tools</h2>
-            <div className="flex flex-col gap-3">
-              <Row label="Design" value="Figma" />
-              <Row label="AI" value="v0, Claude, Conductor" />
-              <Row label="Browser tuning" value="Agentation, DialKit" />
-              <Row label="Editor" value="Cursor" />
-            </div>
-          </section>
-        </div>
-
-        <hr className="mx-auto w-1/3 border-t border-dashed border-border/80" />
-
-        {/* Philosophy */}
-        <div className="py-8">
-          <section className="flex flex-col gap-4">
-            <h2 className="text-sm text-muted-foreground">Approach</h2>
-            <p className="text-base leading-relaxed text-muted-foreground">
-              This site is designed to feel calm and simple. No analytics popups, no cookie
-              banners, no clutter. Content is pulled from Notion so I can write and update
-              without touching code. The source is{" "}
-              <a
-                href="https://github.com/gageminamoto/portfolio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:decoration-primary"
-              >
-                open on GitHub
-              </a>
-              .
-            </p>
-          </section>
-        </div>
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm text-muted-foreground">Approach</h2>
+          <p className="text-base leading-relaxed text-muted-foreground">
+            This site is designed to feel calm and simple. No analytics popups, no cookie
+            banners, no clutter. Content is pulled from Notion so I can write and update
+            without touching code. The source is{" "}
+            <a
+              href="https://github.com/gageminamoto/portfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground underline decoration-dashed decoration-2 decoration-transparent transition-colors duration-150 hover:decoration-primary"
+            >
+              open on GitHub
+            </a>
+            .
+          </p>
+        </section>
       </motion.div>
 
       <motion.div variants={item}>

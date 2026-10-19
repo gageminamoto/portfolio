@@ -8,17 +8,14 @@ export default function LoadingWriting() {
     <main
       id="main-content"
       data-no-markdown
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
     >
-      <header>
+      <header className="flex flex-col gap-6">
         <BackLink href="/">Home</BackLink>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Writing</h1>
       </header>
 
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Writing</h1>
-      </div>
-
-      <section className="flex flex-col gap-10" aria-busy="true" aria-label="Loading posts">
+      <section className="flex flex-col gap-(--page-section-gap)" aria-busy="true" aria-label="Loading posts">
         <div className="flex flex-col gap-4">
           <Skeleton className="h-5 w-20 motion-reduce:animate-none" />
           <div className="flex flex-col">

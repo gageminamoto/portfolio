@@ -131,24 +131,21 @@ export function EarlyDesignPage({
   return (
     <motion.main
       id="main-content"
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
       style={motionStyle}
       variants={shouldReduceMotion ? undefined : stagger}
       initial="hidden"
       animate="show"
     >
-      <motion.header variants={item}>
+      <motion.header variants={item} className="flex flex-col gap-6">
         <nav className="flex items-center justify-between">
           <BackLink href="/">Home</BackLink>
           <PageActions />
         </nav>
-      </motion.header>
-
-      <motion.div variants={item}>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">
           Early design resources
         </h1>
-      </motion.div>
+      </motion.header>
 
       <motion.div variants={item}>
         <div ref={listAnchorRef} className="relative w-full">

@@ -10,7 +10,7 @@ export function Section({
   title: string
   href?: string
   icon?: React.ReactNode
-  children: React.ReactNode
+  children?: React.ReactNode
 }) {
   return (
     <section className="flex flex-col gap-4">

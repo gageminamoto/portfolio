@@ -9,18 +9,17 @@ export default function LoadingTools() {
     <main
       id="main-content"
       data-no-markdown
-      className="mx-auto flex min-h-screen max-w-xl flex-col gap-12 px-6 py-16 md:py-24"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
     >
-      <header>
+      <header className="flex flex-col gap-6">
         <BackLink href="/">Home</BackLink>
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Tools</h1>
+          <p className="text-sm text-muted-foreground">
+            Everything I build with, stay productive, and keep learning.
+          </p>
+        </div>
       </header>
-
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Tools</h1>
-        <p className="text-sm text-muted-foreground">
-          Everything I build with, stay productive, and keep learning.
-        </p>
-      </div>
 
       <section className="flex flex-col gap-5" aria-busy="true" aria-label="Loading tools">
         <div className="relative">

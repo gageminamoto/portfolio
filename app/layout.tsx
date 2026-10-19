@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
 import { CommandKProvider } from '@/contexts/CommandKContext'
+import { SectionGapProvider } from '@/components/section-gap-provider'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -63,13 +64,15 @@ export default function RootLayout({
         >
           <GradientWordProvider>
             <CommandKProvider>
-              <GradientOverlay />
-              <div
-                className="pointer-events-none fixed inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-background via-background/35 to-transparent md:hidden"
-                aria-hidden="true"
-              />
-              {children}
-              <script src="https://inflight.co/widget.js" data-org="yykr0g17" async></script>
+              <SectionGapProvider>
+                <GradientOverlay />
+                <div
+                  className="pointer-events-none fixed inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-background via-background/35 to-transparent md:hidden"
+                  aria-hidden="true"
+                />
+                {children}
+                <script src="https://inflight.co/widget.js" data-org="yykr0g17" async></script>
+              </SectionGapProvider>
             </CommandKProvider>
           </GradientWordProvider>
         </ThemeProvider>

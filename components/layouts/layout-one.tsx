@@ -34,7 +34,7 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
     <WorkHoverProvider>
     <motion.main
       id="main-content"
-      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-12 px-6 py-16 md:py-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       // The homepage's introductory copy is the LCP candidate. Rendering its
       // children with the hidden variant leaves the server-rendered page at
@@ -72,19 +72,11 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
         </div>
 
         <div className="py-8">
-          <Section title="About" href="/about" icon={<IconUser className="h-3.5 w-3.5" />}>
-            <p className="text-sm text-muted-foreground">
-              More about me.
-            </p>
-          </Section>
+          <Section title="About" href="/about" icon={<IconUser className="h-3.5 w-3.5" />} />
         </div>
 
         <div className="py-8">
-          <Section title="Tools" href="/tools" icon={<IconLayers className="h-3.5 w-3.5" />}>
-            <p className="text-sm text-muted-foreground">
-              Everything I build with.
-            </p>
-          </Section>
+          <Section title="Tools" href="/tools" icon={<IconLayers className="h-3.5 w-3.5" />} />
         </div>
 
         <div className="py-8">

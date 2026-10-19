@@ -57,7 +57,7 @@ export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleCo
       <div className={`mx-auto w-full px-6 pt-16 md:pt-24 ${prevPost || nextPost ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center`}>
         <div className="hidden xl:block" />
         <main id="main-content" className="min-w-0 max-w-xl xl:max-w-none mx-auto w-full">
-          <header className="mb-10 flex flex-col gap-6">
+          <header className="mb-(--page-section-gap) flex flex-col gap-6">
             <nav className="flex items-center justify-between">
               <BackLink href={backToHome ? "/" : "/writing"}>
                 {backToHome ? "Home" : "Writing"}
