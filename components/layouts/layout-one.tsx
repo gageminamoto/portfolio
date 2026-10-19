@@ -34,7 +34,7 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
     <WorkHoverProvider>
     <motion.main
       id="main-content"
-      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-12 px-6 py-16 md:gap-14 md:py-24"
+      className="relative z-10 mx-auto flex min-h-screen max-w-xl min-w-0 flex-col gap-12 px-6 py-16 md:py-24"
       variants={shouldReduceMotion ? undefined : stagger}
       // The homepage's introductory copy is the LCP candidate. Rendering its
       // children with the hidden variant leaves the server-rendered page at
@@ -55,36 +55,43 @@ export function LayoutOne({ initialPosts }: LayoutOneProps) {
         <SocialIcons socials={socials} email={email} />
       </motion.header>
 
-      {/* Work */}
-      <motion.section variants={item} className="min-w-0 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <IconSuitcase className="h-3.5 w-3.5" />
-            Work
-          </h2>
+      {/* Sections */}
+      <motion.div variants={item} className="flex flex-col">
+        <div className="pb-8">
+          <section className="min-w-0 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <IconSuitcase className="h-3.5 w-3.5" />
+                Work
+              </h2>
+            </div>
+            <div className="min-w-0 max-w-full">
+              <WorkSection />
+            </div>
+          </section>
         </div>
-        <div className="min-w-0 max-w-full">
-          <WorkSection />
+
+        <div className="py-8">
+          <Section title="About" href="/about" icon={<IconUser className="h-3.5 w-3.5" />}>
+            <p className="text-sm text-muted-foreground">
+              More about me.
+            </p>
+          </Section>
         </div>
-      </motion.section>
 
-      {/* Details */}
-      <motion.div variants={item} className="flex flex-col gap-8">
-        <Section title="About" href="/about" icon={<IconUser className="h-3.5 w-3.5" />}>
-          <p className="text-sm text-muted-foreground">
-            More about me.
-          </p>
-        </Section>
+        <div className="py-8">
+          <Section title="Tools" href="/tools" icon={<IconLayers className="h-3.5 w-3.5" />}>
+            <p className="text-sm text-muted-foreground">
+              Everything I build with.
+            </p>
+          </Section>
+        </div>
 
-        <Section title="Tools" href="/tools" icon={<IconLayers className="h-3.5 w-3.5" />}>
-          <p className="text-sm text-muted-foreground">
-            Everything I build with.
-          </p>
-        </Section>
-
-        <Section title="Writing" href="/writing" icon={<IconPen className="h-3.5 w-3.5" />}>
-          <WritingSection variant="default" initialPosts={initialPosts} />
-        </Section>
+        <div className="py-8">
+          <Section title="Writing" href="/writing" icon={<IconPen className="h-3.5 w-3.5" />}>
+            <WritingSection variant="default" initialPosts={initialPosts} />
+          </Section>
+        </div>
       </motion.div>
 
       <motion.div variants={item}>
