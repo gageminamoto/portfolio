@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useState } from "react"
 import useSWR from "swr"
 import { useDialKit, type TransitionConfig } from "dialkit"
 import {
@@ -69,6 +69,13 @@ function useHeight() {
   const [el, setEl] = useState<HTMLDivElement | null>(null)
   const [height, setHeight] = useState<number | null>(null)
 
+  // Forget the last height when the element unmounts, so a reopened panel
+  // starts from its new content instead of the size it closed at.
+  const ref = useCallback((node: HTMLDivElement | null) => {
+    setEl(node)
+    if (!node) setHeight(null)
+  }, [])
+
   useLayoutEffect(() => {
     if (!el) return
     const observer = new ResizeObserver(([entry]) => {
@@ -78,7 +85,7 @@ function useHeight() {
     return () => observer.disconnect()
   }, [el])
 
-  return [setEl, height] as const
+  return [ref, height] as const
 }
 
 /** DialKit transition (easing or spring) → Motion transition. */
