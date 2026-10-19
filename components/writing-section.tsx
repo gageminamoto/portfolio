@@ -84,45 +84,58 @@ export function WritingSection({
     }
   )
 
-  if (error && !data) {
-    return (
+  const posts = [...(data?.posts ?? []), ...(seedPosts ?? [])]
+
+  const rowFluidHover = (rowId: string) =>
+    useFluidListHover
+      ? buildListRowFluidHover(hoveredPostId, rowId, setHoveredPostId)
+      : undefined
+
+  let postsBody
+  if (error && !data && posts.length === 0) {
+    postsBody = (
       <p className="text-sm text-muted-foreground">
         Could not load writing posts.
       </p>
     )
-  }
-
-  if (isLoading && !data) {
-    return (
+  } else if (isLoading && !data) {
+    postsBody = (
       <div className="flex flex-col" aria-busy="true" aria-label="Loading writing posts">
         {[0, 1, 2].map((i) => (
           <SkeletonRow key={i} />
         ))}
       </div>
     )
-  }
-
-  const posts = [...(data?.posts ?? []), ...(seedPosts ?? [])]
-
-  if (!Array.isArray(posts) || posts.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">No posts yet.</p>
+  } else if (posts.length === 0) {
+    postsBody = <p className="text-sm text-muted-foreground">No posts yet.</p>
+  } else {
+    postsBody = (
+      <ExpandableList
+        items={posts}
+        getKey={(post) => post.id}
+        renderRow={(post) => <PostRow post={post} fluidHover={rowFluidHover(post.id)} />}
+        noun="posts"
+        initialCount={INITIAL_COUNT}
+      />
     )
   }
 
-  const rowFluidHover = (postId: string) =>
-    useFluidListHover
-      ? buildListRowFluidHover(hoveredPostId, postId, setHoveredPostId)
-      : undefined
-
+  // Same Resources row as the writing page, so the early design page stays
+  // reachable now that "writing" opens inline instead of navigating.
   return (
-    <ExpandableList
-      items={posts}
-      getKey={(post) => post.id}
-      renderRow={(post) => <PostRow post={post} fluidHover={rowFluidHover(post.id)} />}
-      noun="posts"
-      initialCount={INITIAL_COUNT}
+    <div
+      className="flex flex-col gap-4"
       onMouseLeave={useFluidListHover ? () => setHoveredPostId(null) : undefined}
-    />
+    >
+      <section className="flex flex-col gap-2">
+        <h2 className="text-sm text-muted-foreground">Resources</h2>
+        <ListRow
+          href="/early-design"
+          name="Early design resources"
+          fluidHover={rowFluidHover("early-design")}
+        />
+      </section>
+      {postsBody}
+    </div>
   )
 }
