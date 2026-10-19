@@ -120,7 +120,7 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
         <TextMorph
           disabled={!!effectsDisabled}
           ease={{ stiffness: 260, damping: 26 }}
-          className="role-morph whitespace-nowrap align-baseline"
+          className="whitespace-nowrap align-baseline"
           style={{ verticalAlign: "baseline" }}
         >
           {selected}

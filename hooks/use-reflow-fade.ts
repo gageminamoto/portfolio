@@ -9,9 +9,10 @@ import { useReducedMotion } from "motion/react"
  * Read top-to-bottom. Each value is ms after the role word
  * starts changing (the word's own width morph is handled by torph).
  *
- *    0ms   role word snaps to its new width; trailing text reflows once
- *    0ms   words that landed on a different line start at 35% opacity
- *  +200    fully visible (no travel, and never fully hidden)
+ *    0ms   role word begins resizing; trailing text reflows with it
+ *   ~Nms   a word or link lands on a different line (caught that frame)
+ *     +0   it starts at 35% opacity at its new spot (no travel)
+ *   +200   fully visible (never fully hidden, so no holes in lines)
  * ───────────────────────────────────────────────────────── */
 
 const REFLOW = {
