@@ -4,18 +4,12 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useTheme } from "next-themes"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
-import {
-  IconLayers,
-  IconSparkles,
-  IconThemeDark,
-  IconThemeLight,
-  IconThemeSystem,
-} from "@/components/site-icons"
+import { IconColor, IconThemeDark, IconThemeLight } from "@/components/site-icons"
 
 const COLOR_OPTIONS = [
-  { word: "software", label: "Software", hue: 250, Icon: IconThemeSystem },
-  { word: "brands", label: "Brands", hue: 330, Icon: IconSparkles },
-  { word: "tools", label: "Tools", hue: 145, Icon: IconLayers },
+  { word: "software", label: "Software", hue: 250 },
+  { word: "brands", label: "Brands", hue: 330 },
+  { word: "tools", label: "Tools", hue: 145 },
 ] as const
 
 const WORD_ALIASES: Record<string, string> = {
@@ -42,7 +36,6 @@ export function AppearanceControl() {
   )
   const color = COLOR_OPTIONS[colorIndex] ?? COLOR_OPTIONS[0]
   const ThemeIcon = mode === "dark" ? IconThemeDark : IconThemeLight
-  const ColorIcon = color.Icon
 
   function toggleTheme(event: React.MouseEvent<HTMLButtonElement>) {
     const next = mode === "dark" ? "light" : "dark"
@@ -140,19 +133,11 @@ export function AppearanceControl() {
             }}
             className={pillClass}
           >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={color.word}
-                className="flex"
-                style={{ color: `oklch(0.62 0.16 ${color.hue})` }}
-                initial={reduceMotion ? false : { opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.16 }}
-              >
-                <ColorIcon className="size-3.5" />
-              </motion.span>
-            </AnimatePresence>
+            {/* One icon for every color; only its tint changes. */}
+            <IconColor
+              className="size-3.5 transition-colors duration-200 ease-out motion-reduce:transition-none"
+              style={{ color: `oklch(0.62 0.16 ${color.hue})` }}
+            />
           </button>
         </>
       ) : (

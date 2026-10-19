@@ -18,6 +18,7 @@ import {
   IconLightbulb3Fill18,
   IconLinkFill18,
   IconMagnifierFill18,
+  IconPaintbrushFill18,
   IconPenWriting6Fill18,
   IconPinTackFill18,
   IconSparkle3Fill18,
@@ -75,6 +76,7 @@ export const IconThemeLight = siteIcon(IconLightbulb3Fill18)
 export const IconThemeDark = siteIcon(IconDarkLightFill18)
 export const IconThemeSystem = siteIcon(IconLaptopMobileFill18)
 export const IconSparkles = siteIcon(IconSparkle3Fill18)
+export const IconColor = siteIcon(IconPaintbrushFill18)
 export const IconVolumeOn = siteIcon(IconVolumeUpFill18)
 export const IconVolumeOff = siteIcon(IconVolumeFill18)
 export const IconMessage = siteIcon(IconMsgsFill18)
