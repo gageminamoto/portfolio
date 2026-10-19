@@ -34,7 +34,8 @@ const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[]
 const REGION_ID = "home-list"
 
 /* List reveal: the region grows open under the bio while its rows fade in,
- * so the list unrolls from the link that opened it. Closing is quicker.
+ * so the list unrolls from the link that opened it. Closing mirrors it:
+ * the rows fade out first, then the region folds back up on the same curve.
  * Tune live in the "List reveal" DialKit panel (dev only). */
 const LIST_REVEAL = {
   enter: {
@@ -43,8 +44,9 @@ const LIST_REVEAL = {
     fadeDelay: [0.06, 0, 0.5, 0.01],
   },
   exit: {
-    height: { type: "easing", duration: 0.25, ease: [0.19, 1, 0.22, 1] },
-    fadeDuration: [0.15, 0, 1, 0.01],
+    height: { type: "easing", duration: 0.4, ease: [0.19, 1, 0.22, 1] },
+    heightDelay: [0.06, 0, 0.5, 0.01],
+    fadeDuration: [0.25, 0, 1, 0.01],
     fadeDelay: [0, 0, 0.5, 0.01],
   },
   // Writing ↔ tools: the open panel resizes to the new list while the lists
@@ -260,7 +262,10 @@ export function LayoutOne() {
                   transition: {
                     height: reduceMotion
                       ? { duration: 0 }
-                      : toMotionTransition(reveal.exit.height),
+                      : {
+                          ...toMotionTransition(reveal.exit.height),
+                          delay: reveal.exit.heightDelay,
+                        },
                     opacity: {
                       duration: reveal.exit.fadeDuration,
                       delay: reduceMotion ? 0 : reveal.exit.fadeDelay,
