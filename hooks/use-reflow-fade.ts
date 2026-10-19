@@ -19,7 +19,7 @@ const REFLOW = {
   duration: 260, // ms for the fade
   delay: 40, // ms before the fade starts
   ease: "ease-out",
-  minLineShift: 8, // px of vertical jump that counts as a line change
+  minLineShift: 8, // px between item tops that starts a new line
 }
 
 export const REFLOW_ATTR = "data-reflow"
@@ -42,11 +42,21 @@ export function useReflowFade(
 
     let layout = new Map<HTMLElement, number>()
 
+    // Map each item to the index of the line it sits on, in reading order.
+    // Comparing line indexes (not pixel tops) means a whole block of lines
+    // nudging down a few px (Safari's line box grows while the role word
+    // morphs) doesn't count as words changing lines.
     const measure = () => {
-      const top = container.getBoundingClientRect().top
       const next = new Map<HTMLElement, number>()
+      let line = -1
+      let lineTop = -Infinity
       container.querySelectorAll<HTMLElement>(`[${REFLOW_ATTR}]`).forEach((el) => {
-        next.set(el, el.getBoundingClientRect().top - top)
+        const top = el.getBoundingClientRect().top
+        if (top - lineTop >= REFLOW.minLineShift) {
+          line += 1
+          lineTop = top
+        }
+        next.set(el, line)
       })
       return next
     }
@@ -54,10 +64,12 @@ export function useReflowFade(
     const check = () => {
       const next = measure()
       if (!reduceMotion) {
-        next.forEach((y, el) => {
+        next.forEach((line, el) => {
           const prev = layout.get(el)
-          if (prev === undefined || Math.abs(y - prev) < REFLOW.minLineShift) return
-          el.getAnimations().forEach((a) => a.cancel())
+          if (prev === undefined || line === prev) return
+          // A word on a line break can flip back and forth mid-morph; let a
+          // running fade finish instead of restarting it (that read as a blink).
+          if (el.getAnimations().some((a) => a.playState === "running")) return
           el.animate([{ opacity: 0 }, { opacity: 1 }], {
             duration: REFLOW.duration,
             delay: REFLOW.delay,
