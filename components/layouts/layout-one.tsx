@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import useSWR from "swr"
 import { useDialKit, type TransitionConfig } from "dialkit"
 import {
   AnimatePresence,
   motion,
-  useAnimation,
   useReducedMotion,
   type Transition,
 } from "motion/react"
@@ -20,7 +19,6 @@ import { generateSeedTools } from "@/lib/seed-tools"
 import { generateSeedPosts } from "@/lib/seed-writing"
 import { portfolioData } from "@/lib/portfolio-data"
 
-const INTRO_KEY = "home-intro-played"
 const easeOut = [0.19, 1, 0.22, 1] as const
 
 /* Bio links that open their list inline under the bio instead of navigating.
@@ -96,8 +94,6 @@ export function LayoutOne() {
   const { name, bio, socials, email } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const reduceMotion = useReducedMotion()
-  const intro = useAnimation()
-  const introStarted = useRef(false)
   const [openSection, setOpenSection] = useState<SectionKey | null>(null)
   const [wanted, setWanted] = useState<Record<SectionKey, boolean>>({
     writing: false,
@@ -176,45 +172,13 @@ export function LayoutOne() {
     ]),
   )
 
-  useLayoutEffect(() => {
-    if (introStarted.current || reduceMotion === null) return
-    introStarted.current = true
-
-    let seen = true
-    try {
-      seen = sessionStorage.getItem(INTRO_KEY) === "1"
-      if (!seen) sessionStorage.setItem(INTRO_KEY, "1")
-    } catch {
-      seen = true
-    }
-
-    if (seen) {
-      intro.set({ opacity: 1, y: 0 })
-      return
-    }
-
-    intro.set(reduceMotion ? { opacity: 0, y: 0 } : { opacity: 0, y: 8 })
-    void intro.start({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: reduceMotion ? 0.2 : 0.45,
-        ease: easeOut,
-      },
-    })
-  }, [intro, reduceMotion])
-
   return (
     <>
       <main
         id="main-content"
         className="relative z-10 flex min-h-screen items-center justify-center px-6 py-16"
       >
-        <motion.div
-          initial={false}
-          animate={intro}
-          className="flex w-full max-w-xl flex-col gap-6"
-        >
+        <div className="flex w-full max-w-xl flex-col gap-6">
           <div className="flex flex-col gap-4">
             <motion.h1
               layout="position"
@@ -339,7 +303,7 @@ export function LayoutOne() {
           <motion.div layout="position">
             <SocialIcons socials={socials} email={email} />
           </motion.div>
-        </motion.div>
+        </div>
         <CursorTrail />
       </main>
     </>

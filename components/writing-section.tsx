@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import { IconChevronDown } from "@/components/site-icons"
+
 import { useReducedMotion } from "framer-motion"
 import type { NotionWritingPost } from "@/lib/notion"
+import { ExpandableList } from "@/components/expandable-list"
 import { ListRow, type ListRowFluidHover } from "@/components/list-row"
-import { cn } from "@/lib/utils"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
 import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
 
@@ -71,7 +71,6 @@ export function WritingSection({
   initialPosts,
   seedPosts,
 }: WritingSectionProps) {
-  const [expanded, setExpanded] = useState(false)
   const [hoveredPostId, setHoveredPostId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
@@ -111,62 +110,19 @@ export function WritingSection({
     )
   }
 
-  const hasMore = posts.length > INITIAL_COUNT
-
   const rowFluidHover = (postId: string) =>
     useFluidListHover
       ? buildListRowFluidHover(hoveredPostId, postId, setHoveredPostId)
       : undefined
 
   return (
-    <div
-      className="flex flex-col"
+    <ExpandableList
+      items={posts}
+      getKey={(post) => post.id}
+      renderRow={(post) => <PostRow post={post} fluidHover={rowFluidHover(post.id)} />}
+      noun="posts"
+      initialCount={INITIAL_COUNT}
       onMouseLeave={useFluidListHover ? () => setHoveredPostId(null) : undefined}
-      style={!expanded && hasMore ? { maskImage: 'linear-gradient(to bottom, black calc(100% - 2rem), transparent)' } : undefined}
-    >
-      {posts.slice(0, INITIAL_COUNT).map((post) => (
-        <PostRow key={post.id} post={post} fluidHover={rowFluidHover(post.id)} />
-      ))}
-
-      {hasMore && (
-        <>
-          <div className="relative">
-            <div
-              className={cn(
-                "grid transition-[grid-template-rows] duration-300 ease-out",
-                expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-              )}
-            >
-              <div className="overflow-hidden">
-                <div className="flex flex-col">
-                  {posts.slice(INITIAL_COUNT).map((post) => (
-                    <PostRow
-                      key={post.id}
-                      post={post}
-                      fluidHover={rowFluidHover(post.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="group flex cursor-pointer items-center justify-center py-1"
-            aria-expanded={expanded}
-            aria-label={expanded ? "Show fewer posts" : `Show ${posts.length - INITIAL_COUNT} more posts`}
-          >
-            <IconChevronDown
-              className={cn(
-                "size-4 text-muted-foreground transition-[color,transform] duration-200 ease-out group-hover:text-foreground",
-                expanded && "rotate-180"
-              )}
-            />
-          </button>
-        </>
-      )}
-    </div>
+    />
   )
 }

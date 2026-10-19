@@ -3,12 +3,12 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { useReducedMotion } from "framer-motion"
-import { IconArrowUpRight, IconChevronDown } from "@/components/site-icons"
+import { IconArrowUpRight } from "@/components/site-icons"
+import { ExpandableList } from "@/components/expandable-list"
 import { ListRow, type ListRowFluidHover } from "@/components/list-row"
 import { AffiliateLabel, ToolIcon, toolAriaLabel } from "@/components/tool-parts"
 import type { NotionToolItem } from "@/lib/notion"
 import { toolLinkRel } from "@/lib/affiliate-links"
-import { cn } from "@/lib/utils"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
 import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
 
@@ -84,7 +84,6 @@ function ToolListRow({
 
 /** Just the list of tools, for the homepage. The full page adds search and filters. */
 export function ToolsSection({ seedTools }: ToolsSectionProps) {
-  const [expanded, setExpanded] = useState(false)
   const [hoveredToolId, setHoveredToolId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
@@ -115,55 +114,19 @@ export function ToolsSection({ seedTools }: ToolsSectionProps) {
     return <p className="text-sm text-muted-foreground">No tools yet.</p>
   }
 
-  const hasMore = tools.length > INITIAL_COUNT
-
   const rowFluidHover = (toolId: string) =>
     useFluidListHover
       ? buildListRowFluidHover(hoveredToolId, toolId, setHoveredToolId)
       : undefined
 
   return (
-    <div
-      className="flex flex-col"
+    <ExpandableList
+      items={tools}
+      getKey={(tool) => tool.id}
+      renderRow={(tool) => <ToolListRow tool={tool} fluidHover={rowFluidHover(tool.id)} />}
+      noun="tools"
+      initialCount={INITIAL_COUNT}
       onMouseLeave={useFluidListHover ? () => setHoveredToolId(null) : undefined}
-      style={!expanded && hasMore ? { maskImage: "linear-gradient(to bottom, black calc(100% - 2rem), transparent)" } : undefined}
-    >
-      {tools.slice(0, INITIAL_COUNT).map((tool) => (
-        <ToolListRow key={tool.id} tool={tool} fluidHover={rowFluidHover(tool.id)} />
-      ))}
-
-      {hasMore && (
-        <>
-          <div
-            className={cn(
-              "grid transition-[grid-template-rows] duration-300 ease-out",
-              expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-            )}
-          >
-            <div className="overflow-hidden">
-              <div className="flex flex-col">
-                {tools.slice(INITIAL_COUNT).map((tool) => (
-                  <ToolListRow key={tool.id} tool={tool} fluidHover={rowFluidHover(tool.id)} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="group flex cursor-pointer items-center justify-center py-1"
-            aria-expanded={expanded}
-            aria-label={expanded ? "Show fewer tools" : `Show ${tools.length - INITIAL_COUNT} more tools`}
-          >
-            <IconChevronDown
-              className={cn(
-                "size-4 text-muted-foreground transition-[color,transform] duration-200 ease-out group-hover:text-foreground",
-                expanded && "rotate-180",
-              )}
-            />
-          </button>
-        </>
-      )}
-    </div>
+    />
   )
 }
