@@ -3,16 +3,14 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { IconChevronDown } from "@/components/site-icons"
-import { useDialKit } from "dialkit"
 import { useReducedMotion } from "framer-motion"
 import type { NotionWritingPost } from "@/lib/notion"
 import { ListRow, type ListRowFluidHover } from "@/components/list-row"
-import { generateSeedPosts } from "@/lib/seed-writing"
 import { cn } from "@/lib/utils"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
 import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
 
-async function fetcher(url: string) {
+export async function writingFetcher(url: string) {
   const response = await fetch(url)
   const data = await response.json()
 
@@ -38,6 +36,8 @@ export type WritingVariant = "default" | "card"
 interface WritingSectionProps {
   variant?: WritingVariant
   initialPosts?: NotionWritingPost[]
+  /** Local preview posts appended after the real ones (DialKit seeding). */
+  seedPosts?: NotionWritingPost[]
 }
 
 function SkeletonRow() {
@@ -69,19 +69,16 @@ function PostRow({
 export function WritingSection({
   variant = "default",
   initialPosts,
+  seedPosts,
 }: WritingSectionProps) {
   const [expanded, setExpanded] = useState(false)
   const [hoveredPostId, setHoveredPostId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
   const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
-  const seedDial = useDialKit("Seed writing", {
-    enabled: false,
-    count: [5, 1, 10, 1],
-  })
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
-    fetcher,
+    writingFetcher,
     {
       revalidateOnFocus: false,
       fallbackData: initialPosts ? { posts: initialPosts } : undefined,
@@ -106,10 +103,7 @@ export function WritingSection({
     )
   }
 
-  const realPosts = data?.posts ?? []
-  const posts = seedDial.enabled
-    ? [...realPosts, ...generateSeedPosts(seedDial.count)]
-    : realPosts
+  const posts = [...(data?.posts ?? []), ...(seedPosts ?? [])]
 
   if (!Array.isArray(posts) || posts.length === 0) {
     return (
@@ -166,7 +160,7 @@ export function WritingSection({
           >
             <IconChevronDown
               className={cn(
-                "size-4 text-muted-foreground/40 transition-transform duration-200 ease-out group-hover:text-muted-foreground",
+                "size-4 text-muted-foreground transition-[color,transform] duration-200 ease-out group-hover:text-foreground",
                 expanded && "rotate-180"
               )}
             />

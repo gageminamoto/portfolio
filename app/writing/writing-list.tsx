@@ -2,12 +2,9 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import { useDialKit } from "dialkit"
 import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
-import { SiteFooter } from "@/components/site-footer"
 import { ListRow, type ListRowFluidHover } from "@/components/list-row"
-import { generateSeedPosts } from "@/lib/seed-posts"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import type { NotionWritingPost } from "@/lib/notion"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
@@ -117,10 +114,6 @@ interface WritingListProps {
 }
 
 export function WritingList({ initialPosts }: WritingListProps) {
-  const dial = useDialKit("Seed Posts", {
-    enabled: false,
-    count: [5, 1, 20, 1],
-  })
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
@@ -142,10 +135,7 @@ export function WritingList({ initialPosts }: WritingListProps) {
   )
   const isPending = isLoading && !data
   const hasError = Boolean(error && !data)
-  const realPosts = data?.posts ?? []
-  const posts = dial.enabled
-    ? [...realPosts, ...generateSeedPosts(dial.count)]
-    : realPosts
+  const posts = data?.posts ?? []
   const groups = groupPosts(posts)
 
   return (
@@ -220,9 +210,6 @@ export function WritingList({ initialPosts }: WritingListProps) {
           ))}
       </motion.div>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
     </motion.main>
   )
 }

@@ -4,7 +4,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
-import { SiteFooter } from "@/components/site-footer"
 import { PageActions } from "@/components/page-actions"
 import { EarlyDesignHoverNote } from "@/components/early-design/early-design-hover-note"
 import {
@@ -225,9 +224,6 @@ export function EarlyDesignPage({
         </div>
       </motion.div>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
     </motion.main>
   )
 }

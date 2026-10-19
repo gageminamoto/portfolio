@@ -7,7 +7,6 @@ import {
   IconChevronLeftFill18,
   IconChevronRightFill18,
   IconChevronUpFill18,
-  IconCircleInfoFill18,
   IconClipboardFill18,
   IconDarkLightFill18,
   IconEnvelopeFill18,
@@ -72,7 +71,6 @@ export const IconSectionLink = siteIcon(IconChevronRightFill18)
 export const IconLink = siteIcon(IconLinkFill18)
 export const IconCheck = siteIcon(IconCheckFill18)
 export const IconSearch = siteIcon(IconMagnifierFill18)
-export const IconInfo = siteIcon(IconCircleInfoFill18)
 export const IconThemeLight = siteIcon(IconLightbulb3Fill18)
 export const IconThemeDark = siteIcon(IconDarkLightFill18)
 export const IconThemeSystem = siteIcon(IconLaptopMobileFill18)

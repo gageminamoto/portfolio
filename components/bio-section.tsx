@@ -1,8 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useRef } from "react"
+import { motion } from "motion/react"
 import { HoverLink } from "@/components/hover-link"
 import { WordSwitcher } from "@/components/word-switcher"
+import { REFLOW_ATTR, useReflowFade } from "@/hooks/use-reflow-fade"
 
 interface BioLink {
   text: string
@@ -54,75 +56,202 @@ interface BioSectionProps {
   className?: string
   onWordChange?: (word: string) => void
   onUserClick?: (word: string) => void
+  /** Links (keyed by href) that open an inline region on plain click. */
+  linkToggles?: BioLinkToggles
+}
+
+export type BioLinkToggles = Record<
+  string,
+  { open: boolean; controls: string; onToggle: () => void; onIntent?: () => void }
+>
+
+function isPlainClick(e: React.MouseEvent) {
+  return !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)
+}
+
+// Each word (and each link) is its own box so the reflow glide can carry it
+// to a new line. Whitespace stays as plain text between boxes, so the
+// paragraph still wraps normally.
+const reflowItemProps = { [REFLOW_ATTR]: "" }
+
+function ReflowWords({ text }: { text: string }) {
+  return text.split(/(\s+)/).map((chunk, i) =>
+    chunk.trim() === "" ? (
+      chunk
+    ) : (
+      <span key={i} {...reflowItemProps} className="inline-block">
+        {chunk}
+      </span>
+    ),
+  )
+}
+
+function renderBioParts(
+  parts: BioPart[],
+  onWordChange?: (word: string) => void,
+  onUserClick?: (word: string) => void,
+  ghost = false,
+  reflow = false,
+  linkToggles?: BioLinkToggles,
+) {
+  const words = (text: string) => (reflow ? <ReflowWords text={text} /> : text)
+  const item = (key: React.Key, node: React.ReactNode) =>
+    reflow ? (
+      <span key={key} {...reflowItemProps} className="inline-block">
+        {node}
+      </span>
+    ) : (
+      <React.Fragment key={key}>{node}</React.Fragment>
+    )
+
+  return parts.map((part, index) => {
+    if (typeof part === "string") {
+      if (part.includes("Negi")) {
+        const [before, after] = part.split("Negi")
+        return (
+          <React.Fragment key={index}>
+            {words(before)}
+            {item(
+              "negi",
+              <HoverLink
+                href="https://negi.studio"
+                previewImage="/negi-studio-preview.png"
+                previewWidth={256}
+                previewHeight={134}
+                className={
+                  ghost
+                    ? "!text-transparent decoration-transparent hover:decoration-primary"
+                    : "no-underline decoration-transparent hover:decoration-primary"
+                }
+              >
+                Negi
+              </HoverLink>,
+            )}
+            {words(after)}
+          </React.Fragment>
+        )
+      }
+      return <React.Fragment key={index}>{words(part)}</React.Fragment>
+    }
+    if (isBioLink(part)) {
+      const previewImages: Record<string, string> = {
+        "Mizen": "/images/mizen-hover.mp4",
+        "University of Hawaiʻi Esports": "/uh-preview.jpg",
+        "UH Esports": "/uh-preview.jpg",
+        "local design community": "/piiku-preview.jpg",
+        "Michelle": "/michelle-preview.jpg",
+        "Aura": "/images/aura-preview.webp",
+        "Kilo": "/images/kilo-preview.webp",
+        "Umi": "/images/umi-preview.webp",
+        "Piʻikū": "/images/piiku-preview.webp",
+        "Spero": "/images/spero-preview.webp",
+        "MemberSpace": "/images/memberspace-preview.webp",
+        "Servco": "/images/servco-preview.webp",
+      }
+      const toggle = linkToggles?.[part.url]
+      return item(
+        index,
+        <HoverLink
+          href={part.url}
+          onClick={
+            toggle
+              ? (e) => {
+                  if (!isPlainClick(e)) return
+                  e.preventDefault()
+                  toggle.onToggle()
+                }
+              : undefined
+          }
+          onPointerEnter={toggle?.onIntent}
+          onFocus={toggle?.onIntent}
+          ariaExpanded={toggle?.open}
+          ariaControls={toggle?.controls}
+          external={!part.url.startsWith("/")}
+          previewImage={previewImages[part.text]}
+          previewFallbackImage={part.text === "Mizen" ? "/projects/mizen.png" : undefined}
+          className={
+            ghost
+              ? "!text-transparent decoration-transparent hover:decoration-primary"
+              : "no-underline decoration-transparent hover:decoration-primary"
+          }
+        >
+          {part.text}
+        </HoverLink>,
+      )
+    }
+    if (isBioSwitcher(part)) {
+      return (
+        <WordSwitcher
+          key={index}
+          options={part.options}
+          onWordChange={onWordChange}
+          onUserClick={onUserClick}
+        />
+      )
+    }
+    return null
+  })
+}
+
+function ShiftingParagraph({
+  parts,
+  className,
+  onWordChange,
+  onUserClick,
+  linkToggles,
+}: {
+  parts: BioPart[]
+  className: string
+  onWordChange?: (word: string) => void
+  onUserClick?: (word: string) => void
+  linkToggles?: BioLinkToggles
+}) {
+  // Render as normal flowing text so the paragraph wraps. The role word
+  // morphs on its own inside WordSwitcher (TextMorph forces nowrap, so it
+  // can't wrap a whole paragraph).
+  const ref = useRef<HTMLParagraphElement>(null)
+  useReflowFade(ref, "button")
+
+  return (
+    <motion.p ref={ref} layout="position" className={className}>
+      {renderBioParts(parts, onWordChange, onUserClick, false, true, linkToggles)}
+    </motion.p>
+  )
 }
 
 /** Shared body copy rhythm for bios and inline prose blocks (About hobbies, etc.). */
 export const bodyCopyClassName = "text-base leading-7 text-wrap"
 
-export function BioSection({ bio, className = "", onWordChange, onUserClick }: BioSectionProps) {
+export function BioSection({
+  bio,
+  className = "",
+  onWordChange,
+  onUserClick,
+  linkToggles,
+}: BioSectionProps) {
   const paragraphs = bio.split("\n\n")
 
   return (
     <div className={`${bodyCopyClassName} text-muted-foreground ${className}`}>
       {paragraphs.map((paragraph, pIndex) => {
         const parts = parseBio(paragraph)
+        const paragraphClass = pIndex > 0 ? "mt-4" : ""
+        if (parts.some(isBioSwitcher)) {
+          return (
+            <ShiftingParagraph
+              key={pIndex}
+              parts={parts}
+              className={paragraphClass}
+              onWordChange={onWordChange}
+              onUserClick={onUserClick}
+              linkToggles={linkToggles}
+            />
+          )
+        }
         return (
-          <p key={pIndex} className={pIndex > 0 ? "mt-4" : ""}>
-            {parts.map((part, index) => {
-              if (typeof part === "string") {
-                if (part.includes("Negi")) {
-                  const [before, after] = part.split("Negi")
-                  return (
-                    <React.Fragment key={index}>
-                      {before}
-                      <HoverLink
-                        href="https://negi.studio"
-                        previewImage="/negi-studio-preview.png"
-                        previewWidth={256}
-                        previewHeight={134}
-                        className="no-underline decoration-transparent hover:decoration-primary"
-                      >
-                        Negi
-                      </HoverLink>
-                      {after}
-                    </React.Fragment>
-                  )
-                }
-                return part
-              }
-              if (isBioLink(part)) {
-                const previewImages: Record<string, string> = {
-                  "Mizen": "/images/mizen-hover.mp4",
-                  "University of Hawaiʻi Esports": "/uh-preview.jpg",
-                  "UH Esports": "/uh-preview.jpg",
-                  "local design community": "/piiku-preview.jpg",
-                  "Michelle": "/michelle-preview.jpg",
-                }
-                const workSyncIds = new Set([
-                  "Aura",
-                  "Kilo",
-                  "Umi",
-                ])
-                const syncWorkId = workSyncIds.has(part.text) ? part.text : undefined
-                return (
-                  <HoverLink
-                    key={index}
-                    href={part.url}
-                    previewImage={previewImages[part.text]}
-                    previewFallbackImage={part.text === "Mizen" ? "/projects/mizen.png" : undefined}
-                    syncWorkId={syncWorkId}
-                    className="no-underline decoration-transparent hover:decoration-primary"
-                  >
-                    {part.text}
-                  </HoverLink>
-                )
-              }
-              if (isBioSwitcher(part)) {
-                return <WordSwitcher key={index} options={part.options} onWordChange={onWordChange} onUserClick={onUserClick} />
-              }
-              return null
-            })}
-          </p>
+          <motion.p key={pIndex} layout="position" className={paragraphClass}>
+            {renderBioParts(parts, onWordChange, onUserClick, false, false, linkToggles)}
+          </motion.p>
         )
       })}
     </div>

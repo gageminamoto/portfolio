@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server"
-import { fetchLatestPosts } from "@/lib/notion"
+import { fetchCachedAllPosts } from "@/lib/notion"
 
 // Revalidate every 10 minutes
 export const revalidate = 600
 
 export async function GET() {
   try {
-    const posts = await fetchLatestPosts(10)
+    const posts = await fetchCachedAllPosts()
     return NextResponse.json({ posts })
   } catch (error) {
     console.error(
