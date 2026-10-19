@@ -119,7 +119,10 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
       >
         <TextMorph
           disabled={!!effectsDisabled}
-          ease={{ stiffness: 260, damping: 26 }}
+          // Critically damped (2·√260 ≈ 32): an underdamped spring let the
+          // width overshoot its final size by a fraction of a pixel, enough to
+          // push the next word to a new line for a few frames and back.
+          ease={{ stiffness: 260, damping: 34 }}
           className="whitespace-nowrap align-baseline"
           style={{ verticalAlign: "baseline" }}
         >
