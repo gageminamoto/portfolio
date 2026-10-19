@@ -9,15 +9,15 @@ import { useReducedMotion } from "motion/react"
  * Read top-to-bottom. Each value is ms after the role word
  * starts changing (the word's own width morph is handled by torph).
  *
- *    0ms   role word begins resizing; trailing text reflows with it
- *   ~Nms   a word or link lands on a different line (caught that frame)
- *   +40    it fades in at its new spot (no travel)
- *  +300    fully visible
+ *    0ms   role word snaps to its new width; trailing text reflows once
+ *    0ms   words that landed on a different line start at 35% opacity
+ *  +200    fully visible (no travel, and never fully hidden)
  * ───────────────────────────────────────────────────────── */
 
 const REFLOW = {
-  duration: 260, // ms for the fade
-  delay: 40, // ms before the fade starts
+  duration: 200, // ms for the fade
+  delay: 0, // ms before the fade starts
+  from: 0.35, // starting opacity; never fully hidden, so no holes in lines
   ease: "ease-out",
   minLineShift: 8, // px between item tops that starts a new line
 }
@@ -70,7 +70,7 @@ export function useReflowFade(
           // A word on a line break can flip back and forth mid-morph; let a
           // running fade finish instead of restarting it (that read as a blink).
           if (el.getAnimations().some((a) => a.playState === "running")) return
-          el.animate([{ opacity: 0 }, { opacity: 1 }], {
+          el.animate([{ opacity: REFLOW.from }, { opacity: 1 }], {
             duration: REFLOW.duration,
             delay: REFLOW.delay,
             easing: REFLOW.ease,

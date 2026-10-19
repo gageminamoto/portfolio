@@ -284,10 +284,12 @@
   z-index: 2;
 }
 
-/* Let a role change reflow the whole line inside one morph. */
-.bio-shift[torph-root] {
-  display: block;
-  width: 100%;
-  white-space: normal;
-  vertical-align: baseline;
+/* The bio role word jumps straight to its new width instead of growing
+ * frame by frame, so the text after it reflows once rather than on every
+ * frame (which read as glitching, especially in Safari). The letters still
+ * morph inside it. !important is needed to win over the morph's own width
+ * animation. */
+.role-morph[torph-root] {
+  width: auto !important;
+  height: auto !important;
 }
