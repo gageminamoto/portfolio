@@ -2,17 +2,15 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import { IconChevronDown } from "@/components/site-icons"
-import { useDialKit } from "dialkit"
+
 import { useReducedMotion } from "framer-motion"
 import type { NotionWritingPost } from "@/lib/notion"
+import { ExpandableList } from "@/components/expandable-list"
 import { ListRow, type ListRowFluidHover } from "@/components/list-row"
-import { generateSeedPosts } from "@/lib/seed-writing"
-import { cn } from "@/lib/utils"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
 import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
 
-async function fetcher(url: string) {
+export async function writingFetcher(url: string) {
   const response = await fetch(url)
   const data = await response.json()
 
@@ -38,6 +36,8 @@ export type WritingVariant = "default" | "card"
 interface WritingSectionProps {
   variant?: WritingVariant
   initialPosts?: NotionWritingPost[]
+  /** Local preview posts appended after the real ones (DialKit seeding). */
+  seedPosts?: NotionWritingPost[]
 }
 
 function SkeletonRow() {
@@ -69,110 +69,76 @@ function PostRow({
 export function WritingSection({
   variant = "default",
   initialPosts,
+  seedPosts,
 }: WritingSectionProps) {
-  const [expanded, setExpanded] = useState(false)
   const [hoveredPostId, setHoveredPostId] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
   const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
-  const seedDial = useDialKit("Seed writing", {
-    enabled: false,
-    count: [5, 1, 10, 1],
-  })
   const { data, error, isLoading } = useSWR<{ posts: NotionWritingPost[] }>(
     "/api/writing",
-    fetcher,
+    writingFetcher,
     {
       revalidateOnFocus: false,
       fallbackData: initialPosts ? { posts: initialPosts } : undefined,
     }
   )
 
-  if (error && !data) {
-    return (
+  const posts = [...(data?.posts ?? []), ...(seedPosts ?? [])]
+
+  const rowFluidHover = (rowId: string) =>
+    useFluidListHover
+      ? buildListRowFluidHover(hoveredPostId, rowId, setHoveredPostId)
+      : undefined
+
+  let postsBody
+  if (error && !data && posts.length === 0) {
+    postsBody = (
       <p className="text-sm text-muted-foreground">
         Could not load writing posts.
       </p>
     )
-  }
-
-  if (isLoading && !data) {
-    return (
+  } else if (isLoading && !data) {
+    postsBody = (
       <div className="flex flex-col" aria-busy="true" aria-label="Loading writing posts">
         {[0, 1, 2].map((i) => (
           <SkeletonRow key={i} />
         ))}
       </div>
     )
-  }
-
-  const realPosts = data?.posts ?? []
-  const posts = seedDial.enabled
-    ? [...realPosts, ...generateSeedPosts(seedDial.count)]
-    : realPosts
-
-  if (!Array.isArray(posts) || posts.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">No posts yet.</p>
+  } else if (posts.length === 0) {
+    postsBody = <p className="text-sm text-muted-foreground">No posts yet.</p>
+  } else {
+    postsBody = (
+      <ExpandableList
+        items={posts}
+        getKey={(post) => post.id}
+        renderRow={(post) => <PostRow post={post} fluidHover={rowFluidHover(post.id)} />}
+        noun="posts"
+        initialCount={INITIAL_COUNT}
+      />
     )
   }
 
-  const hasMore = posts.length > INITIAL_COUNT
-
-  const rowFluidHover = (postId: string) =>
-    useFluidListHover
-      ? buildListRowFluidHover(hoveredPostId, postId, setHoveredPostId)
-      : undefined
-
+  // Same Resources row as the writing page, so the early design page stays
+  // reachable now that "writing" opens inline instead of navigating.
   return (
     <div
-      className="flex flex-col"
+      className="flex flex-col gap-4"
       onMouseLeave={useFluidListHover ? () => setHoveredPostId(null) : undefined}
-      style={!expanded && hasMore ? { maskImage: 'linear-gradient(to bottom, black calc(100% - 2rem), transparent)' } : undefined}
     >
-      {posts.slice(0, INITIAL_COUNT).map((post) => (
-        <PostRow key={post.id} post={post} fluidHover={rowFluidHover(post.id)} />
-      ))}
-
-      {hasMore && (
-        <>
-          <div className="relative">
-            <div
-              className={cn(
-                "grid transition-[grid-template-rows] duration-300 ease-out",
-                expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-              )}
-            >
-              <div className="overflow-hidden">
-                <div className="flex flex-col">
-                  {posts.slice(INITIAL_COUNT).map((post) => (
-                    <PostRow
-                      key={post.id}
-                      post={post}
-                      fluidHover={rowFluidHover(post.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="group flex cursor-pointer items-center justify-center py-1"
-            aria-expanded={expanded}
-            aria-label={expanded ? "Show fewer posts" : `Show ${posts.length - INITIAL_COUNT} more posts`}
-          >
-            <IconChevronDown
-              className={cn(
-                "size-4 text-muted-foreground/40 transition-transform duration-200 ease-out group-hover:text-muted-foreground",
-                expanded && "rotate-180"
-              )}
-            />
-          </button>
-        </>
-      )}
+      <section className="flex flex-col gap-2">
+        <h2 className="text-sm text-muted-foreground">Resources</h2>
+        <ListRow
+          href="/early-design"
+          name="Early design resources"
+          fluidHover={rowFluidHover("early-design")}
+        />
+      </section>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-sm text-muted-foreground">Notes</h2>
+        {postsBody}
+      </section>
     </div>
   )
 }

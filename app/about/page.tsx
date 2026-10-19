@@ -4,7 +4,6 @@ import { useState } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { BackLink } from "@/components/back-link"
-import { SiteFooter } from "@/components/site-footer"
 import { Section } from "@/components/section"
 import { BioSection, bodyCopyClassName } from "@/components/bio-section"
 import { HoverLink } from "@/components/hover-link"
@@ -131,9 +130,6 @@ export default function AboutPage() {
         </Section>
       </motion.div>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
       <CursorTrail />
     </motion.main>
   )

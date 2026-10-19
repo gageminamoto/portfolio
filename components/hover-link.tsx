@@ -19,6 +19,12 @@ interface HoverLinkProps {
   /** Truncate overflowing link text with an ellipsis (for flex row layouts). */
   truncate?: boolean
   className?: string
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
+  onPointerEnter?: () => void
+  onFocus?: () => void
+  /** Set when the link toggles an inline region instead of only navigating. */
+  ariaExpanded?: boolean
+  ariaControls?: string
 }
 
 export function HoverLink({
@@ -33,6 +39,11 @@ export function HoverLink({
   syncWorkId,
   truncate = false,
   className = "",
+  onClick,
+  onPointerEnter,
+  onFocus,
+  ariaExpanded,
+  ariaControls,
 }: HoverLinkProps) {
   const { setHoveredWorkId } = useWorkHover()
   const prefersReducedMotion = useReducedMotion()
@@ -49,7 +60,13 @@ export function HoverLink({
     target.scrollIntoView({ block: "start", behavior: "smooth" })
   }
 
-  const syncHandlers = syncWorkId
+  const syncHandlers: Partial<{
+    onMouseEnter: () => void
+    onMouseLeave: () => void
+    onFocus: () => void
+    onBlur: () => void
+    onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void
+  }> = syncWorkId
     ? {
         onMouseEnter: () => setHoveredWorkId(syncWorkId),
         onMouseLeave: () => setHoveredWorkId(null),
@@ -58,6 +75,22 @@ export function HoverLink({
         onClick: handleSyncClick,
       }
     : {}
+
+  const linkProps = {
+    className: linkClassName,
+    ...syncHandlers,
+    onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick?.(e)
+      syncHandlers.onClick?.(e)
+    },
+    onPointerEnter,
+    onFocus: () => {
+      onFocus?.()
+      syncHandlers.onFocus?.()
+    },
+    "aria-expanded": ariaExpanded,
+    "aria-controls": ariaControls,
+  }
 
   const inner = (
     <>
@@ -109,8 +142,7 @@ export function HoverLink({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={linkClassName}
-        {...syncHandlers}
+        {...linkProps}
       >
         {inner}
       </a>
@@ -118,7 +150,7 @@ export function HoverLink({
   }
 
   return wrapWithPreview(
-    <Link href={href} className={linkClassName} {...syncHandlers}>
+    <Link href={href} {...linkProps}>
       {inner}
     </Link>
   )

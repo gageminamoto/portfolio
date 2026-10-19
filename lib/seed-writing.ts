@@ -21,16 +21,26 @@ const SEED_DEFS: SeedDef[] = [
 ]
 
 export function generateSeedPosts(count: number): NotionWritingPost[] {
-  const n = Math.min(Math.max(0, count), SEED_DEFS.length)
+  const n = Math.max(0, count)
 
+  // Past the static list, cycle it with a part number and an older date so
+  // long lists can be previewed with unique slugs.
   return Array.from({ length: n }, (_, i) => {
-    const def = SEED_DEFS[i]
+    const def = SEED_DEFS[i % SEED_DEFS.length]
+    const cycle = Math.floor(i / SEED_DEFS.length)
+    const slug = cycle ? `${def.slug}-${cycle + 1}` : def.slug
+    let date = def.date
+    if (date && cycle) {
+      const d = new Date(date)
+      d.setFullYear(d.getFullYear() - cycle)
+      date = d.toISOString().slice(0, 10)
+    }
     return {
       id: `seed-post-${i}`,
-      title: def.title,
-      slug: def.slug,
-      date: def.date,
-      url: `/writing/${def.slug}`,
+      title: cycle ? `${def.title} (part ${cycle + 1})` : def.title,
+      slug,
+      date,
+      url: `/writing/${slug}`,
     } satisfies NotionWritingPost
   })
 }

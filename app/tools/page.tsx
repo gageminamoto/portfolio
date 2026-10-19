@@ -10,22 +10,19 @@ import Link from "next/link"
 import { IconArrowUpRight, IconSearch } from "@/components/site-icons"
 import { BackLink } from "@/components/back-link"
 import { ListRow } from "@/components/list-row"
-import { SiteFooter } from "@/components/site-footer"
 import useSWR from "swr"
-import { useDialKit } from "dialkit"
 import {
   fadeUp,
   noMotion,
   stagger,
   toolsPanelEnter,
 } from "@/lib/animations"
-import { faviconHostname, toolLinkRel } from "@/lib/affiliate-links"
-import { generateSeedTools } from "@/lib/seed-tools"
+import { toolLinkRel } from "@/lib/affiliate-links"
 import { cn } from "@/lib/utils"
 import { HOVER_EASE_IN_OUT } from "@/lib/hover-constants"
 import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
 import { getFluidListRowEmphasis } from "@/lib/fluid-list-hover"
-import { OptimizedImage } from "@/components/optimized-image"
+import { AffiliateLabel, ToolIcon, toolAriaLabel } from "@/components/tool-parts"
 import type { NotionToolItem, ToolCategory } from "@/lib/notion"
 
 async function fetcher(url: string) {
@@ -66,53 +63,6 @@ function formatLastUpdated(dateStr: string | null): string {
   })
 }
 
-function AffiliateLabel() {
-  return (
-    <span className="shrink-0 text-[10px] font-medium tracking-wide text-muted-foreground/50">
-      Affiliate
-    </span>
-  )
-}
-
-function toolAriaLabel(
-  displayName: string,
-  description: string,
-  affiliate: boolean,
-): string {
-  const base = `${displayName} — ${description}`
-  return affiliate ? `${base} (affiliate)` : base
-}
-
-function ToolIcon({ name, url }: { name: string; url: string | null }) {
-  const initials = name.slice(0, 2)
-  const [failed, setFailed] = useState(false)
-  const hostname = url ? faviconHostname(url) : null
-
-  if (hostname && !failed) {
-    return (
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
-        <OptimizedImage
-          src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
-          alt=""
-          width={20}
-          height={20}
-          className="size-5 rounded-sm bg-transparent"
-          imageClassName="size-full rounded-sm object-contain"
-          onError={() => setFailed(true)}
-        />
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
-      <span className="font-mono text-[11px] font-semibold text-muted-foreground">
-        {initials}
-      </span>
-    </div>
-  )
-}
-
 function SkeletonRows() {
   return (
     <div className="flex flex-col" aria-busy="true" aria-label="Loading tools">
@@ -148,14 +98,6 @@ function SkeletonCards() {
 }
 
 export default function ToolsPage() {
-  const seedDial = useDialKit("Seed tools", {
-    enabled: false,
-    count: [5, 1, 20, 1],
-  })
-  /** 1 = default; higher = snappier hover (padding, text, background fade). */
-  const hoverSpeedDial = useDialKit("Tools hover speed", {
-    speed: [1, 0.25, 2.5, 0.05],
-  })
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("All")
   const [hoveredToolId, setHoveredToolId] = useState<string | null>(null)
@@ -165,9 +107,8 @@ export default function ToolsPage() {
   const item = shouldReduceMotion ? noMotion : fadeUp
   const toolsPanelParent = shouldReduceMotion ? noMotion : toolsPanelEnter
 
-  const hoverSpeed = Math.max(0.25, hoverSpeedDial.speed)
-  const hoverPadMs = Math.round(100 / hoverSpeed)
-  const hoverColorMs = Math.round(100 / hoverSpeed)
+  const hoverPadMs = 100
+  const hoverColorMs = 100
   const rowPadTransitionStyle: CSSProperties = {
     transitionDuration: `${hoverPadMs}ms`,
     transitionTimingFunction: HOVER_EASE_IN_OUT,
@@ -190,10 +131,7 @@ export default function ToolsPage() {
   const isPending = isLoading && !data
   const hasError = Boolean(error && !data)
 
-  const realTools = data?.tools ?? []
-  const tools = seedDial.enabled
-    ? [...realTools, ...generateSeedTools(seedDial.count)]
-    : realTools
+  const tools = data?.tools ?? []
 
   const filtered = tools.filter((t) => {
     const matchesCategory =
@@ -538,9 +476,6 @@ export default function ToolsPage() {
         </div>
       </motion.div>
 
-      <motion.div variants={item}>
-        <SiteFooter />
-      </motion.div>
     </motion.main>
   )
 }

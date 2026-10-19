@@ -7,7 +7,6 @@ import {
   IconChevronLeftFill18,
   IconChevronRightFill18,
   IconChevronUpFill18,
-  IconCircleInfoFill18,
   IconClipboardFill18,
   IconDarkLightFill18,
   IconEnvelopeFill18,
@@ -19,6 +18,7 @@ import {
   IconLightbulb3Fill18,
   IconLinkFill18,
   IconMagnifierFill18,
+  IconPaintbrushFill18,
   IconPenWriting6Fill18,
   IconPinTackFill18,
   IconSparkle3Fill18,
@@ -35,6 +35,7 @@ import {
 } from "nucleo-ui-essential-fill-18"
 import { IconStarFill12 } from "nucleo-ui-essential-fill-12"
 import { IconGlassesFill18 } from "@/components/icons/icon-glasses-fill-18"
+import { IconMoonFill18, IconSunFill18 } from "@/components/icons/icon-sun-moon-fill-18"
 
 export type SiteIconProps = SVGProps<SVGSVGElement> & {
   className?: string
@@ -72,11 +73,13 @@ export const IconSectionLink = siteIcon(IconChevronRightFill18)
 export const IconLink = siteIcon(IconLinkFill18)
 export const IconCheck = siteIcon(IconCheckFill18)
 export const IconSearch = siteIcon(IconMagnifierFill18)
-export const IconInfo = siteIcon(IconCircleInfoFill18)
 export const IconThemeLight = siteIcon(IconLightbulb3Fill18)
 export const IconThemeDark = siteIcon(IconDarkLightFill18)
+export const IconSun = siteIcon(IconSunFill18)
+export const IconMoon = siteIcon(IconMoonFill18)
 export const IconThemeSystem = siteIcon(IconLaptopMobileFill18)
 export const IconSparkles = siteIcon(IconSparkle3Fill18)
+export const IconColor = siteIcon(IconPaintbrushFill18)
 export const IconVolumeOn = siteIcon(IconVolumeUpFill18)
 export const IconVolumeOff = siteIcon(IconVolumeFill18)
 export const IconMessage = siteIcon(IconMsgsFill18)

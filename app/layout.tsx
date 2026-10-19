@@ -2,14 +2,13 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Agentation } from 'agentation'
-import { DialRoot } from 'dialkit'
 import 'dialkit/styles.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AppearanceControl } from '@/components/appearance-control'
+import { DevPanels } from '@/components/dev-panels'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
 import { CommandKProvider } from '@/contexts/CommandKContext'
-import { SectionGapProvider } from '@/components/section-gap-provider'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -64,24 +63,22 @@ export default function RootLayout({
         >
           <GradientWordProvider>
             <CommandKProvider>
-              <SectionGapProvider>
-                <GradientOverlay />
-                <div
-                  className="pointer-events-none fixed inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-background via-background/35 to-transparent md:hidden"
-                  aria-hidden="true"
-                />
-                {children}
-                <script src="https://inflight.co/widget.js" data-org="yykr0g17" async></script>
-              </SectionGapProvider>
+              <GradientOverlay />
+              <div
+                className="pointer-events-none fixed inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-background via-background/35 to-transparent md:hidden"
+                aria-hidden="true"
+              />
+              {children}
+              <AppearanceControl />
+              <script src="https://inflight.co/widget.js" data-org="yykr0g17" async></script>
             </CommandKProvider>
           </GradientWordProvider>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
-        {process.env.NODE_ENV === "development" && enableAgentation && (
-          <Agentation endpoint="http://localhost:4747" />
+        {process.env.NODE_ENV === "development" && (
+          <DevPanels agentation={enableAgentation} />
         )}
-        {process.env.NODE_ENV === "development" && <DialRoot />}
       </body>
     </html>
   )
