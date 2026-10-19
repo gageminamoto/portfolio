@@ -56,10 +56,16 @@ export function WordSwitcher({ options, onWordChange, onUserClick }: WordSwitche
 
   useEffect(() => {
     const activeIndex = getActiveIndex(options, activeWord)
-    if (activeIndex >= 0) {
-      selectedIndexRef.current = activeIndex
-      setSelectedIndex(activeIndex)
+    if (activeIndex < 0) return
+    // The rotation updates selectedIndexRef before reporting a word, so a
+    // mismatch means someone else picked it (e.g. the color control). Treat
+    // that as a manual choice: stop rotating and show the bar as full.
+    if (activeIndex !== selectedIndexRef.current) {
+      hasInteracted.current = true
+      setProgressKey((key) => key + 1)
     }
+    selectedIndexRef.current = activeIndex
+    setSelectedIndex(activeIndex)
   }, [activeWord, options])
 
   useEffect(() => {
