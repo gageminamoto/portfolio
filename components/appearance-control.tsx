@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useTheme } from "next-themes"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { useMounted } from "@/hooks/use-mounted"
-import { IconColor, IconThemeDark, IconThemeLight } from "@/components/site-icons"
+import { IconColor, IconMoon, IconSun } from "@/components/site-icons"
 
 const COLOR_OPTIONS = [
   { word: "software", label: "Software", hue: 250 },
@@ -35,7 +35,7 @@ export function AppearanceControl() {
     COLOR_OPTIONS.findIndex((option) => option.word === activeColor),
   )
   const color = COLOR_OPTIONS[colorIndex] ?? COLOR_OPTIONS[0]
-  const ThemeIcon = mode === "dark" ? IconThemeDark : IconThemeLight
+  const ThemeIcon = mode === "dark" ? IconMoon : IconSun
 
   function toggleTheme(event: React.MouseEvent<HTMLButtonElement>) {
     const next = mode === "dark" ? "light" : "dark"

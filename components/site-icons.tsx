@@ -35,6 +35,7 @@ import {
 } from "nucleo-ui-essential-fill-18"
 import { IconStarFill12 } from "nucleo-ui-essential-fill-12"
 import { IconGlassesFill18 } from "@/components/icons/icon-glasses-fill-18"
+import { IconMoonFill18, IconSunFill18 } from "@/components/icons/icon-sun-moon-fill-18"
 
 export type SiteIconProps = SVGProps<SVGSVGElement> & {
   className?: string
@@ -74,6 +75,8 @@ export const IconCheck = siteIcon(IconCheckFill18)
 export const IconSearch = siteIcon(IconMagnifierFill18)
 export const IconThemeLight = siteIcon(IconLightbulb3Fill18)
 export const IconThemeDark = siteIcon(IconDarkLightFill18)
+export const IconSun = siteIcon(IconSunFill18)
+export const IconMoon = siteIcon(IconMoonFill18)
 export const IconThemeSystem = siteIcon(IconLaptopMobileFill18)
 export const IconSparkles = siteIcon(IconSparkle3Fill18)
 export const IconColor = siteIcon(IconPaintbrushFill18)

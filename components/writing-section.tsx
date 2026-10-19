@@ -135,7 +135,10 @@ export function WritingSection({
           fluidHover={rowFluidHover("early-design")}
         />
       </section>
-      {postsBody}
+      <section className="flex flex-col gap-2">
+        <h2 className="text-sm text-muted-foreground">Notes</h2>
+        {postsBody}
+      </section>
     </div>
   )
 }
