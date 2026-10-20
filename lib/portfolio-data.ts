@@ -93,11 +93,11 @@ const faviconUrl = (url: string) =>
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
   bio: "{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. Currently designing at Negi and growing Hawai’i’s [local design community](https://piiku.co/), with [Mizen](https://www.mizen.recipes/) on the side.\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
-  extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe quality software should feel invisible; getting out of your way so you can focus on what matters.
+  extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe great software should feel invisible; getting out of your way so you can focus on what matters. Currently building [Mizen](https://www.mizen.recipes/) and growing the [local design community](https://piiku.co/) in Hawai’i.
 
-I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/).
+I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/). Those early roles taught me how to move fast, collaborate across teams, and communicate with clarity.
 
-I then started [Negi](https://negi.studio/), a design studio I co-founded with [Michelle](https://www.michellesunnyside.com/), where we design thoughtful software for passionate communities. Craft is still rare, but deeply needed. Follow our journey [here](https://www.linkedin.com/company/negi-studio/).`,
+Indie games have always inspired me. Small teams pour their craft into every detail with whatever they have. That same energy drives Negi, the design studio I co-founded with [Michelle](https://www.michellesunnyside.com/), where we design thoughtful software and brands in and for Hawai’i. Craft is still rare here, but deeply needed. Follow the journey [here](https://www.linkedin.com/company/negi-studio/).`,
   designManifesto: [
     /*
     { principle: "Calm by default", description: "Software should reduce anxiety, not create it. Every interaction should feel\u00a0unhurried." },
