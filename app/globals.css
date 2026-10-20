@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+/* Shared timeline typography, motion, and rail fades. */
 @import '../styles/lifeline.css';
 
 @custom-variant dark (&:is(.dark *));

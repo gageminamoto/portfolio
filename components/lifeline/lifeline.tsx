@@ -1,6 +1,6 @@
 "use client"
 
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useState, type CSSProperties } from "react"
 import { cn } from "@/lib/utils"
 import { LifelineDesktop } from "./lifeline-desktop"
 import { LifelineFireworksProvider } from "./lifeline-fireworks"
@@ -43,11 +43,14 @@ export function Lifeline(props: LifelineProps) {
           className={
             props.mode === "embed"
               ? cn(
-                  "lifeline-typeset h-full overflow-y-auto pt-5",
+                  "lifeline-typeset lifeline-mobile-rail-fade h-full overflow-y-auto pt-5",
                   props.className,
                 )
               : "lifeline-typeset pt-5"
           }
+          style={{
+            "--lifeline-mobile-rail-x": props.showSecondaryAxis === false ? "2rem" : "5.25rem",
+          } as CSSProperties}
         >
           <LifelineVertical {...props} />
         </div>
