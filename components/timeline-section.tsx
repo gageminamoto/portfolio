@@ -21,13 +21,14 @@ export function TimelineSection({
         Timeline
       </h2>
       <div
-        className="h-[560px] min-w-0 md:-ml-6 md:w-[calc(50vw+50%)]"
+        className="h-[560px] min-w-0 md:-ml-6 md:h-auto md:w-[calc(50vw+50%)]"
       >
         <Lifeline
           markers={markers}
           birthYear={0}
           title="Work and projects timeline"
           mode="embed"
+          className="md:h-auto md:pt-0"
           axisLabels={["Entry", "Period"]}
           showSecondaryAxis={false}
         />

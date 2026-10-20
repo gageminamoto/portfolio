@@ -76,7 +76,7 @@ export const LifelineMarkerColumn = forwardRef<
             {marker.label ?? marker.year}
           </p>
 
-          <div className="relative w-full pb-10 text-zinc-500 transition-colors duration-300 group-hover:text-black dark:group-hover:text-zinc-300">
+          <div className="relative w-full text-zinc-500 transition-colors duration-300 group-hover:text-black dark:group-hover:text-zinc-300">
             {/* When this column carries people, the content block reserves
                 the band's height as a floor: short and average columns put
                 their portraits on the same line as every other column, and
