@@ -1,0 +1,18 @@
+import { Icon, type IconProps } from "nucleo-ui-essential-fill-12"
+
+/** Hammer (12px fill) from Nucleo UI Fill — same paths as IconHammerFill12. */
+export function IconHammerFill12(props: IconProps) {
+  return (
+    <Icon size="12px" {...props}>
+      <path
+        d="M0.5 4.25L0.5 2.25C0.5 1.2835 1.2835 0.5 2.25 0.5H7.44727C7.79275 0.500008 8.13051 0.602308 8.41797 0.793945L10.7207 2.3291C11.2075 2.65366 11.5 3.20005 11.5 3.78516V4.25C11.5 5.2165 10.7165 6 9.75 6H2.25C1.2835 6 0.5 5.2165 0.5 4.25Z"
+        fill="currentColor"
+      />
+      <path
+        d="M8.24602 10.6787C8.26605 10.889 8.19578 11.0986 8.05364 11.2549C7.91153 11.4109 7.71 11.5 7.49895 11.5H4.49895C4.28797 11.4999 4.08628 11.4109 3.94426 11.2549C3.80228 11.0986 3.73187 10.8889 3.75188 10.6787L4.05462 7.5H7.94329L8.24602 10.6787Z"
+        fill="currentColor"
+        data-color="color-2"
+      />
+    </Icon>
+  )
+}
