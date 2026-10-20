@@ -218,19 +218,19 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       description: "The small studio Michelle and I started to build thoughtful software, brands, and experiments in Hawaiʻi.",
     },
     {
+      company: "Yahtzee Scorecard",
+      role: "Weekend Project",
+      period: "Feb 2026",
+      url: "https://yahtzee-score-card.vercel.app/",
+      icon: "/projects/yahtzee-favicon.png",
+      description: "A digital Yahtzee scorecard I built with simple dice input and customizable scoring.",
+    },
+    {
       company: "Side Tracked",
       role: "A Makers Showcase",
       period: "Oct 2026",
       url: "https://www.negi.studio/side-tracked",
       description: "An event showcasing makers and their creative projects.",
-    },
-    {
-      company: "Yahtzee Scorecard",
-      role: "Weekend Project",
-      period: "Shipped",
-      url: "https://yahtzee-score-card.vercel.app/",
-      icon: "/projects/yahtzee-favicon.png",
-      description: "A digital Yahtzee scorecard I built with simple dice input and customizable scoring.",
     },
     {
       company: "Freelance",
