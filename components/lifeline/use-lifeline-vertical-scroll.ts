@@ -119,7 +119,6 @@ export function useLifelineVerticalScroll(
     }
 
     setIsLayoutReady(entryRefs.current.every((entry) => Boolean(entry)))
-    // Sync initial position once before first paint; resize uses measure().
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

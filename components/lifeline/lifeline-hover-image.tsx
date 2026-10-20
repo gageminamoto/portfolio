@@ -157,7 +157,6 @@ export function LifelineHoverImageProvider({
 
         const nodeEl = nodeRef.current
         if (image.node && nodeEl) {
-          // A custom preview takes over the card; image and video sit out.
           setNode(image.node)
           img.style.display = "none"
           if (video) {
@@ -184,7 +183,6 @@ export function LifelineHoverImageProvider({
         setNode(null)
 
         if (image.video && video) {
-          // Video takes over the card; the image element sits this one out.
           img.style.display = "none"
           video.style.display = "block"
 
@@ -194,7 +192,6 @@ export function LifelineHoverImageProvider({
             video.poster = image.src
           }
           video.play().catch(() => {
-            // Autoplay rejection just leaves the poster frame showing.
           })
 
           if (!s.visible) {
@@ -228,7 +225,6 @@ export function LifelineHoverImageProvider({
           img.alt = image.alt
 
           const reveal = () => {
-            // Only reveal if this image is still the requested one.
             if (img.src === targetSrc) {
               img.style.visibility = "visible"
             }

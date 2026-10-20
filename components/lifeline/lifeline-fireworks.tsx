@@ -21,13 +21,11 @@ const NIGHTFALL_MS = 400
 type Palette = [number[], number[], number[]]
 
 const PALETTES: Record<LifelineEventEffect, Palette> = {
-  // Old Glory red / white / blue
   fireworks: [
     [0.9, 0.15, 0.25],
     [1.0, 1.0, 1.0],
     [0.25, 0.45, 0.95],
   ],
-  // celeste / white / pale celeste
   "fireworks-argentina": [
     [0.45, 0.75, 0.98],
     [1.0, 1.0, 1.0],
@@ -86,7 +84,7 @@ void main() {
     float lt = clamp((t - t0) / 1.8, 0.0, 1.0);
 
     vec2 center = vec2((hash(fi * 3.7) - 0.5) * 1.6, -0.05 + hash(fi * 9.1) * 0.5);
-    vec3 base = palette(mod(fi, 3.0)); // strict red / white / blue rotation
+    vec3 base = palette(mod(fi, 3.0));
     // Ramp in fast so overlapping particles at ignition don't stack
     // into a blown-out ball, then decay.
     float fade = exp(-lt * 4.0) * min(1.0, lt * 6.0);
@@ -97,7 +95,7 @@ void main() {
       float speed = 0.16 + 0.22 * hash(fj * 7.77 + fi * 31.3);
 
       vec2 p = center + vec2(cos(angle), sin(angle)) * speed * sqrt(lt);
-      p.y -= 0.09 * lt * lt; // gravity
+      p.y -= 0.09 * lt * lt;
 
       float d = max(length(uv - p), 0.004);
       float sparkle = 0.7 + 0.3 * sin(30.0 * lt + fj * 1.7);

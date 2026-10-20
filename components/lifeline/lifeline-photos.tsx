@@ -138,7 +138,6 @@ export function LifelinePhotoCard({
   const onPointerUp = (event: PointerEvent<HTMLDivElement>) => {
     event.currentTarget.releasePointerCapture(event.pointerId)
     setActive(false)
-    // A press that never travelled is a click — expand to the lightbox.
     if (!drag.current.moved) openLightbox()
   }
 

@@ -82,7 +82,6 @@ const LifelineVerticalEntry = forwardRef<
   const people = aggregateLifelinePeople(marker)
   const photos = marker.photos ?? []
   const hasContent = hasMarkerContent(marker) || photos.length > 0
-  // Fresh tilts per visit; stacked neighbors lean apart.
   const [photoTilts] = useState(() =>
     (marker.photos ?? []).map((_, index) => {
       const sign =

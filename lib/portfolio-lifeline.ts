@@ -4,7 +4,6 @@ import { NvidiaHover } from "@/components/nvidia-hover"
 import type { LifelineMarker } from "@/components/lifeline"
 import type { TimelineItem } from "@/lib/portfolio-data"
 
-// Custom (non-image) hover previews, keyed by TimelineItem.hoverComponent.
 const hoverPreviews: Record<string, () => ReturnType<typeof createElement>> = {
   nvidia: () => createElement(NvidiaHover),
 }

@@ -33,8 +33,6 @@ export function LifelineDesktop({
     [markers],
   )
 
-  // Left edge of each marker's slot within the track — anchors for the
-  // floating photo cards.
   const offsets = useMemo(() => {
     const result: number[] = []
     let sum = 0

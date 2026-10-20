@@ -483,7 +483,6 @@ export function useLifelineScroll(
 
     applyTranslate(translatePx.current)
     setIsLayoutReady(true)
-    // Sync initial position once before first paint; resize uses measure().
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

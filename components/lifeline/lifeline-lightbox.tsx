@@ -72,7 +72,6 @@ function LightboxMedia({
         if (mediaTime !== undefined) video.currentTime = mediaTime
       }
       video.play().catch(() => {
-        // Autoplay rejection just leaves the poster frame showing.
       })
     } else {
       video.pause()
@@ -179,7 +178,6 @@ export function LifelineLightbox({
     return () => window.clearTimeout(timeout)
   }, [reduceMotion])
 
-  // FLIP: first paint sits over the card, next frame eases to center.
   useLayoutEffect(() => {
     if (reduceMotion) return
     let inner = 0
@@ -243,7 +241,6 @@ export function LifelineLightbox({
     setSettled(false) // freeze the video so the return flight is cheap
     setEntered(false)
     setTransform(toTransform(getHome() ?? start))
-    // transitionend is the primary signal; this is the safety net.
     window.setTimeout(onClosed, OPEN_MS + 120)
   }, [reduceMotion, onClosed, toTransform, getHome, start])
 
