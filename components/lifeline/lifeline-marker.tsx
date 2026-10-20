@@ -1,5 +1,4 @@
 import { forwardRef, type CSSProperties } from "react"
-import { LifelineMediaButton } from "./lifeline-media-button"
 import { cn } from "@/lib/utils"
 import { CompanyIcon } from "./company-icon"
 import {
@@ -142,7 +141,6 @@ export const LifelineMarkerColumn = forwardRef<
                       }
                     >
                       <LifelineEventText event={event} />
-                      {image && <LifelineMediaButton image={image} />}
                     </p>
                   )
                 })}

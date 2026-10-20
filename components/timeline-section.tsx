@@ -20,13 +20,8 @@ export function TimelineSection({
         {icon}
         Timeline
       </h2>
-      <p id="timeline-instructions" className="text-xs text-muted-foreground">
-        <span className="hidden md:inline">Scroll or drag to explore. Use arrow keys when the timeline is focused.</span>
-        <span className="md:hidden">Scroll through the timeline. Tap a preview icon to see the work.</span>
-      </p>
       <div
-        aria-describedby="timeline-instructions"
-        className="h-[560px] min-w-0 md:relative md:left-1/2 md:w-[min(64rem,calc(100vw-3rem))] md:-translate-x-1/2"
+        className="h-[560px] min-w-0 md:-ml-6 md:w-[calc(50vw+50%)]"
       >
         <Lifeline
           markers={markers}

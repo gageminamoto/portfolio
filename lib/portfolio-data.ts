@@ -202,7 +202,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       url: "https://www.mizen.recipes/",
       icon: faviconUrl("https://www.mizen.recipes/"),
       hoverImage: "/images/mizen-hover.gif",
-      description: "A side project to make online recipes easier to cook from. I’m exploring recipe parsing, grocery lists, clipping, and the small interaction details that make cooking from a phone feel smoother.",
+      description: "A recipe app I’m building to make cooking from a phone easier, with recipe clipping and grocery lists.",
     },
     {
       company: "Piʻiku",
@@ -211,16 +211,16 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       url: "https://piiku.co/",
       icon: faviconUrl("https://piiku.co/"),
       hoverImage: "/piiku-preview.jpg",
-      description: "A community project where I actively volunteer to support and grow Hawaiʻi’s local design scene. It’s a way for me to help bring designers together, contribute to the community, and invest in the next generation of people making things here.",
+      description: "Volunteering to bring Hawaiʻi’s designers together and support the next generation of local creatives.",
     },
     {
       company: "Negi",
       role: "Tiny design studio",
-      period: "2025 – Present",
+      period: "2026 – Present",
       url: "https://negi.studio/",
       icon: faviconUrl("https://negi.studio/"),
       hoverImage: "/negi-studio-preview.png",
-      description: "The small studio Michelle and I started to make thoughtful software, brands, and experiments in Hawaiʻi. We divide our time across client work, community, and play, with a focus on intentional design, giving back locally, and making space for experimentation.",
+      description: "The small studio Michelle and I started to build thoughtful software, brands, and experiments in Hawaiʻi.",
     },
     {
       company: "Yahtzee Scorecard",
@@ -228,7 +228,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "Shipped",
       url: "https://yahtzee-score-card.vercel.app/",
       icon: "/projects/yahtzee-favicon.png",
-      description: "A digital scorecard I built to make Yahtzee scoring feel easier, faster, and more fun. I focused on clear UX, useful customization, and a new way to input dice that feels smoother than a paper sheet.",
+      description: "A digital Yahtzee scorecard I built with simple dice input and customizable scoring.",
     },
     {
       company: "Freelance",
@@ -236,7 +236,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "2024 – 2026",
       url: "https://gageminamoto.com/",
       icon: "/icons/freelance.png",
-      description: "Helping Hawaiʻi businesses, local builders, and growing teams make websites, brands, and product ideas feel more considered. It’s been a practical way to learn how to scope work, communicate clearly, and ship within real constraints.",
+      description: "Designing websites, brands, and products for Hawaiʻi businesses and growing teams.",
     },
     {
       company: "NVIDIA",
@@ -245,7 +245,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       url: "https://www.nvidia.com/",
       icon: "/icons/nvidia.ico",
       hoverComponent: "nvidia",
-      description: "I worked in QA for generative AI systems, testing inputs, reviewing outputs, and helping identify edge cases and failure patterns. It gave me a close look at how sensitive these systems are to wording, context, and evaluation.",
+      description: "Tested generative AI systems, reviewed outputs, and identified edge cases and failure patterns.",
     },
     {
       company: "University of Hawai'i Esports",
@@ -253,7 +253,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "2023 – 2025",
       url: "https://www.figma.com/deck/5LuGBEAhIF5lbzO5RgrFvc/2025-UHE-Brand-Guides",
       hoverImage: "/uh-preview.jpg",
-      description: "I helped shape the visual identity of collegiate esports at UH through brand systems, match graphics, event assets, and team direction. It was an early turning point for me in learning how to lead design work, not just contribute to it.",
+      description: "Led UH Esports’ visual identity through brand systems, match graphics, event assets, and creative direction.",
     },
     {
       company: "Umi Language Learning App",
@@ -262,7 +262,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       url: "https://umiapp.co/",
       icon: "/icons/umi.png",
       hoverImage: "/images/umi-hover.jpg",
-      description: "A language learning project where I thought deeply about lessons, motivation, memory, and interface clarity. I tested flows with learners and worked to make the product feel supportive without getting in the way.",
+      description: "Designed and tested language learning flows to make lessons clearer and more motivating.",
     },
     {
       company: "Gen.G Esports",
@@ -271,7 +271,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       url: "https://geng.gg/",
       icon: "/icons/geng.png",
       hoverImage: "/images/geng-hover.gif",
-      description: "I worked in Seoul, then created graphics for Gen.G’s Western channels and social media. It gave me strong experience working across cultures and making design work that could translate clearly across different audiences.",
+      description: "Created graphics for Western channels and social media after working with the team in Seoul.",
     },
     {
       company: "Servco",
@@ -279,7 +279,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "2023 – 2024",
       icon: "/icons/servco.png",
       hoverImage: "/images/servco-hover.gif",
-      description: "My first experience designing within a larger company environment. I worked across automotive and lifestyle brands on campaigns and landing pages, and learned how much design depends on keeping complex systems coherent.",
+      description: "Designed campaigns and landing pages across automotive and lifestyle brands during my first in-house design internship.",
       url: "https://www.servco.com/",
     },
   ],

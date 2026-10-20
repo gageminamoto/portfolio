@@ -2,7 +2,7 @@ export const LIFELINE_LABEL_COLUMN_WIDTH = 56
 export const LIFELINE_LABEL_GAP = 16
 export const LIFELINE_STICKY_SHIELD_WIDTH =
   LIFELINE_LABEL_COLUMN_WIDTH + LIFELINE_LABEL_GAP
-export const LIFELINE_STICKY_LEFT = 20
+export const LIFELINE_STICKY_LEFT = 24
 
 export function LifelineStickyLabels({ labels = ["Age", "Years"] }: { labels?: [string, string] }) {
   return (

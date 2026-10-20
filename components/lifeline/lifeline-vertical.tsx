@@ -14,7 +14,6 @@ import {
   getLifelineEventKey,
   LifelineEventText,
 } from "./lifeline-event"
-import { LifelineMediaButton } from "./lifeline-media-button"
 import { aggregateLifelinePeople, LifelinePeople } from "./lifeline-people"
 import { LifelinePhotoCard } from "./lifeline-photos"
 import type { LifelineEvent, LifelineMarker, LifelineProps } from "./types"
@@ -43,17 +42,10 @@ function RailTick() {
   )
 }
 
-/**
- * One event line. Touch layouts have no hover reveal, so an event with
- * attached media becomes tappable: the media expands into the lightbox
- * from the event's text, framed by the poster image's real aspect.
- */
 function LifelineVerticalEvent({ event }: { event: LifelineEvent }) {
-  const image = getLifelineEventImage(event)
   return (
     <p className="max-w-[18rem] text-left text-[14px] leading-[1.55] tracking-[-0.01em]">
       <LifelineEventText event={event} />
-      {image && <LifelineMediaButton image={image} />}
     </p>
   )
 }
