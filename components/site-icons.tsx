@@ -1,4 +1,5 @@
 import type { FC, SVGProps } from "react"
+import { Hammer } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   IconAtSignFill18,
@@ -25,7 +26,6 @@ import {
   IconSquareDottedArrowBottomRightFill18,
   IconStarFill18,
   IconSuitcase3Fill18,
-  IconTextTool2Fill18,
   IconUserFill18,
   IconMsgsFill18,
   IconVolumeFill18,
@@ -96,4 +96,4 @@ export const IconAtSign = siteIcon(IconAtSignFill18)
 
 /** Project badges (12px artboard, sized with CSS) */
 export const IconStarBadge = siteIcon(IconStarFill12)
-export const IconBuildingBadge = siteIcon(IconTextTool2Fill18)
+export const IconBuildingBadge = siteIcon(Hammer)
