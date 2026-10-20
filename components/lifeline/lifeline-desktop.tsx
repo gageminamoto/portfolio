@@ -69,6 +69,7 @@ export function LifelineDesktop({
     introArmed,
   } = useLifelineScroll(markers.length, {
     mode,
+    fullWidthContent: fullWidthRail,
     introLocked: isIntroAnimating,
     introAnimating: isIntroAnimating,
     introSkipped: !intro.shouldPlay,
@@ -146,7 +147,12 @@ export function LifelineDesktop({
         inline so browsers without it simply keep the `items-center` class.
       */}
       <div
-        className="flex h-full items-center overflow-hidden"
+        className={cn(
+          "flex h-full items-center",
+          fullWidthRail
+            ? "[clip-path:inset(0_calc(100%_-_100vw_+_var(--lifeline-stage-left,0px))_0_calc(-1_*_var(--lifeline-stage-left,0px)))]"
+            : "overflow-hidden",
+        )}
         style={isEmbed ? { alignItems: "safe center" } : undefined}
       >
         <div
