@@ -31,6 +31,7 @@ export function TimelineSection({
           className="md:h-auto md:pt-0"
           axisLabels={["Entry", "Period"]}
           showSecondaryAxis={false}
+          fullWidthRail
         />
       </div>
     </section>

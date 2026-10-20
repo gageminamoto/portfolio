@@ -23,6 +23,7 @@ export function LifelineDesktop({
   mode = "auto",
   axisLabels,
   showSecondaryAxis = true,
+  fullWidthRail = false,
 }: LifelineProps) {
   const widths = useMemo(
     () =>
@@ -99,7 +100,8 @@ export function LifelineDesktop({
       // page-mode lifeline is reached just by scrolling to it.
       tabIndex={isEmbed ? 0 : undefined}
       className={cn(
-        "relative h-full min-h-0 select-none overflow-hidden [&_a]:cursor-pointer",
+        "relative h-full min-h-0 select-none [&_a]:cursor-pointer",
+        fullWidthRail ? "overflow-visible" : "overflow-hidden",
         // `pan-y` lets the browser start a vertical page scroll on the
         // first frame instead of waiting on the JS axis lock; horizontal
         // panning stays ours.
@@ -113,8 +115,25 @@ export function LifelineDesktop({
         className,
       )}
       aria-label={title}
-      style={showIntro ? introStyle : undefined}
+      style={{
+        ...(showIntro ? introStyle : {}),
+        "--lifeline-rail": showSecondaryAxis ? "5rem" : "2.75rem",
+      } as CSSProperties}
     >
+      {fullWidthRail && (
+        <div
+          aria-hidden="true"
+          data-lifeline-full-width-rail
+          className="pointer-events-none absolute left-[calc(-1*var(--lifeline-stage-left,0px))] top-[calc(var(--lifeline-track-top,0px)+var(--lifeline-rail))] h-px w-screen overflow-hidden"
+        >
+          <div
+            className={cn(
+              "h-px w-full border-t border-dashed border-border",
+              showIntro && "lifeline-rail-intro",
+            )}
+          />
+        </div>
+      )}
       <LifelineHoverImageProvider preload={hoverImages}>
       {/*
         Centered — but `safe center` where the browser understands it, which
@@ -147,17 +166,19 @@ export function LifelineDesktop({
           </div>
 
           <div className="relative">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-[var(--lifeline-rail)] h-px overflow-hidden"
-            >
+            {!fullWidthRail && (
               <div
-                className={cn(
-                  "h-px w-full border-t border-dashed border-border",
-                  showIntro && "lifeline-rail-intro",
-                )}
-              />
-            </div>
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-[var(--lifeline-rail)] h-px overflow-hidden"
+              >
+                <div
+                  className={cn(
+                    "h-px w-full border-t border-dashed border-border",
+                    showIntro && "lifeline-rail-intro",
+                  )}
+                />
+              </div>
+            )}
 
             <div className="relative flex items-start">
               {markers.map((marker, index) => (

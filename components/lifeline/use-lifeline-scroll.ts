@@ -376,6 +376,11 @@ export function useLifelineScroll(
 
     const embed = resolveMode(true)
     const stageRect = section.getBoundingClientRect()
+    section.style.setProperty("--lifeline-stage-left", `${stageRect.left}px`)
+    section.style.setProperty(
+      "--lifeline-track-top",
+      `${track.getBoundingClientRect().top - stageRect.top}px`,
+    )
 
     const navLogo = document.querySelector("[data-site-nav-logo]")
     const navInner = document.querySelector("[data-site-nav-inner]")

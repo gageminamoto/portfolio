@@ -112,4 +112,6 @@ export interface LifelineProps {
   /** Labels for the secondary and primary axes. */
   axisLabels?: [string, string]
   showSecondaryAxis?: boolean
+  /** Extend the desktop rail to both viewport edges. */
+  fullWidthRail?: boolean
 }
