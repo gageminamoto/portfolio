@@ -145,7 +145,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
     },
     {
       name: "Gunnar's Trash Trade",
-      url: "https://x.com/gageminamoto/status/2080367429163855903?s=20",
+      url: "https://magethegage.itch.io/gunnars-trash-trade",
       description: "A Pico-8 game made in a day",
       status: "new",
       image: "/projects/gunnars-trash-trade.jpg",
