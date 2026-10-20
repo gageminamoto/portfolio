@@ -1,4 +1,5 @@
 import { BackLink } from "@/components/back-link"
+import { ArticleBody } from "@/components/writing/article-body"
 import { BlocksRenderer } from "@/components/writing/blocks-renderer"
 import { TableOfContents } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
@@ -69,7 +70,7 @@ export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleCo
           </header>
 
           {headings.length > 0 && <div className="xl:hidden"><TableOfContents headings={headings} variant="collapsible" /></div>}
-          {articleBlocks.length > 0 ? <article><BlocksRenderer blocks={articleBlocks} /></article> : <p className="text-sm text-muted-foreground">This article does not have any published content yet.</p>}
+          {articleBlocks.length > 0 ? <ArticleBody><BlocksRenderer blocks={articleBlocks} /></ArticleBody> : <p className="text-sm text-muted-foreground">This article does not have any published content yet.</p>}
         </main>
         <aside className="hidden xl:self-start xl:pl-10 xl:block">
           {headings.length > 0 && <TableOfContents headings={headings} variant="list" />}

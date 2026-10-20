@@ -46,14 +46,14 @@ export function Block({ block }: ArticleBlockProps) {
 
     case "bulleted_list_item":
       return (
-        <li className="text-lg leading-7 text-foreground/90">
+        <li className="text-[length:var(--article-size,18px)] leading-[var(--article-leading,1.55)] text-foreground/90">
           <RichText items={block.bulleted_list_item.rich_text} />
         </li>
       )
 
     case "numbered_list_item":
       return (
-        <li className="text-lg leading-7 text-foreground/90">
+        <li className="text-[length:var(--article-size,18px)] leading-[var(--article-leading,1.55)] text-foreground/90">
           <RichText items={block.numbered_list_item.rich_text} />
         </li>
       )

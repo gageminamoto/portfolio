@@ -20,7 +20,7 @@ export function Paragraph({ block }: ArticleParagraphProps) {
   }
 
   return (
-    <p className="mb-5 text-lg leading-7 text-foreground/90">
+    <p className="mb-5 text-[length:var(--article-size,18px)] leading-[var(--article-leading,1.55)] text-foreground/90">
       {icon ? (
         <span className="mr-1.5 inline-block align-baseline" aria-hidden="true">
           {icon}
