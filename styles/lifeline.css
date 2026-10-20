@@ -56,27 +56,17 @@
   font-family: inherit;
 }
 
-/* Keep text opaque; only the rail's narrow column fades at the scrollport edges. */
-.lifeline-mobile-rail-fade {
-  --lifeline-rail-fade-mask:
-    linear-gradient(
-      to right,
-      #000 calc(var(--lifeline-mobile-rail-x) - 0.5rem),
-      transparent calc(var(--lifeline-mobile-rail-x) - 0.5rem),
-      transparent calc(var(--lifeline-mobile-rail-x) + 0.5rem),
-      #000 calc(var(--lifeline-mobile-rail-x) + 0.5rem)
-    ),
-    linear-gradient(
-      to bottom,
-      transparent,
-      #000 1.5rem,
-      #000 calc(100% - 1.5rem),
-      transparent
-    );
-  -webkit-mask-image: var(--lifeline-rail-fade-mask);
-  mask-image: var(--lifeline-rail-fade-mask);
-  -webkit-mask-composite: source-over;
-  mask-composite: add;
+/* Fade all timeline content at the mobile scrollport edges. */
+.lifeline-mobile-fade {
+  --lifeline-mobile-fade-mask: linear-gradient(
+    to bottom,
+    transparent,
+    #000 1.5rem,
+    #000 calc(100% - 1.5rem),
+    transparent
+  );
+  -webkit-mask-image: var(--lifeline-mobile-fade-mask);
+  mask-image: var(--lifeline-mobile-fade-mask);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
