@@ -13,7 +13,10 @@ import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
-const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION !== "false"
+const isDev = process.env.NODE_ENV === "development"
+const enableAgentation = isDev && process.env.NEXT_PUBLIC_ENABLE_AGENTATION !== "false"
+// Set NEXT_PUBLIC_DEVTOOLS=1 on a preview deployment to get the DialKit panel there.
+const showDevPanels = isDev || process.env.NEXT_PUBLIC_DEVTOOLS === "1"
 
 export const metadata: Metadata = {
   title: 'Gage Minamoto',
@@ -76,7 +79,7 @@ export default function RootLayout({
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
-        {process.env.NODE_ENV === "development" && (
+        {showDevPanels && (
           <DevPanels agentation={enableAgentation} />
         )}
       </body>
