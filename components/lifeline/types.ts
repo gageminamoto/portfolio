@@ -111,4 +111,5 @@ export interface LifelineProps {
   mode?: LifelineMode
   /** Labels for the secondary and primary axes. */
   axisLabels?: [string, string]
+  showSecondaryAxis?: boolean
 }

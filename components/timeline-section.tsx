@@ -29,6 +29,7 @@ export function TimelineSection({
           title="Work and projects timeline"
           mode="embed"
           axisLabels={["Entry", "Period"]}
+          showSecondaryAxis={false}
         />
       </div>
     </section>

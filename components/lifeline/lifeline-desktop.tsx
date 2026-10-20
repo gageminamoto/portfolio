@@ -22,6 +22,7 @@ export function LifelineDesktop({
   title = "Lifeline",
   mode = "auto",
   axisLabels,
+  showSecondaryAxis = true,
 }: LifelineProps) {
   const widths = useMemo(
     () =>
@@ -132,7 +133,7 @@ export function LifelineDesktop({
         <div
           ref={trackRef}
           className="relative flex w-max items-start will-change-transform [--lifeline-people-top:calc(14.5rem+40px)] [--lifeline-rail:5rem]"
-          style={{ width: trackWidth }}
+          style={{ width: trackWidth, "--lifeline-rail": showSecondaryAxis ? "5rem" : "2.75rem" } as CSSProperties}
         >
           {/*
             LIFELINE_STICKY_SHIELD_WIDTH reserves this column at the head of
@@ -154,7 +155,7 @@ export function LifelineDesktop({
             style={{ width: LIFELINE_STICKY_SHIELD_WIDTH }}
           >
             <div className={cn(showIntro && "lifeline-labels-intro")}>
-              <LifelineStickyLabels labels={axisLabels} />
+              <LifelineStickyLabels labels={axisLabels} showSecondaryAxis={showSecondaryAxis} />
             </div>
           </div>
 
@@ -177,6 +178,7 @@ export function LifelineDesktop({
                   key={marker.id}
                   ref={(node) => setMarkerRef(index, node)}
                   marker={marker}
+                  showSecondaryAxis={showSecondaryAxis}
                   birthYear={birthYear}
                   minWidth={widths[index]}
                   animateIntro={showIntro}

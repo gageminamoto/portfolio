@@ -24,6 +24,10 @@ import { useLifelineVerticalScroll } from "./use-lifeline-vertical-scroll"
 const GRID_CLASS = "grid grid-cols-[2.5rem_1rem_1fr] gap-x-3"
 const RAIL_LEFT = "calc(2.5rem + 0.75rem + 0.5rem)"
 
+function gridClass(showSecondaryAxis: boolean) {
+  return showSecondaryAxis ? GRID_CLASS : "grid grid-cols-[1rem_1fr] gap-x-3"
+}
+
 /**
  * Above this many entries the delay-armed intro fades would promote
  * every entry to a compositor layer at once and crash mobile Safari's
@@ -59,6 +63,7 @@ const LifelineVerticalEntry = forwardRef<
     introDelay?: number
     introDuration?: number
     revealPending?: boolean
+    showSecondaryAxis?: boolean
   }
 >(function LifelineVerticalEntry(
   {
@@ -68,6 +73,7 @@ const LifelineVerticalEntry = forwardRef<
     introDelay = 0,
     introDuration = 420,
     revealPending = false,
+    showSecondaryAxis = true,
   },
   ref,
 ) {
@@ -110,10 +116,12 @@ const LifelineVerticalEntry = forwardRef<
             : {}),
         }}
       >
-        <div className={`${GRID_CLASS} items-center`}>
-          <p className="text-right text-[11px] font-medium leading-4 tabular-nums text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
-            {age}
-          </p>
+        <div className={`${gridClass(showSecondaryAxis)} items-center`}>
+          {showSecondaryAxis && (
+            <p className="text-right text-[11px] font-medium leading-4 tabular-nums text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+              {age}
+            </p>
+          )}
 
           <div className="flex items-center justify-center">
             <RailTick />
@@ -125,8 +133,8 @@ const LifelineVerticalEntry = forwardRef<
         </div>
 
         {hasContent && (
-          <div className={`${GRID_CLASS} mt-6`}>
-            <div aria-hidden="true" />
+          <div className={`${gridClass(showSecondaryAxis)} mt-6`}>
+            {showSecondaryAxis && <div aria-hidden="true" />}
             <div aria-hidden="true" />
             <div className="min-w-0 text-zinc-500 transition-colors duration-300 dark:text-zinc-400">
               {marker.badges && marker.badges.length > 0 && (
@@ -203,6 +211,7 @@ export function LifelineVertical({
   title = "Lifeline",
   mode = "auto",
   axisLabels = ["Age", "Years"],
+  showSecondaryAxis = true,
 }: LifelineProps) {
   // Only an explicit `mode` embeds the vertical layout. `"auto"` measures
   // scrollability on desktop, but the mobile layout *is* a vertical
@@ -337,10 +346,12 @@ export function LifelineVertical({
       )}
       style={showIntro ? introStyle : undefined}
     >
-      <div className={cn(`${GRID_CLASS} mb-6 items-end`, showIntro && "lifeline-labels-intro")}>
-        <p className="text-right text-[11px] font-medium uppercase leading-4 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
-          {axisLabels[0]}
-        </p>
+      <div className={cn(`${gridClass(showSecondaryAxis)} mb-6 items-end`, showIntro && "lifeline-labels-intro")}>
+        {showSecondaryAxis && (
+          <p className="text-right text-[11px] font-medium uppercase leading-4 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+            {axisLabels[0]}
+          </p>
+        )}
         <div aria-hidden="true" />
         <p className="text-[11px] font-medium uppercase leading-5 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
           {axisLabels[1]}
@@ -351,7 +362,7 @@ export function LifelineVertical({
         <div
           aria-hidden="true"
           className="pointer-events-none absolute bottom-0 top-0 overflow-hidden -translate-x-1/2"
-          style={{ left: RAIL_LEFT, width: 1 }}
+          style={{ left: showSecondaryAxis ? RAIL_LEFT : "0.5rem", width: 1 }}
         >
           <div
             className={cn(
@@ -367,6 +378,7 @@ export function LifelineVertical({
               key={marker.id}
               ref={(node) => setEntryRef(index, node)}
               marker={marker}
+              showSecondaryAxis={showSecondaryAxis}
               birthYear={birthYear}
               animateIntro={animateEntries}
               revealPending={showIntro && revealOnScroll}

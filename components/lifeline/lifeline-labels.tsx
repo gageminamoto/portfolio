@@ -4,7 +4,7 @@ export const LIFELINE_STICKY_SHIELD_WIDTH =
   LIFELINE_LABEL_COLUMN_WIDTH + LIFELINE_LABEL_GAP
 export const LIFELINE_STICKY_LEFT = 24
 
-export function LifelineStickyLabels({ labels = ["Age", "Years"] }: { labels?: [string, string] }) {
+export function LifelineStickyLabels({ labels = ["Age", "Years"], showSecondaryAxis = true }: { labels?: [string, string]; showSecondaryAxis?: boolean }) {
   return (
     <div
       className="relative"
@@ -12,9 +12,11 @@ export function LifelineStickyLabels({ labels = ["Age", "Years"] }: { labels?: [
       aria-hidden="true"
     >
       <div className="flex flex-col items-start text-left">
-        <p className="mb-5 h-4 text-[11px] font-medium uppercase leading-4 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
-          {labels[0]}
-        </p>
+        {showSecondaryAxis && (
+          <p className="mb-5 h-4 text-[11px] font-medium uppercase leading-4 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+            {labels[0]}
+          </p>
+        )}
         <p className="mb-6 h-5 text-[11px] font-medium uppercase leading-5 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
           {labels[1]}
         </p>
