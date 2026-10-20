@@ -122,6 +122,7 @@ function hasReleasableScroll(section: HTMLElement) {
 }
 
 interface LifelineScrollOptions {
+  fullWidthContent?: boolean
   mode?: LifelineMode
   isCoarsePointer?: boolean
   introLocked?: boolean
@@ -256,9 +257,10 @@ export function useLifelineScroll(
     const section = sectionRef.current
     if (!section) return
 
-    // All fade math is relative to the section's own box — the lifeline
-    // may be embedded anywhere, not pinned to the viewport.
+    // Full-width content exits at the viewport, while embedded cards use their box.
     const stageRect = section.getBoundingClientRect()
+    const fadeLeft = options.fullWidthContent ? 0 : stageRect.left
+    const fadeWidth = options.fullWidthContent ? window.innerWidth : stageRect.width
     const isCoarse = isCoarsePointerRef.current
     const fadeZone = isCoarse ? FADE_ZONE_COARSE : FADE_ZONE
     const leftFadeZone = isCoarse
@@ -269,10 +271,25 @@ export function useLifelineScroll(
       if (!marker) return
 
       const rect = marker.getBoundingClientRect()
-      const markerLeft = rect.left - stageRect.left
+      const markerLeft = rect.left - fadeLeft
       const center = markerLeft + rect.width / 2
 
       let opacity = 1
+
+      // Keep dates clear of the content-aligned Period label as cards pass behind it.
+      if (options.fullWidthContent) {
+        const axisLeft = rect.left - stageRect.left
+        const axisFadeStart = LIFELINE_STICKY_LEFT + LIFELINE_STICKY_SHIELD_WIDTH
+        const axisRest = Math.max(
+          axisFadeStart + 1,
+          Math.min(axisLeft + translatePx.current, leftFadeZone),
+        )
+        const axisOpacity = (axisLeft - axisFadeStart) / (axisRest - axisFadeStart)
+        marker.style.setProperty(
+          "--lifeline-period-opacity",
+          String(clamp(axisOpacity, 0, 1)),
+        )
+      }
 
       // Fade a marker out only as scrubbing carries it left of where
       // it rests at translate 0 — the first markers naturally live
@@ -283,14 +300,14 @@ export function useLifelineScroll(
         opacity = markerLeft <= 0 ? 0 : markerLeft / restLeft
       }
 
-      if (center > stageRect.width - fadeZone) {
-        opacity = Math.min(opacity, (stageRect.width - center) / fadeZone)
+      if (center > fadeWidth - fadeZone) {
+        opacity = Math.min(opacity, (fadeWidth - center) / fadeZone)
       }
 
       if (isCoarse) {
         const readableLeft = LIFELINE_STICKY_SHIELD_WIDTH
-        const readableRight = stageRect.width - 12
-        const markerRight = rect.right - stageRect.left
+        const readableRight = fadeWidth - 12
+        const markerRight = rect.right - fadeLeft
         const visibleWidth =
           Math.min(markerRight, readableRight) - Math.max(markerLeft, readableLeft)
         const visibility = rect.width > 0 ? visibleWidth / rect.width : 0
@@ -302,7 +319,7 @@ export function useLifelineScroll(
 
       marker.style.opacity = String(clamp(opacity, 0, 1))
     })
-  }, [])
+  }, [options.fullWidthContent])
 
   const applyTranslate = useCallback(
     (value: number) => {
@@ -416,6 +433,12 @@ export function useLifelineScroll(
       startInset.current = LIFELINE_DEFAULT_START_INSET
     }
 
+    // The viewport-wide timeline starts its first card at the content edge.
+    // Its label remains pinned independently, so it needs no reserved column.
+    if (options.fullWidthContent) {
+      startInset.current -= LIFELINE_STICKY_SHIELD_WIDTH
+    }
+
     if (followChrome && navRight !== null) {
       endInset.current = navRight
     } else {
@@ -438,7 +461,7 @@ export function useLifelineScroll(
     maxTranslate.current = max
 
     return max
-  }, [markerCount, resolveMode])
+  }, [markerCount, options.fullWidthContent, resolveMode])
 
   useLayoutEffect(() => {
     markerRefs.current.length = markerCount

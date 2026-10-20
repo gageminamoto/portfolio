@@ -73,7 +73,10 @@ export const LifelineMarkerColumn = forwardRef<
             </p>
           )}
 
-          <p className="mb-6 h-5 whitespace-nowrap text-sm font-medium leading-5 tabular-nums text-muted-foreground">
+          <p
+            className="mb-6 h-5 whitespace-nowrap text-sm font-medium leading-5 tabular-nums text-muted-foreground"
+            style={{ opacity: "var(--lifeline-period-opacity, 1)" }}
+          >
             {marker.label ?? marker.year}
           </p>
 
