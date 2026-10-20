@@ -1,5 +1,4 @@
 import type { FC, SVGProps } from "react"
-import { Hammer } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   IconAtSignFill18,
@@ -34,6 +33,7 @@ import {
   IconXmarkFill18,
 } from "nucleo-ui-essential-fill-18"
 import { IconStarFill12 } from "nucleo-ui-essential-fill-12"
+import { IconHammerFill12 } from "@/components/icons/icon-hammer-fill-12"
 import { IconGlassesFill18 } from "@/components/icons/icon-glasses-fill-18"
 import { IconMoonFill18, IconSunFill18 } from "@/components/icons/icon-sun-moon-fill-18"
 
@@ -96,4 +96,4 @@ export const IconAtSign = siteIcon(IconAtSignFill18)
 
 /** Project badges (12px artboard, sized with CSS) */
 export const IconStarBadge = siteIcon(IconStarFill12)
-export const IconBuildingBadge = siteIcon(Hammer)
+export const IconBuildingBadge = siteIcon(IconHammerFill12)
