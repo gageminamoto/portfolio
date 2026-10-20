@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState, type CSSProperties, type PointerEvent } from "react"
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react"
 import { cn } from "@/lib/utils"
 import { LifelineEventMedia } from "./lifeline-event"
 import {
@@ -125,13 +125,21 @@ export function LifelinePhotoCard({
     }
   }
 
+  const openLightbox = () => {
+    if (!lightboxStart) setLightboxStart(measureCard())
+  }
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return
+    event.preventDefault()
+    openLightbox()
+  }
+
   const onPointerUp = (event: PointerEvent<HTMLDivElement>) => {
     event.currentTarget.releasePointerCapture(event.pointerId)
     setActive(false)
     // A press that never travelled is a click — expand to the lightbox.
-    if (!drag.current.moved && !lightboxStart) {
-      setLightboxStart(measureCard())
-    }
+    if (!drag.current.moved) openLightbox()
   }
 
   // The browser claiming the gesture (a vertical pan-y scroll on
@@ -147,7 +155,11 @@ export function LifelinePhotoCard({
       <div
         ref={cardRef}
         data-lifeline-interactive=""
+        role="button"
+        tabIndex={0}
+        aria-label={`Open ${photo.alt}`}
         className={cn(
+          "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
           // pan-y keeps page scrolling alive on touch: a vertical swipe
           // starting on a card scrolls the timeline (the browser claims
           // the gesture and fires pointercancel); horizontal drags move
@@ -168,6 +180,7 @@ export function LifelinePhotoCard({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
+        onKeyDown={onKeyDown}
       >
         <div
           className={cn(

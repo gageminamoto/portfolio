@@ -238,7 +238,7 @@ export function LifelineVertical({
     for (const marker of markers) {
       for (const event of marker.events) {
         const image = getLifelineEventImage(event)
-        if (image) sources.push(image.src)
+        if (image?.src) sources.push(image.src)
       }
     }
     if (sources.length === 0) return

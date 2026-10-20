@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import type { CompanyIconId } from "./company-icon"
 
 
@@ -27,6 +29,8 @@ export interface LifelineEventImage {
   alt: string
   /** Optional mp4/webm — hover shows this (muted, looping) with src as fallback. */
   video?: string
+  /** Custom hover preview rendered in place of the image (desktop hover only); src may be empty. */
+  node?: ReactNode
 }
 
 /**

@@ -1,5 +1,23 @@
+import { createElement } from "react"
+
+import { NvidiaHover } from "@/components/nvidia-hover"
 import type { LifelineMarker } from "@/components/lifeline"
 import type { TimelineItem } from "@/lib/portfolio-data"
+
+// Custom (non-image) hover previews, keyed by TimelineItem.hoverComponent.
+const hoverPreviews: Record<string, () => ReturnType<typeof createElement>> = {
+  nvidia: () => createElement(NvidiaHover),
+}
+
+function hoverMedia(item: TimelineItem) {
+  if (item.hoverImage) {
+    return { src: item.hoverImage, alt: `${item.company} preview` }
+  }
+  const preview = item.hoverComponent && hoverPreviews[item.hoverComponent]
+  return preview
+    ? { src: "", alt: `${item.company} preview`, node: preview() }
+    : undefined
+}
 
 function startYear(period: string) {
   const year = period.match(/\b\d{4}\b/)
@@ -24,9 +42,7 @@ export function createPortfolioMarkers(items: TimelineItem[]): LifelineMarker[] 
         item.role,
         {
           text: item.description,
-          image: item.hoverImage
-            ? { src: item.hoverImage, alt: `${item.company} preview` }
-            : undefined,
+          image: hoverMedia(item),
         },
       ],
     }))

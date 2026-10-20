@@ -9,6 +9,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
   type ReactNode,
 } from "react"
 import { clamp, snapToDevicePixel } from "./lifeline-utils"
@@ -53,6 +54,8 @@ export function LifelineHoverImageProvider({
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const nodeRef = useRef<HTMLDivElement>(null)
+  const [node, setNode] = useState<ReactNode>(null)
   const state = useRef({
     x: 0,
     y: 0,
@@ -87,6 +90,7 @@ export function LifelineHoverImageProvider({
 
     const warm = () => {
       preload.forEach(({ src }) => {
+        if (!src) return
         const image = new window.Image()
         image.src = src
       })
@@ -150,6 +154,34 @@ export function LifelineHoverImageProvider({
         const img = imageRef.current
         const video = videoRef.current
         if (!s.hoverCapable || !container || !img) return
+
+        const nodeEl = nodeRef.current
+        if (image.node && nodeEl) {
+          // A custom preview takes over the card; image and video sit out.
+          setNode(image.node)
+          img.style.display = "none"
+          if (video) {
+            video.pause()
+            video.style.display = "none"
+          }
+          nodeEl.style.display = "block"
+
+          if (!s.visible) {
+            s.x = s.targetX
+            s.y = s.targetY
+            s.tilt = 0
+          }
+
+          s.visible = true
+          container.style.opacity = "1"
+          nodeEl.style.transform = "scale(1)"
+
+          cancelAnimationFrame(s.frame)
+          s.frame = requestAnimationFrame(step)
+          return
+        }
+        if (nodeEl) nodeEl.style.display = "none"
+        setNode(null)
 
         if (image.video && video) {
           // Video takes over the card; the image element sits this one out.
@@ -236,6 +268,7 @@ export function LifelineHoverImageProvider({
         s.visible = false
         container.style.opacity = "0"
         img.style.transform = "scale(0.94)"
+        if (nodeRef.current) nodeRef.current.style.transform = "scale(0.94)"
         if (video) {
           video.pause()
           video.style.transform = "scale(0.94)"
@@ -260,6 +293,13 @@ export function LifelineHoverImageProvider({
           className="w-[280px] scale-95 rounded-xl shadow-2xl ring-1 ring-black/10 transition-[transform,box-shadow] duration-200 ease-out dark:ring-white/15"
           decoding="async"
         />
+        <div
+          ref={nodeRef}
+          className="aspect-[4/3] w-[280px] scale-95 overflow-hidden rounded-xl shadow-2xl ring-1 ring-black/10 transition-[transform,box-shadow] duration-200 ease-out dark:ring-white/15"
+          style={{ display: "none" }}
+        >
+          {node}
+        </div>
         <video
           ref={videoRef}
           muted
