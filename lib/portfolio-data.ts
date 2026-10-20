@@ -92,8 +92,8 @@ const faviconUrl = (url: string) =>
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. Currently designing at Negi and growing Hawai’i’s [local design community](https://piiku.co/), with [Mizen](https://www.mizen.recipes/) on the side.\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
-  extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products that feel calm and intuitive. I care deeply about craft and believe quality software should feel invisible; getting out of your way so you can focus on what matters.
+  bio: "{Interaction designer|Software designer|Experience designer} building at Negi and growing Hawai’i’s [local design community](https://piiku.co/).\n\nCooking up [Mizen](https://www.mizen.recipes/), a recipe manager for home cooks.\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
+  extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products.
 
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/).
 
