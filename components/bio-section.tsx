@@ -135,6 +135,7 @@ function renderBioParts(
     }
     if (isBioLink(part)) {
       const previewImages: Record<string, string> = {
+        "Negi": "/negi-studio-preview.png",
         "Mizen": "/images/mizen-hover.mp4",
         "University of Hawaiʻi Esports": "/uh-preview.jpg",
         "UH Esports": "/uh-preview.jpg",
@@ -169,6 +170,8 @@ function renderBioParts(
           external={!part.url.startsWith("/")}
           previewImage={previewImages[part.text]}
           previewFallbackImage={part.text === "Mizen" ? "/projects/mizen.png" : undefined}
+          previewWidth={part.text === "Negi" ? 256 : undefined}
+          previewHeight={part.text === "Negi" ? 134 : undefined}
           className={
             ghost
               ? "!text-transparent decoration-transparent hover:decoration-primary"
