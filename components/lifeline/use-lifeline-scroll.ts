@@ -433,6 +433,12 @@ export function useLifelineScroll(
       startInset.current = LIFELINE_DEFAULT_START_INSET
     }
 
+    // The viewport-wide timeline starts its first card at the content edge.
+    // Its label remains pinned independently, so it needs no reserved column.
+    if (options.fullWidthContent) {
+      startInset.current -= LIFELINE_STICKY_SHIELD_WIDTH
+    }
+
     if (followChrome && navRight !== null) {
       endInset.current = navRight
     } else {
@@ -455,7 +461,7 @@ export function useLifelineScroll(
     maxTranslate.current = max
 
     return max
-  }, [markerCount, resolveMode])
+  }, [markerCount, options.fullWidthContent, resolveMode])
 
   useLayoutEffect(() => {
     markerRefs.current.length = markerCount
