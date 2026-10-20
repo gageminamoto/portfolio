@@ -57,7 +57,7 @@ export function LifelineEventText({
             href={segment.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline decoration-zinc-400 underline-offset-2 transition-colors duration-300 group-hover:text-black group-hover:decoration-zinc-600 dark:decoration-zinc-700 dark:group-hover:text-white dark:group-hover:decoration-zinc-400"
+            className="font-medium text-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-colors duration-150 hover:decoration-primary"
           >
             {segment.value}
           </a>

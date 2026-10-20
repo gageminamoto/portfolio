@@ -170,11 +170,6 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       url: "https://uxhiconference.com",
     },
     {
-      name: "Side Tracked: A Makers Showcase",
-      description: "Oct 2026",
-      url: "https://www.negi.studio/side-tracked",
-    },
-    {
       name: "Piʻikū Co. Alumni Panel – Tech but Build it Local",
       description: "Sep 2026",
       url: "https://luma.com/dkxxm2tz?tk=gAV0PB",
@@ -221,6 +216,13 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       icon: faviconUrl("https://negi.studio/"),
       hoverImage: "/negi-studio-preview.png",
       description: "The small studio Michelle and I started to build thoughtful software, brands, and experiments in Hawaiʻi.",
+    },
+    {
+      company: "Side Tracked",
+      role: "A Makers Showcase",
+      period: "Oct 2026",
+      url: "https://www.negi.studio/side-tracked",
+      description: "An event showcasing makers and their creative projects.",
     },
     {
       company: "Yahtzee Scorecard",

@@ -53,7 +53,7 @@
 }
 
 .lifeline-typeset {
-  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  font-family: inherit;
 }
 
 @media (prefers-reduced-motion: reduce) {

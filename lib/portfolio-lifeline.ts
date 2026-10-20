@@ -2,7 +2,7 @@ import type { LifelineMarker } from "@/components/lifeline"
 import type { TimelineItem } from "@/lib/portfolio-data"
 
 function startYear(period: string) {
-  const year = period.match(/^\d{4}\b/)
+  const year = period.match(/\b\d{4}\b/)
   return year ? Number(year[0]) : Number.POSITIVE_INFINITY
 }
 

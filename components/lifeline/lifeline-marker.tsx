@@ -1,5 +1,6 @@
 import { forwardRef, type CSSProperties } from "react"
 import { cn } from "@/lib/utils"
+import { bodyCopyClassName } from "@/components/bio-section"
 import { CompanyIcon } from "./company-icon"
 import {
   getLifelineEventEffect,
@@ -61,22 +62,22 @@ export const LifelineMarkerColumn = forwardRef<
         }}
       >
         <span
-          className="absolute left-0 top-[var(--lifeline-rail)] z-10 h-[10px] w-px -translate-y-1/2 bg-zinc-400 transition-colors duration-300 group-hover:bg-zinc-600 dark:bg-zinc-700 dark:group-hover:bg-zinc-400"
+          className="absolute left-0 top-[var(--lifeline-rail)] z-10 h-[10px] w-px -translate-y-1/2 bg-muted-foreground/40"
           aria-hidden="true"
         />
 
         <div className="flex w-full flex-col items-start text-left">
           {showSecondaryAxis && (
-            <p className="mb-5 h-4 text-[11px] font-medium leading-4 tabular-nums text-zinc-500 transition-colors duration-300 group-hover:text-black dark:text-zinc-600 dark:group-hover:text-zinc-400">
+            <p className="mb-5 h-4 text-xs font-medium leading-4 tabular-nums text-muted-foreground">
               {age}
             </p>
           )}
 
-          <p className="mb-6 h-5 whitespace-nowrap text-[15px] font-medium leading-5 tabular-nums text-zinc-500 transition-colors duration-300 group-hover:text-black dark:group-hover:text-white">
+          <p className="mb-6 h-5 whitespace-nowrap text-sm font-medium leading-5 tabular-nums text-muted-foreground">
             {marker.label ?? marker.year}
           </p>
 
-          <div className="relative w-full text-zinc-500 transition-colors duration-300 group-hover:text-black dark:group-hover:text-zinc-300">
+          <div className="relative w-full text-muted-foreground">
             {/* When this column carries people, the content block reserves
                 the band's height as a floor: short and average columns put
                 their portraits on the same line as every other column, and
@@ -126,7 +127,8 @@ export const LifelineMarkerColumn = forwardRef<
                     <p
                       key={getLifelineEventKey(event, index)}
                       className={cn(
-                        "max-w-[18rem] text-left text-[14px] leading-[1.55] tracking-[-0.01em]",
+                        bodyCopyClassName,
+                        "max-w-[18rem] text-left text-muted-foreground",
                         effect && "cursor-pointer",
                       )}
                       data-lifeline-interactive={effect ? "" : undefined}

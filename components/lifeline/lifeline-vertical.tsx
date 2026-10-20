@@ -8,6 +8,7 @@ import {
   type CSSProperties,
 } from "react"
 import { cn } from "@/lib/utils"
+import { bodyCopyClassName } from "@/components/bio-section"
 import { CompanyIcon } from "./company-icon"
 import {
   getLifelineEventImage,
@@ -41,14 +42,14 @@ function RailTick() {
   return (
     <span
       aria-hidden="true"
-      className="block h-px w-[10px] bg-zinc-400 transition-colors duration-300 dark:bg-zinc-700"
+      className="block h-px w-[10px] bg-muted-foreground/40"
     />
   )
 }
 
 function LifelineVerticalEvent({ event }: { event: LifelineEvent }) {
   return (
-    <p className="max-w-[18rem] text-left text-[14px] leading-[1.55] tracking-[-0.01em]">
+    <p className={cn(bodyCopyClassName, "max-w-[18rem] text-left text-muted-foreground")}>
       <LifelineEventText event={event} />
     </p>
   )
@@ -118,7 +119,7 @@ const LifelineVerticalEntry = forwardRef<
       >
         <div className={`${gridClass(showSecondaryAxis)} items-center`}>
           {showSecondaryAxis && (
-            <p className="text-right text-[11px] font-medium leading-4 tabular-nums text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+            <p className="text-right text-xs font-medium leading-4 tabular-nums text-muted-foreground">
               {age}
             </p>
           )}
@@ -127,7 +128,7 @@ const LifelineVerticalEntry = forwardRef<
             <RailTick />
           </div>
 
-          <p className="whitespace-nowrap text-[15px] font-medium leading-5 tabular-nums text-zinc-500 transition-colors duration-300 dark:text-zinc-400">
+          <p className="whitespace-nowrap text-sm font-medium leading-5 tabular-nums text-muted-foreground">
             {marker.label ?? marker.year}
           </p>
         </div>
@@ -136,7 +137,7 @@ const LifelineVerticalEntry = forwardRef<
           <div className={`${gridClass(showSecondaryAxis)} mt-6`}>
             {showSecondaryAxis && <div aria-hidden="true" />}
             <div aria-hidden="true" />
-            <div className="min-w-0 text-zinc-500 transition-colors duration-300 dark:text-zinc-400">
+            <div className="min-w-0 text-muted-foreground">
               {marker.badges && marker.badges.length > 0 && (
                 <div className="mb-3 flex items-center justify-start gap-2">
                   {marker.badges.map((badge) => (
@@ -348,12 +349,12 @@ export function LifelineVertical({
     >
       <div className={cn(`${gridClass(showSecondaryAxis)} mb-6 items-end`, showIntro && "lifeline-labels-intro")}>
         {showSecondaryAxis && (
-          <p className="text-right text-[11px] font-medium uppercase leading-4 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+          <p className="text-right text-xs font-medium uppercase leading-4 tracking-[0.08em] text-muted-foreground">
             {axisLabels[0]}
           </p>
         )}
         <div aria-hidden="true" />
-        <p className="text-[11px] font-medium uppercase leading-5 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+        <p className="text-xs font-medium uppercase leading-5 tracking-[0.08em] text-muted-foreground">
           {axisLabels[1]}
         </p>
       </div>
@@ -366,7 +367,7 @@ export function LifelineVertical({
         >
           <div
             className={cn(
-              "h-full w-px border-l border-dashed border-zinc-300 transition-colors duration-300 dark:border-zinc-800",
+              "h-full w-px border-l border-dashed border-border",
               showIntro && "lifeline-rail-intro-vertical",
             )}
           />

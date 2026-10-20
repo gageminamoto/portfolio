@@ -13,11 +13,11 @@ export function LifelineStickyLabels({ labels = ["Age", "Years"], showSecondaryA
     >
       <div className="flex flex-col items-start text-left">
         {showSecondaryAxis && (
-          <p className="mb-5 h-4 text-[11px] font-medium uppercase leading-4 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+          <p className="mb-5 h-4 text-xs font-medium uppercase leading-4 tracking-[0.08em] text-muted-foreground">
             {labels[0]}
           </p>
         )}
-        <p className="mb-6 h-5 text-[11px] font-medium uppercase leading-5 tracking-[0.08em] text-zinc-500 transition-colors duration-300 dark:text-zinc-600">
+        <p className="mb-6 h-5 text-xs font-medium uppercase leading-5 tracking-[0.08em] text-muted-foreground">
           {labels[1]}
         </p>
       </div>

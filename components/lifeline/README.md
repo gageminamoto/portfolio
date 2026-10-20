@@ -5,8 +5,8 @@ Vendored from https://github.com/evilrabbit/lifeline at commit
 listed in its shadcn registry. See LICENSE for the upstream MIT license.
 
 The portfolio supplies markers directly from its existing timeline data.
-Local adaptations: configurable axis labels, the site's background and Inter
-font, reduced-motion styles, accessible media controls, focus-following keyboard
+Local adaptations: configurable axis labels, the shared portfolio font, body-copy
+and neutral color tokens, reduced-motion styles, accessible media controls, focus-following keyboard
 navigation, and hover previews portaled outside the clipped track. Registry CSS lives
 in `styles/lifeline.css`. No additional runtime packages are required because
 lucide-react and next-themes are already installed.
