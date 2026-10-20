@@ -193,7 +193,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
     {
       company: "Mizen",
       role: "Calm recipes",
-      period: "Building",
+      period: "2025 – Present",
       url: "https://www.mizen.recipes/",
       icon: faviconUrl("https://www.mizen.recipes/"),
       hoverImage: "/images/mizen-hover.gif",
@@ -202,7 +202,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
     {
       company: "Piʻiku",
       role: "Local design community",
-      period: "Ongoing",
+      period: "2024 – Present",
       url: "https://piiku.co/",
       icon: faviconUrl("https://piiku.co/"),
       hoverImage: "/piiku-preview.jpg",
