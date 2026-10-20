@@ -17,7 +17,9 @@ import {
   IconLaptopMobileFill18,
   IconLightbulb3Fill18,
   IconLinkFill18,
+  IconLoaderFill18,
   IconMagnifierFill18,
+  IconMinusFill18,
   IconPaintbrushFill18,
   IconPenWriting6Fill18,
   IconPinTackFill18,
@@ -91,6 +93,8 @@ export const IconExternalLink = siteIcon(IconWindowExpandBottomRightFill18)
 export const IconArrowUpRight = siteIcon(IconSquareDottedArrowBottomRightFill18)
 export const IconCopy = siteIcon(IconClipboardFill18)
 export const IconClose = siteIcon(IconXmarkFill18)
+export const IconMinus = siteIcon(IconMinusFill18)
+export const IconLoader = siteIcon(IconLoaderFill18)
 export const IconEmail = siteIcon(IconEnvelopeFill18)
 export const IconAtSign = siteIcon(IconAtSignFill18)
 
