@@ -86,6 +86,23 @@ function ReflowWords({ text }: { text: string }) {
   )
 }
 
+/** Break multi-word link labels at intentional spots so lines fill width without orphans. */
+function ReflowLinkLabel({ text }: { text: string }) {
+  if (text === "local design community") {
+    return (
+      <>
+        <span {...reflowItemProps} className="inline-block">
+          local
+        </span>{" "}
+        <span {...reflowItemProps} className="inline-block">
+          design community
+        </span>
+      </>
+    )
+  }
+  return <ReflowWords text={text} />
+}
+
 function renderBioParts(
   parts: BioPart[],
   onWordChange?: (word: string) => void,
@@ -150,10 +167,10 @@ function renderBioParts(
         "Servco": "/images/servco-preview.webp",
       }
       const toggle = linkToggles?.[part.url]
-      return item(
-        index,
+      const link = (
         <HoverLink
           href={part.url}
+          wrap={reflow}
           onClick={
             toggle
               ? (e) => {
@@ -178,9 +195,13 @@ function renderBioParts(
               : "no-underline decoration-transparent hover:decoration-primary"
           }
         >
-          {part.text}
-        </HoverLink>,
+          {reflow ? <ReflowLinkLabel text={part.text} /> : part.text}
+        </HoverLink>
       )
+      if (reflow) {
+        return <React.Fragment key={index}>{link}</React.Fragment>
+      }
+      return item(index, link)
     }
     if (isBioSwitcher(part)) {
       return (
@@ -223,7 +244,7 @@ function ShiftingParagraph({
 }
 
 /** Shared body copy rhythm for bios and inline prose blocks (About hobbies, etc.). */
-export const bodyCopyClassName = "text-base leading-7 text-wrap"
+export const bodyCopyClassName = "text-base leading-7 text-pretty"
 
 export function BioSection({
   bio,

@@ -18,6 +18,8 @@ interface HoverLinkProps {
   syncWorkId?: string
   /** Truncate overflowing link text with an ellipsis (for flex row layouts). */
   truncate?: boolean
+  /** Allow link label to wrap across lines (bio reflow); default keeps one flex row. */
+  wrap?: boolean
   className?: string
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
   onPointerEnter?: () => void
@@ -38,6 +40,7 @@ export function HoverLink({
   previewHeight = 144,
   syncWorkId,
   truncate = false,
+  wrap = false,
   className = "",
   onClick,
   onPointerEnter,
@@ -47,7 +50,11 @@ export function HoverLink({
 }: HoverLinkProps) {
   const { setHoveredWorkId } = useWorkHover()
   const prefersReducedMotion = useReducedMotion()
-  const layoutClass = truncate ? "flex min-w-0 max-w-full" : "inline-flex"
+  const layoutClass = truncate
+    ? "flex min-w-0 max-w-full"
+    : wrap
+      ? "inline"
+      : "inline-flex"
   const linkClassName = `group ${layoutClass} items-center gap-1 text-foreground underline decoration-dashed decoration-2 decoration-muted-foreground/40 underline-offset-4 transition-[color,text-decoration-color] duration-150 ease-out hover:decoration-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm ${className}`
   const previewIsVideo = previewImage?.endsWith(".mp4")
 
@@ -104,7 +111,9 @@ export function HoverLink({
   const wrapWithPreview = (link: React.ReactNode) => {
     if (!previewImage || syncWorkId) return link
     return (
-      <span className="group/preview relative inline-block">
+      <span
+        className={`group/preview relative ${wrap ? "inline" : "inline-block"}`}
+      >
         {link}
         <span
           data-no-markdown
