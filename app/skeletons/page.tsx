@@ -1,6 +1,10 @@
+"use client"
+
+import { motion, useReducedMotion } from "framer-motion"
 import { IconSearch } from "@/components/site-icons"
 import { BackLink } from "@/components/back-link"
 import { Skeleton } from "@/components/ui/skeleton"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 
 const writingRows = Array.from({ length: 5 })
 const toolRows = Array.from({ length: 6 })
@@ -28,16 +32,26 @@ function WritingRows({ count = 5 }: { count?: number }) {
 }
 
 export default function SkeletonsPage() {
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
+
   return (
-    <main id="main-content" className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24">
-      <header className="flex flex-col gap-6">
+    <motion.main
+      id="main-content"
+      className="mx-auto flex min-h-screen max-w-xl flex-col gap-(--page-section-gap) px-6 py-16 md:py-24"
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.header variants={item} className="flex flex-col gap-6">
         <BackLink href="/">Home</BackLink>
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Skeleton loaders</h1>
           <p className="text-sm text-muted-foreground">A temporary preview of every loading state used across the site.</p>
         </div>
-      </header>
+      </motion.header>
 
+      <motion.div variants={item} className="flex flex-col gap-(--page-section-gap)">
       <Preview title="Writing page">
         <Skeleton className="h-5 w-20 motion-reduce:animate-none" />
         <WritingRows />
@@ -108,6 +122,7 @@ export default function SkeletonsPage() {
           ))}
         </div>
       </Preview>
-    </main>
+      </motion.div>
+    </motion.main>
   )
 }

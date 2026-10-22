@@ -1,9 +1,13 @@
+"use client"
+
+import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { BlocksRenderer } from "@/components/writing/blocks-renderer"
 import { TableOfContents } from "@/components/writing/table-of-contents"
 import { ArticleFooter } from "@/components/writing/article-footer"
-import { generateSeedPosts, getSeedPost, generateSeedBlocks } from "@/lib/seed-posts"
+import { generateSeedPosts, generateSeedBlocks } from "@/lib/seed-posts"
 import type { NotionBlock, NotionWritingPost } from "@/lib/notion"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { ArticleActions } from "./article-actions"
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -43,20 +47,32 @@ interface ArticleContentProps {
 }
 
 export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleContentProps) {
+  const shouldReduceMotion = useReducedMotion()
+  const item = shouldReduceMotion ? noMotion : fadeUp
   const isSeed = slug.startsWith("seed-")
   const articleBlocks = isSeed ? generateSeedBlocks() : blocks
   const posts = isSeed ? [...allPosts, ...generateSeedPosts(5)] : allPosts
-  const index = posts.findIndex((item) => item.slug === slug)
+  const index = posts.findIndex((entry) => entry.slug === slug)
   const prevPost = index > 0 ? posts[index - 1] : null
   const nextPost = index >= 0 && index < posts.length - 1 ? posts[index + 1] : null
   const headings = extractHeadings(articleBlocks)
   const backToHome = from === "home"
 
   return (
-    <div>
-      <div className={`mx-auto w-full px-6 pt-16 md:pt-24 ${prevPost || nextPost ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center`}>
+    <motion.div
+      variants={shouldReduceMotion ? undefined : stagger}
+      initial="hidden"
+      animate="show"
+    >
+      <div
+        className={`mx-auto w-full px-6 pt-16 md:pt-24 ${prevPost || nextPost ? "pb-0" : "pb-16 md:pb-24"} xl:grid xl:grid-cols-[clamp(16rem,18vw,20rem)_minmax(0,36rem)_clamp(16rem,18vw,20rem)] xl:items-start xl:justify-center`}
+      >
         <div className="hidden xl:block" />
-        <main id="main-content" className="min-w-0 max-w-xl xl:max-w-none mx-auto w-full">
+        <motion.main
+          id="main-content"
+          variants={item}
+          className="min-w-0 max-w-xl xl:max-w-none mx-auto w-full"
+        >
           <header className="mb-(--page-section-gap) flex flex-col gap-6">
             <nav className="flex items-center justify-between">
               <BackLink href={backToHome ? "/" : "/writing"}>
@@ -70,12 +86,16 @@ export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleCo
 
           {headings.length > 0 && <div className="xl:hidden"><TableOfContents headings={headings} variant="collapsible" /></div>}
           {articleBlocks.length > 0 ? <article><BlocksRenderer blocks={articleBlocks} /></article> : <p className="text-sm text-muted-foreground">This article does not have any published content yet.</p>}
-        </main>
-        <aside className="hidden xl:self-start xl:pl-10 xl:block">
+        </motion.main>
+        <motion.aside variants={item} className="hidden xl:self-start xl:pl-10 xl:block">
           {headings.length > 0 && <TableOfContents headings={headings} variant="list" />}
-        </aside>
+        </motion.aside>
       </div>
-      {(prevPost || nextPost) && <div className="px-6"><ArticleFooter prevPost={prevPost} nextPost={nextPost} /></div>}
-    </div>
+      {(prevPost || nextPost) && (
+        <motion.div variants={item} className="px-6">
+          <ArticleFooter prevPost={prevPost} nextPost={nextPost} />
+        </motion.div>
+      )}
+    </motion.div>
   )
 }

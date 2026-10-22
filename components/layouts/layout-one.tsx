@@ -17,6 +17,7 @@ import { ToolsSection, toolsFetcher } from "@/components/tools-section"
 import { WritingSection, writingFetcher } from "@/components/writing-section"
 import { generateSeedTools } from "@/lib/seed-tools"
 import { generateSeedPosts } from "@/lib/seed-writing"
+import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { portfolioData } from "@/lib/portfolio-data"
 
 const easeOut = [0.19, 1, 0.22, 1] as const
@@ -101,6 +102,7 @@ export function LayoutOne() {
   const { name, bio, socials, email } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const reduceMotion = useReducedMotion()
+  const item = reduceMotion ? noMotion : fadeUp
   const [openSection, setOpenSection] = useState<SectionKey | null>(null)
   const [wanted, setWanted] = useState<Record<SectionKey, boolean>>({
     writing: false,
@@ -181,12 +183,15 @@ export function LayoutOne() {
 
   return (
     <>
-      <main
+      <motion.main
         id="main-content"
         className="relative z-10 flex min-h-screen items-center justify-center px-6 py-16"
+        variants={reduceMotion ? undefined : stagger}
+        initial="hidden"
+        animate="show"
       >
         <div className="flex w-full max-w-xl flex-col gap-6">
-          <div className="flex flex-col gap-4">
+          <motion.div variants={item} className="flex flex-col gap-4">
             <motion.h1
               layout="position"
               className="text-3xl font-semibold tracking-tight text-foreground"
@@ -203,7 +208,7 @@ export function LayoutOne() {
             }}
             linkToggles={linkToggles}
           />
-          </div>
+          </motion.div>
           <AnimatePresence initial={false}>
             {shownSection && (
               <motion.section
@@ -307,12 +312,12 @@ export function LayoutOne() {
               </motion.section>
             )}
           </AnimatePresence>
-          <motion.div layout="position">
+          <motion.div layout="position" variants={item}>
             <SocialIcons socials={socials} email={email} />
           </motion.div>
         </div>
         <CursorTrail />
-      </main>
+      </motion.main>
     </>
   )
 }
