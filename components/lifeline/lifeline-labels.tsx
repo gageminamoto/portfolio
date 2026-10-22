@@ -1,0 +1,26 @@
+export const LIFELINE_LABEL_COLUMN_WIDTH = 56
+export const LIFELINE_LABEL_GAP = 16
+export const LIFELINE_STICKY_SHIELD_WIDTH =
+  LIFELINE_LABEL_COLUMN_WIDTH + LIFELINE_LABEL_GAP
+export const LIFELINE_STICKY_LEFT = 24
+
+export function LifelineStickyLabels({ labels = ["Age", "Years"], showSecondaryAxis = true }: { labels?: [string, string]; showSecondaryAxis?: boolean }) {
+  return (
+    <div
+      className="relative"
+      style={{ width: LIFELINE_LABEL_COLUMN_WIDTH }}
+      aria-hidden="true"
+    >
+      <div className="flex flex-col items-start text-left">
+        {showSecondaryAxis && (
+          <p className="mb-5 h-4 text-xs font-medium uppercase leading-4 tracking-[0.08em] text-muted-foreground">
+            {labels[0]}
+          </p>
+        )}
+        <p className="mb-6 h-5 text-xs font-medium uppercase leading-5 tracking-[0.08em] text-muted-foreground">
+          {labels[1]}
+        </p>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,218 @@
+"use client"
+
+import { useMemo, type CSSProperties } from "react"
+import { cn } from "@/lib/utils"
+import {
+  LifelineStickyLabels,
+  LIFELINE_STICKY_SHIELD_WIDTH,
+} from "./lifeline-labels"
+import { LifelineMarkerColumn } from "./lifeline-marker"
+import type { LifelineEventImage, LifelineProps } from "./types"
+import { getLifelineEventImage } from "./lifeline-event"
+import { LifelineHoverImageProvider } from "./lifeline-hover-image"
+import { LifelineFloatingPhotos } from "./lifeline-photos"
+import { useLifelineIntro } from "./use-lifeline-intro"
+import { useLifelineScroll } from "./use-lifeline-scroll"
+import { getMarkerWidth } from "./lifeline-utils"
+
+export function LifelineDesktop({
+  markers,
+  birthYear,
+  className,
+  title = "Lifeline",
+  mode = "auto",
+  axisLabels,
+  showSecondaryAxis = true,
+  fullWidthRail = false,
+}: LifelineProps) {
+  const widths = useMemo(
+    () =>
+      markers.map((marker, index) =>
+        getMarkerWidth(marker, markers[index + 1]?.year),
+      ),
+    [markers],
+  )
+
+  const offsets = useMemo(() => {
+    const result: number[] = []
+    let sum = 0
+    for (const width of widths) {
+      result.push(sum)
+      sum += width
+    }
+    return result
+  }, [widths])
+
+  const hoverImages = useMemo(() => {
+    const images: LifelineEventImage[] = []
+    for (const marker of markers) {
+      for (const event of marker.events) {
+        const image = getLifelineEventImage(event)
+        if (image) images.push(image)
+      }
+    }
+    return images
+  }, [markers])
+
+  const intro = useLifelineIntro(widths)
+  const isIntroAnimating = intro.shouldPlay && intro.isPlaying
+
+  const {
+    sectionRef,
+    trackRef,
+    labelsRef,
+    setMarkerRef,
+    isLayoutReady,
+    isEmbed,
+    introArmed,
+  } = useLifelineScroll(markers.length, {
+    mode,
+    fullWidthContent: fullWidthRail,
+    introLocked: isIntroAnimating,
+    introAnimating: isIntroAnimating,
+    introSkipped: !intro.shouldPlay,
+    introRailMs: intro.railDuration,
+    introGetTrackProgress: intro.getTrackProgressAtTime,
+    onIntroScrollStart: intro.startIntroTimer,
+    onIntroSettleComplete: intro.completeIntro,
+  })
+
+  // Embedded, the open waits for the module to come into view: the marker
+  // fades are CSS animations that start the moment their class lands, so
+  // applying it early would spend them below the fold.
+  const introWaitingInView = isEmbed && intro.shouldPlay && !introArmed
+  const showIntro = isIntroAnimating && isLayoutReady && !introWaitingInView
+
+  const trackWidth =
+    LIFELINE_STICKY_SHIELD_WIDTH + widths.reduce((sum, width) => sum + width, 0)
+
+  const introStyle = {
+    "--lifeline-labels-ms": `${intro.labelsDuration}ms`,
+    "--lifeline-rail-ms": `${intro.railDuration}ms`,
+  } as CSSProperties
+
+  return (
+    <section
+      ref={sectionRef}
+      data-lifeline-mode={isEmbed ? "embed" : "page"}
+      // Embedded, the module needs a tab stop to be operable at all — a
+      // page-mode lifeline is reached just by scrolling to it.
+      tabIndex={isEmbed ? 0 : undefined}
+      className={cn(
+        "relative h-full min-h-0 select-none [&_a]:cursor-pointer",
+        fullWidthRail ? "overflow-visible" : "overflow-hidden",
+        // `pan-y` lets the browser start a vertical page scroll on the
+        // first frame instead of waiting on the JS axis lock; horizontal
+        // panning stays ours.
+        isEmbed &&
+          "touch-pan-y focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        // Hold it blank rather than showing a settled timeline that then
+        // resets itself to play the intro. Below the fold there is nothing
+        // to see anyway, and the arming margin means it fills in before it
+        // reaches the reader.
+        (!isLayoutReady || introWaitingInView) && "invisible",
+        className,
+      )}
+      aria-label={title}
+      style={{
+        ...(showIntro ? introStyle : {}),
+        "--lifeline-rail": showSecondaryAxis ? "5rem" : "2.75rem",
+      } as CSSProperties}
+    >
+      {fullWidthRail && (
+        <div
+          aria-hidden="true"
+          data-lifeline-full-width-rail
+          className="pointer-events-none absolute left-[calc(-1*var(--lifeline-stage-left,0px))] top-[calc(var(--lifeline-track-top,0px)+var(--lifeline-rail))] h-px w-screen overflow-hidden"
+        >
+          <div
+            className={cn(
+              "h-px w-full border-t border-dashed border-border",
+              showIntro && "lifeline-rail-intro",
+            )}
+          />
+        </div>
+      )}
+      <LifelineHoverImageProvider preload={hoverImages}>
+      {/*
+        Centered — but `safe center` where the browser understands it, which
+        matters once the height is the consumer's to choose. A track taller
+        than its box would otherwise overflow equally top and bottom, and
+        since the section clips, the first thing lost is the row nearest the
+        top: the Age/Years label column and the year labels. `safe` falls
+        back to start-alignment exactly in that case, so the labels and the
+        rail stay put and only the tail of a long column clips. Declared
+        inline so browsers without it simply keep the `items-center` class.
+      */}
+      <div
+        className={cn(
+          "flex h-full items-center",
+          fullWidthRail
+            ? "[clip-path:inset(0_calc(100%_-_100vw_+_var(--lifeline-stage-left,0px))_0_calc(-1_*_var(--lifeline-stage-left,0px)))]"
+            : "overflow-hidden",
+        )}
+        style={isEmbed ? { alignItems: "safe center" } : undefined}
+      >
+        <div
+          ref={trackRef}
+          className="relative flex w-max items-start will-change-transform [--lifeline-people-top:calc(14.5rem+40px)] [--lifeline-rail:5rem]"
+          style={{ width: trackWidth, "--lifeline-rail": showSecondaryAxis ? "5rem" : "2.75rem" } as CSSProperties}
+        >
+          {/* Reserve the label column without covering the page background. */}
+          <div
+            ref={labelsRef}
+            className="lifeline-labels shrink-0 will-change-transform"
+            style={{ width: LIFELINE_STICKY_SHIELD_WIDTH }}
+          >
+            <div className={cn(showIntro && "lifeline-labels-intro")}>
+              <LifelineStickyLabels labels={axisLabels} showSecondaryAxis={showSecondaryAxis} />
+            </div>
+          </div>
+
+          <div className="relative">
+            {!fullWidthRail && (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-[var(--lifeline-rail)] h-px overflow-hidden"
+              >
+                <div
+                  className={cn(
+                    "h-px w-full border-t border-dashed border-border",
+                    showIntro && "lifeline-rail-intro",
+                  )}
+                />
+              </div>
+            )}
+
+            <div className="relative flex items-start">
+              {markers.map((marker, index) => (
+                <LifelineMarkerColumn
+                  key={marker.id}
+                  ref={(node) => setMarkerRef(index, node)}
+                  marker={marker}
+                  showSecondaryAxis={showSecondaryAxis}
+                  birthYear={birthYear}
+                  minWidth={widths[index]}
+                  animateIntro={showIntro}
+                  introDelay={intro.getMarkerDelay(index)}
+                  introDuration={intro.getMarkerFadeDuration(index)}
+                />
+              ))}
+            </div>
+
+            <LifelineFloatingPhotos
+              markers={markers}
+              offsets={offsets}
+              widths={widths}
+              animateIntro={showIntro}
+              getIntroDelay={intro.getMarkerDelay}
+              getIntroDuration={intro.getMarkerFadeDuration}
+            />
+          </div>
+        </div>
+      </div>
+
+      </LifelineHoverImageProvider>
+    </section>
+  )
+}

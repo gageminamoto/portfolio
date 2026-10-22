@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+/* Shared timeline typography, motion, and mobile edge fades. */
+@import '../styles/lifeline.css';
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant hover-note {
