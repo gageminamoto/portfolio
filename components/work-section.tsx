@@ -28,6 +28,8 @@ import { caseStudySlug } from "@/lib/utils"
 interface WorkItem {
   name: string
   url: string
+  /** Button text for the project link. Defaults to the link's domain. */
+  linkLabel?: string
   image: string
   previewImage: string
   type: string
@@ -59,11 +61,12 @@ type CaseStudyMedia = CaseStudyImage | {
 const workItems: WorkItem[] = [
   {
     name: "Mizen",
-    url: "https://www.mizen.recipes/",
+    url: "https://mizen.recipes",
+    linkLabel: "Read the sunset note",
     image: "/images/mizen-hover.gif",
     previewImage: "/images/mizen-preview.webp",
     type: "Product",
-    description: "Mizen is a calm recipe workspace for saving recipes from the web, organizing what to cook, and making home cooking feel clearer and less hectic.",
+    description: "Mizen was a calm recipe workspace for saving recipes from the web, organizing what to cook, and making home cooking feel clearer and less hectic. It was retired in 2026.",
     outcome: "This side project was entirely my own, from front-end to back-end, marketing, and roadmap definition. I managed design and engineering, set the visual branding direction, and mapped out features.",
     contributors: [
       { name: "Gage Minamoto", avatarUrl: "/avatars/gage.png", url: "https://linkedin.com/in/gageminamoto" },
@@ -433,7 +436,7 @@ function ProjectDetails({ item }: { item: WorkItem }) {
         className="bg-foreground text-background transition-colors duration-150 ease hover:bg-foreground/90 hover:text-background"
       >
         <a href={item.url} target="_blank" rel="noopener noreferrer">
-          {projectUrlLabel(item.url)}
+          {item.linkLabel ?? projectUrlLabel(item.url)}
           <IconArrowUpRight className="size-3.5" />
         </a>
       </Button>
