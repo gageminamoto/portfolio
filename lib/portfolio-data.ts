@@ -92,7 +92,7 @@ const faviconUrl = (url: string) =>
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "{Interaction designer|Software designer|Experience designer} building at Negi and growing Hawai’i’s [local design community](https://piiku.co/).\n\nCooking up [Mizen](https://www.mizen.recipes/), a recipe manager for home cooks.\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
+  bio: "{Interaction designer|Software designer|Experience designer} building at Negi and growing Hawai’i’s [local design community](https://piiku.co/).\n\nPreviously made [Mizen](https://mizen.recipes), a recipe manager for home cooks.\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
   extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products.
 
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/).
@@ -193,11 +193,11 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
     {
       company: "Mizen",
       role: "Calm recipes",
-      period: "2025 – Present",
-      url: "https://www.mizen.recipes/",
-      icon: faviconUrl("https://www.mizen.recipes/"),
+      period: "2025 – 2026",
+      url: "https://mizen.recipes",
+      icon: faviconUrl("https://mizen.recipes"),
       hoverImage: "/images/mizen-hover.gif",
-      description: "A recipe app I’m building to make cooking from a phone easier, with recipe clipping and grocery lists.",
+      description: "A recipe app I built to make cooking from a phone easier, with recipe clipping and grocery lists.",
     },
     {
       company: "Piʻiku",
