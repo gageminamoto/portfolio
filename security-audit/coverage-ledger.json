@@ -1,0 +1,2723 @@
+[
+ {
+  "coverage_id": "app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23GET::app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23baseUrl::accept-md::WEB-PROTOCOL-AND-AUTH.md%23Host%20and%20forwarded-header%20trust",
+  "canonical_refs": {
+   "surface": "app/api/accept-md/[[...path]]/route.ts#GET",
+   "boundary": "app/api/accept-md/[[...path]]/route.ts#baseUrl",
+   "subsystem": "accept-md",
+   "attack_class": "WEB-PROTOCOL-AND-AUTH.md#Host and forwarded-header trust"
+  },
+  "surface": "Markdown rewrite to /api/accept-md (*.md, Accept: text/markdown)",
+  "boundary": "Self-fetch origin and forwarded headers",
+  "subsystem": "accept-md",
+  "attack_class": "Host and forwarded-header trust",
+  "starting_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "next.config.mjs"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "WEB-PROTOCOL-AND-AUTH.md#Host and forwarded-header trust",
+   "WEB-PROTOCOL-AND-AUTH.md#Web cache poisoning through unkeyed input",
+   "WEB-PROTOCOL-AND-AUTH.md#Cache deception and private-response caching",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-web",
+  "reviewed_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "next.config.mjs",
+   "package-lock.json"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "The markdown self-fetch target origin must be pinned to the site's own origin, not taken from request Host/forwarded metadata.",
+    "method": "source",
+    "result": "The route sets baseUrl to markdownConfig.baseUrl ?? request.nextUrl.origin (route.ts:42). markdownConfig never sets baseUrl (route.ts:9-24), so the origin always comes from the request. All inbound request headers except Accept are forwarded to the fetch (route.ts:36-37,45). No allowlist of hosts exists in source. Whether Next/Vercel let a client-chosen Host or X-Forwarded-Host reach nextUrl.origin is ingress behaviour that is not visible in source.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts"
+    ],
+    "invariant": "The pathname passed to the self-fetch must stay a same-origin path (no protocol-relative or backslash forms).",
+    "method": "local",
+    "result": "The route builds pathname as '/' + path.join('/') with no normalization (route.ts:34-35). Segments that decode to '//evil.example', ['', 'evil.example'] or '\\\\evil.example' produce '///evil.example', '//evil.example' and '/\\\\evil.example'. WHATWG new URL(pathname, base) resolves all three to https://evil.example/, while string concatenation stays same-origin. Which join accept-md-runtime@5.0.2 uses is unknown because the package is absent.",
+    "artifact": "agents/hunter-web/artifacts/check-2.txt"
+   },
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Shared caches (in-process Map and CDN s-maxage) must key on every input that changes the response.",
+    "method": "source",
+    "result": "The response is public, s-maxage=60 with Vary: Accept only (route.ts:50-56; next.config.mjs:33-39 adds Vary: Accept to all paths). The 250-entry in-process markdownCache is shared across all requests (route.ts:8,44), and its key is computed inside accept-md-runtime, which is not present. Host and forwarded headers are not in Vary. If the origin or pathname can be steered, the cached markdown could be served to other visitors. This cannot be decided from source.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-04",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs",
+     "package-lock.json"
+    ],
+    "invariant": "Independent Phase 3 validation of accept-md:route:request-derived-self-fetch-url",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: How accept-md-runtime@5.0.2 getMarkdownForPath combines baseUrl and pathname (new URL resolution or string concatenation), whether it checks that the result stays on baseUrl's origin, whether include/exclude matching rejects '//' or backslash paths, whether it passes the forwarded Host header to fetch, and what its cache key contains (pathname only, or the full URL). The package is absent locally and installing it is prohibited. | Whether Next.js 16.1.6, as deployed on Vercel, derives request.nextUrl.origin from a client-supplied Host or X-Forwarded-Host, or whether Vercel ingress overwrites or rejects those headers. This is deployment behaviour that is not visible in the repository. | Whether Next.js routing and the beforeFiles rewrites deliver a catch-all segment that decodes to '//host' or '\\host' (for example /%2F%2Fevil.example.md, /%5Cevil.example.md or //evil.example with Accept: text/markdown) into params.path, or instead normalize, reject or redirect repeated slashes and backslashes first. | Whether the Vercel CDN cache key for a public s-maxage response includes the Host, so a steered response could reach other visitors.",
+    "artifact": "agents/verifier-04/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "accept-md:route:request-derived-self-fetch-url"
+  ],
+  "unresolved": [],
+  "x_key": "acceptmd-host",
+  "x_hunter": "hunter-web",
+  "x_hardening": [
+   "lib/notion.ts and lib/github.ts read secrets but do not import 'server-only'. Adding it would turn an accidental value import from a client component into a build error instead of a bundled module (process.env secrets would still be undefined on the client, but the guard documents and enforces the boundary).",
+   "/api/accept-md returns error.message verbatim (route.ts:59-63). Replace it with a generic message so fetch failures do not echo internal URLs or upstream details.",
+   "/api/accept-md forwards every inbound header, including Cookie and Authorization, to the self-fetch while its output is stored in a shared cache. Forward an allowlist of headers, or skip caching when credentials are present, in case deployment protection or future auth cookies are added.",
+   "The /api/commits/history route sets force-dynamic together with revalidate=600 and sends no Cache-Control, so every anonymous hit makes 3 to 7 authenticated GitHub calls against the owner's token quota (availability belongs to a peer unit; noted only)."
+  ],
+  "x_uncovered": [],
+  "x_decisions": {
+   "accept-md:route:request-derived-self-fetch-url": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23GET::app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23catch::accept-md::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+  "canonical_refs": {
+   "surface": "app/api/accept-md/[[...path]]/route.ts#GET",
+   "boundary": "app/api/accept-md/[[...path]]/route.ts#catch",
+   "subsystem": "accept-md",
+   "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+  },
+  "surface": "GET /api/accept-md error responses",
+  "boundary": "Server internals to anonymous visitor",
+  "subsystem": "accept-md",
+  "attack_class": "Feature abuse and data leakage",
+  "starting_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "next.config.mjs"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+  "selected_companion_blocks": [
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Analytics, logs, traces, and diagnostics as alternate readers",
+   "WEB-PROTOCOL-AND-AUTH.md#Host and forwarded-header trust",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 2,
+  "status": "covered",
+  "agent_id": "hunter-w2-data",
+  "reviewed_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "next.config.mjs"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts"
+    ],
+    "invariant": "Error responses from the accept-md handler must not disclose secrets, private content, or internal-only data to an anonymous visitor.",
+    "method": "source",
+    "result": "The catch block at route.ts:58-63 returns error.message verbatim as JSON with status 404 or 500. The only inputs that reach getMarkdownForPath (route.ts:40-46) are the visitor-controlled pathname, baseUrl = request.nextUrl.origin (visitor-influenced through Host; owned by the peer fingerprint accept-md:route:request-derived-self-fetch-url), the visitor's own forwarded request headers, and the static markdownConfig. No env secret, Notion key, or GitHub token is in scope of this handler. The upstream it fetches is the site's own public page (or, under the peer's Host issue, an attacker-chosen origin, so it only reflects the attacker's own data back). accept-md-runtime 5.0.2 (package-lock.json:4432-4435) is not present locally, so the exact message text cannot be read. That fact is not decisive: no secret-bearing value can enter the message. Status selection (route.ts:61) is a regex over that same message and only tells a visitor whether a public page exists, which they can already learn by requesting it directly.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Markdown derived copies (the in-process Map cache and the s-maxage=60 CDN copy) must not hand non-public or per-visitor content to a different visitor.",
+    "method": "source",
+    "result": "The app sets no cookies and has no sessions or auth (architecture section 1), so the forwarded request headers (route.ts:36-37) carry no per-user state that could make a self-fetched page private. The success response is public, s-maxage=60 with Vary: Accept (route.ts:48-56), and every page reachable through the rewrites (next.config.mjs:10-29) is already publicly renderable. The exclude list ['/api/**','/_next/**'] (route.ts:11) is enforced by the absent library, but API routes are public GETs anyway. Cross-request cache poisoning through Host is the peer's root cause (accept-md:route:request-derived-self-fetch-url) and is not duplicated here. Reaching /writing/<page-id>.md is another way into the peer's page-ID fallback (lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check) and is not a new root cause.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "acceptmd-errors",
+  "x_hunter": "hunter-w2-data",
+  "x_origin": "critic-1",
+  "x_hardening": [
+   "app/layout.tsx:73 loads https://inflight.co/widget.js with no integrity attribute and no CSP is set anywhere (next.config.mjs:33-40). Consider a CSP that limits script-src to self, Vercel analytics, and inflight.co, so that a compromise of the vendor or the CDN is at least bounded.",
+   "app/api/image/route.ts:61-62 caches proxied Notion signed-URL images public/immutable for 1 year, so an image removed in Notion stays served from the CDN copy. Use a shorter max-age, or key the cache on the block or file ID rather than the signed URL, if removal should take effect.",
+   "app/api/accept-md/[[...path]]/route.ts:59-63 returns library error.message verbatim. Prefer a fixed generic message, with status derived from a typed error, so future library changes cannot leak internal URLs or upstream details.",
+   "app/api/image/route.ts:41 accepts http: URLs on allowlisted hosts (isAllowedImageUrl ignores the protocol). Requiring https: is a cheap tightening alongside the per-hop redirect check."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Notion image-block dimension fetch (getImageDimensions) during fetchPostBlocks",
+    "boundary": "Redirect and proxy chaining from allowlisted hosts on the Notion-content path",
+    "subsystem": "lib/image-metadata",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+     "lib/image-metadata.ts",
+     "lib/notion.ts"
+    ],
+    "reason": "Same root-cause variant as app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck: a one-time isAllowedImageUrl check (line 18) followed by fetch with default redirect follow (line 24), reached from any page the integration can read (including through the peer's page-ID fallback). Its input source and trigger differ from /api/image and no current coverage unit owns it."
+   }
+  ]
+ },
+ {
+  "coverage_id": "app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23GET::app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23markdownCache::accept-md::WEB-PROTOCOL-AND-AUTH.md%23Web%20cache%20poisoning%20through%20unkeyed%20input",
+  "canonical_refs": {
+   "surface": "app/api/accept-md/[[...path]]/route.ts#GET",
+   "boundary": "app/api/accept-md/[[...path]]/route.ts#markdownCache",
+   "subsystem": "accept-md",
+   "attack_class": "WEB-PROTOCOL-AND-AUTH.md#Web cache poisoning through unkeyed input"
+  },
+  "surface": "GET /api/accept-md via *.md and Accept: text/markdown rewrites",
+  "boundary": "Forwarded request headers versus shared cache keys",
+  "subsystem": "accept-md",
+  "attack_class": "Web cache poisoning through unkeyed input",
+  "starting_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "next.config.mjs"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "WEB-PROTOCOL-AND-AUTH.md#Web cache poisoning through unkeyed input",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 3,
+  "status": "candidate",
+  "agent_id": "hunter-w3",
+  "reviewed_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "app/writing/[slug]/page.tsx",
+   "lib/github.ts",
+   "next.config.mjs",
+   "package-lock.json"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w3",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Responses on the same public URL that differ by representation (HTML vs markdown) must be distinguished in every shared cache key; the rewrite selector (Accept contains text/markdown) must match what the cache keys on.",
+    "method": "source",
+    "result": "next.config.mjs:19-29 rewrites any non-api/_next path to the markdown handler when the Accept header matches the regex (.*)text/markdown(.*). The handler (route.ts:48-56) returns the markdown with 'public, s-maxage=60, stale-while-revalidate' on the same public URL as the HTML page. The only thing separating the two representations in a shared cache is 'Vary: Accept' (route.ts:55; next.config.mjs:33-39). The rewrite tests a substring regex, while a cache that honours Vary keys on the raw Accept value. Whether the deployed CDN honours Vary: Accept, and whether Next.js keeps or overwrites the Vary set in headers() on prerendered HTML, cannot be seen in the source. Recorded as needs_validation.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w3",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "app/writing/[slug]/page.tsx",
+     "lib/github.ts"
+    ],
+    "invariant": "The process-wide markdownCache Map must be keyed on every input that changes the generated markdown: baseUrl (from the request origin), the forwarded headers, and the pathname.",
+    "method": "source",
+    "result": "route.ts:8 creates one module-level Map that every visitor shares. route.ts:36-46 passes the request-derived baseUrl and all request headers except Accept into getMarkdownForPath, together with that Map. The pathname is built only from path segments (route.ts:35), so the query string is dropped and is not a variant. No app page reads headers() or cookies(), and there is no middleware, so forwarded headers do not change the HTML except through the Host/origin that becomes baseUrl. How accept-md-runtime builds its cache key (pathname only, or baseUrl+pathname) is not visible because the package is not installed. If the key is pathname only, markdown rendered from a request-chosen origin is stored and served to later visitors on the same instance. Recorded as needs_validation and linked to the peer host-trust root cause.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-02",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Independent Phase 3 validation of accept-md:route:accept-header-representation-switch-relies-on-vary",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: Whether the deployed Vercel edge cache includes the request Accept value in its cache key when a response carries Vary: Accept, for both the rewritten markdown response and the page HTML response. This is deployment and CDN behaviour that is not in the repository. | Whether Next.js 16.1.6 keeps the custom 'Vary: Accept' from next.config headers() on prerendered, ISR or dynamic App Router HTML responses, or replaces it with its own Vary (rsc, Next-Router-State-Tree, Next-Router-Prefetch, ...). Also whether the beforeFiles rule with :path((?!api...).*) matches the root path /. Both are framework behaviour that cannot be checked because node_modules is absent and installing is prohibited.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-03",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "package-lock.json"
+    ],
+    "invariant": "Independent Phase 3 validation of accept-md:route:markdownCache-key-omits-baseUrl",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: The cache-key construction in accept-md-runtime@5.0.2 is not present locally. node_modules is absent, no other copy exists on disk, and installing is prohibited. Whether baseUrl or any forwarded header is part of the key is therefore unknown, and that fact decides the finding. | Whether the deployed platform lets a request reach this function with an origin other than the site's own domains (for example through a Host or X-Forwarded-Host override) is a deployment fact owned by the peer host-trust unit.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [
+   "accept-md:route:accept-header-representation-switch-relies-on-vary",
+   "accept-md:route:markdownCache-key-omits-baseUrl"
+  ],
+  "unresolved": [],
+  "x_key": "acceptmd-unkeyed",
+  "x_hunter": "hunter-w3",
+  "x_origin": "critic-final-1",
+  "x_hardening": [
+   "The accept-md handler forwards every inbound request header (cookies, authorization, x-vercel-* headers) on its self-fetch (app/api/accept-md/[[...path]]/route.ts:36-37). No page currently varies by these headers, so nothing private is cached today. Forwarding an explicit allowlist would stop a future cookie-dependent page from being cached publicly under s-maxage=60.",
+   "The markdown rewrite matches 'text/markdown' anywhere in Accept, including low-q values such as 'text/html, text/markdown;q=0.1'. Exact media-type negotiation would reduce how many Accept values can select the markdown variant."
+  ],
+  "x_uncovered": [],
+  "x_decisions": {
+   "accept-md:route:accept-header-representation-switch-relies-on-vary": "needs_validation",
+   "accept-md:route:markdownCache-key-omits-baseUrl": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Faccept-md%2F%5B%5B...path%5D%5D%2Froute.ts%23GET::next.config.mjs%23rewrites::accept-md::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Unbounded%20buffering%20and%20cardinality",
+  "canonical_refs": {
+   "surface": "app/api/accept-md/[[...path]]/route.ts#GET",
+   "boundary": "next.config.mjs#rewrites",
+   "subsystem": "accept-md",
+   "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality"
+  },
+  "surface": "Markdown rewrite /:path*.md and Accept: text/markdown",
+  "boundary": "Self-fetch re-entry and cache cardinality",
+  "subsystem": "accept-md",
+  "attack_class": "Unbounded buffering and cardinality",
+  "starting_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "next.config.mjs",
+   "app/writing/[slug]/page.tsx"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Database and downstream query amplification",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 2,
+  "status": "candidate",
+  "agent_id": "hunter-w2-avail",
+  "reviewed_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "app/writing/[slug]/page.tsx",
+   "next.config.mjs",
+   "package-lock.json"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w2-avail",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "A markdown self-fetch must never re-enter the accept-md rewrite. Each anonymous request must cause at most one extra origin render.",
+    "method": "source",
+    "result": "The route removes only the `accept` header before the self-fetch (route.ts:36-37). That stops loops through the Accept-header rewrite (next.config.mjs:19-29). It does not stop loops through the `/:path*.md` suffix rewrite (next.config.mjs:16-17). The pathname is rebuilt from the decoded path segments (route.ts:34-35) and fetched against request.nextUrl.origin (route.ts:42). If a pathname ends in `.md`, the self-fetch is rewritten back into accept-md with one `.md` removed. So `/a.md.md...md` with k suffixes becomes a chain of k nested public-origin invocations, all held open at once. The only limit is URL length. The repo has no recursion marker, depth limit, or `.md`-suffix exclusion: the config has include `/**` and excludes only `/api/**` and `/_next/**`. The runtime's internal behaviour and Vercel loop detection are not visible locally.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w2-avail",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "app/writing/[slug]/page.tsx",
+     "package-lock.json"
+    ],
+    "invariant": "The in-process markdown cache keyed by attacker-chosen pathnames must have an aggregate bound.",
+    "method": "source",
+    "result": "The config sets maxCacheEntries: 250 and fetchTimeoutMs: 10000 (route.ts:21-23), and the Map is per process (route.ts:8). Unknown writing slugs call notFound(), which returns 404, so they are probably never cached as successes. Notion errors render ArticleUnavailable with a 200 status, but per-slug Notion cost belongs to peer fingerprint lib/notion.ts:fetchPostBySlug:uncached-full-scan-on-slug-miss. Enforcement of the 250-entry eviction lives in accept-md-runtime@5.0.2, which is not installed locally. On its own, cache cardinality is bounded by the config and is not reported as a finding.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-01",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Independent Phase 3 validation of accept-md:rewrite:nested-md-suffix-self-fetch-chain",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: accept-md-runtime@5.0.2 (package-lock.json:4432) is not installed locally, and installing is prohibited. Without it, there is no way to tell whether getMarkdownForPath rejects or strips .md pathnames, rewrites them, adds a loop-marker header, or limits recursion. This fact decides whether the chain exists at all. | Next.js 16.1.6 is absent, so its path-to-regexp matching of `/:path*.md` against `/a.md.md` cannot be run with the real framework code. Source reading suggests path=`a.md` because the pattern is end-anchored, but this has not been observed. | Platform behaviour cannot be observed locally: whether Vercel loop detection (508 INFINITE_LOOP_DETECTED, which may be triggered by the forwarded x-vercel-* headers), the platform URL length limit, function concurrency limits, or WAF rules stop the self-request chain at a small depth.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [
+   "accept-md:rewrite:nested-md-suffix-self-fetch-chain"
+  ],
+  "unresolved": [],
+  "x_key": "acceptmd-recursion",
+  "x_hunter": "hunter-w2-avail",
+  "x_origin": "critic-1",
+  "x_hardening": [
+   "accept-md route: the 250-entry in-process Map and the 10s fetch timeout are enforced inside accept-md-runtime, which is not present locally. Once installed, confirm that eviction actually caps the Map size, and that failed or 404 renders are not cached, so they cannot evict the real pages.",
+   "lib/github.ts runs per-repo commit fetches one after another with no overall deadline. A slow GitHub response chains up to 7+ waits of fetch-default length per request, holding a function invocation open. Add an AbortSignal.timeout to each fetch."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Markdown rewrite /:path*.md self-fetch",
+    "boundary": "Visitor to shared origin/CDN cache via a nested self-fetch",
+    "subsystem": "accept-md",
+    "attack_class": "WEB-PROTOCOL-AND-AUTH.md#Cache poisoning",
+    "starting_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "reason": "The nested `.md.md` chain returns inner text/markdown responses that the outer level converts and caches publicly (s-maxage=60) under a key that differs only in suffix. Whether attacker-shaped nested output can poison cached `.md` entries is a protocol and cache question outside this availability unit and the peer host-trust unit."
+   }
+  ],
+  "x_decisions": {
+   "accept-md:rewrite:nested-md-suffix-self-fetch-chain": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fcommits%2Fhistory%2Froute.ts%23GET::lib%2Fgithub.ts%23fetchCommitHistory::lib%2Fgithub::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Database%20and%20downstream%20query%20amplification",
+  "canonical_refs": {
+   "surface": "app/api/commits/history/route.ts#GET",
+   "boundary": "lib/github.ts#fetchCommitHistory",
+   "subsystem": "lib/github",
+   "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Database and downstream query amplification"
+  },
+  "surface": "GET /api/commits/history",
+  "boundary": "GitHub token rate-limit budget",
+  "subsystem": "lib/github",
+  "attack_class": "Database and downstream query amplification",
+  "starting_paths": [
+   "app/api/commits/history/route.ts",
+   "lib/github.ts",
+   "components/commits-section.tsx"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Database and downstream query amplification",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Quota-accounting scope and reset gaps",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 2,
+  "status": "candidate",
+  "agent_id": "hunter-w2-avail",
+  "reviewed_paths": [
+   "app/api/commits/history/route.ts",
+   "components/commits-section.tsx",
+   "lib/github.ts",
+   "next.config.mjs"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w2-avail",
+    "reviewed_paths": [
+     "app/api/commits/history/route.ts",
+     "lib/github.ts",
+     "components/commits-section.tsx"
+    ],
+    "invariant": "Anonymous requests must not use the owner's GitHub API rate-limit budget per request without a cache or rate gate.",
+    "method": "source",
+    "result": "The route is force-dynamic (route.ts:4), which overrides revalidate=600 at route.ts:5. It calls fetchCommitHistory(30) on every request (route.ts:10). Each call makes 1 events fetch (github.ts:48), 1 repos fetch (github.ts:97), and then one commits fetch per repo for up to 5 repos plus all GITHUB_EXTRA_REPOS (github.ts:125-130). That is at least 7 sequential GitHub REST calls per anonymous GET. None of these fetches sets a cache option, and the repo has no rate gate or middleware. The 10-minute SWR polling interval applies only to the site's own client (commits-section.tsx:104-107); direct callers bypass it. With GITHUB_TOKEN set, the calls are billed to the owner's token (github.ts:17-19), whose limit is 5000 requests per hour. About 715 anonymous requests per hour would use it up. Without a token, the 60 requests per hour unauthenticated per-IP limit on the shared egress IP runs out after about 9 requests. Whether calls are actually cached, the token type, and any Vercel WAF/rate limit are deployment facts.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-08",
+    "reviewed_paths": [
+     "app/api/commits/history/route.ts",
+     "components/commits-section.tsx",
+     "lib/github.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/github:fetchCommitHistory:uncached-per-request-github-fanout",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: Whether GITHUB_TOKEN is set in production, and whether it is a personal token shared with the owner's other tooling or a dedicated fine-grained or App token with its own budget, is a deployment fact. It decides whether there is any impact beyond the site's own commit feed. | Whether Vercel WAF or Firewall rate-limit rules, or edge caching, limit anonymous request volume to /api/commits/history is not visible in the repository. | Whether the Next.js 16.1.6 runtime leaves these fetches uncached under force-dynamic (expected: no-store) cannot be observed, because node_modules is absent and installing is prohibited. The local harness ran the function outside Next.js.",
+    "artifact": "agents/verifier-08/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "lib/github:fetchCommitHistory:uncached-per-request-github-fanout"
+  ],
+  "unresolved": [],
+  "x_key": "github-quota",
+  "x_hunter": "hunter-w2-avail",
+  "x_origin": "critic-1",
+  "x_hardening": [
+   "accept-md route: the 250-entry in-process Map and the 10s fetch timeout are enforced inside accept-md-runtime, which is not present locally. Once installed, confirm that eviction actually caps the Map size, and that failed or 404 renders are not cached, so they cannot evict the real pages.",
+   "lib/github.ts runs per-repo commit fetches one after another with no overall deadline. A slow GitHub response chains up to 7+ waits of fetch-default length per request, holding a function invocation open. Add an AbortSignal.timeout to each fetch."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Markdown rewrite /:path*.md self-fetch",
+    "boundary": "Visitor to shared origin/CDN cache via a nested self-fetch",
+    "subsystem": "accept-md",
+    "attack_class": "WEB-PROTOCOL-AND-AUTH.md#Cache poisoning",
+    "starting_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "next.config.mjs"
+    ],
+    "reason": "The nested `.md.md` chain returns inner text/markdown responses that the outer level converts and caches publicly (s-maxage=60) under a key that differs only in suffix. Whether attacker-shaped nested output can poison cached `.md` entries is a protocol and cache question outside this availability unit and the peer host-trust unit."
+   }
+  ],
+  "x_decisions": {
+   "lib/github:fetchCommitHistory:uncached-per-request-github-fanout": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fcommits%2Fhistory%2Froute.ts%23GET::lib%2Fgithub.ts%23reposUrl::lib%2Fgithub::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+  "canonical_refs": {
+   "surface": "app/api/commits/history/route.ts#GET",
+   "boundary": "lib/github.ts#reposUrl",
+   "subsystem": "lib/github",
+   "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+  },
+  "surface": "GET /api/commits/history",
+  "boundary": "GitHub token data minimisation",
+  "subsystem": "lib/github",
+  "attack_class": "Feature abuse and data leakage",
+  "starting_paths": [
+   "app/api/commits/history/route.ts",
+   "lib/github.ts",
+   "components/commits-section.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+  "selected_companion_blocks": [
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Analytics, logs, traces, and diagnostics as alternate readers",
+   "WEB-PROTOCOL-AND-AUTH.md#API-key scope and resource binding",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-web",
+  "reviewed_paths": [
+   "app/api/commits/history/route.ts",
+   "components/commits-section.tsx",
+   "lib/github.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "lib/github.ts",
+     "app/api/commits/history/route.ts"
+    ],
+    "invariant": "When the owner's GITHUB_TOKEN is used, the anonymous commit feed must contain only public repositories and public events.",
+    "method": "local",
+    "result": "I ran a mocked-fetch harness with a dummy token and dummy GitHub responses: one repo marked private:true from /user/repos and one private PushEvent from /users/<u>/events. fetchCommitHistory sent authenticated requests to /user/repos?type=owner and /users/gageminamoto/events. It returned the private repo's full name, commit message and commit URL with no visibility filter. These fields go unchanged into the public JSON from /api/commits/history.",
+    "artifact": "agents/hunter-web/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "lib/github.ts"
+    ],
+    "invariant": "Operational logs must not expose private data to a broader reader.",
+    "method": "source",
+    "result": "The code logs repo full names and event types (github.ts:78,82,142), but only to the owner's own server logs, which is the same principal. This is not a separate finding.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "components/commits-section.tsx"
+    ],
+    "invariant": "The client consumer sees exactly what the API returns.",
+    "method": "source",
+    "result": "The page fetches /api/commits/history with useSWR and renders each repo name, message and URL to every visitor (commits-section.tsx:104).",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-07",
+    "reviewed_paths": [
+     "app/api/commits/history/route.ts",
+     "components/commits-section.tsx",
+     "lib/github.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/github:fetchCommitHistory:private-repo-disclosure",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: Whether the production Vercel deployment sets GITHUB_TOKEN. AGENTS.md calls it optional, and the repository has no deployment config. | The token's type and scope. A classic token with the repo scope, or a fine-grained token with private-repository access, can return private repos from /user/repos and private events from /users/gageminamoto/events. A public-only fine-grained token or a classic token without repo cannot. | Whether the owner account has private repositories among its 5 most recently pushed owned repos, or private PushEvents within the events API retention window. | GitHub API behaviour for authenticated /users/<self>/events and /user/repos?type=owner is third-party behaviour. Only documentation supports it; it was not observed locally. | Promotion of the decisive local artifact scratch/check-1.txt to agents/verifier-07/artifacts/check-1.txt by the trusted parent has not yet happened.",
+    "artifact": "agents/verifier-07/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "lib/github:fetchCommitHistory:private-repo-disclosure"
+  ],
+  "unresolved": [],
+  "x_key": "github-disclosure",
+  "x_hunter": "hunter-web",
+  "x_hardening": [
+   "lib/notion.ts and lib/github.ts read secrets but do not import 'server-only'. Adding it would turn an accidental value import from a client component into a build error instead of a bundled module (process.env secrets would still be undefined on the client, but the guard documents and enforces the boundary).",
+   "/api/accept-md returns error.message verbatim (route.ts:59-63). Replace it with a generic message so fetch failures do not echo internal URLs or upstream details.",
+   "/api/accept-md forwards every inbound header, including Cookie and Authorization, to the self-fetch while its output is stored in a shared cache. Forward an allowlist of headers, or skip caching when credentials are present, in case deployment protection or future auth cookies are added.",
+   "The /api/commits/history route sets force-dynamic together with revalidate=600 and sends no Cache-Control, so every anonymous hit makes 3 to 7 authenticated GitHub calls against the owner's token quota (availability belongs to a peer unit; noted only)."
+  ],
+  "x_uncovered": [],
+  "x_decisions": {
+   "lib/github:fetchCommitHistory:private-repo-disclosure": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fimage%2Froute.ts%23GET::app%2Fapi%2Fimage%2Froute.ts%23fetch::lib%2Fimage::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+  "canonical_refs": {
+   "surface": "app/api/image/route.ts#GET",
+   "boundary": "app/api/image/route.ts#fetch",
+   "subsystem": "lib/image",
+   "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+  },
+  "surface": "GET /api/image url via allowed-host redirects or proxies",
+  "boundary": "Redirect and proxy chaining from allowlisted hosts",
+  "subsystem": "lib/image",
+  "attack_class": "Resource and file handling",
+  "starting_paths": [
+   "app/api/image/route.ts",
+   "lib/image-url.ts"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+  "selected_companion_blocks": [
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 2,
+  "status": "candidate",
+  "agent_id": "hunter-w2-data",
+  "reviewed_paths": [
+   "app/api/image/route.ts",
+   "lib/image-metadata.ts",
+   "lib/image-url.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts"
+    ],
+    "invariant": "Every hop the server fetches for /api/image must satisfy the image-host allowlist, not just the first URL.",
+    "method": "source",
+    "result": "isAllowedImageUrl (lib/image-url.ts:8-10) is checked once, against the visitor-supplied URL (route.ts:19,24). fetch(url, { signal }) at route.ts:41 sets no redirect option, so it uses the WHATWG/undici default redirect:'follow' (up to 20 hops), and no hop after the first is re-validated. Any 3xx from an allowlisted host (www.notion.so, images.unsplash.com, s3.us-west-2.amazonaws.com, prod-files-secure.s3.us-west-2.amazonaws.com) therefore makes the server issue a GET to an arbitrary host, protocol (http), or internal address. The body is returned only if sharp decodes it as an image (route.ts:53-56); otherwise the response is a generic 500. The read is mostly blind, but the server-side request itself happens. Whether any allowlisted host emits an attacker-steerable redirect is third-party behaviour and cannot be seen in source.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts"
+    ],
+    "invariant": "Local proof that the route's fetch call shape follows a cross-host redirect without an allowlist re-check.",
+    "method": "source",
+    "result": "A loopback fixture harness (scratch h2.mjs: a copy of isAllowedImageUrl plus the same fetch(url,{signal}) shape, with fixture A 302-ing to fixture B on a different hostname) could not run. Loopback is not up in the provided sandbox network namespace: connect ENETUNREACH 127.0.0.1. No artifact was produced. The redirect-follow default is therefore stated from the platform fetch specification, not from a local observation.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "lib/image-metadata.ts"
+    ],
+    "invariant": "Sibling path: the Notion image-dimension fetch must apply the same per-hop allowlist.",
+    "method": "source",
+    "result": "lib/image-metadata.ts:18 runs the same one-time isAllowedImageUrl check, and line 24 calls fetch(src, {headers:{Range}, signal}) with the default redirect follow. This is the same root-cause variant. Its input is image block URLs from the owner's Notion pages, reachable by a visitor only through pages the integration can read. This unit does not own it, so it is recorded under uncovered.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "lib/image-url.ts"
+    ],
+    "invariant": "Proxy chaining through allowlisted hosts must not let attacker content be served from the origin.",
+    "method": "source",
+    "result": "Allowlisted hosts that act as fetch proxies (for example a Notion image proxy path on www.notion.so, or any attacker-owned path-style bucket on s3.us-west-2.amazonaws.com) let attacker-chosen bytes be cached on the origin for 1 year (route.ts:61-62). The root cause is the hostname-only allowlist with no path binding, which is the peer fingerprint lib/image-url.ts:isAllowedImageUrl:hostname-only-shared-s3. It is not re-proposed here.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-05",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "lib/image-metadata.ts",
+     "lib/image-url.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: Whether any of the four allowlisted hosts returns a 3xx whose Location an anonymous attacker can choose is third-party behaviour that source cannot show. That includes an open redirect, a redirecting proxy path, or a pre-signed S3 or bucket website-redirect configuration on the shared s3.us-west-2.amazonaws.com hostname. Without such a redirect, the flaw cannot be reached. | The local observation used Node 22.23.4's built-in fetch (undici). It did not use the fetch that Next.js 16.1.6 patches at runtime, because node_modules is absent and installing is prohibited. It is not verified locally that the patched fetch keeps redirect:'follow' as the default for this route. | What a Vercel function can reach through egress, and so the real impact of server-side request forgery, depends on the deployment and is not visible in source. Examples are internal metadata or private network services.",
+    "artifact": "agents/verifier-05/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck"
+  ],
+  "unresolved": [],
+  "x_key": "image-redirect",
+  "x_hunter": "hunter-w2-data",
+  "x_origin": "critic-1",
+  "x_hardening": [
+   "app/layout.tsx:73 loads https://inflight.co/widget.js with no integrity attribute and no CSP is set anywhere (next.config.mjs:33-40). Consider a CSP that limits script-src to self, Vercel analytics, and inflight.co, so that a compromise of the vendor or the CDN is at least bounded.",
+   "app/api/image/route.ts:61-62 caches proxied Notion signed-URL images public/immutable for 1 year, so an image removed in Notion stays served from the CDN copy. Use a shorter max-age, or key the cache on the block or file ID rather than the signed URL, if removal should take effect.",
+   "app/api/accept-md/[[...path]]/route.ts:59-63 returns library error.message verbatim. Prefer a fixed generic message, with status derived from a typed error, so future library changes cannot leak internal URLs or upstream details.",
+   "app/api/image/route.ts:41 accepts http: URLs on allowlisted hosts (isAllowedImageUrl ignores the protocol). Requiring https: is a cheap tightening alongside the per-hop redirect check."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Notion image-block dimension fetch (getImageDimensions) during fetchPostBlocks",
+    "boundary": "Redirect and proxy chaining from allowlisted hosts on the Notion-content path",
+    "subsystem": "lib/image-metadata",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+     "lib/image-metadata.ts",
+     "lib/notion.ts"
+    ],
+    "reason": "Same root-cause variant as app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck: a one-time isAllowedImageUrl check (line 18) followed by fetch with default redirect follow (line 24), reached from any page the integration can read (including through the peer's page-ID fallback). Its input source and trigger differ from /api/image and no current coverage unit owns it."
+   }
+  ],
+  "x_decisions": {
+   "app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fimage%2Froute.ts%23GET::app%2Fapi%2Fimage%2Froute.ts%23sharp%28buffer%29::lib%2Fimage::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Decompression%20and%20representation%20amplification",
+  "canonical_refs": {
+   "surface": "app/api/image/route.ts#GET",
+   "boundary": "app/api/image/route.ts#sharp(buffer)",
+   "subsystem": "lib/image",
+   "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Decompression and representation amplification"
+  },
+  "surface": "GET /api/image url/w/q params",
+  "boundary": "Image fetch and decode limits",
+  "subsystem": "lib/image",
+  "attack_class": "Decompression and representation amplification",
+  "starting_paths": [
+   "app/api/image/route.ts",
+   "lib/image-metadata.ts"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Decompression and representation amplification",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-image",
+  "reviewed_paths": [
+   "app/api/image/route.ts",
+   "lib/image-metadata.ts",
+   "lib/image-url.ts",
+   "lib/notion.ts",
+   "package.json"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "app/api/image/route.ts"
+    ],
+    "invariant": "Transfer size and decode work for a visitor-chosen image are capped before sharp processes it.",
+    "method": "source",
+    "result": "Not enforced. route.ts:51 reads the whole upstream body with response.arrayBuffer(). There is no Content-Length check and no byte cap. route.ts:53 passes the buffer to sharp(buffer) with no limitInputPixels or other option, so only sharp's library default applies. The only width bound (route.ts:28-31, at most 2400) limits the output size. It does not limit the decoded input size.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "app/api/image/route.ts"
+    ],
+    "invariant": "The 10s fetch deadline covers reading the body as well as the response headers.",
+    "method": "source",
+    "result": "Not enforced. route.ts:39 arms a 10_000ms abort timer, and route.ts:42 calls clearTimeout right after fetch() resolves, which happens once the headers arrive. The body read at route.ts:51 and the sharp work at route.ts:53-56 therefore run with no deadline in the code. A local fixture to observe this could not run: Node's undici fetch failed to allocate WebAssembly memory under the sandbox's as=8GiB prlimit, so this stays source-only.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts"
+    ],
+    "invariant": "A visitor cannot pick the upstream bytes that get decoded, and cannot bypass the long-lived cache to force repeated decode work.",
+    "method": "local",
+    "result": "Pure-function harness copied from lib/image-url.ts and route.ts:28-35. It accepts https and http URLs on the shared path-style host s3.us-west-2.amazonaws.com for any bucket path, including ones with arbitrary nonce query strings. Each distinct url and w value is a separate cache key, so the public immutable cache (route.ts:61) does not stop repeated decode work. Width is capped at 2400. A negative w passes through as -5 and makes sharp throw (500, no-store).",
+    "artifact": "agents/hunter-image/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "lib/image-metadata.ts",
+     "lib/notion.ts"
+    ],
+    "invariant": "The sibling path that reads image metadata has the same bounds.",
+    "method": "source",
+    "result": "image-metadata.ts:116-122 asks for only 64 KiB with Range: bytes=0-65535, but still reads arrayBuffer() with no cap, so a host that ignores Range sends the full object. sharp(buffer).metadata() (line 123) only parses the header. The input URLs come from image blocks in the owner's Notion pages (notion.ts:546-551), not from visitor parameters. This is a hardening gap and not a separate visitor-reachable finding.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-06",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts",
+     "package.json"
+    ],
+    "invariant": "Independent Phase 3 validation of app/api/image/route.ts:GET:unbounded-body-and-decode",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: sharp 0.34.5's actual default limitInputPixels, and its peak memory and CPU when decoding a small, highly compressed input of about 16000x16000 pixels, cannot be observed: node_modules is absent and installing is prohibited. | The deployed Vercel function memory size, maxDuration, concurrency, and billing for /api/image are not in the repository. There is no vercel.json and no route segment config. These decide whether the impact is a shared availability failure or bounded spend. | Whether the platform enforces any limit on outbound fetch response bodies cannot be determined locally. A body-deadline fixture also cannot run, because Node's undici fetch fails to allocate WebAssembly memory under the sandbox's 8GiB address-space limit.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [
+   "app/api/image/route.ts:GET:unbounded-body-and-decode"
+  ],
+  "unresolved": [],
+  "x_key": "image-dos",
+  "x_hunter": "hunter-image",
+  "x_hardening": [
+   "lib/image-metadata.ts:116-122 asks for only 64 KiB with a Range header but reads arrayBuffer() with no cap, so a host that ignores Range sends the whole object. Its inputs come from the owner's Notion image blocks, not visitor parameters, so this is hardening only.",
+   "app/api/image/route.ts:28-31: a negative w (for example -5) is not clamped to at least 1. sharp throws and the route returns 500 no-store. This is a correctness issue, not a security one.",
+   "app/api/image/route.ts:61 caches prod-files-secure Notion signed-URL images as immutable for one year. A copy stays available after the Notion signature expires or the owner deletes the image. That content was already public on the site, so this is a lifecycle note only."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/image url param via www.notion.so/image/<encoded-url>",
+    "boundary": "Third-party proxy and redirect chaining from allowed hosts",
+    "subsystem": "lib/image",
+    "attack_class": "SSRF through redirects and allowlisted open proxies",
+    "starting_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts"
+    ],
+    "reason": "Whether allowed hosts (www.notion.so, images.unsplash.com) redirect to or proxy arbitrary origins depends on third-party behaviour and needs a separate owner-observed check of redirect and proxy behaviour."
+   }
+  ],
+  "x_decisions": {
+   "app/api/image/route.ts:GET:unbounded-body-and-decode": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fimage%2Froute.ts%23GET::lib%2Fimage-url.ts%23isAllowedImageUrl::lib%2Fimage::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+  "canonical_refs": {
+   "surface": "app/api/image/route.ts#GET",
+   "boundary": "lib/image-url.ts#isAllowedImageUrl",
+   "subsystem": "lib/image",
+   "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+  },
+  "surface": "GET /api/image url param",
+  "boundary": "Image host allowlist",
+  "subsystem": "lib/image",
+  "attack_class": "Resource and file handling",
+  "starting_paths": [
+   "app/api/image/route.ts",
+   "lib/image-url.ts",
+   "lib/image-metadata.ts",
+   "components/optimized-image.tsx",
+   "components/writing/image.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+  "selected_companion_blocks": [
+   "WEB-PROTOCOL-AND-AUTH.md#Web cache poisoning through unkeyed input",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Blob and signed-reference overreach",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-image",
+  "reviewed_paths": [
+   "app/api/image/route.ts",
+   "components/optimized-image.tsx",
+   "components/writing/image.tsx",
+   "lib/image-url.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "lib/image-url.ts",
+     "app/api/image/route.ts"
+    ],
+    "invariant": "The image proxy only fetches the site owner's own image objects.",
+    "method": "local",
+    "result": "Not enforced. isAllowedImageUrl (image-url.ts:9) compares only url.hostname. The allowlist includes the multi-tenant S3 path-style endpoint s3.us-west-2.amazonaws.com (image-url.ts:5), plus www.notion.so and images.unsplash.com, with no check on path, bucket or protocol. The harness shows https and http URLs for an arbitrary bucket path are accepted. Look-alike suffix hosts such as s3.us-west-2.amazonaws.com.evil.example are rejected.",
+    "artifact": "agents/hunter-image/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "app/api/image/route.ts"
+    ],
+    "invariant": "Redirects from allowed hosts are re-checked against the allowlist.",
+    "method": "source",
+    "result": "route.ts:41 calls fetch(url) with Node's default redirect behaviour, which is 'follow'. The allowlist is never checked again on the final URL. Whether any allowed host (for example www.notion.so or its /image/ proxy) issues open redirects or fetches arbitrary URLs is behaviour outside the repository.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-image",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "components/writing/image.tsx",
+     "components/optimized-image.tsx"
+    ],
+    "invariant": "Responses cached on the site origin cannot be poisoned through input that is left out of the cache key.",
+    "method": "source",
+    "result": "The cache key is the full request URL, and the output depends only on the url, w and q query values (route.ts:11, 28-35). Request headers and Host do not change the response body. No unkeyed-input poisoning was found. However, any attacker-chosen image on an allowed host is served from the site origin as image/webp with public, immutable, 1-year caching (route.ts:61-62). The Content-Type is fixed to image/webp, so no script runs in the site's origin. The client only builds proxy URLs from Notion block URLs (components/writing/image.tsx:38-39).",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-09",
+    "reviewed_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/image-url.ts:isAllowedImageUrl:hostname-only-shared-s3",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: Whether AWS currently serves a public-read object from an arbitrary third-party us-west-2 bucket at the path-style URL https://s3.us-west-2.amazonaws.com/<bucket>/<key> is AWS service behaviour that cannot be observed locally without network access. This fact decides whether the attack works. | The end-to-end fetch, sharp transcode and response headers cannot be run locally because node_modules (next, sharp) is absent and installing is prohibited. Only the pure allowlist function was reproduced. | Whether www.notion.so or images.unsplash.com issue redirects to, or proxy, arbitrary upstream URLs, which would widen the reach through the unchecked redirect follow, is third-party behaviour outside the repository. | Whether the deployed Vercel CDN honours the one-year immutable cache for these responses, and the resulting compute and egress cost, is not visible in the repository.",
+    "artifact": "agents/verifier-09/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "lib/image-url.ts:isAllowedImageUrl:hostname-only-shared-s3"
+  ],
+  "unresolved": [],
+  "x_key": "image-ssrf",
+  "x_hunter": "hunter-image",
+  "x_hardening": [
+   "lib/image-metadata.ts:116-122 asks for only 64 KiB with a Range header but reads arrayBuffer() with no cap, so a host that ignores Range sends the whole object. Its inputs come from the owner's Notion image blocks, not visitor parameters, so this is hardening only.",
+   "app/api/image/route.ts:28-31: a negative w (for example -5) is not clamped to at least 1. sharp throws and the route returns 500 no-store. This is a correctness issue, not a security one.",
+   "app/api/image/route.ts:61 caches prod-files-secure Notion signed-URL images as immutable for one year. A copy stays available after the Notion signature expires or the owner deletes the image. That content was already public on the site, so this is a lifecycle note only."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/image url param via www.notion.so/image/<encoded-url>",
+    "boundary": "Third-party proxy and redirect chaining from allowed hosts",
+    "subsystem": "lib/image",
+    "attack_class": "SSRF through redirects and allowlisted open proxies",
+    "starting_paths": [
+     "app/api/image/route.ts",
+     "lib/image-url.ts"
+    ],
+    "reason": "Whether allowed hosts (www.notion.so, images.unsplash.com) redirect to or proxy arbitrary origins depends on third-party behaviour and needs a separate owner-observed check of redirect and proxy behaviour."
+   }
+  ],
+  "x_decisions": {
+   "lib/image-url.ts:isAllowedImageUrl:hostname-only-shared-s3": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Ftools%2Froute.ts%23GET::lib%2Fnotion.ts%23getNotionClient::lib%2Fnotion::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Database%20and%20downstream%20query%20amplification",
+  "canonical_refs": {
+   "surface": "app/api/tools/route.ts#GET",
+   "boundary": "lib/notion.ts#getNotionClient",
+   "subsystem": "lib/notion",
+   "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Database and downstream query amplification"
+  },
+  "surface": "GET /writing/[slug], /api/writing/[slug], /api/tools",
+  "boundary": "Notion API quota and request amplification",
+  "subsystem": "lib/notion",
+  "attack_class": "Database and downstream query amplification",
+  "starting_paths": [
+   "app/api/writing/[slug]/route.ts",
+   "app/writing/[slug]/page.tsx",
+   "app/api/tools/route.ts",
+   "lib/notion.ts"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Database and downstream query amplification",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-notion",
+  "reviewed_paths": [
+   "app/api/tools/route.ts",
+   "app/api/writing/[slug]/route.ts",
+   "app/tools/layout.tsx",
+   "app/writing/[slug]/page.tsx",
+   "lib/notion.ts",
+   "next.config.mjs"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-notion",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "app/api/writing/[slug]/route.ts",
+     "app/writing/[slug]/page.tsx"
+    ],
+    "invariant": "An anonymous request for a slug that matches no post must not cause unbounded or full-database Notion API work on every request.",
+    "method": "local",
+    "result": "Ran a sandboxed harness copied from fetchPostBySlug, resolveWritingPostBySlug, fetchAllWritingPostsForDatabase and deduplicateSlugs, with a mocked Notion client, a warm list cache and 250 dummy posts. Every unknown slug made 5 Notion calls: 1 Slug-filter query, 3 uncached full-list pages and 1 pages.retrieve. That is 1 + ceil(N/100) + 1 calls per request. Repeating the request did not reduce the count. A slug in the cached list made 0 lookup calls.",
+    "artifact": "agents/hunter-notion/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-notion",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "app/writing/[slug]/page.tsx",
+     "next.config.mjs"
+    ],
+    "invariant": "Source has a cache, rate limit or bound on the miss path and on per-view block fan-out.",
+    "method": "source",
+    "result": "Source has none. The full scan at lib/notion.ts:227 calls fetchAllPosts directly, not the unstable_cache wrapper fetchCachedAllPosts. The catch at lib/notion.ts:221 treats any error, including 429 and timeouts, as a missing Slug property and falls through to the full scan. The page calls noStore() at app/writing/[slug]/page.tsx:78, so each view of a real post re-runs the recursive fetchPostBlocks (lib/notion.ts:529-569), which makes one blocks.children.list per nested block plus an image fetch per image block. There is no middleware/proxy file and no rate limiting in next.config.mjs. React cache() only deduplicates the metadata and page calls within one request. Deployed WAF limits, Notion quota and SDK retry behavior are not visible in source.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-notion",
+    "reviewed_paths": [
+     "app/api/tools/route.ts",
+     "app/tools/layout.tsx",
+     "lib/notion.ts"
+    ],
+    "invariant": "/api/tools must not let anonymous requests drive unbounded Notion work.",
+    "method": "source",
+    "result": "The route is force-dynamic with revalidate=0 and has no cache. Each request makes ceil(N_tools/100) dataSources.query calls; resolveDataSourceId is memoised per process. That is roughly one Notion call per request with no amplification beyond the size of the tools database, so it is recorded as hardening and not as a separate candidate.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-12",
+    "reviewed_paths": [
+     "app/writing/[slug]/page.tsx",
+     "lib/notion.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/notion.ts:fetchPostBySlug:uncached-full-scan-on-slug-miss",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: The integration's actual Notion rate limit, and how Notion behaves under sustained 429s, are third-party behaviour that cannot be observed without contacting Notion. | Vercel WAF, firewall or rate-limit rules on the deployed project are not in the repository. | The automatic retry policy of the installed @notionhq/client 5.x (which may multiply calls on 429) cannot be inspected because node_modules is absent. | The real blog database size N, which sets the ceil(N/100) multiplier, is unknown. The minimum is 3 calls per miss.",
+    "artifact": "agents/verifier-12/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "lib/notion.ts:fetchPostBySlug:uncached-full-scan-on-slug-miss"
+  ],
+  "unresolved": [],
+  "x_key": "notion-quota",
+  "x_hunter": "hunter-notion",
+  "x_hardening": [
+   "/api/tools (app/api/tools/route.ts:4-5) is force-dynamic with revalidate=0, so each anonymous request queries Notion again even though app/tools/layout.tsx already uses revalidate=600. Wrapping fetchTools in unstable_cache would remove this per-request quota use. The amplification is about 1:1, so it is not reported as a finding.",
+   "fetchAllWritingPostsForDatabase (lib/notion.ts:137-146) has no Published or Status filter, so every non-trashed page in the blog database is listed publicly. There is no documented draft boundary, so this is a policy note, not a finding. Adding a published filter would make drafts safe to keep in the database.",
+   "The page-ID fallback passes an unvalidated string as page_id. Restricting it to a 32-hex/UUID format before calling pages.retrieve stops any SDK path-composition surprises and most of the slug-miss cost.",
+   "getRawTitle (lib/notion.ts:76) throws on non-page objects (missing properties). That accidentally limits what a non-page response could disclose, but explicit object/parent checks would be more robust."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/writing/[slug] JSON response and the /writing/[slug] RSC payload",
+    "boundary": "Notion metadata minimisation to anonymous visitors",
+    "subsystem": "lib/notion",
+    "attack_class": "DATA-ISOLATION-AND-LIFECYCLE.md#Derived copies / Feature abuse and data leakage",
+    "starting_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "lib/notion.ts",
+     "app/writing/[slug]/article-content.tsx"
+    ],
+    "reason": "Raw BlockObjectResponse objects (created_by/last_edited_by user IDs, parent IDs, child_page/link_to_page IDs, mention targets, signed Notion file URLs) are returned without filtering to the rendered fields. This needs its own data-minimisation unit that is separate from database scoping."
+   }
+  ],
+  "x_decisions": {
+   "lib/notion.ts:fetchPostBySlug:uncached-full-scan-on-slug-miss": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fwriting%2F%5Bslug%5D%2Froute.ts%23GET::lib%2Fnotion.ts%23fetchPostBlocks::lib%2Fnotion::DATA-ISOLATION-AND-LIFECYCLE.md%23Stale%20authorization%20and%20derived%20copy%20use",
+  "canonical_refs": {
+   "surface": "app/api/writing/[slug]/route.ts#GET",
+   "boundary": "lib/notion.ts#fetchPostBlocks",
+   "subsystem": "lib/notion",
+   "attack_class": "DATA-ISOLATION-AND-LIFECYCLE.md#Stale authorization and derived copy use"
+  },
+  "surface": "GET /api/writing/[slug] JSON and /writing/[slug] payload",
+  "boundary": "Notion metadata minimisation and derived-copy lifetime",
+  "subsystem": "lib/notion",
+  "attack_class": "Stale authorization and derived copy use",
+  "starting_paths": [
+   "app/api/writing/[slug]/route.ts",
+   "lib/notion.ts",
+   "app/writing/[slug]/article-content.tsx",
+   "app/writing/[slug]/page.tsx",
+   "components/writing/image.tsx",
+   "app/api/image/route.ts"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Stale authorization and derived copy use",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Blob and signed-reference overreach",
+   "WEB-PROTOCOL-AND-AUTH.md#API-key scope and resource binding",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 2,
+  "status": "candidate",
+  "agent_id": "hunter-w2-data",
+  "reviewed_paths": [
+   "app/api/image/route.ts",
+   "app/api/writing/[slug]/route.ts",
+   "app/writing/[slug]/article-content.tsx",
+   "app/writing/[slug]/page.tsx",
+   "components/writing/block.tsx",
+   "components/writing/image.tsx",
+   "lib/notion.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "app/api/writing/[slug]/route.ts",
+     "components/writing/block.tsx"
+    ],
+    "invariant": "The public JSON and RSC payloads for a post must carry only the content the site publishes (the block types the renderer shows), not the raw recursive Notion block tree.",
+    "method": "local",
+    "result": "fetchPostBlocks (lib/notion.ts:529-569) recurses into every block with has_children (line 553-554), whatever its type, and keeps each raw BlockObjectResponse unchanged ({...block}, line 545). The route returns that tree unfiltered: NextResponse.json({ post, blocks, allPosts }) at app/api/writing/[slug]/route.ts:23. The page passes it to the 'use client' ArticleContentMotion (article-content.tsx:53-57), so it is also serialised into the RSC payload. The renderer's switch (components/writing/block.tsx:17-71) shows only 13 types; child_page, file, pdf, video, audio, column_list, synced_block and others fall to default:null. A sandboxed harness copied fetchPostBlocks verbatim with a dummy Notion client. Its output JSON contained the body text of a child_page subpage, a signed attachment URL from an unrendered 'file' block, and created_by user IDs, while the Block switch rendered none of those blocks.",
+    "artifact": "agents/hunter-w2-data/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "app/writing/[slug]/page.tsx",
+     "app/api/image/route.ts",
+     "components/writing/image.tsx"
+    ],
+    "invariant": "Derived copies must not outlive the owner's removal of content in a way that breaks a stated lifecycle guarantee.",
+    "method": "source",
+    "result": "The route and the page use revalidate=600 (route.ts:4, page.tsx:15; the page also calls noStore at page.tsx:78). getCachedAllPosts uses unstable_cache with revalidate 600 (lib/notion.ts:177-181). Image proxy outputs keyed by the signed Notion URL are cached public/immutable for 1 year (app/api/image/route.ts:61-62; URLs are built at components/writing/image.tsx:38-39). An image deleted in Notion therefore stays retrievable from the CDN copy for up to a year, at a URL that was already published. No deletion or revocation guarantee is stated in the repo, so under the core discipline this is a retention preference and is recorded as hardening, not a finding.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-10",
+    "reviewed_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "app/writing/[slug]/article-content.tsx",
+     "app/writing/[slug]/page.tsx",
+     "components/writing/block.tsx",
+     "lib/notion.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/notion.ts:fetchPostBlocks:unprojected-recursive-block-tree",
+    "method": "local",
+    "result": "decision: needs_validation; blockers: Provider behaviour, which cannot be observed locally: whether the Notion API (notionVersion 2025-09-03) sets has_children=true on child_page and synced_block blocks, and whether blocks.children.list on a child_page ID returns the subpage's content under the integration's inherited access. Both local harnesses (the hunter's check-1 and the verifier's check-1) model this with a dummy client. | Owner data state: only the owner can see whether live writing posts contain nested child pages, synced or column content, or file/pdf/video/audio attachments that are not meant to be public. Without such content, the exposure is limited to block metadata such as Notion user IDs.",
+    "artifact": "agents/verifier-10/artifacts/check-1.txt"
+   }
+  ],
+  "result_fingerprints": [
+   "lib/notion.ts:fetchPostBlocks:unprojected-recursive-block-tree"
+  ],
+  "unresolved": [],
+  "x_key": "notion-minimise",
+  "x_hunter": "hunter-w2-data",
+  "x_origin": "critic-1",
+  "x_hardening": [
+   "app/layout.tsx:73 loads https://inflight.co/widget.js with no integrity attribute and no CSP is set anywhere (next.config.mjs:33-40). Consider a CSP that limits script-src to self, Vercel analytics, and inflight.co, so that a compromise of the vendor or the CDN is at least bounded.",
+   "app/api/image/route.ts:61-62 caches proxied Notion signed-URL images public/immutable for 1 year, so an image removed in Notion stays served from the CDN copy. Use a shorter max-age, or key the cache on the block or file ID rather than the signed URL, if removal should take effect.",
+   "app/api/accept-md/[[...path]]/route.ts:59-63 returns library error.message verbatim. Prefer a fixed generic message, with status derived from a typed error, so future library changes cannot leak internal URLs or upstream details.",
+   "app/api/image/route.ts:41 accepts http: URLs on allowlisted hosts (isAllowedImageUrl ignores the protocol). Requiring https: is a cheap tightening alongside the per-hop redirect check."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Notion image-block dimension fetch (getImageDimensions) during fetchPostBlocks",
+    "boundary": "Redirect and proxy chaining from allowlisted hosts on the Notion-content path",
+    "subsystem": "lib/image-metadata",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+     "lib/image-metadata.ts",
+     "lib/notion.ts"
+    ],
+    "reason": "Same root-cause variant as app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck: a one-time isAllowedImageUrl check (line 18) followed by fetch with default redirect follow (line 24), reached from any page the integration can read (including through the peer's page-ID fallback). Its input source and trigger differ from /api/image and no current coverage unit owns it."
+   }
+  ],
+  "x_decisions": {
+   "lib/notion.ts:fetchPostBlocks:unprojected-recursive-block-tree": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Fapi%2Fwriting%2F%5Bslug%5D%2Froute.ts%23GET::lib%2Fnotion.ts%23fetchPostBySlug::lib%2Fnotion::ATTACK-CLASSES.md%23Access%20control",
+  "canonical_refs": {
+   "surface": "app/api/writing/[slug]/route.ts#GET",
+   "boundary": "lib/notion.ts#fetchPostBySlug",
+   "subsystem": "lib/notion",
+   "attack_class": "ATTACK-CLASSES.md#Access control"
+  },
+  "surface": "GET /writing/[slug] and /api/writing/[slug]",
+  "boundary": "Notion blog database scoping",
+  "subsystem": "lib/notion",
+  "attack_class": "Access control",
+  "starting_paths": [
+   "app/api/writing/[slug]/route.ts",
+   "app/writing/[slug]/page.tsx",
+   "lib/notion.ts",
+   "app/api/tools/route.ts",
+   "app/early-design/page.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+  "selected_companion_blocks": [
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Missing tenant or owner enforcement",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Policy and query disagreement",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+   "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-notion",
+  "reviewed_paths": [
+   "app/api/tools/route.ts",
+   "app/api/writing/[slug]/route.ts",
+   "app/early-design/page.tsx",
+   "app/writing/[slug]/page.tsx",
+   "lib/notion.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-notion",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "app/api/writing/[slug]/route.ts",
+     "app/writing/[slug]/page.tsx"
+    ],
+    "invariant": "Only pages in the blog database named by NOTION_BLOG_DATABASE_ID (and not trashed) can be resolved and returned as writing posts.",
+    "method": "local",
+    "result": "In a sandboxed harness of the copied resolve/fetch logic with a mocked Notion client, two slugs returned status 200. A dummy page ID whose parent is a page, not the blog data source, returned its title and block content. A dummy in_trash page ID also returned 200. The page-ID fallback at lib/notion.ts:232-242 never checks page.parent, in_trash or archived.",
+    "artifact": "agents/hunter-notion/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-notion",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "app/api/tools/route.ts",
+     "app/early-design/page.tsx"
+    ],
+    "invariant": "Sibling Notion reads are scoped to the database IDs pinned in env.",
+    "method": "source",
+    "result": "fetchTools, fetchEarlyDesignResources, the blog list and the Slug-filter query all go through dataSources.query on an env-pinned data source and take no visitor-controlled identifier. Only the pages.retrieve fallback in fetchPostBySlug takes a visitor-supplied ID. The full block tree is then returned as raw JSON by app/api/writing/[slug]/route.ts:23, or serialized into the page payload.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-11",
+    "reviewed_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "app/writing/[slug]/page.tsx",
+     "lib/notion.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: Which Notion pages and databases outside the blog database the deployed NOTION_API_KEY integration is connected to is a workspace setting that source does not show. Any impact beyond trashed blog posts depends on it. | Whether Notion's pages.retrieve and blocks.children.list (API version 2025-09-03) still return content for in_trash/archived pages is third-party behavior that cannot be observed locally. | node_modules is absent, so it cannot be checked whether @notionhq/client 5.x URL-encodes page_id when it builds the request path. This affects whether non-UUID slugs could reach other API paths, not the core finding.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [
+   "lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check"
+  ],
+  "unresolved": [],
+  "x_key": "notion-scope",
+  "x_hunter": "hunter-notion",
+  "x_hardening": [
+   "/api/tools (app/api/tools/route.ts:4-5) is force-dynamic with revalidate=0, so each anonymous request queries Notion again even though app/tools/layout.tsx already uses revalidate=600. Wrapping fetchTools in unstable_cache would remove this per-request quota use. The amplification is about 1:1, so it is not reported as a finding.",
+   "fetchAllWritingPostsForDatabase (lib/notion.ts:137-146) has no Published or Status filter, so every non-trashed page in the blog database is listed publicly. There is no documented draft boundary, so this is a policy note, not a finding. Adding a published filter would make drafts safe to keep in the database.",
+   "The page-ID fallback passes an unvalidated string as page_id. Restricting it to a 32-hex/UUID format before calling pages.retrieve stops any SDK path-composition surprises and most of the slug-miss cost.",
+   "getRawTitle (lib/notion.ts:76) throws on non-page objects (missing properties). That accidentally limits what a non-page response could disclose, but explicit object/parent checks would be more robust."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/writing/[slug] JSON response and the /writing/[slug] RSC payload",
+    "boundary": "Notion metadata minimisation to anonymous visitors",
+    "subsystem": "lib/notion",
+    "attack_class": "DATA-ISOLATION-AND-LIFECYCLE.md#Derived copies / Feature abuse and data leakage",
+    "starting_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "lib/notion.ts",
+     "app/writing/[slug]/article-content.tsx"
+    ],
+    "reason": "Raw BlockObjectResponse objects (created_by/last_edited_by user IDs, parent IDs, child_page/link_to_page IDs, mention targets, signed Notion file URLs) are returned without filtering to the rendered fields. This needs its own data-minimisation unit that is separate from database scoping."
+   }
+  ],
+  "x_decisions": {
+   "lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "app%2Flayout.tsx%23RootLayout::app%2Flayout.tsx%23inflight-widget::app::CLIENT-SIDE.md%23Clickjacking",
+  "canonical_refs": {
+   "surface": "app/layout.tsx#RootLayout",
+   "boundary": "app/layout.tsx#inflight-widget",
+   "subsystem": "app",
+   "attack_class": "CLIENT-SIDE.md#Clickjacking"
+  },
+  "surface": "Third-party runtime scripts on every page",
+  "boundary": "Third-party script origin trust",
+  "subsystem": "app",
+  "attack_class": "Clickjacking",
+  "starting_paths": [
+   "app/layout.tsx",
+   "next.config.mjs"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "CLIENT-SIDE.md#Clickjacking",
+   "CLIENT-SIDE.md#Core discipline",
+   "CLIENT-SIDE.md#Universal moves",
+   "CLIENT-SIDE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-client",
+  "reviewed_paths": [
+   "app/layout.tsx",
+   "components/search/SearchCommandModal.tsx",
+   "contexts/CommandKContext.tsx",
+   "next.config.mjs"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "app/layout.tsx",
+     "next.config.mjs"
+    ],
+    "invariant": "A state-changing action that can be framed must be protected by frame-ancestors, X-Frame-Options or similar UI isolation",
+    "method": "source",
+    "result": "next.config.mjs headers() sets only 'Vary: Accept' (lines 33-40). The repo has no middleware.ts, proxy.ts or vercel.json, and no CSP, frame-ancestors or X-Frame-Options anywhere, so pages can be framed. But the architecture and the source show no logins, sessions, app-set cookies, forms or server actions, and every route handler is a GET. app/layout.tsx renders only static navigation, the theme/appearance controls and the third-party inflight widget script (line 73). Nothing a framed victim could be tricked into clicking changes server-side or account state. Per the Clickjacking block, missing frame headers on read-only content is a hardening note, not a finding.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "components/search/SearchCommandModal.tsx",
+     "contexts/CommandKContext.tsx"
+    ],
+    "invariant": "No in-page control performs a sensitive action that would be reachable in the framed state",
+    "method": "source",
+    "result": "The command palette's only actions are theme, shader and sound toggles held in the visitor's own localStorage/next-themes state, plus navigation to static or same-origin paths. None of them is sensitive or reaches another principal, so no clickjacking target exists.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "client-thirdparty",
+  "x_hunter": "hunter-client",
+  "x_hardening": [
+   "next.config.mjs sets no Content-Security-Policy frame-ancestors or X-Frame-Options, and the repo has no middleware or vercel.json, so every page can be framed. The site has no state-changing actions, so this is not exploitable today. Adding 'Content-Security-Policy: frame-ancestors 'self'' would prevent future regressions.",
+   "app/layout.tsx:73 loads https://inflight.co/widget.js on every page with no Subresource Integrity and no CSP script-src limit. Whatever that origin serves runs with full same-origin DOM access. Add a CSP, and consider self-hosting or pinning the script if the vendor supports versioned URLs.",
+   "Tool URLs from Notion (lib/notion.ts:283-287 getUrl -> lib/affiliate-links.ts resolveToolLink) and rich-text hrefs (components/writing/rich-text.tsx:73) are rendered without the http/https check that normalizeExternalUrl applies to early-design resources. Today only owner authorship and React 19's javascript: URL blocking protect them. Running these URLs through normalizeExternalUrl would make the controls consistent."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Third-party runtime script inflight.co/widget.js loaded on every page",
+    "boundary": "Third-party script origin trust (same-origin DOM execution)",
+    "subsystem": "app",
+    "attack_class": "SUPPLY-CHAIN-AND-RELEASE: runtime third-party script integrity (no SRI or CSP)",
+    "starting_paths": [
+     "app/layout.tsx",
+     "next.config.mjs"
+    ],
+    "reason": "The assigned layout unit covers only Clickjacking, and supply-deps covers lockfile and build inputs. No unit checks the integrity and pinning of the externally hosted script that runs on the site's origin."
+   }
+  ]
+ },
+ {
+  "coverage_id": "app%2Flayout.tsx%23RootLayout::app%2Flayout.tsx%23inflight-widget::app::SUPPLY-CHAIN-AND-RELEASE.md%23Plugin%20and%20extension%20trust%20expansion",
+  "canonical_refs": {
+   "surface": "app/layout.tsx#RootLayout",
+   "boundary": "app/layout.tsx#inflight-widget",
+   "subsystem": "app",
+   "attack_class": "SUPPLY-CHAIN-AND-RELEASE.md#Plugin and extension trust expansion"
+  },
+  "surface": "Third-party runtime script inflight.co/widget.js",
+  "boundary": "Third-party script origin trust",
+  "subsystem": "app",
+  "attack_class": "Plugin and extension trust expansion",
+  "starting_paths": [
+   "app/layout.tsx",
+   "next.config.mjs"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "SUPPLY-CHAIN-AND-RELEASE.md#Plugin and extension trust expansion",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs",
+   "CLIENT-SIDE.md#DOM-based XSS",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Universal moves",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Validation rules",
+   "CLIENT-SIDE.md#Core discipline",
+   "CLIENT-SIDE.md#Universal moves",
+   "CLIENT-SIDE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 2,
+  "status": "covered",
+  "agent_id": "hunter-w2-data",
+  "reviewed_paths": [
+   "app/layout.tsx",
+   "next.config.mjs"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w2-data",
+    "reviewed_paths": [
+     "app/layout.tsx",
+     "next.config.mjs"
+    ],
+    "invariant": "A third-party runtime script must not gain authority over protected origin state beyond what the owner deliberately granted.",
+    "method": "source",
+    "result": "app/layout.tsx:73 loads https://inflight.co/widget.js with data-org but without integrity. next.config.mjs:33-40 sets only a Vary header, with no CSP, and there is no middleware or proxy file. The script runs with full DOM authority on the origin. That authority was granted deliberately by the trusted owner, who embedded a vendor-updated widget, and the supply-chain block says intended same-owner installation is not a privilege boundary. The origin holds no session, auth cookie, token, or form for the script to reach beyond what any visitor sees (architecture section 1; secrets stay server-side per the secrets-bundle peer). No lower-trust actor other than the chosen vendor can change the script. The URL is HTTPS on a fixed host, and the repo contains no DOM sink that feeds visitor data into it. No trust expansion or DOM-XSS path is established. A missing SRI/CSP is hardening only.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "thirdparty-script",
+  "x_hunter": "hunter-w2-data",
+  "x_origin": "critic-1",
+  "x_hardening": [
+   "app/layout.tsx:73 loads https://inflight.co/widget.js with no integrity attribute and no CSP is set anywhere (next.config.mjs:33-40). Consider a CSP that limits script-src to self, Vercel analytics, and inflight.co, so that a compromise of the vendor or the CDN is at least bounded.",
+   "app/api/image/route.ts:61-62 caches proxied Notion signed-URL images public/immutable for 1 year, so an image removed in Notion stays served from the CDN copy. Use a shorter max-age, or key the cache on the block or file ID rather than the signed URL, if removal should take effect.",
+   "app/api/accept-md/[[...path]]/route.ts:59-63 returns library error.message verbatim. Prefer a fixed generic message, with status derived from a typed error, so future library changes cannot leak internal URLs or upstream details.",
+   "app/api/image/route.ts:41 accepts http: URLs on allowlisted hosts (isAllowedImageUrl ignores the protocol). Requiring https: is a cheap tightening alongside the per-hop redirect check."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Notion image-block dimension fetch (getImageDimensions) during fetchPostBlocks",
+    "boundary": "Redirect and proxy chaining from allowlisted hosts on the Notion-content path",
+    "subsystem": "lib/image-metadata",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+     "lib/image-metadata.ts",
+     "lib/notion.ts"
+    ],
+    "reason": "Same root-cause variant as app/api/image/route.ts:GET:redirect-follow-without-allowlist-recheck: a one-time isAllowedImageUrl check (line 18) followed by fetch with default redirect follow (line 24), reached from any page the integration can read (including through the peer's page-ID fallback). Its input source and trigger differ from /api/image and no current coverage unit owns it."
+   }
+  ]
+ },
+ {
+  "coverage_id": "components%2Fwork-section.tsx%23caseStudySlugFromHash::components%2Fsearch%2FSearchCommandModal.tsx%23openHref::components::CLIENT-SIDE.md%23Client-side%20navigation%20confusion",
+  "canonical_refs": {
+   "surface": "components/work-section.tsx#caseStudySlugFromHash",
+   "boundary": "components/search/SearchCommandModal.tsx#openHref",
+   "subsystem": "components",
+   "attack_class": "CLIENT-SIDE.md#Client-side navigation confusion"
+  },
+  "surface": "URL hash, command palette, client navigation",
+  "boundary": "Client-side navigation targets",
+  "subsystem": "components",
+  "attack_class": "Client-side navigation confusion",
+  "starting_paths": [
+   "components/work-section.tsx",
+   "components/search/SearchCommandModal.tsx",
+   "contexts/CommandKContext.tsx",
+   "components/dev-panels.tsx",
+   "components/copy-link-button.tsx"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "CLIENT-SIDE.md#Client-side navigation confusion",
+   "CLIENT-SIDE.md#postMessage origin and source trust",
+   "CLIENT-SIDE.md#Browser-storage disclosure and stale authorization",
+   "CLIENT-SIDE.md#Core discipline",
+   "CLIENT-SIDE.md#Universal moves",
+   "CLIENT-SIDE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-client",
+  "reviewed_paths": [
+   "components/copy-link-button.tsx",
+   "components/dev-panels.tsx",
+   "components/search/SearchCommandModal.tsx",
+   "components/work-section.tsx",
+   "components/writing/article-footer.tsx",
+   "contexts/CommandKContext.tsx",
+   "lib/portfolio-data.ts",
+   "lib/utils.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "components/work-section.tsx",
+     "lib/utils.ts"
+    ],
+    "invariant": "A slug controlled through the URL hash must not pick a navigation destination without a destination policy",
+    "method": "local",
+    "result": "caseStudySlugFromHash (work-section.tsx:177-188) decodes the hash, and the result is used only for itemSlugs.indexOf(slug) (line 824). Unknown slugs close the drawer. pushCaseStudyHash (line 190) writes only itemSlugs[index], which comes from static WorkItem names through caseStudySlug, into a same-origin pushState. The sandboxed harness showed that hashes such as '#work/javascript%3Aalert(1)', '#work/%2F%2Fevil.example' and malformed percent-encoding resolve to index -1, so they cause no navigation.",
+    "artifact": "agents/hunter-client/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "components/search/SearchCommandModal.tsx",
+     "lib/portfolio-data.ts",
+     "components/writing/article-footer.tsx"
+    ],
+    "invariant": "openHref must not navigate to an executable scheme or attacker-chosen destination, and window.open must isolate the opener",
+    "method": "source",
+    "result": "openHref (SearchCommandModal.tsx:192-206) gets its hrefs from static items, from portfolioData projects and socials (hard-coded https URLs), from a mailto built from the static email, and from writing items '/writing/${post.slug}'. The slug is fixed under a '/writing/' path prefix and comes from the owner's Notion data through /api/writing. A visitor has no input that controls href. window.open passes 'noopener,noreferrer' (line 201), so the opener is not kept. The article-footer links use the same prefixed pattern.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "components/dev-panels.tsx",
+     "contexts/CommandKContext.tsx",
+     "components/copy-link-button.tsx"
+    ],
+    "invariant": "No postMessage handler trusts event.data without checking origin, and no browser storage keeps privileged state that a lower-trust reader could use",
+    "method": "source",
+    "result": "The repository has no message listeners or postMessage calls. Browser storage holds only UI flags: sessionStorage 'devtools-hidden' in the dev-only DevPanels (rendered only when NODE_ENV=development, app/layout.tsx:79), and localStorage 'shader-enabled'/'sound-enabled'. The site has no accounts, tokens or private responses. copy-link-button only writes window.location.href to the visitor's own clipboard.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "client-nav",
+  "x_hunter": "hunter-client",
+  "x_hardening": [
+   "next.config.mjs sets no Content-Security-Policy frame-ancestors or X-Frame-Options, and the repo has no middleware or vercel.json, so every page can be framed. The site has no state-changing actions, so this is not exploitable today. Adding 'Content-Security-Policy: frame-ancestors 'self'' would prevent future regressions.",
+   "app/layout.tsx:73 loads https://inflight.co/widget.js on every page with no Subresource Integrity and no CSP script-src limit. Whatever that origin serves runs with full same-origin DOM access. Add a CSP, and consider self-hosting or pinning the script if the vendor supports versioned URLs.",
+   "Tool URLs from Notion (lib/notion.ts:283-287 getUrl -> lib/affiliate-links.ts resolveToolLink) and rich-text hrefs (components/writing/rich-text.tsx:73) are rendered without the http/https check that normalizeExternalUrl applies to early-design resources. Today only owner authorship and React 19's javascript: URL blocking protect them. Running these URLs through normalizeExternalUrl would make the controls consistent."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Third-party runtime script inflight.co/widget.js loaded on every page",
+    "boundary": "Third-party script origin trust (same-origin DOM execution)",
+    "subsystem": "app",
+    "attack_class": "SUPPLY-CHAIN-AND-RELEASE: runtime third-party script integrity (no SRI or CSP)",
+    "starting_paths": [
+     "app/layout.tsx",
+     "next.config.mjs"
+    ],
+    "reason": "The assigned layout unit covers only Clickjacking, and supply-deps covers lockfile and build inputs. No unit checks the integrity and pinning of the externally hosted script that runs on the site's origin."
+   }
+  ]
+ },
+ {
+  "coverage_id": "components%2Fwriting%2Frich-text.tsx%23RichText::components%2Fhover-link.tsx%23HoverLink::components::CLIENT-SIDE.md%23DOM-based%20XSS",
+  "canonical_refs": {
+   "surface": "components/writing/rich-text.tsx#RichText",
+   "boundary": "components/hover-link.tsx#HoverLink",
+   "subsystem": "components",
+   "attack_class": "CLIENT-SIDE.md#DOM-based XSS"
+  },
+  "surface": "Notion-sourced link hrefs rendered in DOM",
+  "boundary": "Rendered URL scheme handling",
+  "subsystem": "components",
+  "attack_class": "DOM-based XSS",
+  "starting_paths": [
+   "components/writing/rich-text.tsx",
+   "components/hover-link.tsx",
+   "lib/affiliate-links.ts",
+   "components/tool-row.tsx",
+   "components/tools-section.tsx",
+   "app/tools/page.tsx",
+   "lib/early-design-resources.ts",
+   "components/commits-section.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+  "selected_companion_blocks": [
+   "CLIENT-SIDE.md#DOM-based XSS",
+   "CLIENT-SIDE.md#Core discipline",
+   "CLIENT-SIDE.md#Universal moves",
+   "CLIENT-SIDE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-client",
+  "reviewed_paths": [
+   "app/tools/page.tsx",
+   "components/commits-section.tsx",
+   "components/early-design/early-design-page.tsx",
+   "components/hover-link.tsx",
+   "components/list-row.tsx",
+   "components/tool-row.tsx",
+   "components/tools-section.tsx",
+   "components/ui/chart.tsx",
+   "components/writing/rich-text.tsx",
+   "lib/affiliate-links.ts",
+   "lib/early-design-resources.ts",
+   "lib/github.ts",
+   "lib/notion.ts",
+   "package.json"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "components/writing/rich-text.tsx",
+     "components/hover-link.tsx",
+     "components/tool-row.tsx",
+     "components/tools-section.tsx",
+     "app/tools/page.tsx",
+     "components/list-row.tsx",
+     "lib/notion.ts",
+     "lib/affiliate-links.ts",
+     "package.json"
+    ],
+    "invariant": "A href sourced from Notion must not reach the DOM as an executable URL through input a lower-trust principal controls",
+    "method": "source",
+    "result": "RichText (rich-text.tsx:71-76) passes item.href to HoverLink, which renders <a href> (hover-link.tsx:150-158). Tool URLs from getUrl (lib/notion.ts:283-287) pass through resolveToolLink unchanged, with no scheme check, into ListRow and ToolRow anchors. Both values are written only by the trusted owner in Notion, and the env-pinned database IDs mean visitors cannot supply them. Peer unit notion-scope owns the page-ID fallback that could select other workspace pages, which are still owner-authored. All text goes through React's escaped interpolation. React 19.2.4 (package.json) replaces javascript: URLs in href. A visitor has no controllable source here, so there is no finding.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "lib/early-design-resources.ts",
+     "components/early-design/early-design-page.tsx"
+    ],
+    "invariant": "Early-design resource URLs from Notion are limited to http and https before rendering",
+    "method": "local",
+    "result": "The sandboxed harness copying normalizeExternalUrl (early-design-resources.ts:69-89) showed that javascript:, mixed-case or whitespace-prefixed javascript:, data: and vbscript: inputs all return undefined. Bare hosts are upgraded to https.",
+    "artifact": "agents/hunter-client/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-client",
+    "reviewed_paths": [
+     "components/commits-section.tsx",
+     "lib/github.ts",
+     "components/ui/chart.tsx"
+    ],
+    "invariant": "Commit links and raw-HTML sinks cannot carry attacker-controlled executable content",
+    "method": "source",
+    "result": "Commit hrefs use GitHub html_url or a template 'https://github.com/${repo}/commit/${sha}' (lib/github.ts:85,151), so the https scheme is fixed. The only dangerouslySetInnerHTML is in components/ui/chart.tsx:83 (ChartStyle), which nothing outside that file uses. The repository has no innerHTML, document.write or eval sinks.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "client-href",
+  "x_hunter": "hunter-client",
+  "x_hardening": [
+   "next.config.mjs sets no Content-Security-Policy frame-ancestors or X-Frame-Options, and the repo has no middleware or vercel.json, so every page can be framed. The site has no state-changing actions, so this is not exploitable today. Adding 'Content-Security-Policy: frame-ancestors 'self'' would prevent future regressions.",
+   "app/layout.tsx:73 loads https://inflight.co/widget.js on every page with no Subresource Integrity and no CSP script-src limit. Whatever that origin serves runs with full same-origin DOM access. Add a CSP, and consider self-hosting or pinning the script if the vendor supports versioned URLs.",
+   "Tool URLs from Notion (lib/notion.ts:283-287 getUrl -> lib/affiliate-links.ts resolveToolLink) and rich-text hrefs (components/writing/rich-text.tsx:73) are rendered without the http/https check that normalizeExternalUrl applies to early-design resources. Today only owner authorship and React 19's javascript: URL blocking protect them. Running these URLs through normalizeExternalUrl would make the controls consistent."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "Third-party runtime script inflight.co/widget.js loaded on every page",
+    "boundary": "Third-party script origin trust (same-origin DOM execution)",
+    "subsystem": "app",
+    "attack_class": "SUPPLY-CHAIN-AND-RELEASE: runtime third-party script integrity (no SRI or CSP)",
+    "starting_paths": [
+     "app/layout.tsx",
+     "next.config.mjs"
+    ],
+    "reason": "The assigned layout unit covers only Clickjacking, and supply-deps covers lockfile and build inputs. No unit checks the integrity and pinning of the externally hosted script that runs on the site's origin."
+   }
+  ]
+ },
+ {
+  "coverage_id": "lib%2Fnotion.ts%23process.env::lib%2Fimage-metadata.ts%23server-only::repo::ATTACK-CLASSES.md%23Cryptography%20and%20secrets",
+  "canonical_refs": {
+   "surface": "lib/notion.ts#process.env",
+   "boundary": "lib/image-metadata.ts#server-only",
+   "subsystem": "repo",
+   "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets"
+  },
+  "surface": "Server env vars and client bundle imports",
+  "boundary": "Server secret to client bundle boundary",
+  "subsystem": "repo",
+  "attack_class": "Cryptography and secrets",
+  "starting_paths": [
+   "lib/notion.ts",
+   "lib/github.ts",
+   "lib/image-metadata.ts",
+   "app/layout.tsx",
+   "components/commits-section.tsx",
+   "components/writing/image.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Cryptography and secrets",
+  "selected_companion_blocks": [
+   "WEB-PROTOCOL-AND-AUTH.md#API-key exposure and unsafe transport",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-web",
+  "reviewed_paths": [
+   "app/api/commits/history/route.ts",
+   "app/layout.tsx",
+   "components/commits-section.tsx",
+   "components/writing/image.tsx",
+   "lib/github.ts",
+   "lib/image-metadata.ts",
+   "lib/notion.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "lib/github.ts",
+     "app/layout.tsx"
+    ],
+    "invariant": "Secret env vars (NOTION_API_KEY, GITHUB_TOKEN, database IDs) are read only in server modules and never through NEXT_PUBLIC_ names.",
+    "method": "source",
+    "result": "The secret env vars are read only in lib/notion.ts (22,38,155,167,190,313,377,460) and lib/github.ts (7,17-18,24). The only NEXT_PUBLIC variable is NEXT_PUBLIC_ENABLE_AGENTATION, a non-secret toggle (app/layout.tsx:16). No hard-coded tokens were found in the tree or in a git-history grep for ghp_/github_pat_/ntn_/secret_ patterns.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "components/commits-section.tsx",
+     "components/writing/image.tsx",
+     "lib/notion.ts",
+     "lib/image-metadata.ts"
+    ],
+    "invariant": "Client components do not import, directly or transitively, a module that reads secrets.",
+    "method": "source",
+    "result": "Every 'use client' file imports from @/lib/notion and @/lib/github only with 'import type', which is erased at build time. Value imports of lib/notion and lib/github appear only in route handlers and server pages/layouts (app/api/*, app/tools/layout.tsx, app/writing/*, app/early-design/page.tsx). lib/image-metadata.ts imports server-only. lib/notion.ts and lib/github.ts do not, so a future client value import would not fail the build; this is noted as hardening.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-web",
+    "reviewed_paths": [
+     "app/api/commits/history/route.ts",
+     "lib/github.ts",
+     "lib/image-metadata.ts"
+    ],
+    "invariant": "Tokens do not reach responses or error bodies.",
+    "method": "source",
+    "result": "The token is used only in the Authorization header (github.ts:17-18), never in URLs. The commits route returns a fixed error string (route.ts:15-17). image-metadata logs only error.message. .gitignore excludes .env*.local.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "secrets-bundle",
+  "x_hunter": "hunter-web",
+  "x_hardening": [
+   "lib/notion.ts and lib/github.ts read secrets but do not import 'server-only'. Adding it would turn an accidental value import from a client component into a build error instead of a bundled module (process.env secrets would still be undefined on the client, but the guard documents and enforces the boundary).",
+   "/api/accept-md returns error.message verbatim (route.ts:59-63). Replace it with a generic message so fetch failures do not echo internal URLs or upstream details.",
+   "/api/accept-md forwards every inbound header, including Cookie and Authorization, to the self-fetch while its output is stored in a shared cache. Forward an allowlist of headers, or skip caching when credentials are present, in case deployment protection or future auth cookies are added.",
+   "The /api/commits/history route sets force-dynamic together with revalidate=600 and sends no Cache-Control, so every anonymous hit makes 3 to 7 authenticated GitHub calls against the owner's token quota (availability belongs to a peer unit; noted only)."
+  ],
+  "x_uncovered": []
+ },
+ {
+  "coverage_id": "lib%2Fnotion.ts%23resolveWritingPostBySlug::lib%2Fnotion.ts%23deduplicateSlugs::lib%2Fnotion::ATTACK-CLASSES.md%23Business%20logic",
+  "canonical_refs": {
+   "surface": "lib/notion.ts#resolveWritingPostBySlug",
+   "boundary": "lib/notion.ts#deduplicateSlugs",
+   "subsystem": "lib/notion",
+   "attack_class": "ATTACK-CLASSES.md#Business logic"
+  },
+  "surface": "Writing slug resolution and dedup",
+  "boundary": "Slug-to-page binding",
+  "subsystem": "lib/notion",
+  "attack_class": "Business logic",
+  "starting_paths": [
+   "lib/notion.ts",
+   "lib/utils.ts",
+   "app/writing/[slug]/page.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Business logic",
+  "selected_companion_blocks": [],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "candidate",
+  "agent_id": "hunter-notion",
+  "reviewed_paths": [
+   "app/api/writing/[slug]/route.ts",
+   "app/writing/[slug]/page.tsx",
+   "lib/notion.ts",
+   "lib/utils.ts"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-notion",
+    "reviewed_paths": [
+     "lib/notion.ts",
+     "lib/utils.ts"
+    ],
+    "invariant": "Slug-to-page binding resolves only to the deduplicated set of blog posts. Fallbacks do not widen that set or change behavior when a dependency fails.",
+    "method": "source",
+    "result": "Slug collisions in deduplicateSlugs and getSlug come only from owner-authored titles and Slug values, so no lower-trust principal controls them. The Slug-filter path skips deduplication, which only picks which owner post a duplicated slug shows. Two fallback problems widen the binding. (1) The backward-compatibility UUID fallback accepts any page ID, which is the same root cause as the access-control candidate. (2) The catch-all at lib/notion.ts:221 treats every error, including rate limits and timeouts, as 'Slug property missing' and runs a full uncached scan, which adds to the amplification candidate. No numeric, time-based or race problem with security impact was found. slugify is pure and its output never reaches a security check.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-11",
+    "reviewed_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "app/writing/[slug]/page.tsx",
+     "lib/notion.ts"
+    ],
+    "invariant": "Independent Phase 3 validation of lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: Which Notion pages and databases outside the blog database the deployed NOTION_API_KEY integration is connected to is a workspace setting that source does not show. Any impact beyond trashed blog posts depends on it. | Whether Notion's pages.retrieve and blocks.children.list (API version 2025-09-03) still return content for in_trash/archived pages is third-party behavior that cannot be observed locally. | node_modules is absent, so it cannot be checked whether @notionhq/client 5.x URL-encodes page_id when it builds the request path. This affects whether non-UUID slugs could reach other API paths, not the core finding.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [
+   "lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check"
+  ],
+  "unresolved": [],
+  "x_key": "business-logic",
+  "x_hunter": "hunter-notion",
+  "x_hardening": [
+   "/api/tools (app/api/tools/route.ts:4-5) is force-dynamic with revalidate=0, so each anonymous request queries Notion again even though app/tools/layout.tsx already uses revalidate=600. Wrapping fetchTools in unstable_cache would remove this per-request quota use. The amplification is about 1:1, so it is not reported as a finding.",
+   "fetchAllWritingPostsForDatabase (lib/notion.ts:137-146) has no Published or Status filter, so every non-trashed page in the blog database is listed publicly. There is no documented draft boundary, so this is a policy note, not a finding. Adding a published filter would make drafts safe to keep in the database.",
+   "The page-ID fallback passes an unvalidated string as page_id. Restricting it to a 32-hex/UUID format before calling pages.retrieve stops any SDK path-composition surprises and most of the slug-miss cost.",
+   "getRawTitle (lib/notion.ts:76) throws on non-page objects (missing properties). That accidentally limits what a non-page response could disclose, but explicit object/parent checks would be more robust."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/writing/[slug] JSON response and the /writing/[slug] RSC payload",
+    "boundary": "Notion metadata minimisation to anonymous visitors",
+    "subsystem": "lib/notion",
+    "attack_class": "DATA-ISOLATION-AND-LIFECYCLE.md#Derived copies / Feature abuse and data leakage",
+    "starting_paths": [
+     "app/api/writing/[slug]/route.ts",
+     "lib/notion.ts",
+     "app/writing/[slug]/article-content.tsx"
+    ],
+    "reason": "Raw BlockObjectResponse objects (created_by/last_edited_by user IDs, parent IDs, child_page/link_to_page IDs, mention targets, signed Notion file URLs) are returned without filtering to the rendered fields. This needs its own data-minimisation unit that is separate from database scoping."
+   }
+  ],
+  "x_decisions": {
+   "lib/notion.ts:fetchPostBySlug:page-id-fallback-no-parent-check": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "next.config.mjs%23images.remotePatterns::next.config.mjs%23images::next-image-optimizer::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Pre-authentication%20work%20imbalance",
+  "canonical_refs": {
+   "surface": "next.config.mjs#images.remotePatterns",
+   "boundary": "next.config.mjs#images",
+   "subsystem": "next-image-optimizer",
+   "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance"
+  },
+  "surface": "GET /_next/image built-in optimizer",
+  "boundary": "Visitor-chosen optimizer URL to egress and optimization quota",
+  "subsystem": "next-image-optimizer",
+  "attack_class": "Pre-authentication work imbalance",
+  "starting_paths": [
+   "next.config.mjs",
+   "components/tool-parts.tsx",
+   "lib/portfolio-data.ts",
+   "components/optimized-image.tsx",
+   "components/hover-link.tsx",
+   "components/search/SearchCommandModal.tsx"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Quota-accounting scope and reset gaps",
+   "WEB-PROTOCOL-AND-AUTH.md#Web cache poisoning through unkeyed input",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+   "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules",
+   "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+   "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+   "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 3,
+  "status": "candidate",
+  "agent_id": "hunter-w3",
+  "reviewed_paths": [
+   "components/hover-link.tsx",
+   "components/optimized-image.tsx",
+   "components/search/SearchCommandModal.tsx",
+   "components/tool-parts.tsx",
+   "lib/portfolio-data.ts",
+   "next.config.mjs"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-w3",
+    "reviewed_paths": [
+     "next.config.mjs",
+     "components/tool-parts.tsx",
+     "lib/portfolio-data.ts"
+    ],
+    "invariant": "The built-in /_next/image optimizer should accept only the finite set of remote source URLs the site renders, so anonymous visitors cannot create unlimited distinct optimizer jobs or cache entries.",
+    "method": "source",
+    "result": "next.config.mjs:47-54 limits remote sources to https://www.google.com with pathname /s2/favicons. It sets no 'search' constraint, so the domain/domain_url/sz query values are free. Legitimate uses (components/tool-parts.tsx:35, lib/portfolio-data.ts:91) put a visitor-invisible but arbitrary-looking domain into the query. Assuming Next 16 permits any query string when 'search' is omitted, an anonymous visitor can build /_next/image?url=https://www.google.com/s2/favicons?domain=<random>&w=<allowed>&q=75 with unbounded distinct source URLs. Each one triggers an upstream fetch, a sharp transform, and a new optimizer-cache entry, which may count as a billable Vercel source image. Per-request work is small because favicons are tiny and widths and qualities come from the framework allowlist, so the cost lies in cardinality and spend, not in per-request amplification. Framework defaults and Vercel billing are not visible here. Recorded as needs_validation.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-w3",
+    "reviewed_paths": [
+     "components/optimized-image.tsx",
+     "components/hover-link.tsx",
+     "components/search/SearchCommandModal.tsx"
+    ],
+    "invariant": "Other next/image call sites must not widen the remote allowlist or pass visitor-controlled sources to the optimizer.",
+    "method": "source",
+    "result": "These components pass static, local, or owner-authored sources to next/image. They add no remote host beyond remotePatterns, and the visitor cannot control their src. Local sources are bounded by the framework's local-image handling and by the files in public/. No additional variant was found.",
+    "artifact": null
+   },
+   {
+    "agent_id": "verifier-13",
+    "reviewed_paths": [
+     "components/optimized-image.tsx",
+     "components/tool-parts.tsx",
+     "lib/portfolio-data.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "Independent Phase 3 validation of next.config.mjs:images.remotePatterns:favicon-query-unconstrained",
+    "method": "source",
+    "result": "decision: needs_validation; blockers: node_modules is absent and installing is prohibited, so Next.js 16.1.6's matching of a remotePattern without 'search' (whether any query string is accepted) cannot be checked locally. Its default limits (images.qualities, deviceSizes/imageSizes, maximum upstream response size, minimumCacheTTL, cache size eviction) cannot be checked either. | Deployment facts outside the repository: whether production runs on Vercel's managed Image Optimization, how unique source images are counted and billed, and whether any WAF or rate limit sits in front of /_next/image.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [
+   "next.config.mjs:images.remotePatterns:favicon-query-unconstrained"
+  ],
+  "unresolved": [],
+  "x_key": "next-image",
+  "x_hunter": "hunter-w3",
+  "x_origin": "critic-final-1",
+  "x_hardening": [
+   "The accept-md handler forwards every inbound request header (cookies, authorization, x-vercel-* headers) on its self-fetch (app/api/accept-md/[[...path]]/route.ts:36-37). No page currently varies by these headers, so nothing private is cached today. Forwarding an explicit allowlist would stop a future cookie-dependent page from being cached publicly under s-maxage=60.",
+   "The markdown rewrite matches 'text/markdown' anywhere in Accept, including low-q values such as 'text/html, text/markdown;q=0.1'. Exact media-type negotiation would reduce how many Accept values can select the markdown variant."
+  ],
+  "x_uncovered": [],
+  "x_decisions": {
+   "next.config.mjs:images.remotePatterns:favicon-query-unconstrained": "needs_validation"
+  }
+ },
+ {
+  "coverage_id": "package.json%23dependencies::.%2F.npmrc%23frozen-lockfile::build::SUPPLY-CHAIN-AND-RELEASE.md%23Mutable%20and%20unbound%20build%20inputs",
+  "canonical_refs": {
+   "surface": "package.json#dependencies",
+   "boundary": "./.npmrc#frozen-lockfile",
+   "subsystem": "build",
+   "attack_class": "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs"
+  },
+  "surface": "Dependency manifests and lockfiles",
+  "boundary": "Build input resolution",
+  "subsystem": "build",
+  "attack_class": "Mutable and unbound build inputs",
+  "starting_paths": [
+   "package.json",
+   "package-lock.json",
+   "pnpm-lock.yaml",
+   ".npmrc",
+   "scripts/install-framer-motion.sh",
+   "scripts/install-framer-motion.js",
+   "scripts/install-framer-motion.mjs",
+   "next.config.mjs"
+  ],
+  "ordinary_attack_class_block": null,
+  "selected_companion_blocks": [
+   "SUPPLY-CHAIN-AND-RELEASE.md#Mutable and unbound build inputs",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Dependency source and namespace confusion",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Untrusted code in a privileged workflow",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Universal moves",
+   "SUPPLY-CHAIN-AND-RELEASE.md#Validation rules"
+  ],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-repo",
+  "reviewed_paths": [
+   ".npmrc",
+   "next.config.mjs",
+   "package-lock.json",
+   "package.json",
+   "pnpm-lock.yaml",
+   "scripts/install-framer-motion.js",
+   "scripts/install-framer-motion.mjs",
+   "scripts/install-framer-motion.sh"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "package.json",
+     "package-lock.json",
+     "pnpm-lock.yaml",
+     ".npmrc"
+    ],
+    "invariant": "Build dependency resolution is bound to reviewed, integrity-pinned artifacts from an intended registry and no lower-trust writer can steer which package source/name is installed",
+    "method": "local",
+    "result": "package-lock.json (v3) matches every package.json specifier, all 720 entries resolve to registry.npmjs.org with integrity hashes, and only sharp and unrs-resolver (dev) have install scripts. pnpm-lock.yaml is stale: it has no importer entries for accept-md-runtime, nucleo-ui-essential-fill-12/-18 or torph, and its dialkit/framer-motion/motion specifiers have drifted. Together with .npmrc frozen-lockfile=false, a pnpm-based install would re-resolve those from caret ranges. There are no private scopes, alternate registries, git/tarball/file sources or .npmrc registry overrides, so namespace/source confusion is impossible. The only actor who could influence a re-resolution is the upstream npm publisher of a public package. That is ordinary upstream trust, not a repository-specific lower-trust writer, so per Core discipline this is hardening, not a finding.",
+    "artifact": "agents/hunter-repo/artifacts/check-1.txt"
+   },
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "scripts/install-framer-motion.sh",
+     "scripts/install-framer-motion.js",
+     "scripts/install-framer-motion.mjs",
+     "package.json"
+    ],
+    "invariant": "No install-time or build-time script runs unreviewed commands or downloads in the trusted build",
+    "method": "source",
+    "result": "The three scripts are v0 leftovers that run 'pnpm add framer-motion' in the hard-coded cwd /vercel/share/v0-project. Nothing references them: package.json scripts are only next dev/build/start and eslint, there are no pre/postinstall hooks and no CI directory. They do not reach the build.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "next.config.mjs"
+    ],
+    "invariant": "Build configuration does not pull remote includes or mutable inputs into the output",
+    "method": "source",
+    "result": "next.config.mjs contains only rewrites, a Vary header, the turbopack root, typescript.ignoreBuildErrors and an images.remotePatterns entry for www.google.com/s2/favicons. It has no remote includes, no downloaded tools and no generated inputs from untrusted sources. ignoreBuildErrors disables a type-safety gate but adds no untrusted writer.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "supply-deps",
+  "x_hunter": "hunter-repo",
+  "x_hardening": [
+   "Remove the stale pnpm-lock.yaml (it has no entries for accept-md-runtime, nucleo-ui-essential-fill-12/-18 or torph and has drifted framer-motion/motion/dialkit specifiers) or regenerate it, and drop frozen-lockfile=false from .npmrc so any install fails closed rather than re-resolving caret ranges. Pin the package manager via packageManager in package.json so the hosting build cannot pick the stale lockfile.",
+   "Delete the unused v0 scripts scripts/install-framer-motion.{sh,js,mjs} and the unused @nicepkg/gpt-runner dependency, which pulls a large transitive tree into every install for no runtime use.",
+   "next.config.mjs sets typescript.ignoreBuildErrors: true, so type errors no longer block a deploy. Consider removing it so type checks gate the build.",
+   ".gitignore ignores .env*.local but not a plain .env or .env.production. Add .env and .env.* (with !.env.example if needed) to prevent accidental commits of Notion or GitHub keys.",
+   "Remove the leftover '[v0]' console.log diagnostics in app/api/commits/history/route.ts and lib/github.ts."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/accept-md/[[...path]] error responses",
+    "boundary": "Server internals to anonymous visitor (error disclosure)",
+    "subsystem": "accept-md",
+    "attack_class": "Information disclosure via verbatim error messages",
+    "starting_paths": [
+     "app/api/accept-md/[[...path]]/route.ts"
+    ],
+    "reason": "The handler returns error.message from accept-md-runtime verbatim as JSON (lines 58-63). Whether those messages include the internal self-fetch URL, forwarded host or upstream response details depends on the accept-md-runtime source, which is not present locally. The peer unit acceptmd-host covers host trust, not error-content disclosure, so this needs its own unit and a review of the package source."
+   }
+  ]
+ },
+ {
+  "coverage_id": "repo%23all-entry-surfaces::repo%23obvious::repo::ATTACK-CLASSES.md%23Obvious%20things",
+  "canonical_refs": {
+   "surface": "repo#all-entry-surfaces",
+   "boundary": "repo#obvious",
+   "subsystem": "repo",
+   "attack_class": "ATTACK-CLASSES.md#Obvious things"
+  },
+  "surface": "Repository-wide basic exposures",
+  "boundary": "Basic exposure checklist",
+  "subsystem": "repo",
+  "attack_class": "Obvious things",
+  "starting_paths": [
+   "app/api/accept-md/[[...path]]/route.ts",
+   "app/api/commits/history/route.ts",
+   "next.config.mjs",
+   ".gitignore",
+   "lib/github.ts",
+   "app/layout.tsx",
+   "app/api/image/route.ts"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Obvious things",
+  "selected_companion_blocks": [],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-repo",
+  "reviewed_paths": [
+   ".gitignore",
+   "app/api/accept-md/[[...path]]/route.ts",
+   "app/api/commits/history/route.ts",
+   "app/api/image/route.ts",
+   "app/api/tools/route.ts",
+   "app/api/writing/[slug]/route.ts",
+   "app/api/writing/route.ts",
+   "app/layout.tsx",
+   "components/dev-panels.tsx",
+   "lib/github.ts",
+   "lib/notion.ts",
+   "next.config.mjs",
+   "package-lock.json"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "lib/github.ts",
+     "lib/notion.ts",
+     ".gitignore",
+     "package-lock.json"
+    ],
+    "invariant": "No hardcoded secrets in tracked source or recent history, and no secret files are committed",
+    "method": "source",
+    "result": "Searched tracked files for password, secret, api key, token, Bearer, -----BEGIN, ntn_, ghp_, github_pat_ and sk-. Every secret is read only from process.env (NOTION_API_KEY at lib/notion.ts:22, GITHUB_TOKEN at lib/github.ts:17-18). No .env, .pem, .key or credentials files are tracked. git log -p over the shallow 57-commit history shows no added or removed secret literals and no deleted env or key files. .gitignore covers .env*.local, .vercel and node_modules but not a plain .env (hardening).",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "app/layout.tsx",
+     "components/dev-panels.tsx"
+    ],
+    "invariant": "Debug and dev tooling cannot be enabled in production by query, header or env",
+    "method": "source",
+    "result": "DevPanels (Agentation pointing at localhost:4747, plus DialKit) renders only under process.env.NODE_ENV === 'development' (app/layout.tsx:79), which Next inlines at build time. The ?devtools=on|off query only hides or shows panels that are already gated, and NEXT_PUBLIC_ENABLE_AGENTATION only narrows them further. No /debug, /admin, /health, /metrics, /env or /config routes exist. The only route handlers are the six GET handlers under app/api. app/skeletons is a static demo page with no data access.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "app/api/accept-md/[[...path]]/route.ts",
+     "app/api/commits/history/route.ts",
+     "app/api/image/route.ts",
+     "app/api/writing/route.ts",
+     "app/api/writing/[slug]/route.ts",
+     "app/api/tools/route.ts",
+     "next.config.mjs"
+    ],
+    "invariant": "No eval or dynamic code, no permissive CORS, no insecure cookies, no open redirects, and no verbose production errors",
+    "method": "source",
+    "result": "No eval, Function, vm or child_process in app, lib or components; the dynamic import() calls use literal specifiers. No Access-Control-* headers and no cookies set anywhere. No server redirect sinks. The url parameter in /api/image is a fetch target, not a redirect, and is peer-owned (image-ssrf). Client navigation sinks are peer-owned (client-nav). The writing, tools, commits and image handlers return generic error strings. The single exception is accept-md, which returns error.message verbatim (route.ts:58-63). The message comes from accept-md-runtime, which is absent locally, so whether it contains internal URLs cannot be determined and is recorded under uncovered. All dependencies are lock-pinned with integrity hashes. CVE status is not checkable offline. TLS is handled by the hosting platform: there are no http:// server endpoints, and the only http:// URL is the dev-only localhost Agentation endpoint.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "obvious",
+  "x_hunter": "hunter-repo",
+  "x_hardening": [
+   "Remove the stale pnpm-lock.yaml (it has no entries for accept-md-runtime, nucleo-ui-essential-fill-12/-18 or torph and has drifted framer-motion/motion/dialkit specifiers) or regenerate it, and drop frozen-lockfile=false from .npmrc so any install fails closed rather than re-resolving caret ranges. Pin the package manager via packageManager in package.json so the hosting build cannot pick the stale lockfile.",
+   "Delete the unused v0 scripts scripts/install-framer-motion.{sh,js,mjs} and the unused @nicepkg/gpt-runner dependency, which pulls a large transitive tree into every install for no runtime use.",
+   "next.config.mjs sets typescript.ignoreBuildErrors: true, so type errors no longer block a deploy. Consider removing it so type checks gate the build.",
+   ".gitignore ignores .env*.local but not a plain .env or .env.production. Add .env and .env.* (with !.env.example if needed) to prevent accidental commits of Notion or GitHub keys.",
+   "Remove the leftover '[v0]' console.log diagnostics in app/api/commits/history/route.ts and lib/github.ts."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/accept-md/[[...path]] error responses",
+    "boundary": "Server internals to anonymous visitor (error disclosure)",
+    "subsystem": "accept-md",
+    "attack_class": "Information disclosure via verbatim error messages",
+    "starting_paths": [
+     "app/api/accept-md/[[...path]]/route.ts"
+    ],
+    "reason": "The handler returns error.message from accept-md-runtime verbatim as JSON (lines 58-63). Whether those messages include the internal self-fetch URL, forwarded host or upstream response details depends on the accept-md-runtime source, which is not present locally. The peer unit acceptmd-host covers host trust, not error-content disclosure, so this needs its own unit and a review of the package source."
+   }
+  ]
+ },
+ {
+  "coverage_id": "repo%23all-entry-surfaces::repo%23wildcard::repo::ATTACK-CLASSES.md%23Wildcard",
+  "canonical_refs": {
+   "surface": "repo#all-entry-surfaces",
+   "boundary": "repo#wildcard",
+   "subsystem": "repo",
+   "attack_class": "ATTACK-CLASSES.md#Wildcard"
+  },
+  "surface": "Repository-wide unusual code",
+  "boundary": "Unassigned anomalies",
+  "subsystem": "repo",
+  "attack_class": "Wildcard",
+  "starting_paths": [
+   "app/skeletons/page.tsx",
+   "lib/portfolio-data.ts",
+   "lib/writing-display.ts",
+   "lib/utils.ts",
+   "app/api/writing/route.ts",
+   "components/writing/article-footer.tsx"
+  ],
+  "ordinary_attack_class_block": "ATTACK-CLASSES.md#Wildcard",
+  "selected_companion_blocks": [],
+  "excluded_blocks": [
+   {
+    "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+    "reason": "no native code in repository; sharp/libvips is a third-party binary"
+   },
+   {
+    "block": "AI-AND-LLM.md#Core discipline",
+    "reason": "no model integration; @nicepkg/gpt-runner is never imported"
+   },
+   {
+    "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+    "reason": "no RPC, broker, or webhook receiver surfaces"
+   },
+   {
+    "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+    "reason": "no native app or IPC; Agentation localhost endpoint renders only when NODE_ENV=development (app/layout.tsx:79)"
+   },
+   {
+    "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+    "reason": "no IaC/IAM/container config in repository; deployment facts handled as needs_validation blockers"
+   }
+  ],
+  "prior_status": "none",
+  "attempts": [],
+  "wave": 1,
+  "status": "covered",
+  "agent_id": "hunter-repo",
+  "reviewed_paths": [
+   "app/api/writing/route.ts",
+   "app/skeletons/page.tsx",
+   "components/dev-panels.tsx",
+   "components/writing/article-footer.tsx",
+   "lib/portfolio-data.ts",
+   "lib/utils.ts",
+   "lib/writing-display.ts",
+   "scripts/install-framer-motion.js"
+  ],
+  "local_checks": [
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "app/skeletons/page.tsx",
+     "lib/portfolio-data.ts",
+     "lib/writing-display.ts",
+     "lib/utils.ts"
+    ],
+    "invariant": "Experimental, leftover or commented-out code exposes no hidden data path or capability",
+    "method": "source",
+    "result": "app/skeletons/page.tsx is an unlinked client page that renders only static Skeleton placeholders. lib/portfolio-data.ts holds static data plus a commented-out Notion helper that is never compiled. displayWritingTitle and slugify are pure string transforms with no sink: slugify output is limited to [a-z0-9-] or 'untitled'.",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "app/api/writing/route.ts",
+     "components/writing/article-footer.tsx"
+    ],
+    "invariant": "Writing list API and footer links expose only intended post fields and stay same-origin",
+    "method": "source",
+    "result": "/api/writing returns fetchCachedAllPosts with ISR revalidate=600 and a generic error message, and takes no visitor input. ArticleFooter builds next/link hrefs as /writing/${slug} with slug taken from owner-authored Notion data, so the links stay same-origin and titles render as React text. Whether a post slug can be a non-database page is peer-owned (notion-scope, business-logic).",
+    "artifact": null
+   },
+   {
+    "agent_id": "hunter-repo",
+    "reviewed_paths": [
+     "components/dev-panels.tsx",
+     "scripts/install-framer-motion.js"
+    ],
+    "invariant": "Bolted-on dev and v0 artefacts cannot be reached in production",
+    "method": "source",
+    "result": "The v0 install scripts are unreferenced, and the DevPanels rendering is NODE_ENV-gated (see the obvious-things unit). The '[v0]' console.log lines in /api/commits/history and lib/github.ts write only event counts and types to server logs, not to responses.",
+    "artifact": null
+   }
+  ],
+  "result_fingerprints": [],
+  "unresolved": [],
+  "x_key": "wildcard",
+  "x_hunter": "hunter-repo",
+  "x_hardening": [
+   "Remove the stale pnpm-lock.yaml (it has no entries for accept-md-runtime, nucleo-ui-essential-fill-12/-18 or torph and has drifted framer-motion/motion/dialkit specifiers) or regenerate it, and drop frozen-lockfile=false from .npmrc so any install fails closed rather than re-resolving caret ranges. Pin the package manager via packageManager in package.json so the hosting build cannot pick the stale lockfile.",
+   "Delete the unused v0 scripts scripts/install-framer-motion.{sh,js,mjs} and the unused @nicepkg/gpt-runner dependency, which pulls a large transitive tree into every install for no runtime use.",
+   "next.config.mjs sets typescript.ignoreBuildErrors: true, so type errors no longer block a deploy. Consider removing it so type checks gate the build.",
+   ".gitignore ignores .env*.local but not a plain .env or .env.production. Add .env and .env.* (with !.env.example if needed) to prevent accidental commits of Notion or GitHub keys.",
+   "Remove the leftover '[v0]' console.log diagnostics in app/api/commits/history/route.ts and lib/github.ts."
+  ],
+  "x_uncovered": [
+   {
+    "surface": "GET /api/accept-md/[[...path]] error responses",
+    "boundary": "Server internals to anonymous visitor (error disclosure)",
+    "subsystem": "accept-md",
+    "attack_class": "Information disclosure via verbatim error messages",
+    "starting_paths": [
+     "app/api/accept-md/[[...path]]/route.ts"
+    ],
+    "reason": "The handler returns error.message from accept-md-runtime verbatim as JSON (lines 58-63). Whether those messages include the internal self-fetch URL, forwarded host or upstream response details depends on the accept-md-runtime source, which is not present locally. The peer unit acceptmd-host covers host trust, not error-content disclosure, so this needs its own unit and a review of the package source."
+   }
+  ]
+ }
+]
