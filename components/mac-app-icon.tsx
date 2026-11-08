@@ -8,6 +8,8 @@ import {
   AGENTATION_MARK,
   GROK_BOT_MARK,
   LINEAR_MARK,
+  PAPER_BLUE,
+  PAPER_MARK,
   RAYCAST_MARK,
 } from "@/lib/mac-app-marks"
 
@@ -56,19 +58,10 @@ function FigmaMark() {
 }
 
 function PaperMark() {
-  // A sheet with a folded corner.
+  // Paper's mark (26×26 canvas) at half the icon width, in Paper blue.
   return (
-    <g>
-      <path
-        d="M34 22h22l14 14v38a4 4 0 0 1-4 4H34a4 4 0 0 1-4-4V26a4 4 0 0 1 4-4z"
-        fill="#1d1d1f"
-      />
-      <path d="M56 22v10a4 4 0 0 0 4 4h10z" fill="#8e8e93" />
-      <g stroke="rgba(255,255,255,.35)" strokeWidth="3" strokeLinecap="round">
-        <line x1="40" y1="52" x2="60" y2="52" />
-        <line x1="40" y1="61" x2="60" y2="61" />
-        <line x1="40" y1="70" x2="52" y2="70" />
-      </g>
+    <g transform="translate(25 25) scale(1.924)">
+      <path d={PAPER_MARK} fill={PAPER_BLUE} />
     </g>
   )
 }
@@ -146,7 +139,7 @@ interface IconStyle {
 
 const ICONS: Record<MacAppSlug, IconStyle> = {
   figma: { from: "#2c2c2e", to: "#0f0f10", mark: <FigmaMark /> },
-  paper: { from: "#ffffff", to: "#e9e9eb", light: true, mark: <PaperMark /> },
+  paper: { from: "#2c2c2e", to: "#0f0f10", mark: <PaperMark /> },
   linear: { from: "#7b86e0", to: "#5e6ad2", mark: <Mark24 d={LINEAR_MARK} /> },
   agentation: { from: "#ffffff", to: "#ececec", light: true, mark: <AgentationMark /> },
   dialkit: { from: "#4a4a4d", to: "#1c1c1e", mark: <DialKitMark /> },
