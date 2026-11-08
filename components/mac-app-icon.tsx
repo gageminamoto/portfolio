@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import type { MacAppSlug } from "@/lib/mac-apps"
 import {
   AGENTATION_MARK,
+  GRANOLA_MARK,
   GROK_BOT_MARK,
   LINEAR_MARK,
   PAPER_BLUE,
@@ -112,19 +113,11 @@ function InflightMark() {
 }
 
 function GranolaMark() {
+  // Granola's spiral (32×32 canvas) at 56% of the icon, in its dark ink.
   return (
-    <text
-      x="50"
-      y="68"
-      textAnchor="middle"
-      fontSize="54"
-      fontWeight="700"
-      fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'Inter', system-ui, sans-serif"
-      fill="#1d1d1f"
-      letterSpacing="-2"
-    >
-      G
-    </text>
+    <g transform="translate(22 22) scale(1.75)">
+      <path d={GRANOLA_MARK} fill="#1e1e1e" />
+    </g>
   )
 }
 
@@ -150,7 +143,7 @@ const ICONS: Record<MacAppSlug, IconStyle> = {
     mark: <Mark24 d={GROK_BOT_MARK} fillRule="evenodd" />,
   },
   raycast: { from: "#ff7a7a", to: "#e03e3e", mark: <Mark24 d={RAYCAST_MARK} /> },
-  granola: { from: "#fbf3e4", to: "#ebd9b4", light: true, mark: <GranolaMark /> },
+  granola: { from: "#fbfaf6", to: "#edece4", light: true, mark: <GranolaMark /> },
 }
 
 export interface MacAppIconProps {
