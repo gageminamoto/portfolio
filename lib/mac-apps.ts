@@ -35,7 +35,7 @@ export interface MacAppGroup {
 
 export const MAC_APP_GROUPS: MacAppGroup[] = [
   {
-    label: "Canvas",
+    label: "Build",
     apps: [
       {
         slug: "figma",
@@ -49,11 +49,6 @@ export const MAC_APP_GROUPS: MacAppGroup[] = [
         url: "https://paper.design",
         description: "Fast, focused design canvas",
       },
-    ],
-  },
-  {
-    label: "Build",
-    apps: [
       {
         slug: "linear",
         name: "Linear",

@@ -59,7 +59,7 @@ function FigmaMark() {
 }
 
 function PaperMark() {
-  // Paper's mark (26×26 canvas) at half the icon width, in Paper blue.
+  // Paper's mark (26×26 canvas) at half the icon width, Paper blue on Paper cream (#f0efe4).
   return (
     <g transform="translate(25 25) scale(1.924)">
       <path d={PAPER_MARK} fill={PAPER_BLUE} />
@@ -103,17 +103,22 @@ function DialKitMark() {
 }
 
 function InflightMark() {
-  // A paper plane in flight.
+  // Inflight's glyph, lifted from its app icon and placed where it sits there.
+  // The source icon is a 256 canvas whose squircle spans 25–230.
+  const scale = 100 / 205
   return (
-    <g>
-      <path d="M22 48 78 24 62 76 48 60 40 72 40 56Z" fill="#fff" />
-      <path d="M40 56 78 24 48 60Z" fill="rgba(0,0,0,.14)" />
-    </g>
+    <image
+      href="/tools/inflight-mark.png"
+      x={-25 * scale}
+      y={-25 * scale}
+      width={256 * scale}
+      height={256 * scale}
+    />
   )
 }
 
 function GranolaMark() {
-  // Granola's spiral (32×32 canvas) at 56% of the icon, in its dark ink.
+  // Granola's spiral (32×32 canvas) at 56% of the icon, in its dark ink on Granola green.
   return (
     <g transform="translate(22 22) scale(1.75)">
       <path d={GRANOLA_MARK} fill="#1e1e1e" />
@@ -131,19 +136,19 @@ interface IconStyle {
 }
 
 const ICONS: Record<MacAppSlug, IconStyle> = {
-  figma: { from: "#2c2c2e", to: "#0f0f10", mark: <FigmaMark /> },
-  paper: { from: "#2c2c2e", to: "#0f0f10", mark: <PaperMark /> },
+  figma: { from: "#ffffff", to: "#ebebeb", light: true, mark: <FigmaMark /> },
+  paper: { from: "#f7f6ee", to: "#e9e8db", light: true, mark: <PaperMark /> },
   linear: { from: "#7b86e0", to: "#5e6ad2", mark: <Mark24 d={LINEAR_MARK} /> },
   agentation: { from: "#ffffff", to: "#ececec", light: true, mark: <AgentationMark /> },
   dialkit: { from: "#4a4a4d", to: "#1c1c1e", mark: <DialKitMark /> },
-  inflight: { from: "#64d2ff", to: "#0a84ff", mark: <InflightMark /> },
+  inflight: { from: "#5c6573", to: "#1a1f27", mark: <InflightMark /> },
   "grok-bot": {
     from: "#3a3a3c",
     to: "#000000",
     mark: <Mark24 d={GROK_BOT_MARK} fillRule="evenodd" />,
   },
   raycast: { from: "#ff7a7a", to: "#e03e3e", mark: <Mark24 d={RAYCAST_MARK} /> },
-  granola: { from: "#fbfaf6", to: "#edece4", light: true, mark: <GranolaMark /> },
+  granola: { from: "#bfd05a", to: "#a2b33a", mark: <GranolaMark /> },
 }
 
 export interface MacAppIconProps {
