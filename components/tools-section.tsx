@@ -1,132 +1,58 @@
 "use client"
 
-import { useState } from "react"
-import useSWR from "swr"
-import { useReducedMotion } from "framer-motion"
-import { IconArrowUpRight } from "@/components/site-icons"
-import { ExpandableList } from "@/components/expandable-list"
-import { ListRow, type ListRowFluidHover } from "@/components/list-row"
-import { AffiliateLabel, ToolIcon, toolAriaLabel } from "@/components/tool-parts"
-import type { NotionToolItem } from "@/lib/notion"
-import { toolLinkRel } from "@/lib/affiliate-links"
-import { useFinePointerHover } from "@/hooks/use-fine-pointer-hover"
-import { buildListRowFluidHover } from "@/lib/list-row-fluid-hover"
-
-export async function toolsFetcher(url: string) {
-  const response = await fetch(url)
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data?.error ?? "Failed to fetch tools")
-  }
-
-  return data
-}
-const INITIAL_COUNT = 5
+import { MacAppIcon } from "@/components/mac-app-icon"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { MAC_APP_GROUPS, type MacApp, type MacAppIconImages } from "@/lib/mac-apps"
 
 interface ToolsSectionProps {
-  /** Local preview tools appended after the real ones (DialKit seeding). */
-  seedTools?: NotionToolItem[]
+  /** Real exported icons by slug; the rest fall back to drawn mock-ups. */
+  iconImages?: MacAppIconImages
 }
 
-function SkeletonRow() {
+function AppLink({ app, image }: { app: MacApp; image?: string }) {
   return (
-    <div className="flex items-center gap-3 px-0 py-3">
-      <div className="h-8 w-8 shrink-0 animate-pulse rounded-md bg-muted motion-reduce:animate-none" />
-      <div className="h-4 w-28 shrink-0 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
-      <div className="h-3 w-44 flex-1 animate-pulse rounded-sm bg-muted motion-reduce:animate-none" />
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <a
+          href={app.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${app.name} — ${app.description}`}
+          className="group block size-11 rounded-xl outline-none sm:size-13 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <MacAppIcon
+            slug={app.slug}
+            image={image}
+            className="transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-hover:scale-105 group-focus-visible:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:transform-none"
+          />
+        </a>
+      </TooltipTrigger>
+      <TooltipContent sideOffset={2}>
+        <span className="font-medium">{app.name}</span>
+        <span className="text-background/70"> · {app.description}</span>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
-function ToolName({ tool }: { tool: NotionToolItem }) {
-  const isSkill = tool.category === "Skills"
-
+/** The homepage tools row: Mac app icons grouped by what they are for. */
+export function ToolsSection({ iconImages }: ToolsSectionProps) {
   return (
-    <span className="inline-flex items-center gap-1.5">
-      {isSkill ? (
-        <span className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs font-medium">
-          /{tool.name}
-          {tool.url ? (
-            <IconArrowUpRight className="h-2.5 w-2.5 shrink-0 text-muted-foreground/50" />
-          ) : null}
-        </span>
-      ) : (
-        tool.name
-      )}
-      {tool.affiliate ? <AffiliateLabel /> : null}
-    </span>
-  )
-}
-
-function ToolListRow({
-  tool,
-  fluidHover,
-}: {
-  tool: NotionToolItem
-  fluidHover?: ListRowFluidHover
-}) {
-  const displayName = tool.category === "Skills" ? `/${tool.name}` : tool.name
-
-  return (
-    <ListRow
-      href={tool.url}
-      external
-      rel={toolLinkRel(Boolean(tool.url) && tool.affiliate)}
-      icon={<ToolIcon name={tool.name} url={tool.url} />}
-      name={<ToolName tool={tool} />}
-      meta={tool.description}
-      fluidHover={fluidHover}
-      aria-label={toolAriaLabel(displayName, tool.description, tool.affiliate)}
-    />
-  )
-}
-
-/** Just the list of tools, for the homepage. The full page adds search and filters. */
-export function ToolsSection({ seedTools }: ToolsSectionProps) {
-  const [hoveredToolId, setHoveredToolId] = useState<string | null>(null)
-  const shouldReduceMotion = useReducedMotion()
-  const prefersFinePointer = useFinePointerHover({ minWidth: 768 })
-  const useFluidListHover = Boolean(!shouldReduceMotion && prefersFinePointer)
-  const { data, error, isLoading } = useSWR<{ tools: NotionToolItem[] }>(
-    "/api/tools",
-    toolsFetcher,
-    { revalidateOnFocus: false },
-  )
-
-  const tools = [...(data?.tools ?? []), ...(seedTools ?? [])]
-
-  if (error && !data && tools.length === 0) {
-    return <p className="text-sm text-muted-foreground">Could not load tools.</p>
-  }
-
-  if (isLoading && !data) {
-    return (
-      <div className="flex flex-col" aria-busy="true" aria-label="Loading tools">
-        {[0, 1, 2].map((i) => (
-          <SkeletonRow key={i} />
-        ))}
-      </div>
-    )
-  }
-
-  if (tools.length === 0) {
-    return <p className="text-sm text-muted-foreground">No tools yet.</p>
-  }
-
-  const rowFluidHover = (toolId: string) =>
-    useFluidListHover
-      ? buildListRowFluidHover(hoveredToolId, toolId, setHoveredToolId)
-      : undefined
-
-  return (
-    <ExpandableList
-      items={tools}
-      getKey={(tool) => tool.id}
-      renderRow={(tool) => <ToolListRow tool={tool} fluidHover={rowFluidHover(tool.id)} />}
-      noun="tools"
-      initialCount={INITIAL_COUNT}
-      onMouseLeave={useFluidListHover ? () => setHoveredToolId(null) : undefined}
-    />
+    <ul className="flex flex-wrap gap-x-5 gap-y-4" aria-label="Tools, grouped">
+      {MAC_APP_GROUPS.map((group) => (
+        <li key={group.label} className="flex flex-col gap-1">
+          <ul className="-mx-1 flex" aria-label={group.label}>
+            {group.apps.map((app) => (
+              <li key={app.slug}>
+                <AppLink app={app} image={iconImages?.[app.slug]} />
+              </li>
+            ))}
+          </ul>
+          <span className="pl-1 text-[11px] font-medium text-muted-foreground/70">
+            {group.label}
+          </span>
+        </li>
+      ))}
+    </ul>
   )
 }

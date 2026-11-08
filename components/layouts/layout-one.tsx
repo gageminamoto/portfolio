@@ -13,20 +13,21 @@ import { BioSection, type BioLinkToggles } from "@/components/bio-section"
 import { CursorTrail } from "@/components/cursor-trail"
 import { useGradientWord } from "@/components/gradient-word-context"
 import { SocialIcons } from "@/components/social-icons"
-import { ToolsSection, toolsFetcher } from "@/components/tools-section"
+import { ToolsSection } from "@/components/tools-section"
 import { WritingSection, writingFetcher } from "@/components/writing-section"
-import { generateSeedTools } from "@/lib/seed-tools"
 import { generateSeedPosts } from "@/lib/seed-writing"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { portfolioData } from "@/lib/portfolio-data"
+import type { MacAppIconImages } from "@/lib/mac-apps"
 
 const easeOut = [0.19, 1, 0.22, 1] as const
 
 /* Bio links that open their list inline under the bio instead of navigating.
- * One list is open at a time; picking the other swaps them. */
+ * One list is open at a time; picking the other swaps them. Writing loads from
+ * the API; the tools row is static, so it is always ready. */
 const SECTIONS = {
-  writing: { href: "/writing", label: "Writing", api: "/api/writing", fetcher: writingFetcher },
-  tools: { href: "/tools", label: "Tools", api: "/api/tools", fetcher: toolsFetcher },
+  writing: { href: "/writing", label: "Writing" },
+  tools: { href: "/tools", label: "Tools" },
 } as const
 type SectionKey = keyof typeof SECTIONS
 const SECTION_KEYS = Object.keys(SECTIONS) as SectionKey[]
@@ -59,7 +60,6 @@ const LIST_REVEAL = {
   seed: {
     enabled: false,
     posts: [5, 1, 30, 1],
-    tools: [8, 1, 23, 1],
   },
   writing: { type: "action", label: "Open / close writing" },
   tools: { type: "action", label: "Open / close tools" },
@@ -98,7 +98,12 @@ function toMotionTransition(config: TransitionConfig): Transition {
   return { type: "spring", ...spring }
 }
 
-export function LayoutOne() {
+interface LayoutOneProps {
+  /** Real Mac app icons found in `public/tools`, by tool slug. */
+  toolIconImages?: MacAppIconImages
+}
+
+export function LayoutOne({ toolIconImages }: LayoutOneProps = {}) {
   const { name, bio, socials, email } = portfolioData
   const { setActiveWord, setCursorTrailActive } = useGradientWord()
   const reduceMotion = useReducedMotion()
@@ -124,24 +129,17 @@ export function LayoutOne() {
     },
   })
 
-  // Warm the shared cache on hover/focus, and hold the reveal until the list
+  // Warm the writing cache on hover/focus, and hold the reveal until the list
   // arrives, so the region opens to its final height instead of opening on
   // loading rows and then jumping. A slow response falls back to skeletons.
-  const writingQuery = useSWR(
-    wanted.writing ? SECTIONS.writing.api : null,
-    SECTIONS.writing.fetcher,
-    { revalidateOnFocus: false },
-  )
-  const toolsQuery = useSWR(
-    wanted.tools ? SECTIONS.tools.api : null,
-    SECTIONS.tools.fetcher,
-    { revalidateOnFocus: false },
-  )
-  const queries = { writing: writingQuery, tools: toolsQuery }
+  const writingQuery = useSWR(wanted.writing ? "/api/writing" : null, writingFetcher, {
+    revalidateOnFocus: false,
+  })
   const openReady =
     openSection !== null &&
-    (queries[openSection].data !== undefined ||
-      queries[openSection].error !== undefined ||
+    (openSection === "tools" ||
+      writingQuery.data !== undefined ||
+      writingQuery.error !== undefined ||
       waitedLong)
 
   // While swapping to a list that hasn't loaded yet, keep the current one up
@@ -297,13 +295,7 @@ export function LayoutOne() {
                             }
                           />
                         ) : (
-                          <ToolsSection
-                            seedTools={
-                              reveal.seed.enabled
-                                ? generateSeedTools(reveal.seed.tools)
-                                : undefined
-                            }
-                          />
+                          <ToolsSection iconImages={toolIconImages} />
                         )}
                       </motion.div>
                     </AnimatePresence>
