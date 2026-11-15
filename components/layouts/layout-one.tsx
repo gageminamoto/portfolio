@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useLayoutEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import useSWR from "swr"
 import { useDialKit, type TransitionConfig } from "dialkit"
 import {
@@ -19,6 +20,11 @@ import { generateSeedTools } from "@/lib/seed-tools"
 import { generateSeedPosts } from "@/lib/seed-writing"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { portfolioData } from "@/lib/portfolio-data"
+
+const ShinkansenShowcase = dynamic(
+  () => import("@/components/shinkansen/shinkansen-showcase"),
+  { ssr: false, loading: () => <div className="aspect-[16/11] w-full sm:aspect-[16/10]" /> },
+)
 
 const easeOut = [0.19, 1, 0.22, 1] as const
 
@@ -312,6 +318,9 @@ export function LayoutOne() {
               </motion.section>
             )}
           </AnimatePresence>
+          <motion.div layout="position" variants={item}>
+            <ShinkansenShowcase />
+          </motion.div>
           <motion.div layout="position" variants={item}>
             <SocialIcons socials={socials} email={email} />
           </motion.div>
