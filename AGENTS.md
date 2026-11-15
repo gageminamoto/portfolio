@@ -28,3 +28,13 @@ Do not add extra checklist sections to the PR body unless the team asks for them
 - Checks that exist: `npm run lint` and `npm run build`. There is no automated test script.
 - Writing and tools load from Notion. Without `NOTION_API_KEY`, `NOTION_BLOG_DATABASE_ID`, and `NOTION_TOOLS_DATABASE_ID`, those pages still render, with empty writing and tools lists. Early design loads from Notion when `NOTION_EARLY_DESIGN_DB_ID` is set, and otherwise uses the hard-coded fallback list. The homepage, about page, and work case studies do not need those keys. `GITHUB_TOKEN` is optional; the public GitHub API is enough for the commit footer.
 - In development, Agentation tries to reach `http://localhost:4747`. A connection error in the browser console is expected when that helper is not running.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
