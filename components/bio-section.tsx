@@ -154,6 +154,7 @@ function renderBioParts(
       const previewImages: Record<string, string> = {
         "Negi": "/negi-studio-preview.png",
         "Mizen": "/images/mizen-hover.mp4",
+        "Yahtzee scorecard": "/projects/yahtzee-preview.mp4",
         "University of Hawaiʻi Esports": "/uh-preview.jpg",
         "UH Esports": "/uh-preview.jpg",
         "local design community": "/piiku-preview.jpg",
@@ -165,6 +166,11 @@ function renderBioParts(
         "Spero": "/images/spero-preview.webp",
         "MemberSpace": "/images/memberspace-preview.webp",
         "Servco": "/images/servco-preview.webp",
+      }
+      // Still frames shown instead of video previews when motion is reduced.
+      const previewFallbackImages: Record<string, string> = {
+        "Mizen": "/projects/mizen.png",
+        "Yahtzee scorecard": "/projects/yahtzee.png",
       }
       const toggle = linkToggles?.[part.url]
       const link = (
@@ -186,7 +192,7 @@ function renderBioParts(
           ariaControls={toggle?.controls}
           external={!part.url.startsWith("/")}
           previewImage={previewImages[part.text]}
-          previewFallbackImage={part.text === "Mizen" ? "/projects/mizen.png" : undefined}
+          previewFallbackImage={previewFallbackImages[part.text]}
           previewWidth={part.text === "Negi" ? 256 : undefined}
           previewHeight={part.text === "Negi" ? 134 : undefined}
           className={
