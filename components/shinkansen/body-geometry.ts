@@ -162,6 +162,38 @@ export function pointAt(sec: Section, a: number): SurfacePoint {
   return { y, z, sx, sy }
 }
 
+const ARC_SAMPLES = 256
+
+/**
+ * Maps a 0..1 ring parameter to a section angle so that equal steps cover
+ * equal distance around the outline. Plain superellipse angles bunch points
+ * into the corners and starve the flat sides, where the stripes run.
+ */
+export function arcMap(sec: Section): (v: number) => number {
+  const len = new Float64Array(ARC_SAMPLES + 1)
+  let prev = pointAt(sec, ringAngle(0))
+  for (let k = 1; k <= ARC_SAMPLES; k++) {
+    const p = pointAt(sec, ringAngle(k / ARC_SAMPLES))
+    len[k] = len[k - 1] + Math.hypot(p.y - prev.y, p.z - prev.z)
+    prev = p
+  }
+  const total = len[ARC_SAMPLES]
+  if (total < 1e-6) return ringAngle
+  return (v) => {
+    const target = (v - Math.floor(v)) * total
+    let lo = 0
+    let hi = ARC_SAMPLES
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1
+      if (len[mid] <= target) lo = mid
+      else hi = mid
+    }
+    const span = len[hi] - len[lo]
+    const f = span > 0 ? (target - len[lo]) / span : 0
+    return ringAngle((lo + f) / ARC_SAMPLES)
+  }
+}
+
 /** Texture u packs the nose into more texels than the plain body. */
 export const NOSE_SHARE = 0.46
 
@@ -205,8 +237,9 @@ export function buildBodyGeometry(profile: BodyProfile) {
   for (const x of xs) {
     const sec = sectionAt(profile, x)
     const u = xToU(profile, x)
+    const toAngle = arcMap(sec)
     for (let j = 0; j <= RING; j++) {
-      const p = pointAt(sec, ringAngle(j / RING))
+      const p = pointAt(sec, j === RING ? toAngle(0) : toAngle(j / RING))
       positions.push(x, p.y, p.z)
       uvs.push(u, j / RING)
     }

@@ -17,7 +17,7 @@ const laneX = (i: number) => (i - (SERIES.length - 1) / 2) * TRACK_SPACING
 
 const OVERVIEW = {
   position: new THREE.Vector3(-9.6, 4.4, 15.2),
-  target: new THREE.Vector3(1.4, 2.1, -5.5),
+  target: new THREE.Vector3(1.4, 1.55, -5.5),
 }
 
 const damp = THREE.MathUtils.damp

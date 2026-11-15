@@ -14,7 +14,7 @@ const wheelGeometry = new THREE.CylinderGeometry(WHEEL_R, WHEEL_R, 0.14, 28)
 wheelGeometry.rotateX(Math.PI / 2)
 const darkMetal = new THREE.MeshStandardMaterial({ color: "#2b2e33", roughness: 0.55, metalness: 0.6 })
 const wheelMetal = new THREE.MeshStandardMaterial({ color: "#5b5f66", roughness: 0.35, metalness: 0.85 })
-const underMat = new THREE.MeshStandardMaterial({ color: "#1d1f22", roughness: 0.8 })
+const underMat = new THREE.MeshStandardMaterial({ color: "#34373c", roughness: 0.8 })
 
 function Bogie({ x, exposed }: { x: number; exposed: boolean }) {
   return (

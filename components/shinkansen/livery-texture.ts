@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { pointAt, ringAngle, sectionAt, uToX } from "./body-geometry"
+import { arcMap, pointAt, sectionAt, uToX, type Section } from "./body-geometry"
 import type { Paint, Series } from "./series"
 
 export const TEX_W = 2048
@@ -30,8 +30,8 @@ export async function paintLivery(
   const light = new Uint8Array(TEX_W * TEX_H * 4)
   const tmp = { r: 0, g: 0, b: 0, rough: 0, lr: 0, lg: 0, lb: 0 }
 
-  const sample = (u: number, v: number, sec = sectionAt(profile, uToX(profile, u))) => {
-    const p = pointAt(sec, ringAngle(v))
+  const sample = (v: number, sec: Section, toAngle: (v: number) => number) => {
+    const p = pointAt(sec, toAngle(v))
     return series.paint({ x: sec.x, y: p.y, z: p.z, sx: p.sx, sy: p.sy, sec })
   }
   const accumulate = (out: Paint, w: number) => {
@@ -71,11 +71,14 @@ export async function paintLivery(
   }
 
   // Pass 1: one sample per texel.
+  const columnAngles: ((v: number) => number)[] = []
   for (let i = 0; i < TEX_W; i++) {
     await breathe()
     const sec = sectionAt(profile, uToX(profile, (i + 0.5) / TEX_W))
+    const toAngle = arcMap(sec)
+    columnAngles.push(toAngle)
     for (let j = 0; j < TEX_H; j++) {
-      accumulate(sample(0, (j + 0.5) / TEX_H, sec), 1)
+      accumulate(sample((j + 0.5) / TEX_H, sec, toAngle), 1)
       write((j * TEX_W + i) * 4)
     }
   }
@@ -100,15 +103,17 @@ export async function paintLivery(
   const w = 1 / (N * N)
   for (let i = 0; i < TEX_W; i++) {
     await breathe()
-    let secs: ReturnType<typeof sectionAt>[] | null = null
+    let secs: Section[] | null = null
     for (let j = 0; j < TEX_H; j++) {
       if (!edge[j * TEX_W + i]) continue
+      // Sub-samples are a fraction of a texel apart, so they share the
+      // column's spacing around the outline.
       secs ??= Array.from({ length: N }, (_, a) =>
         sectionAt(profile, uToX(profile, (i + (a + 0.5) / N) / TEX_W)),
       )
       for (let a = 0; a < N; a++) {
         for (let b = 0; b < N; b++) {
-          accumulate(sample(0, (j + (b + 0.5) / N) / TEX_H, secs[a]), w)
+          accumulate(sample((j + (b + 0.5) / N) / TEX_H, secs[a], columnAngles[i]), w)
         }
       }
       write((j * TEX_W + i) * 4)
