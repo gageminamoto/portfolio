@@ -223,7 +223,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "Feb 2026",
       url: "https://yahtzee-score-card.vercel.app/",
       icon: "/projects/yahtzee-favicon.png",
-      hoverImage: "/projects/yahtzee.png",
+      hoverImage: "/images/yahtzee-hover.jpg",
       description: "A digital Yahtzee scorecard I built with simple dice input and customizable scoring.",
     },
     {

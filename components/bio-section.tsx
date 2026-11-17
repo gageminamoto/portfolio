@@ -167,10 +167,10 @@ function renderBioParts(
         "Servco": "/images/servco-preview.webp",
         "Side Tracked": "/images/side-tracked-hover.jpg",
         "Design Talk Story": "/images/design-talk-story-hover.jpg",
-        "Yahtzee scorecard": "/projects/yahtzee.png",
+        "Yahtzee scorecard": "/images/yahtzee-hover.jpg",
       }
       // Social-card images (1200×630) are wider than the default 16:9 preview.
-      const wide = ["Negi", "Side Tracked", "Design Talk Story"].includes(part.text)
+      const wide = ["Negi", "Side Tracked", "Design Talk Story", "Yahtzee scorecard"].includes(part.text)
       const toggle = linkToggles?.[part.url]
       const link = (
         <HoverLink
