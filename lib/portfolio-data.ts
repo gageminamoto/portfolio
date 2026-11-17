@@ -92,7 +92,7 @@ const faviconUrl = (url: string) =>
 
 export const portfolioData: PortfolioData = {
   name: "Gage Minamoto",
-  bio: "{Interaction designer|Software designer|Experience designer} building at Negi and growing Hawai’i’s [local design community](https://piiku.co/).\n\nIn my free time I build things like [Mizen](https://mizen.recipes), [Side Tracked](https://www.negi.studio/side-tracked), and a [Yahtzee scorecard](https://yahtzee-score-card.vercel.app/).\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
+  bio: "{Interaction designer|Software designer|Experience designer} building at Negi and growing Hawai’i’s [local design community](https://piiku.co/).\n\nIn my free time I build things like [Mizen](https://mizen.recipes), [Side Tracked](https://www.negi.studio/side-tracked), [Design Talk Story](https://www.negi.studio/design-talk-story), and a [Yahtzee scorecard](https://yahtzee-score-card.vercel.app/).\n\nA little more lives in [about](/about), [writing](/writing), and [tools](/tools).",
   extendedBio: `{Interaction designer|Software designer|Experience designer} based in Hawai’i, focused on building everyday products.
 
 I first stepped into design through esports and brand marketing at the [University of Hawaiʻi Esports](https://www.hawaii.edu/), then continued at [Servco](https://www.servco.com/).
@@ -223,6 +223,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "Feb 2026",
       url: "https://yahtzee-score-card.vercel.app/",
       icon: "/projects/yahtzee-favicon.png",
+      hoverImage: "/images/yahtzee-hover.jpg",
       description: "A digital Yahtzee scorecard I built with simple dice input and customizable scoring.",
     },
     {
@@ -230,7 +231,16 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       role: "A Makers Showcase",
       period: "Oct 2026",
       url: "https://www.negi.studio/side-tracked",
+      hoverImage: "/images/side-tracked-hover.jpg",
       description: "An event showcasing makers and their creative projects.",
+    },
+    {
+      company: "Design Talk Story",
+      role: "Coffee & design chats",
+      period: "Nov 2026",
+      url: "https://www.negi.studio/design-talk-story",
+      hoverImage: "/images/design-talk-story-hover.jpg",
+      description: "Casual coffee chats where local designers bring what they’re working on.",
     },
     {
       company: "Freelance",
@@ -238,6 +248,7 @@ I then started [Negi](https://negi.studio/), a design studio I co-founded with [
       period: "2024 – 2026",
       url: "https://gageminamoto.com/",
       icon: "/icons/freelance.png",
+      hoverImage: "/images/freelance-hover.jpg",
       description: "Designing websites, brands, and products for Hawaiʻi businesses and growing teams.",
     },
     {

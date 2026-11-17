@@ -165,7 +165,12 @@ function renderBioParts(
         "Spero": "/images/spero-preview.webp",
         "MemberSpace": "/images/memberspace-preview.webp",
         "Servco": "/images/servco-preview.webp",
+        "Side Tracked": "/images/side-tracked-hover.jpg",
+        "Design Talk Story": "/images/design-talk-story-hover.jpg",
+        "Yahtzee scorecard": "/images/yahtzee-hover.jpg",
       }
+      // Social-card images (1200×630) are wider than the default 16:9 preview.
+      const wide = ["Negi", "Side Tracked", "Design Talk Story", "Yahtzee scorecard"].includes(part.text)
       const toggle = linkToggles?.[part.url]
       const link = (
         <HoverLink
@@ -187,8 +192,8 @@ function renderBioParts(
           external={!part.url.startsWith("/")}
           previewImage={previewImages[part.text]}
           previewFallbackImage={part.text === "Mizen" ? "/projects/mizen.png" : undefined}
-          previewWidth={part.text === "Negi" ? 256 : undefined}
-          previewHeight={part.text === "Negi" ? 134 : undefined}
+          previewWidth={wide ? 256 : undefined}
+          previewHeight={wide ? 134 : undefined}
           className={
             ghost
               ? "!text-transparent decoration-transparent hover:decoration-primary"
