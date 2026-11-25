@@ -9,6 +9,7 @@ import { DevPanels } from '@/components/dev-panels'
 import { GradientWordProvider } from '@/components/gradient-word-context'
 import { GradientOverlay } from '@/components/gradient-overlay'
 import { CommandKProvider } from '@/contexts/CommandKContext'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/site'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -16,8 +17,22 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jet
 const enableAgentation = process.env.NEXT_PUBLIC_ENABLE_AGENTATION !== "false"
 
 export const metadata: Metadata = {
-  title: 'Gage Minamoto',
-  description: 'Designer building everyday products. Growing Hawai\'i\'s local design community.',
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: 'website',
+    siteName: SITE_NAME,
+    locale: 'en_US',
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: 'summary',
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    creator: TWITTER_HANDLE,
+  },
   icons: {
     icon: [
       { url: '/favicon-light.svg?v=3', media: '(prefers-color-scheme: light)', type: 'image/svg+xml' },
