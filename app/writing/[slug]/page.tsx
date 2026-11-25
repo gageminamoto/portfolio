@@ -9,6 +9,8 @@ import {
   resolveWritingPostBySlug,
 } from "@/lib/notion"
 import { getSeedPost } from "@/lib/seed-posts"
+import { JsonLd, articleJsonLd } from "@/lib/json-ld"
+import { SITE_NAME, TWITTER_HANDLE } from "@/lib/site"
 import { ArticleContent } from "./article-content"
 import { ArticleUnavailable } from "./article-unavailable"
 
@@ -61,10 +63,21 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     return post
       ? {
           title: `${post.title} | Gage Minamoto`,
+          alternates: { canonical: `/writing/${post.slug}` },
+          authors: [{ name: SITE_NAME, url: "/" }],
           openGraph: {
             title: post.title,
             type: "article",
+            url: `/writing/${post.slug}`,
+            siteName: SITE_NAME,
+            locale: "en_US",
             publishedTime: post.date ?? undefined,
+            authors: ["/"],
+          },
+          twitter: {
+            card: "summary",
+            title: post.title,
+            creator: TWITTER_HANDLE,
           },
         }
       : { title: "Not Found" }
@@ -92,5 +105,10 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   if (article.status === "error") return <ArticleUnavailable />
   if (!article.post) return <ArticleUnavailable />
 
-  return <ArticleContent slug={slug} from={from} post={article.post} blocks={article.blocks} allPosts={article.posts} />
+  return (
+    <>
+      <JsonLd data={articleJsonLd(article.post)} />
+      <ArticleContent slug={slug} from={from} post={article.post} blocks={article.blocks} allPosts={article.posts} />
+    </>
+  )
 }

@@ -17,7 +17,7 @@ const nextConfig = {
           destination: "/api/accept-md/:path*",
         },
         {
-          source: "/:path((?!api(?:/|$)|_next(?:/|$)).*)",
+          source: "/:path((?!api(?:/|$)|_next(?:/|$)|llms\\.txt$|robots\\.txt$|sitemap\\.xml$).*)",
           has: [
             {
               type: "header",
