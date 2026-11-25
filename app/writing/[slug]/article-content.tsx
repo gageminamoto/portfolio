@@ -32,13 +32,12 @@ function formatDate(date: string | null): string | null {
 
 interface ArticleContentProps {
   slug: string
-  from?: string
   post: NotionWritingPost
   blocks: NotionBlock[]
   allPosts: NotionWritingPost[]
 }
 
-export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleContentProps) {
+export function ArticleContent({ slug, post, blocks, allPosts }: ArticleContentProps) {
   const isSeed = slug.startsWith("seed-")
   const articleBlocks = isSeed ? generateSeedBlocks() : blocks
   const posts = isSeed ? [...allPosts, ...generateSeedPosts(5)] : allPosts
@@ -46,12 +45,10 @@ export function ArticleContent({ slug, from, post, blocks, allPosts }: ArticleCo
   const prevPost = index > 0 ? posts[index - 1] : null
   const nextPost = index >= 0 && index < posts.length - 1 ? posts[index + 1] : null
   const headings = extractHeadings(articleBlocks)
-  const backToHome = from === "home"
   const formattedDate = formatDate(post.date)
 
   return (
     <ArticleContentMotion
-      backToHome={backToHome}
       post={post}
       formattedDate={formattedDate}
       articleBlocks={articleBlocks}

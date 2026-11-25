@@ -49,7 +49,14 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  // Let the page draw under the status bar on notched phones; layouts pad
+  // themselves with env(safe-area-inset-*) so content stays clear of it.
+  viewportFit: "cover",
   themeColor: [
+    // On phones, match the browser chrome to the page background so the top
+    // edge reads as one surface. Desktop keeps the original colors below.
+    { media: "(max-width: 767px) and (prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(max-width: 767px) and (prefers-color-scheme: dark)", color: "#0a0a0a" },
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#252525" },
   ],
@@ -79,10 +86,6 @@ export default function RootLayout({
           <GradientWordProvider>
             <CommandKProvider>
               <GradientOverlay />
-              <div
-                className="pointer-events-none fixed inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-background via-background/35 to-transparent md:hidden"
-                aria-hidden="true"
-              />
               {children}
               <AppearanceControl />
               <script src="https://inflight.co/widget.js" data-org="yykr0g17" async></script>
