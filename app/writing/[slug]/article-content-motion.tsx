@@ -1,5 +1,7 @@
 "use client"
 
+import { Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { motion, useReducedMotion } from "framer-motion"
 import { BackLink } from "@/components/back-link"
 import { BlocksRenderer } from "@/components/writing/blocks-renderer"
@@ -9,8 +11,17 @@ import type { NotionBlock, NotionWritingPost } from "@/lib/notion"
 import { fadeUp, noMotion, stagger } from "@/lib/animations"
 import { ArticleActions } from "./article-actions"
 
+// Read `from` on the client so the article HTML stays cacheable.
+function ArticleBackLink() {
+  const backToHome = useSearchParams().get("from") === "home"
+  return (
+    <BackLink href={backToHome ? "/" : "/writing"}>
+      {backToHome ? "Home" : "Writing"}
+    </BackLink>
+  )
+}
+
 interface ArticleContentMotionProps {
-  backToHome: boolean
   post: NotionWritingPost
   formattedDate: string | null
   articleBlocks: NotionBlock[]
@@ -20,7 +31,6 @@ interface ArticleContentMotionProps {
 }
 
 export function ArticleContentMotion({
-  backToHome,
   post,
   formattedDate,
   articleBlocks,
@@ -48,9 +58,9 @@ export function ArticleContentMotion({
         >
           <header className="mb-(--page-section-gap) flex flex-col gap-6">
             <nav className="flex items-center justify-between">
-              <BackLink href={backToHome ? "/" : "/writing"}>
-                {backToHome ? "Home" : "Writing"}
-              </BackLink>
+              <Suspense fallback={<BackLink href="/writing">Writing</BackLink>}>
+                <ArticleBackLink />
+              </Suspense>
               <ArticleActions />
             </nav>
             <h1 className="text-2xl font-semibold tracking-tight text-foreground [text-wrap:balance]">{post.title}</h1>
