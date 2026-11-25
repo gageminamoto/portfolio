@@ -185,7 +185,9 @@ export function LayoutOne() {
     <>
       <motion.main
         id="main-content"
-        className="relative z-10 flex min-h-screen items-center justify-center px-6 py-16"
+        // Mobile: center in the visible viewport and keep the hero clear of the
+        // status bar and home indicator. Desktop keeps the original spacing.
+        className="relative z-10 flex min-h-svh items-center justify-center px-6 pt-[max(4rem,calc(env(safe-area-inset-top)+2.5rem))] pb-[max(4rem,calc(env(safe-area-inset-bottom)+2.5rem))] md:min-h-screen md:py-16"
         variants={reduceMotion ? undefined : stagger}
         initial="hidden"
         animate="show"
