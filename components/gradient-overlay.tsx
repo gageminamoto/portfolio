@@ -65,7 +65,10 @@ export function GradientOverlay() {
       {shaderEnabled && (
         <motion.div
           key="gradients"
-          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10"
+          // Mobile: center the glow just below the status bar and fade it in
+          // from the page background at the very top, so it eases out from
+          // under the browser chrome instead of being cut off by it.
+          className="pointer-events-none absolute inset-x-0 top-0 h-screen -z-10 max-md:[--wash-top:calc(env(safe-area-inset-top,0px)+2rem)] max-md:[mask-image:linear-gradient(to_bottom,transparent,black_calc(env(safe-area-inset-top,0px)+4rem))]"
           aria-hidden="true"
           initial={{ opacity: 0 }}
           animate={{ opacity: p.opacity }}
@@ -88,7 +91,7 @@ export function GradientOverlay() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isActive ? 1 : 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : p.duration, ease: [0.4, 0, 0.2, 1] }}
-                style={{ background: `radial-gradient(ellipse ${p.width}% ${p.height}% at 50% 0%, ${color} 0%, color-mix(in oklch, ${color} 70%, transparent) 25%, color-mix(in oklch, ${color} 35%, transparent) 50%, color-mix(in oklch, ${color} 10%, transparent) 75%, transparent 100%)` }}
+                style={{ background: `radial-gradient(ellipse ${p.width}% ${p.height}% at 50% var(--wash-top, 0%), ${color} 0%, color-mix(in oklch, ${color} 70%, transparent) 25%, color-mix(in oklch, ${color} 35%, transparent) 50%, color-mix(in oklch, ${color} 10%, transparent) 75%, transparent 100%)` }}
               />
             )
           })}

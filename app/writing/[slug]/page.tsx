@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { unstable_noStore as noStore } from "next/cache"
 import { notFound } from "next/navigation"
 import { cache } from "react"
 import {
@@ -15,12 +14,14 @@ import { ArticleContent } from "./article-content"
 import { ArticleUnavailable } from "./article-unavailable"
 
 export const revalidate = 600
+// Slugs published after the last build render on first request, then cache.
+// A slug that is not found yet is only cached for one revalidate window.
+export const dynamicParams = true
 
 const resolvePostForRequest = cache(resolveWritingPostBySlug)
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ from?: string }>
 }
 
 async function getArticle(slug: string) {
@@ -86,16 +87,13 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   }
 }
 
-export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
-  // Avoid serving a stale Full Route Cache 404 after a new Notion post goes live.
-  noStore()
+export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
-  const { from } = await searchParams
 
   if (slug.startsWith("seed-")) {
     const post = getSeedPost(slug)
     if (!post) notFound()
-    return <ArticleContent slug={slug} from={from} post={post} blocks={[]} allPosts={[]} />
+    return <ArticleContent slug={slug} post={post} blocks={[]} allPosts={[]} />
   }
 
   if (!isWritingConfigured()) notFound()
@@ -108,7 +106,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   return (
     <>
       <JsonLd data={articleJsonLd(article.post)} />
-      <ArticleContent slug={slug} from={from} post={article.post} blocks={article.blocks} allPosts={article.posts} />
+      <ArticleContent slug={slug} post={article.post} blocks={article.blocks} allPosts={article.posts} />
     </>
   )
 }

@@ -526,7 +526,7 @@ export async function getEarlyDesignResources(): Promise<EarlyDesignResource[]> 
 
 // ─── Post Blocks ─────────────────────────────────────────────────────
 
-export async function fetchPostBlocks(
+async function fetchPostBlocksUncached(
   pageId: string
 ): Promise<NotionBlock[]> {
   const blocks: NotionBlock[] = []
@@ -551,7 +551,7 @@ export async function fetchPostBlocks(
             notionBlock.imageDimensions = await getImageDimensions(src)
           }
           if (block.has_children) {
-            notionBlock.children = await fetchPostBlocks(block.id)
+            notionBlock.children = await fetchPostBlocksUncached(block.id)
           }
           return notionBlock
         } catch (error) {
@@ -566,4 +566,17 @@ export async function fetchPostBlocks(
   } while (cursor)
 
   return blocks
+}
+
+// The block tree includes image dimensions, so caching it also avoids
+// re-reading image headers on every render. Notion file URLs inside the
+// payload are signed for about an hour, which outlasts this window.
+const getCachedPostBlocks = unstable_cache(
+  async (pageId: string) => fetchPostBlocksUncached(pageId),
+  ["notion-post-blocks"],
+  { revalidate: 600, tags: ["notion-writing", "notion-post-blocks"] }
+)
+
+export async function fetchPostBlocks(pageId: string): Promise<NotionBlock[]> {
+  return getCachedPostBlocks(pageId)
 }
